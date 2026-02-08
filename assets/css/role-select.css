@@ -1,0 +1,52 @@
+/* Role Selection Styling */
+
+.role-info {
+    background: #F9FAFB;
+    border-radius: 8px;
+    padding: 14px;
+    margin-top: 8px;
+    font-size: 13px;
+    color: #4B5563;
+    line-height: 1.6;
+    border-left: 4px solid #E5E7EB;
+    transition: all 0.3s ease;
+}
+
+.role-info.guest {
+    background: #EEF2FF;
+    border-left-color: #6366F1;
+    color: #3730A3;
+}
+
+.role-info.host {
+    background: #ECFDF5;
+    border-left-color: #10B981;
+    color: #065F46;
+}
+
+.role-info strong {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+select[name="role"],
+select#register-role,
+select#role {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7280' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 40px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+}
+
+select[name="role"]:focus,
+select#register-role:focus,
+select#role:focus {
+    border-color: #6366F1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
