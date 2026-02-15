@@ -43,10 +43,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign up - ServePro</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/role-select.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=8.0">
+    <link rel="stylesheet" href="assets/css/role-select.css?v=8.0">
+    <link rel="stylesheet" href="assets/css/theme-toggle.css?v=2.0">
 </head>
 <body>
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+        <span class="theme-toggle-icon">☀️</span>
+        <span class="theme-toggle-text">Light</span>
+    </div>
+    
     <div class="auth-container">
         <div class="auth-box">
             <div class="auth-header">
@@ -186,6 +193,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         });
     </script>
+    
+    <script src="assets/js/theme-toggle.js"></script>
     <script src="assets/js/validation.js"></script>
 </body>
 </html>

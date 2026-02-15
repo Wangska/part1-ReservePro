@@ -23,23 +23,24 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
 }
 
 .modal-content {
     position: relative;
-    background: white;
+    background: #1A1A1A;
     border-radius: 16px;
     padding: 40px;
     width: 90%;
     max-width: 480px;
     max-height: 90vh;
     overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
     animation: slideUp 0.4s ease;
     z-index: 10000;
+    border: 1px solid #3A3A3A;
 }
 
 .modal-close {
@@ -49,7 +50,7 @@
     background: transparent;
     border: none;
     font-size: 32px;
-    color: #6B7280;
+    color: #B8B8B8;
     cursor: pointer;
     transition: color 0.2s ease, transform 0.2s ease;
     width: 40px;
@@ -61,8 +62,8 @@
 }
 
 .modal-close:hover {
-    color: #1F2937;
-    background: #F3F4F6;
+    color: #D4A574;
+    background: #2C2C2C;
     transform: rotate(90deg);
 }
 
@@ -74,7 +75,7 @@
 .modal-header h2 {
     font-size: 28px;
     font-weight: 700;
-    color: #1F2937;
+    color: #FFFFFF;
     margin-bottom: 8px;
 }
 
@@ -104,7 +105,7 @@
 .form-group label {
     font-size: 14px;
     font-weight: 600;
-    color: #1F2937;
+    color: #FFFFFF;
 }
 
 .form-group input,
@@ -121,19 +122,20 @@
 
 .form-group input:focus,
 .form-group select:focus {
-    border-color: #6366F1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    border-color: #D4A574;
+    box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.1);
 }
 
 .form-group select {
     cursor: pointer;
-    background: white;
+    background: #2C2C2C;
+    color: #FFFFFF;
 }
 
 .modal-btn {
     padding: 14px 24px;
-    background: linear-gradient(135deg, #6366F1, #4F46E5);
-    color: white;
+    background: linear-gradient(135deg, #D4A574, #B8935F);
+    color: #0F0F0F;
     border: none;
     border-radius: 8px;
     font-size: 16px;
@@ -165,14 +167,14 @@
 }
 
 .modal-footer a {
-    color: #6366F1;
+    color: #D4A574;
     text-decoration: none;
     font-weight: 600;
     transition: color 0.2s ease;
 }
 
 .modal-footer a:hover {
-    color: #4F46E5;
+    color: #E6C89C;
     text-decoration: underline;
 }
 
@@ -203,9 +205,9 @@
     gap: 12px;
     width: 100%;
     padding: 12px 24px;
-    background: white;
-    color: #1F2937;
-    border: 2px solid #E5E7EB;
+    background: #2C2C2C;
+    color: #FFFFFF;
+    border: 2px solid #3A3A3A;
     border-radius: 8px;
     font-size: 14px;
     font-weight: 600;
@@ -214,8 +216,8 @@
 }
 
 .modal-btn-social:hover {
-    background: #F9FAFB;
-    border-color: #6366F1;
+    background: #1F1F1F;
+    border-color: #D4A574;
 }
 
 /* Animations */
@@ -271,15 +273,87 @@ body.modal-open > *:not(.modal) {
 }
 
 .modal-content::-webkit-scrollbar-track {
-    background: #F3F4F6;
+    background: #2C2C2C;
     border-radius: 4px;
 }
 
 .modal-content::-webkit-scrollbar-thumb {
-    background: #6366F1;
+    background: #D4A574;
     border-radius: 4px;
 }
 
 .modal-content::-webkit-scrollbar-thumb:hover {
-    background: #4F46E5;
+    background: #E6C89C;
+}
+
+/* Property Details Modal Overrides */
+#propertyModal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#propertyModal .modal-content {
+    max-width: 1100px;
+    width: 95%;
+    padding: 0;
+    overflow: hidden;
+    margin: auto;
+}
+
+#propertyModalContent {
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+#propertyModalContent::-webkit-scrollbar {
+    width: 8px;
+}
+
+#propertyModalContent::-webkit-scrollbar-track {
+    background: #2C2C2C;
+}
+
+#propertyModalContent::-webkit-scrollbar-thumb {
+    background: #D4A574;
+    border-radius: 4px;
+}
+
+.gallery-item {
+    position: relative;
+    overflow: hidden;
+    background: #2C2C2C;
+    min-height: 200px;
+}
+
+.gallery-main {
+    grid-row: span 2;
+}
+
+/* Responsive adjustments for property modal */
+@media (max-width: 1024px) {
+    #propertyModal .modal-content {
+        width: 95%;
+        max-width: 95%;
+    }
+}
+
+@media (max-width: 768px) {
+    #propertyModal .modal-content {
+        width: 98%;
+        max-width: 98%;
+    }
+    
+    #propertyModalContent {
+        max-height: 80vh;
+    }
+}
+
+.info-section {
+    padding: 24px 0;
+    border-bottom: 1px solid #3A3A3A;
+}
+
+.info-section:last-child {
+    border-bottom: none;
 }

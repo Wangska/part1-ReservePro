@@ -1,0 +1,533 @@
+<?php
+require_once __DIR__ . '/../config/session.php';
+require_once __DIR__ . '/../config/database.php';
+
+requireLogin();
+$user = getCurrentUser();
+
+// Ensure user is a host
+if ($user['role'] !== 'host') {
+    header('Location: ../home.php');
+    exit();
+}
+
+$conn = getDBConnection();
+
+// Get all bookings for host's properties
+$stmt = $conn->prepare("
+    SELECT 
+        b.id,
+        b.booking_date,
+        b.check_in,
+        b.check_out,
+        b.total_price,
+        b.status,
+        p.title as property_name,
+        p.price_per_night,
+        u.first_name,
+        u.last_name,
+        u.email,
+        DATEDIFF(b.check_out, b.check_in) as nights
+    FROM bookings b
+    JOIN properties p ON b.property_id = p.id
+    JOIN users u ON b.guest_id = u.id
+    WHERE p.host_id = ?
+    ORDER BY b.booking_date DESC
+");
+$stmt->bind_param("i", $user['id']);
+$stmt->execute();
+$bookings = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+
+// Calculate earnings statistics
+$total_earnings = 0;
+$pending_earnings = 0;
+$completed_earnings = 0;
+$total_bookings = count($bookings);
+
+foreach ($bookings as $booking) {
+    if ($booking['status'] === 'confirmed') {
+        $completed_earnings += $booking['total_price'];
+    } elseif ($booking['status'] === 'pending') {
+        $pending_earnings += $booking['total_price'];
+    }
+    if ($booking['status'] !== 'cancelled') {
+        $total_earnings += $booking['total_price'];
+    }
+}
+
+$conn->close();
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earnings - ServePro</title>
+    <link rel="stylesheet" href="../assets/css/style.css?v=11.0">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=11.0">
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=11.0">
+    <style>
+        .earnings-header {
+            background: linear-gradient(135deg, #2C1810 0%, #3E2723 50%, #0F0F0F 100%);
+            padding: 40px;
+            border-radius: 16px;
+            margin-bottom: 32px;
+            color: white;
+        }
+
+        .earnings-header h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+            color: #FFFFFF !important;
+        }
+
+        .earnings-header p {
+            opacity: 0.9;
+            font-size: 16px;
+            color: #E0E0E0 !important;
+        }
+
+        .earnings-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .earnings-stat-card {
+            background: #1F1F1F;
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid #3A3A3A;
+            transition: all 0.3s ease;
+        }
+
+        .earnings-stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(212, 165, 116, 0.2);
+            border-color: #D4A574;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #B8B8B8;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #D4A574, #B8935F);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+
+        .stat-change {
+            font-size: 13px;
+            color: #22C55E;
+        }
+
+        .earnings-table-container {
+            background: #1F1F1F;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #3A3A3A;
+        }
+
+        .table-header {
+            padding: 24px;
+            border-bottom: 1px solid #3A3A3A;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #FFFFFF !important;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid #3A3A3A;
+            background: transparent;
+            color: #B8B8B8;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover {
+            background: #2C2C2C;
+            color: #D4A574;
+            border-color: #D4A574;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #D4A574, #B8935F);
+            color: #0F0F0F;
+            border-color: transparent;
+        }
+
+        .earnings-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .earnings-table thead {
+            background: #2C2C2C;
+        }
+
+        .earnings-table th {
+            padding: 16px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            color: #B8B8B8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #3A3A3A;
+        }
+
+        .earnings-table td {
+            padding: 20px;
+            color: #E0E0E0;
+            border-bottom: 1px solid #2C2C2C;
+        }
+
+        .earnings-table tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        .earnings-table tbody tr:hover {
+            background: #2C2C2C;
+        }
+
+        .booking-id {
+            font-family: 'Courier New', monospace;
+            color: #D4A574;
+            font-weight: 600;
+        }
+
+        .guest-name {
+            font-weight: 500;
+            color: #FFFFFF;
+        }
+
+        .amount {
+            font-weight: 700;
+            font-size: 16px;
+            color: #D4A574;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .status-completed {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22C55E;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .status-pending {
+            background: rgba(251, 191, 36, 0.2);
+            color: #FBBf24;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .status-confirmed {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3B82F6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .status-cancelled {
+            background: rgba(239, 68, 68, 0.2);
+            color: #EF4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .status-labels {
+            margin-top: 32px;
+            padding: 24px;
+            background: #1F1F1F;
+            border-radius: 12px;
+            border: 1px solid #3A3A3A;
+        }
+
+        .status-labels h3 {
+            font-size: 16px;
+            margin-bottom: 16px;
+            color: #FFFFFF !important;
+        }
+
+        .status-labels ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+
+        .status-labels li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #B8B8B8;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-completed {
+            background: #22C55E;
+        }
+
+        .dot-pending {
+            background: #FBBF24;
+        }
+
+        .dot-cancelled {
+            background: #EF4444;
+        }
+
+        .dot-confirmed {
+            background: #3B82F6;
+        }
+
+        .empty-earnings {
+            text-align: center;
+            padding: 80px 20px;
+            color: #B8B8B8;
+        }
+
+        .empty-earnings h3 {
+            font-size: 24px;
+            margin-bottom: 12px;
+            color: #FFFFFF !important;
+        }
+
+        .empty-earnings p {
+            font-size: 16px;
+            margin-bottom: 24px;
+            color: #B8B8B8 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="host-layout">
+        <!-- Sidebar -->
+        <aside class="host-sidebar">
+            <div class="sidebar-header">
+                <a href="../home.php" class="sidebar-brand">
+                    <svg class="brand-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 1c2 0 3.46 1.63 3.46 3.41 0 1.78-1.46 3.41-3.46 3.41s-3.46-1.63-3.46-3.41C12.54 2.63 14 1 16 1zm0 6.82c2.52 0 4.61-1.84 4.61-4.41C20.61 1.84 18.52 0 16 0s-4.61 1.84-4.61 4.41c0 2.57 2.09 4.41 4.61 4.41zM13.96 28.85l6.72-11.87c-1.41-.83-3.07-1.33-4.86-1.33-1.79 0-3.45.5-4.86 1.33l6.72 11.87h.28zm-1.27-1.89l-5.12-9.04C8.47 16.02 9.99 15 11.71 15h8.58c1.72 0 3.24 1.02 4.14 2.92l-5.12 9.04h-7.62z"/>
+                    </svg>
+                    <span>ServePro</span>
+                </a>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="dashboard.php" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="properties.php" class="nav-item">
+                    <span class="nav-icon">🏠</span>
+                    <span>My Properties</span>
+                </a>
+                <a href="add-property.php" class="nav-item">
+                    <span class="nav-icon">➕</span>
+                    <span>Add Property</span>
+                </a>
+                <a href="bookings.php" class="nav-item">
+                    <span class="nav-icon">📅</span>
+                    <span>Bookings</span>
+                </a>
+                <a href="earnings.php" class="nav-item active">
+                    <span class="nav-icon">💰</span>
+                    <span>Earnings</span>
+                </a>
+                <a href="messages.php" class="nav-item">
+                    <span class="nav-icon">💬</span>
+                    <span>Messages</span>
+                </a>
+                <a href="../home.php" class="nav-item">
+                    <span class="nav-icon">🌐</span>
+                    <span>View Site</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <?php echo strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_name'], 0, 1)); ?>
+                    </div>
+                    <div class="user-info">
+                        <div class="user-name"><?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?></div>
+                        <div class="user-role">Host</div>
+                    </div>
+                </div>
+                
+                <a href="../logout.php" class="btn-logout">Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="host-main">
+            <div class="earnings-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1>💰 Earnings</h1>
+                    <p>Track your revenue and booking history</p>
+                </div>
+                <!-- Theme Toggle -->
+                <div class="theme-toggle">
+                    <span class="theme-toggle-icon">☀️</span>
+                    <span class="theme-toggle-text">Light</span>
+                </div>
+            </div>
+
+            <!-- Earnings Statistics -->
+            <div class="earnings-stats">
+                <div class="earnings-stat-card">
+                    <div class="stat-label">Total Earnings</div>
+                    <div class="stat-value">₱<?php echo number_format($total_earnings, 2); ?></div>
+                    <div class="stat-change">All time revenue</div>
+                </div>
+                <div class="earnings-stat-card">
+                    <div class="stat-label">Completed</div>
+                    <div class="stat-value">₱<?php echo number_format($completed_earnings, 2); ?></div>
+                    <div class="stat-change">Paid bookings</div>
+                </div>
+                <div class="earnings-stat-card">
+                    <div class="stat-label">Pending</div>
+                    <div class="stat-value">₱<?php echo number_format($pending_earnings, 2); ?></div>
+                    <div class="stat-change">Awaiting payment</div>
+                </div>
+                <div class="earnings-stat-card">
+                    <div class="stat-label">Total Bookings</div>
+                    <div class="stat-value"><?php echo $total_bookings; ?></div>
+                    <div class="stat-change">All reservations</div>
+                </div>
+            </div>
+
+            <!-- Earnings Table -->
+            <div class="earnings-table-container">
+                <div class="table-header">
+                    <h2>Booking History</h2>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" onclick="filterBookings('all')">All</button>
+                        <button class="filter-btn" onclick="filterBookings('confirmed')">Completed</button>
+                        <button class="filter-btn" onclick="filterBookings('pending')">Pending</button>
+                        <button class="filter-btn" onclick="filterBookings('cancelled')">Cancelled</button>
+                    </div>
+                </div>
+
+                <?php if (empty($bookings)): ?>
+                    <div class="empty-earnings">
+                        <h3>📊 No Earnings Yet</h3>
+                        <p>You haven't received any bookings yet. Start by adding properties!</p>
+                        <a href="add-property.php" class="btn-primary">Add Your First Property</a>
+                    </div>
+                <?php else: ?>
+                    <table class="earnings-table">
+                        <thead>
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>Property</th>
+                                <th>Guest</th>
+                                <th>Dates</th>
+                                <th>Nights</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($bookings as $booking): ?>
+                                <tr data-status="<?php echo $booking['status']; ?>">
+                                    <td class="booking-id">BK-<?php echo str_pad($booking['id'], 4, '0', STR_PAD_LEFT); ?></td>
+                                    <td><?php echo htmlspecialchars($booking['property_name']); ?></td>
+                                    <td class="guest-name"><?php echo htmlspecialchars($booking['first_name'] . ' ' . substr($booking['last_name'], 0, 1) . '.'); ?></td>
+                                    <td><?php echo date('M j', strtotime($booking['check_in'])) . '–' . date('j', strtotime($booking['check_out'])); ?></td>
+                                    <td><?php echo $booking['nights']; ?></td>
+                                    <td class="amount">₱<?php echo number_format($booking['total_price'], 0); ?></td>
+                                    <td>
+                                        <span class="status-badge status-<?php echo $booking['status']; ?>">
+                                            <?php echo ucfirst($booking['status']); ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
+            </div>
+
+            <!-- Status Labels -->
+            <?php if (!empty($bookings)): ?>
+            <div class="status-labels">
+                <h3>Status Labels</h3>
+                <ul>
+                    <li>
+                        <span class="status-dot dot-completed"></span>
+                        Confirmed (paid)
+                    </li>
+                    <li>
+                        <span class="status-dot dot-pending"></span>
+                        Pending
+                    </li>
+                    <li>
+                        <span class="status-dot dot-cancelled"></span>
+                        Cancelled (₱0)
+                    </li>
+                </ul>
+            </div>
+            <?php endif; ?>
+        </main>
+    </div>
+
+    <script src="../assets/js/theme-toggle.js"></script>
+    <script>
+        function filterBookings(status) {
+            const rows = document.querySelectorAll('.earnings-table tbody tr');
+            const buttons = document.querySelectorAll('.filter-btn');
+            
+            // Update active button
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Filter rows
+            rows.forEach(row => {
+                if (status === 'all') {
+                    row.style.display = '';
+                } else {
+                    if (row.dataset.status === status) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

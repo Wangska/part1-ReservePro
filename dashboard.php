@@ -12,7 +12,8 @@ $user = getCurrentUser();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - ServePro</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=8.0">
+    <link rel="stylesheet" href="assets/css/theme-toggle.css?v=2.0">
 </head>
 <body>
     <div class="dashboard-container">
@@ -32,6 +33,13 @@ $user = getCurrentUser();
                     <h3><?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?></h3>
                     <p><?php echo htmlspecialchars($user['email']); ?></p>
                 </div>
+                
+                <!-- Theme Toggle -->
+                <div class="theme-toggle">
+                    <span class="theme-toggle-icon">☀️</span>
+                    <span class="theme-toggle-text">Light</span>
+                </div>
+                
                 <a href="logout.php" class="btn-logout">Log out</a>
             </div>
         </div>
@@ -56,5 +64,7 @@ $user = getCurrentUser();
             </div>
         </div>
     </div>
+    
+    <script src="assets/js/theme-toggle.js"></script>
 </body>
 </html>

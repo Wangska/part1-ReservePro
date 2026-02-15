@@ -13,9 +13,9 @@
 }
 
 .role-info.guest {
-    background: #EEF2FF;
-    border-left-color: #6366F1;
-    color: #3730A3;
+    background: rgba(212, 165, 116, 0.1);
+    border-left-color: #D4A574;
+    color: #D4A574;
 }
 
 .role-info.host {
@@ -47,6 +47,6 @@ select#role {
 select[name="role"]:focus,
 select#register-role:focus,
 select#role:focus {
-    border-color: #6366F1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    border-color: #D4A574;
+    box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.1);
 }

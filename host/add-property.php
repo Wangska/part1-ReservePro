@@ -59,6 +59,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
             
+            // Handle photo uploads
+            $upload_errors = [];
+            if (isset($_FILES['property_photos'])) {
+                $upload_dir = $_SERVER['DOCUMENT_ROOT'] . '/part1/uploads/properties/';
+                
+                // Create directory if it doesn't exist
+                if (!file_exists($upload_dir)) {
+                    mkdir($upload_dir, 0777, true);
+                    chmod($upload_dir, 0777);
+                }
+                
+                // Debug: Check if directory is writable
+                if (!is_writable($upload_dir)) {
+                    $errors[] = "Upload directory is not writable: " . $upload_dir;
+                }
+                
+                // Check if files were uploaded
+                if (!empty($_FILES['property_photos']['name'][0])) {
+                    $photo_count = count($_FILES['property_photos']['name']);
+                    $is_primary = 1;
+                    
+                    for ($i = 0; $i < $photo_count && $i < 5; $i++) {
+                        if ($_FILES['property_photos']['error'][$i] === UPLOAD_ERR_OK) {
+                            $file_tmp = $_FILES['property_photos']['tmp_name'][$i];
+                            $file_name = $_FILES['property_photos']['name'][$i];
+                            $file_size = $_FILES['property_photos']['size'][$i];
+                            $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+                            
+                            // Validate file
+                            $allowed_ext = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                            $max_size = 5 * 1024 * 1024; // 5MB
+                            
+                            if (in_array($file_ext, $allowed_ext) && $file_size <= $max_size) {
+                                // Generate unique filename
+                                $new_filename = 'property_' . $property_id . '_' . time() . '_' . $i . '.' . $file_ext;
+                                $upload_path = $upload_dir . $new_filename;
+                                $photo_url = 'uploads/properties/' . $new_filename;
+                                
+                                if (move_uploaded_file($file_tmp, $upload_path)) {
+                                    // Verify file was actually created
+                                    if (file_exists($upload_path)) {
+                                        // Insert into database
+                                        $photo_stmt = $conn->prepare("INSERT INTO property_photos (property_id, photo_url, is_primary) VALUES (?, ?, ?)");
+                                        $photo_stmt->bind_param("isi", $property_id, $photo_url, $is_primary);
+                                        $photo_stmt->execute();
+                                        $photo_stmt->close();
+                                        
+                                        // Only first photo is primary
+                                        $is_primary = 0;
+                                    } else {
+                                        $upload_errors[] = "File upload succeeded but file not found: " . $file_name;
+                                    }
+                                } else {
+                                    $upload_errors[] = "Failed to move uploaded file: " . $file_name . " (Temp: " . $file_tmp . ", Target: " . $upload_path . ")";
+                                }
+                            } else {
+                                $upload_errors[] = "Invalid file: " . $file_name;
+                            }
+                        }
+                    }
+                }
+            }
+            
             $success = true;
             header('Location: dashboard.php?success=property_added');
             exit();
@@ -77,9 +140,10 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Property - ServePro</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css">
-    <link rel="stylesheet" href="../assets/css/add-property.css">
+    <link rel="stylesheet" href="../assets/css/style.css?v=14.0">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=14.0">
+    <link rel="stylesheet" href="../assets/css/add-property.css?v=14.0">
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=14.0">
 </head>
 <body>
     <div class="host-layout">
@@ -135,15 +199,23 @@ $conn->close();
                         <div class="user-role">Host</div>
                     </div>
                 </div>
+                
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
         </aside>
 
         <!-- Main Content -->
         <main class="host-main">
-            <div class="host-header">
-                <h1>Add New Property 🏠</h1>
-                <p class="subtitle">List your place and start hosting</p>
+            <div class="host-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1>Add New Property 🏠</h1>
+                    <p class="subtitle">List your place and start hosting</p>
+                </div>
+                <!-- Theme Toggle -->
+                <div class="theme-toggle">
+                    <span class="theme-toggle-icon">☀️</span>
+                    <span class="theme-toggle-text">Light</span>
+                </div>
             </div>
 
             <?php if (!empty($errors)): ?>
@@ -157,7 +229,7 @@ $conn->close();
             </div>
             <?php endif; ?>
 
-            <form method="POST" action="add-property.php" class="property-form">
+            <form method="POST" action="add-property.php" class="property-form" enctype="multipart/form-data">
                 <!-- Basic Information -->
                 <div class="form-section">
                     <h2 class="section-title">📝 Basic Information</h2>
@@ -260,6 +332,42 @@ $conn->close();
                     <?php endforeach; ?>
                 </div>
 
+                <!-- Photos Section -->
+                <div class="form-section">
+                    <h2 class="section-title">📸 Property Photos</h2>
+                    <p class="section-description">Upload high-quality photos of your property (Maximum 5 photos)</p>
+                    
+                    <div class="photo-upload-container">
+                        <div class="photo-upload-area" id="photoUploadArea">
+                            <div class="upload-icon">📷</div>
+                            <h3>Click to Upload Photos</h3>
+                            <p>Or drag and drop images here</p>
+                            <p class="upload-hint">Supported: JPG, PNG (Max 5MB each)</p>
+                        </div>
+                        
+                        <input type="file" id="propertyPhotos" name="property_photos[]" multiple accept="image/*" style="display: none;">
+                        
+                        <!-- Backup visible button -->
+                        <div style="text-align: center; margin-top: 16px;">
+                            <label for="propertyPhotos" style="display: inline-block; padding: 12px 24px; background: linear-gradient(135deg, #D4A574, #B8935F); color: #0F0F0F; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                                📁 Choose Files
+                            </label>
+                        </div>
+                        
+                        <div class="photo-preview-grid" id="photoPreviewGrid"></div>
+                    </div>
+                    
+                    <div class="primary-photo-note">
+                        <p>💡 <strong>Tip:</strong> The first photo will be set as the primary photo displayed in listings.</p>
+                    </div>
+                    
+                    <div id="uploadStatus" style="margin-top: 16px; padding: 12px; background: rgba(59, 130, 246, 0.1); border-left: 4px solid #3B82F6; border-radius: 8px; display: none;">
+                        <p style="color: #3B82F6 !important; margin: 0; font-size: 14px;">
+                            <strong>Ready to upload:</strong> <span id="fileCount">0</span> photo(s) selected
+                        </p>
+                    </div>
+                </div>
+
                 <!-- Submit -->
                 <div class="form-actions">
                     <a href="dashboard.php" class="btn-secondary">Cancel</a>
@@ -272,5 +380,139 @@ $conn->close();
             </form>
         </main>
     </div>
+    
+    <script src="../assets/js/theme-toggle.js"></script>
+    <script>
+        console.log('🎬 Photo upload script loading...');
+        
+        // Photo Upload Functionality
+        const photoUploadArea = document.getElementById('photoUploadArea');
+        const photoInput = document.getElementById('propertyPhotos');
+        const photoPreviewGrid = document.getElementById('photoPreviewGrid');
+        let selectedFiles = [];
+
+        console.log('Elements:', {
+            photoUploadArea: !!photoUploadArea,
+            photoInput: !!photoInput,
+            photoPreviewGrid: !!photoPreviewGrid
+        });
+
+        // Make sure elements exist
+        if (photoUploadArea && photoInput && photoPreviewGrid) {
+            console.log('✅ All elements found, setting up listeners...');
+            
+            // Click to upload
+            photoUploadArea.addEventListener('click', function(e) {
+                console.log('📸 Upload area clicked!');
+                e.preventDefault();
+                e.stopPropagation();
+                photoInput.click();
+            });
+
+            // File input change
+            photoInput.addEventListener('change', function(e) {
+                console.log('📁 Files selected:', e.target.files.length);
+                handleFiles(e.target.files);
+            });
+
+        // Drag and drop
+        photoUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            photoUploadArea.classList.add('dragover');
+        });
+
+        photoUploadArea.addEventListener('dragleave', () => {
+            photoUploadArea.classList.remove('dragover');
+        });
+
+        photoUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            photoUploadArea.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        function handleFiles(files) {
+            const maxFiles = 5;
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            
+            // Convert FileList to Array and filter
+            const newFiles = Array.from(files).filter(file => {
+                // Check file type
+                if (!file.type.startsWith('image/')) {
+                    alert('Please upload only image files.');
+                    return false;
+                }
+                
+                // Check file size
+                if (file.size > maxSize) {
+                    alert(`${file.name} is too large. Maximum size is 5MB.`);
+                    return false;
+                }
+                
+                return true;
+            });
+
+            // Check total files limit
+            if (selectedFiles.length + newFiles.length > maxFiles) {
+                alert(`You can only upload a maximum of ${maxFiles} photos.`);
+                return;
+            }
+
+            // Add new files to selected files
+            selectedFiles = [...selectedFiles, ...newFiles];
+            updatePhotoPreview();
+        }
+
+        function updatePhotoPreview() {
+            photoPreviewGrid.innerHTML = '';
+            
+            // Update status
+            const uploadStatus = document.getElementById('uploadStatus');
+            const fileCount = document.getElementById('fileCount');
+            if (selectedFiles.length > 0) {
+                uploadStatus.style.display = 'block';
+                fileCount.textContent = selectedFiles.length;
+            } else {
+                uploadStatus.style.display = 'none';
+            }
+            
+            selectedFiles.forEach((file, index) => {
+                const reader = new FileReader();
+                
+                reader.onload = (e) => {
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'photo-preview-item';
+                    previewItem.innerHTML = `
+                        <img src="${e.target.result}" alt="Property photo ${index + 1}">
+                        ${index === 0 ? '<span class="photo-preview-badge">Primary</span>' : ''}
+                        <button type="button" class="photo-remove-btn" onclick="removePhoto(${index})">&times;</button>
+                    `;
+                    photoPreviewGrid.appendChild(previewItem);
+                };
+                
+                reader.readAsDataURL(file);
+            });
+
+            // Update file input
+            const dataTransfer = new DataTransfer();
+            selectedFiles.forEach(file => {
+                dataTransfer.items.add(file);
+            });
+            photoInput.files = dataTransfer.files;
+        }
+
+        function removePhoto(index) {
+            selectedFiles.splice(index, 1);
+            updatePhotoPreview();
+        }
+        
+        } else {
+            console.error('❌ Elements not found!', {
+                photoUploadArea: !!photoUploadArea,
+                photoInput: !!photoInput,
+                photoPreviewGrid: !!photoPreviewGrid
+            });
+        }
+    </script>
 </body>
 </html>

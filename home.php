@@ -12,13 +12,33 @@ $query = "
     JOIN users u ON p.host_id = u.id
     WHERE p.status = 'approved'
     ORDER BY p.created_at DESC
-    LIMIT 12
+    LIMIT 50
 ";
 $result = $conn->query($query);
 $properties = [];
 if ($result) {
     $properties = $result->fetch_all(MYSQLI_ASSOC);
 }
+
+// Get property types with counts
+$property_types_query = "
+    SELECT property_type, COUNT(*) as count 
+    FROM properties 
+    WHERE status = 'approved' 
+    GROUP BY property_type
+";
+$types_result = $conn->query($property_types_query);
+$property_types = [];
+if ($types_result) {
+    $property_types = $types_result->fetch_all(MYSQLI_ASSOC);
+}
+
+// Get min and max prices
+$price_query = "SELECT MIN(price_per_night) as min_price, MAX(price_per_night) as max_price FROM properties WHERE status = 'approved'";
+$price_result = $conn->query($price_query);
+$price_range = $price_result->fetch_assoc();
+$min_price = $price_range['min_price'] ?? 0;
+$max_price = $price_range['max_price'] ?? 10000;
 
 // Get property amenities count
 $property_amenities = [];
@@ -43,10 +63,11 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ServePro - Discover Amazing Services</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/landing.css">
-    <link rel="stylesheet" href="assets/css/modal.css">
-    <link rel="stylesheet" href="assets/css/role-select.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=23.0">
+    <link rel="stylesheet" href="assets/css/landing.css?v=23.0">
+    <link rel="stylesheet" href="assets/css/modal.css?v=23.0">
+    <link rel="stylesheet" href="assets/css/role-select.css?v=23.0">
+    <link rel="stylesheet" href="assets/css/theme-toggle.css?v=23.0">
 </head>
 <body>
     <!-- Navigation -->
@@ -60,10 +81,10 @@ $conn->close();
                     <span class="brand-name">ServePro</span>
                 </a>
                 <div class="nav-links">
-                    <a href="#services">Services</a>
-                    <a href="#experiences">Experiences</a>
-                    <a href="#about">About</a>
-                    <a href="#contact">Contact</a>
+                    <a href="home.php">Home</a>
+                    <a href="experiences.php">Experiences</a>
+                    <a href="about.php">About</a>
+                    <a href="contact.php">Contact</a>
                 </div>
             </div>
             <div class="nav-right">
@@ -77,6 +98,12 @@ $conn->close();
                     <button onclick="openModal('loginModal')" class="nav-btn-outline">Sign in</button>
                     <button onclick="openModal('registerModal')" class="nav-btn">Sign up</button>
                 <?php endif; ?>
+                
+                <!-- Theme Toggle -->
+                <div class="theme-toggle">
+                    <span class="theme-toggle-icon">☀️</span>
+                    <span class="theme-toggle-text">Light</span>
+                </div>
             </div>
         </div>
     </nav>
@@ -95,8 +122,8 @@ $conn->close();
                         <circle cx="11" cy="11" r="8"></circle>
                         <path d="m21 21-4.35-4.35"></path>
                     </svg>
-                    <input type="text" placeholder="Where do you want to go?" class="search-input">
-                    <button class="search-btn">Search</button>
+                    <input type="text" placeholder="Where do you want to go?" class="search-input" id="searchInput">
+                    <button class="search-btn" id="searchBtn">Search</button>
                 </div>
             </div>
         </div>
@@ -109,84 +136,57 @@ $conn->close();
             <aside class="filters-sidebar">
                 <div class="filter-header">
                     <h3>Filters</h3>
-                    <button class="filter-reset">Clear all</button>
+                    <button class="filter-reset" id="clearFilters">Clear all</button>
                 </div>
 
                 <div class="filter-section">
-                    <h4>Categories</h4>
+                    <h4>Property Types</h4>
                     <label class="filter-checkbox">
-                        <input type="checkbox" checked>
-                        <span>All Services</span>
-                        <span class="filter-count">(242)</span>
+                        <input type="checkbox" class="category-filter" value="all" checked>
+                        <span>All Properties</span>
+                        <span class="filter-count">(<?php echo count($properties); ?>)</span>
                     </label>
+                    <?php foreach ($property_types as $type): ?>
                     <label class="filter-checkbox">
-                        <input type="checkbox">
-                        <span>Tours</span>
-                        <span class="filter-count">(75)</span>
+                        <input type="checkbox" class="category-filter" value="<?php echo htmlspecialchars($type['property_type']); ?>">
+                        <span><?php echo ucfirst($type['property_type']); ?></span>
+                        <span class="filter-count">(<?php echo $type['count']; ?>)</span>
                     </label>
-                    <label class="filter-checkbox">
-                        <input type="checkbox">
-                        <span>Experiences</span>
-                        <span class="filter-count">(67)</span>
-                    </label>
-                    <label class="filter-checkbox">
-                        <input type="checkbox">
-                        <span>Transportation</span>
-                        <span class="filter-count">(44)</span>
-                    </label>
+                    <?php endforeach; ?>
                 </div>
 
                 <div class="filter-section">
                     <h4>Price Range</h4>
                     <div class="price-range">
-                        <input type="range" min="0" max="1000" value="500" class="price-slider">
+                        <input type="range" 
+                               min="<?php echo $min_price; ?>" 
+                               max="<?php echo $max_price; ?>" 
+                               value="<?php echo $max_price; ?>" 
+                               class="price-slider" 
+                               id="priceSlider">
                         <div class="price-labels">
-                            <span>₱0</span>
-                            <span>₱1000+</span>
+                            <span>₱<?php echo number_format($min_price, 0); ?></span>
+                            <span id="currentPrice">₱<?php echo number_format($max_price, 0); ?>+</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="filter-section">
-                    <h4>Rating</h4>
-                    <label class="filter-checkbox">
-                        <input type="checkbox">
-                        <span>⭐⭐⭐⭐⭐</span>
-                    </label>
-                    <label class="filter-checkbox">
-                        <input type="checkbox">
-                        <span>⭐⭐⭐⭐</span>
-                    </label>
-                    <label class="filter-checkbox">
-                        <input type="checkbox">
-                        <span>⭐⭐⭐</span>
-                    </label>
-                </div>
-
-                <div class="filter-section">
-                    <h4>Features</h4>
-                    <label class="filter-checkbox">
-                        <input type="checkbox">
-                        <span>Free Cancellation</span>
-                    </label>
-                    <label class="filter-checkbox">
-                        <input type="checkbox">
-                        <span>Instant Confirmation</span>
-                    </label>
-                </div>
             </aside>
 
             <!-- Services Grid -->
             <main class="services-grid">
                 <div class="grid-header">
-                    <h2>Popular Services</h2>
+                    <div>
+                        <h2>Popular Services</h2>
+                        <p id="resultsCount" style="color: #B8B8B8; font-size: 14px; margin-top: 8px;">Showing <?php echo count($properties); ?> properties</p>
+                    </div>
                     <div class="sort-options">
                         <label>Sort by:</label>
-                        <select class="sort-select">
-                            <option>Popular</option>
-                            <option>Price: Low to High</option>
-                            <option>Price: High to Low</option>
-                            <option>Highest Rated</option>
+                        <select class="sort-select" id="sortSelect">
+                            <option value="popular">Popular</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="price-high">Price: High to Low</option>
+                            <option value="newest">Newest First</option>
                         </select>
                     </div>
                 </div>
@@ -196,18 +196,31 @@ $conn->close();
                         <!-- No Properties Available -->
                         <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
                             <div style="font-size: 64px; margin-bottom: 20px;">🏠</div>
-                            <h3 style="font-size: 24px; color: #1F2937; margin-bottom: 12px;">No Properties Available Yet</h3>
-                            <p style="color: #6B7280; font-size: 16px;">Check back soon for amazing properties!</p>
+                            <h3 style="font-size: 24px; color: #FFFFFF !important; margin-bottom: 12px;">No Properties Available Yet</h3>
+                            <p style="color: #E0E0E0 !important; font-size: 16px;">Check back soon for amazing properties!</p>
                         </div>
                     <?php else: ?>
                         <?php foreach ($properties as $property): 
                             // Use placeholder image if no photo
-                            $image_url = $property['primary_photo'] ?? 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400';
+                            if (!empty($property['primary_photo'])) {
+                                // Remove leading slash if present to make it relative
+                                $photo_path = ltrim($property['primary_photo'], '/');
+                                $image_url = $photo_path;
+                            } else {
+                                $image_url = 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400';
+                            }
                             $amenity_count = $property_amenities[$property['id']] ?? 0;
                         ?>
-                        <div class="service-card">
+                        <div class="service-card" onclick="openPropertyModal(<?php echo $property['id']; ?>)" 
+                             data-price="<?php echo $property['price_per_night']; ?>" 
+                             data-date="<?php echo $property['created_at']; ?>"
+                             data-type="<?php echo htmlspecialchars($property['property_type']); ?>"
+                             data-title="<?php echo htmlspecialchars(strtolower($property['title'])); ?>"
+                             data-city="<?php echo htmlspecialchars(strtolower($property['city'])); ?>"
+                             data-country="<?php echo htmlspecialchars(strtolower($property['country'])); ?>"
+                             data-description="<?php echo htmlspecialchars(strtolower($property['description'])); ?>">
                             <div class="card-image">
-                                <img src="<?php echo htmlspecialchars($image_url); ?>" alt="<?php echo htmlspecialchars($property['title']); ?>">
+                                <img src="<?php echo htmlspecialchars($image_url); ?>" alt="<?php echo htmlspecialchars($property['title']); ?>" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400'">
                                 <span class="card-badge"><?php echo ucfirst($property['property_type']); ?></span>
                                 <button class="card-favorite">♡</button>
                             </div>
@@ -229,7 +242,7 @@ $conn->close();
                                 <div class="card-footer">
                                     <div class="card-price">
                                         <div class="price-wrapper">
-                                            <span class="price-current">₱<?php echo number_format($property['price_per_night'], 2); ?></span>
+                                            <span class="price-current price-amount">₱<?php echo number_format($property['price_per_night'], 2); ?></span>
                                             <span class="price-label">/night</span>
                                         </div>
                                     </div>
@@ -392,7 +405,24 @@ $conn->close();
         </div>
     </div>
 
+    <!-- Property Details Modal -->
+    <div id="propertyModal" class="modal" style="display: none;">
+        <div class="modal-overlay" onclick="closePropertyModal()"></div>
+        <div class="modal-content" style="max-width: 1000px; max-height: 90vh; overflow-y: auto;">
+            <button class="modal-close" onclick="closePropertyModal()">&times;</button>
+            
+            <div id="propertyModalContent">
+                <div style="text-align: center; padding: 40px; color: #B8B8B8;">
+                    <div style="font-size: 48px; margin-bottom: 16px;">⏳</div>
+                    <p>Loading property details...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/theme-toggle.js"></script>
     <script src="assets/js/landing.js"></script>
     <script src="assets/js/modal.js"></script>
+    <script src="assets/js/property-modal.js?v=3.0"></script>
 </body>
 </html>

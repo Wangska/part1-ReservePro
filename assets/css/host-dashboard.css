@@ -3,14 +3,14 @@
 .host-layout {
     display: flex;
     min-height: 100vh;
-    background: #F9FAFB;
+    background: #0F0F0F;
 }
 
 /* Sidebar */
 .host-sidebar {
     width: 280px;
-    background: white;
-    border-right: 1px solid #E5E7EB;
+    background: #1A1A1A;
+    border-right: 1px solid #3A3A3A;
     display: flex;
     flex-direction: column;
     position: fixed;
@@ -20,7 +20,7 @@
 
 .sidebar-header {
     padding: 24px;
-    border-bottom: 1px solid #E5E7EB;
+    border-bottom: 1px solid #3A3A3A;
 }
 
 .sidebar-brand {
@@ -38,13 +38,13 @@
 .sidebar-brand .brand-icon {
     width: 32px;
     height: 32px;
-    fill: #6366F1;
+    fill: #D4A574;
 }
 
 .sidebar-brand span {
     font-size: 24px;
     font-weight: 700;
-    background: linear-gradient(135deg, #6366F1, #4F46E5);
+    background: linear-gradient(135deg, #D4A574, #B8935F);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -61,20 +61,20 @@
     padding: 12px 16px;
     border-radius: 8px;
     text-decoration: none;
-    color: #6B7280;
+    color: #B8B8B8;
     font-weight: 500;
     margin-bottom: 4px;
     transition: all 0.2s ease;
 }
 
 .nav-item:hover {
-    background: #F3F4F6;
-    color: #6366F1;
+    background: #2C2C2C;
+    color: #D4A574;
 }
 
 .nav-item.active {
-    background: linear-gradient(135deg, #6366F1, #4F46E5);
-    color: white;
+    background: linear-gradient(135deg, #D4A574, #B8935F);
+    color: #0F0F0F;
 }
 
 .nav-icon {
@@ -83,7 +83,7 @@
 
 .sidebar-footer {
     padding: 16px;
-    border-top: 1px solid #E5E7EB;
+    border-top: 1px solid #3A3A3A;
 }
 
 .user-profile {
@@ -97,7 +97,7 @@
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #6366F1, #4F46E5);
+    background: linear-gradient(135deg, #D4A574, #B8935F);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -113,20 +113,20 @@
 .user-name {
     font-weight: 600;
     font-size: 14px;
-    color: #1F2937;
+    color: #FFFFFF;
 }
 
 .user-role {
     font-size: 12px;
-    color: #6B7280;
+    color: #B8B8B8;
 }
 
 .btn-logout {
     display: block;
     width: 100%;
     padding: 10px;
-    background: white;
-    border: 1px solid #E5E7EB;
+    background: transparent;
+    border: 1px solid #D4A574;
     border-radius: 8px;
     text-align: center;
     text-decoration: none;
@@ -137,8 +137,9 @@
 }
 
 .btn-logout:hover {
-    background: #FEE2E2;
-    border-color: #EF4444;
+    background: #D4A574;
+    color: #0F0F0F;
+    border-color: #D4A574;
 }
 
 /* Main Content */
@@ -150,18 +151,25 @@
 
 .host-header {
     margin-bottom: 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.host-header .theme-toggle {
+    margin: 0;
 }
 
 .host-header h1 {
     font-size: 32px;
     font-weight: 700;
-    color: #1F2937;
+    color: #FFFFFF;
     margin-bottom: 8px;
 }
 
 .subtitle {
     font-size: 16px;
-    color: #6B7280;
+    color: #B8B8B8;
 }
 
 /* Stats Grid */
@@ -173,10 +181,11 @@
 }
 
 .stat-card {
-    background: white;
+    background: #1F1F1F;
     border-radius: 12px;
     padding: 24px;
     display: flex;
+    border: 1px solid #3A3A3A;
     align-items: center;
     gap: 20px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -201,13 +210,13 @@
 .stat-content h3 {
     font-size: 32px;
     font-weight: 800;
-    color: #1F2937;
+    color: #FFFFFF;
     margin-bottom: 4px;
 }
 
 .stat-content p {
     font-size: 14px;
-    color: #6B7280;
+    color: #B8B8B8;
 }
 
 /* Quick Actions */
@@ -218,7 +227,7 @@
 .quick-actions h2 {
     font-size: 24px;
     font-weight: 700;
-    color: #1F2937;
+    color: #FFFFFF;
     margin-bottom: 20px;
 }
 
@@ -229,10 +238,11 @@
 }
 
 .action-card {
-    background: white;
+    background: #1F1F1F;
     border-radius: 12px;
     padding: 24px;
     text-decoration: none;
+    border: 1px solid #3A3A3A;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     transition: all 0.2s ease;
     border: 2px solid transparent;
@@ -241,7 +251,7 @@
 .action-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    border-color: #6366F1;
+    border-color: #D4A574;
 }
 
 .action-icon {
@@ -253,13 +263,13 @@
 .action-card h3 {
     font-size: 18px;
     font-weight: 700;
-    color: #1F2937;
+    color: #FFFFFF;
     margin-bottom: 8px;
 }
 
 .action-card p {
     font-size: 14px;
-    color: #6B7280;
+    color: #B8B8B8;
 }
 
 /* Section Header */
@@ -300,10 +310,11 @@
 }
 
 .property-card {
-    background: white;
+    background: #1F1F1F;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    border: 1px solid #3A3A3A;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -337,8 +348,8 @@
 }
 
 .status-pending {
-    background: #FEF3C7;
-    color: #B45309;
+    background: rgba(245, 158, 11, 0.2);
+    color: #F59E0B;
 }
 
 .status-approved {
@@ -347,13 +358,13 @@
 }
 
 .status-rejected {
-    background: #FEE2E2;
-    color: #991B1B;
+    background: rgba(239, 68, 68, 0.2);
+    color: #EF4444;
 }
 
 .status-suspended {
-    background: #E5E7EB;
-    color: #374151;
+    background: rgba(128, 128, 128, 0.2);
+    color: #B8B8B8;
 }
 
 .property-info {
@@ -363,13 +374,13 @@
 .property-info h3 {
     font-size: 18px;
     font-weight: 700;
-    color: #1F2937;
+    color: #FFFFFF;
     margin-bottom: 8px;
 }
 
 .property-location {
     font-size: 14px;
-    color: #6B7280;
+    color: #B8B8B8;
     margin-bottom: 12px;
 }
 
@@ -377,7 +388,7 @@
     display: flex;
     gap: 16px;
     font-size: 14px;
-    color: #6B7280;
+    color: #B8B8B8;
     margin-bottom: 16px;
 }
 
@@ -395,8 +406,8 @@
 
 .btn-edit {
     padding: 8px 16px;
-    background: #6366F1;
-    color: white;
+    background: #D4A574;
+    color: #0F0F0F;
     border-radius: 6px;
     text-decoration: none;
     font-weight: 600;
@@ -405,15 +416,16 @@
 }
 
 .btn-edit:hover {
-    background: #4F46E5;
+    background: #E6C89C;
 }
 
 /* Empty State */
 .empty-state {
-    background: white;
+    background: #1F1F1F;
     border-radius: 12px;
     padding: 60px 40px;
     text-align: center;
+    border: 1px solid #3A3A3A;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -426,21 +438,21 @@
 .empty-state h3 {
     font-size: 24px;
     font-weight: 700;
-    color: #1F2937;
+    color: #FFFFFF;
     margin-bottom: 8px;
 }
 
 .empty-state p {
     font-size: 16px;
-    color: #6B7280;
+    color: #B8B8B8;
     margin-bottom: 24px;
 }
 
 .btn-primary {
     display: inline-block;
     padding: 12px 32px;
-    background: linear-gradient(135deg, #6366F1, #4F46E5);
-    color: white;
+    background: linear-gradient(135deg, #D4A574, #B8935F);
+    color: #0F0F0F;
     border-radius: 8px;
     text-decoration: none;
     font-weight: 600;
@@ -457,10 +469,11 @@
 }
 
 .bookings-table {
-    background: white;
+    background: #1F1F1F;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    border: 1px solid #3A3A3A;
 }
 
 .bookings-table table {
@@ -469,7 +482,7 @@
 }
 
 .bookings-table thead {
-    background: #F9FAFB;
+    background: #2C2C2C;
 }
 
 .bookings-table th {
@@ -477,16 +490,16 @@
     text-align: left;
     font-size: 14px;
     font-weight: 700;
-    color: #6B7280;
+    color: #B8B8B8;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .bookings-table td {
     padding: 16px;
-    border-top: 1px solid #E5E7EB;
+    border-top: 1px solid #3A3A3A;
     font-size: 14px;
-    color: #1F2937;
+    color: #FFFFFF;
 }
 
 .guest-info {
@@ -497,12 +510,12 @@
 
 .guest-info strong {
     font-weight: 600;
-    color: #1F2937;
+    color: #FFFFFF;
 }
 
 .guest-info small {
     font-size: 12px;
-    color: #6B7280;
+    color: #B8B8B8;
 }
 
 .badge {
@@ -515,8 +528,8 @@
 }
 
 .badge-pending {
-    background: #FEF3C7;
-    color: #B45309;
+    background: rgba(245, 158, 11, 0.2);
+    color: #F59E0B;
 }
 
 .badge-confirmed {
@@ -525,8 +538,8 @@
 }
 
 .badge-cancelled {
-    background: #FEE2E2;
-    color: #991B1B;
+    background: rgba(239, 68, 68, 0.2);
+    color: #EF4444;
 }
 
 .badge-completed {

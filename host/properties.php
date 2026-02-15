@@ -5,9 +5,15 @@ require_once __DIR__ . '/../config/database.php';
 requireLogin();
 $user = getCurrentUser();
 
-// Get all host properties
+// Get all host properties with photos
 $conn = getDBConnection();
-$stmt = $conn->prepare("SELECT * FROM properties WHERE host_id = ? ORDER BY created_at DESC");
+$stmt = $conn->prepare("
+    SELECT p.*,
+    (SELECT photo_url FROM property_photos WHERE property_id = p.id AND is_primary = 1 LIMIT 1) as primary_photo
+    FROM properties p
+    WHERE p.host_id = ? 
+    ORDER BY p.created_at DESC
+");
 $stmt->bind_param("i", $user['id']);
 $stmt->execute();
 $properties = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -20,8 +26,9 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Properties - ServePro</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css">
+    <link rel="stylesheet" href="../assets/css/style.css?v=13.0">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=13.0">
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=13.0">
 </head>
 <body>
     <div class="host-layout">
@@ -77,18 +84,23 @@ $conn->close();
                         <div class="user-role">Host</div>
                     </div>
                 </div>
+                
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
         </aside>
 
         <!-- Main Content -->
         <main class="host-main">
-            <div class="host-header">
+            <div class="host-header" style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <h1>My Properties 🏠</h1>
                     <p class="subtitle">Manage all your listings</p>
                 </div>
-                <a href="add-property.php" class="btn-primary">➕ Add Property</a>
+                <!-- Theme Toggle -->
+                <div class="theme-toggle">
+                    <span class="theme-toggle-icon">☀️</span>
+                    <span class="theme-toggle-text">Light</span>
+                </div>
             </div>
 
             <?php if (empty($properties)): ?>
@@ -100,11 +112,13 @@ $conn->close();
                 </div>
             <?php else: ?>
                 <div class="properties-grid">
-                    <?php foreach ($properties as $property): ?>
+                    <?php foreach ($properties as $property): 
+                        $photo_url = !empty($property['primary_photo']) ? htmlspecialchars($property['primary_photo']) : 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400';
+                    ?>
                         <div class="property-card">
                             <div class="property-image">
-                                <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400" alt="Property">
-                                <span class="status-badge status-<?php echo $property['status']; ?>">
+                                <img src="<?php echo $photo_url; ?>" alt="Property" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400'">
+                                <span class="status-badge status-<?php echo ucfirst($property['status']); ?>">
                                     <?php echo ucfirst($property['status']); ?>
                                 </span>
                             </div>
@@ -127,5 +141,7 @@ $conn->close();
             <?php endif; ?>
         </main>
     </div>
+    
+    <script src="../assets/js/theme-toggle.js"></script>
 </body>
 </html>

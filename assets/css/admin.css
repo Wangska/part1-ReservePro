@@ -7,13 +7,14 @@
 }
 
 .review-card {
-    background: white;
+    background: #1F1F1F;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
     display: flex;
     gap: 24px;
     padding: 24px;
+    border: 1px solid #3A3A3A;
 }
 
 .review-image {
@@ -46,19 +47,19 @@
 .review-header h3 {
     font-size: 20px;
     font-weight: 700;
-    color: #1F2937;
+    color: #FFFFFF;
     margin-bottom: 4px;
 }
 
 .review-host {
     font-size: 14px;
-    color: #6B7280;
+    color: #B8B8B8;
     margin-bottom: 4px;
 }
 
 .review-location {
     font-size: 14px;
-    color: #6B7280;
+    color: #B8B8B8;
 }
 
 .review-price {
@@ -68,16 +69,17 @@
 .review-price strong {
     display: block;
     font-size: 24px;
-    color: #6366F1;
+    color: #D4A574;
 }
 
 .review-price span {
     font-size: 14px;
-    color: #6B7280;
+    color: #B8B8B8;
 }
 
 .review-description {
     font-size: 14px;
+    color: #B8B8B8;
     color: #4B5563;
     line-height: 1.6;
 }
@@ -86,7 +88,7 @@
     display: flex;
     gap: 20px;
     font-size: 14px;
-    color: #6B7280;
+    color: #B8B8B8;
 }
 
 .review-actions {
@@ -131,9 +133,9 @@
 
 .btn-view {
     padding: 10px 24px;
-    background: white;
-    color: #6366F1;
-    border: 2px solid #6366F1;
+    background: transparent;
+    color: #D4A574;
+    border: 2px solid #D4A574;
     border-radius: 8px;
     font-weight: 600;
     font-size: 14px;
@@ -144,8 +146,8 @@
 }
 
 .btn-view:hover {
-    background: #6366F1;
-    color: white;
+    background: #D4A574;
+    color: #0F0F0F;
 }
 
 /* Responsive */

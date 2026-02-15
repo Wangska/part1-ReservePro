@@ -27,8 +27,9 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bookings - ServePro</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css">
+    <link rel="stylesheet" href="../assets/css/style.css?v=11.0">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=11.0">
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=11.0">
 </head>
 <body>
     <div class="host-layout">
@@ -84,15 +85,23 @@ $conn->close();
                         <div class="user-role">Host</div>
                     </div>
                 </div>
+                
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
         </aside>
 
         <!-- Main Content -->
         <main class="host-main">
-            <div class="host-header">
-                <h1>Bookings 📅</h1>
-                <p class="subtitle">Manage your reservations</p>
+            <div class="host-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1>Bookings 📅</h1>
+                    <p class="subtitle">Manage your reservations</p>
+                </div>
+                <!-- Theme Toggle -->
+                <div class="theme-toggle">
+                    <span class="theme-toggle-icon">☀️</span>
+                    <span class="theme-toggle-text">Light</span>
+                </div>
             </div>
 
             <?php if (empty($bookings)): ?>
@@ -144,5 +153,7 @@ $conn->close();
             <?php endif; ?>
         </main>
     </div>
+    
+    <script src="../assets/js/theme-toggle.js"></script>
 </body>
 </html>
