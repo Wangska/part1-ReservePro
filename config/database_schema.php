@@ -20,7 +20,10 @@ function initializeHostTables() {
         max_guests INT(11) NOT NULL,
         bedrooms INT(11) NOT NULL,
         bathrooms INT(11) NOT NULL,
-        status ENUM('pending', 'approved', 'rejected', 'suspended') DEFAULT 'pending',
+        latitude DECIMAL(10, 8) NULL,
+        longitude DECIMAL(11, 8) NULL,
+        auto_accept_bookings TINYINT(1) NOT NULL DEFAULT 0,
+        status ENUM('pending', 'approved', 'rejected', 'suspended', 'out_of_order') DEFAULT 'pending',
         admin_notes TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -74,13 +77,61 @@ function initializeHostTables() {
     )";
     $conn->query($sql);
     
+    // Add 'out_of_order' to properties.status only if not already present (avoids repeated ALTER = no table lock)
+    $col = $conn->query("SHOW COLUMNS FROM properties WHERE Field = 'status'");
+    if ($col && $col->num_rows > 0) {
+        $row = $col->fetch_assoc();
+        if ($row && strpos($row['Type'], 'out_of_order') === false) {
+            $conn->query("ALTER TABLE properties MODIFY COLUMN status ENUM('pending', 'approved', 'rejected', 'suspended', 'out_of_order') DEFAULT 'pending'");
+        }
+    }
+
+    // Add latitude/longitude columns if missing (for precise map pins)
+    $result = $conn->query("SHOW COLUMNS FROM properties LIKE 'latitude'");
+    if ($result && $result->num_rows == 0) {
+        $conn->query("ALTER TABLE properties ADD COLUMN latitude DECIMAL(10, 8) NULL AFTER bathrooms");
+    }
+    $result = $conn->query("SHOW COLUMNS FROM properties LIKE 'longitude'");
+    if ($result && $result->num_rows == 0) {
+        $conn->query("ALTER TABLE properties ADD COLUMN longitude DECIMAL(11, 8) NULL AFTER latitude");
+    }
+    $result = $conn->query("SHOW COLUMNS FROM properties LIKE 'auto_accept_bookings'");
+    if ($result && $result->num_rows == 0) {
+        $conn->query("ALTER TABLE properties ADD COLUMN auto_accept_bookings TINYINT(1) NOT NULL DEFAULT 0 AFTER longitude");
+    }
+    
     // User roles (extend users table)
     // Check if role column exists before adding
     $result = $conn->query("SHOW COLUMNS FROM users LIKE 'role'");
-    if ($result->num_rows == 0) {
+    if ($result && $result->num_rows == 0) {
         $sql = "ALTER TABLE users ADD COLUMN role ENUM('guest', 'host', 'admin') DEFAULT 'guest' AFTER password";
         $conn->query($sql);
     }
+
+    // Host verification flag
+    $result = $conn->query("SHOW COLUMNS FROM users LIKE 'host_verified'");
+    if ($result && $result->num_rows == 0) {
+        $conn->query("ALTER TABLE users ADD COLUMN host_verified TINYINT(1) NOT NULL DEFAULT 0 AFTER role");
+    }
+
+    // Host documents table (stores KYC/verification data for hosts)
+    $sql = "CREATE TABLE IF NOT EXISTS host_documents (
+        id INT(11) AUTO_INCREMENT PRIMARY KEY,
+        user_id INT(11) NOT NULL,
+        gov_id_type VARCHAR(100) NOT NULL,
+        gov_id_number VARCHAR(100) DEFAULT NULL,
+        ownership_proof_type VARCHAR(100) NOT NULL,
+        ownership_reference VARCHAR(255) DEFAULT NULL,
+        business_registration VARCHAR(255) DEFAULT NULL,
+        tax_id VARCHAR(100) DEFAULT NULL,
+        tourism_license VARCHAR(255) DEFAULT NULL,
+        bank_name VARCHAR(255) NOT NULL,
+        bank_account_name VARCHAR(255) NOT NULL,
+        bank_account_number VARCHAR(100) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    )";
+    $conn->query($sql);
     
     // Insert default amenities
     $amenitiesList = [

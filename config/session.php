@@ -19,7 +19,8 @@ function getCurrentUser() {
     $conn = getDBConnection();
     
     $user_id = $_SESSION['user_id'];
-    $stmt = $conn->prepare("SELECT id, first_name, last_name, email, role FROM users WHERE id = ?");
+    // Include host_verified flag when present
+    $stmt = $conn->prepare("SELECT id, first_name, last_name, email, role, IFNULL(host_verified, 0) AS host_verified FROM users WHERE id = ?");
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
     $result = $stmt->get_result();

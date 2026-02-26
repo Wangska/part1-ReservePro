@@ -5,8 +5,81 @@ require_once __DIR__ . '/../config/database.php';
 requireLogin();
 $user = getCurrentUser();
 
-// Get all host properties with photos
+// Hosts must complete verification before managing properties
+if ($user && $user['role'] === 'host' && empty($user['host_verified'])) {
+    header('Location: verify-account.php');
+    exit();
+}
+
 $conn = getDBConnection();
+
+// Handle host actions: availability, auto-accept, delete
+$action_message = null;
+$action_error = null;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $property_id = intval($_POST['property_id'] ?? 0);
+    $action = $_POST['action'] ?? '';
+
+    if ($property_id > 0 && $action && $user) {
+        // Ensure property belongs to current host
+        $stmt = $conn->prepare("SELECT id, status FROM properties WHERE id = ? AND host_id = ?");
+        $stmt->bind_param("ii", $property_id, $user['id']);
+        $stmt->execute();
+        $propResult = $stmt->get_result();
+        $propertyRow = $propResult->fetch_assoc();
+        $stmt->close();
+
+        if (!$propertyRow) {
+            $action_error = "You are not allowed to modify this property.";
+        } else {
+            if ($action === 'update_availability') {
+                $new_status = $_POST['new_status'] ?? '';
+                if (in_array($new_status, ['approved', 'out_of_order'], true)) {
+                    // Only allow toggling between approved and out_of_order
+                    $stmt = $conn->prepare("UPDATE properties SET status = ? WHERE id = ? AND host_id = ?");
+                    $stmt->bind_param("sii", $new_status, $property_id, $user['id']);
+                    $stmt->execute();
+                    $stmt->close();
+                    $action_message = $new_status === 'out_of_order'
+                        ? "Property marked as Out of Order. Guests will no longer see it."
+                        : "Property marked as Available. Guests can see and book it again.";
+                }
+            } elseif ($action === 'toggle_auto_accept') {
+                $new_value = intval($_POST['new_value'] ?? 0) ? 1 : 0;
+                $stmt = $conn->prepare("UPDATE properties SET auto_accept_bookings = ? WHERE id = ? AND host_id = ?");
+                $stmt->bind_param("iii", $new_value, $property_id, $user['id']);
+                $stmt->execute();
+                $stmt->close();
+                $action_message = $new_value
+                    ? "Auto-accept enabled. New bookings for this property will be auto-confirmed."
+                    : "Auto-accept disabled. You will manually review bookings.";
+            } elseif ($action === 'delete_property') {
+                // Deletion rules:
+                // - Only owner can delete (already enforced above)
+                // - Cannot delete if there are any bookings for this property
+                $stmt = $conn->prepare("SELECT COUNT(*) AS booking_count FROM bookings WHERE property_id = ?");
+                $stmt->bind_param("i", $property_id);
+                $stmt->execute();
+                $countResult = $stmt->get_result()->fetch_assoc();
+                $stmt->close();
+
+                if ($countResult && $countResult['booking_count'] > 0) {
+                    $action_error = "This property has bookings and cannot be deleted. Settle/cancel bookings instead.";
+                } else {
+                    // Safe to delete property (related rows cascade via FK)
+                    $stmt = $conn->prepare("DELETE FROM properties WHERE id = ? AND host_id = ?");
+                    $stmt->bind_param("ii", $property_id, $user['id']);
+                    $stmt->execute();
+                    $stmt->close();
+                    $action_message = "Property deleted successfully.";
+                }
+            }
+        }
+    }
+}
+
+// Get all host properties with photos (after any updates)
 $stmt = $conn->prepare("
     SELECT p.*,
     (SELECT photo_url FROM property_photos WHERE property_id = p.id AND is_primary = 1 LIMIT 1) as primary_photo
@@ -103,6 +176,17 @@ $conn->close();
                 </div>
             </div>
 
+            <?php if ($action_message): ?>
+                <div class="alert alert-success">
+                    <?php echo htmlspecialchars($action_message); ?>
+                </div>
+            <?php endif; ?>
+            <?php if ($action_error): ?>
+                <div class="alert alert-error">
+                    <?php echo htmlspecialchars($action_error); ?>
+                </div>
+            <?php endif; ?>
+
             <?php if (empty($properties)): ?>
                 <div class="empty-state">
                     <span class="empty-icon">🏠</span>
@@ -130,9 +214,53 @@ $conn->close();
                                     <span>🚿 <?php echo $property['bathrooms']; ?> baths</span>
                                     <span>👥 <?php echo $property['max_guests']; ?> guests</span>
                                 </div>
-                                <div class="property-footer">
-                                    <span class="price">₱<?php echo number_format($property['price_per_night'], 2); ?>/night</span>
-                                    <a href="edit-property.php?id=<?php echo $property['id']; ?>" class="btn-edit">Edit</a>
+                                <div class="property-footer" style="display: flex; flex-direction: column; gap: 8px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <span class="price">₱<?php echo number_format($property['price_per_night'], 2); ?>/night</span>
+                                        <a href="edit-property.php?id=<?php echo $property['id']; ?>" class="btn-edit">Edit</a>
+                                    </div>
+
+                                    <?php if (in_array($property['status'], ['approved', 'out_of_order'])): ?>
+                                    <div class="property-meta-row">
+                                        <form method="POST" action="properties.php" style="display: inline-flex; align-items: center; gap: 8px;">
+                                            <input type="hidden" name="property_id" value="<?php echo (int)$property['id']; ?>">
+                                            <input type="hidden" name="action" value="update_availability">
+                                            <?php if ($property['status'] === 'out_of_order'): ?>
+                                                <input type="hidden" name="new_status" value="approved">
+                                                <span class="badge badge-warning">Out of Order (hidden from guests)</span>
+                                                <button type="submit" class="btn-small">Mark Available</button>
+                                            <?php else: ?>
+                                                <input type="hidden" name="new_status" value="out_of_order">
+                                                <span class="badge badge-success">Available</span>
+                                                <button type="submit" class="btn-small btn-outline">Mark Out of Order</button>
+                                            <?php endif; ?>
+                                        </form>
+                                    </div>
+                                    <?php else: ?>
+                                        <div class="property-meta-row">
+                                            <span class="badge badge-neutral">Status: <?php echo ucfirst($property['status']); ?></span>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <div class="property-meta-row" style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                                        <form method="POST" action="properties.php" style="display: inline-flex; align-items: center; gap: 8px;">
+                                            <input type="hidden" name="property_id" value="<?php echo (int)$property['id']; ?>">
+                                            <input type="hidden" name="action" value="toggle_auto_accept">
+                                            <input type="hidden" name="new_value" value="<?php echo $property['auto_accept_bookings'] ? 0 : 1; ?>">
+                                            <span class="badge <?php echo $property['auto_accept_bookings'] ? 'badge-success' : 'badge-neutral'; ?>">
+                                                Auto-accept: <?php echo $property['auto_accept_bookings'] ? 'On' : 'Off'; ?>
+                                            </span>
+                                            <button type="submit" class="btn-small btn-outline">
+                                                <?php echo $property['auto_accept_bookings'] ? 'Disable' : 'Enable'; ?>
+                                            </button>
+                                        </form>
+
+                                        <form method="POST" action="properties.php" onsubmit="return confirm('Are you sure you want to delete this property? This cannot be undone.');">
+                                            <input type="hidden" name="property_id" value="<?php echo (int)$property['id']; ?>">
+                                            <input type="hidden" name="action" value="delete_property">
+                                            <button type="submit" class="btn-small btn-danger">Delete</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>

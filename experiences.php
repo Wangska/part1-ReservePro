@@ -538,7 +538,7 @@ $conn->close();
     <script src="assets/js/theme-toggle.js"></script>
     <script src="assets/js/landing.js"></script>
     <script src="assets/js/modal.js"></script>
-    <script src="assets/js/property-modal.js?v=3.0"></script>
+    <script src="assets/js/property-modal.js?v=4.0"></script>
     <script>
         // Sort functionality for experiences page
         const experienceSort = document.querySelector('.experience-sort');

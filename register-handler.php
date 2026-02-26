@@ -23,7 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($result['success']) {
         // Redirect based on selected role
         if ($role === 'host') {
-            header('Location: host/dashboard.php');
+            // Hosts must complete verification before accessing the dashboard
+            header('Location: host/verify-account.php');
         } else {
             // Guests go to browse properties (home page)
             header('Location: home.php');

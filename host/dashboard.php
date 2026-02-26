@@ -6,6 +6,12 @@ require_once __DIR__ . '/../config/database_schema.php';
 requireLogin();
 $user = getCurrentUser();
 
+// Hosts must complete verification before accessing dashboard
+if ($user && $user['role'] === 'host' && empty($user['host_verified'])) {
+    header('Location: verify-account.php');
+    exit();
+}
+
 // Get host properties
 $conn = getDBConnection();
 $stmt = $conn->prepare("

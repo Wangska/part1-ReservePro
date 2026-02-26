@@ -5,6 +5,12 @@ require_once __DIR__ . '/../config/database.php';
 requireLogin();
 $user = getCurrentUser();
 
+// Hosts must complete verification before managing bookings
+if ($user && $user['role'] === 'host' && empty($user['host_verified'])) {
+    header('Location: verify-account.php');
+    exit();
+}
+
 // Get all bookings for host properties
 $conn = getDBConnection();
 $stmt = $conn->prepare("

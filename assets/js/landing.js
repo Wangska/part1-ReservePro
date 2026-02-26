@@ -88,6 +88,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // Amenity filter checkboxes
+    document.querySelectorAll('.amenity-filter').forEach(amenityFilter => {
+        amenityFilter.addEventListener('change', function() {
+            filterProperties();
+        });
+    });
+    
     // Category filter checkboxes
     const categoryFilters = document.querySelectorAll('.category-filter');
     categoryFilters.forEach(filter => {
@@ -126,6 +133,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const showAll = categoryFilters.length > 0 && categoryFilters[0].checked && categoryFilters[0].value === 'all';
         
+        const amenityFilters = document.querySelectorAll('.amenity-filter:checked');
+        const selectedAmenityIds = Array.from(amenityFilters).map(f => parseInt(f.value, 10));
+        
         let visibleCount = 0;
         
         cards.forEach(card => {
@@ -135,10 +145,19 @@ document.addEventListener('DOMContentLoaded', function() {
             const cardCity = card.getAttribute('data-city') || '';
             const cardCountry = card.getAttribute('data-country') || '';
             const cardDescription = card.getAttribute('data-description') || '';
+            // Parse amenity IDs: only show card if it has ALL selected amenities (e.g. Kitchen = only units with Kitchen)
+            const cardAmenityIdsRaw = (card.getAttribute('data-amenity-ids') || '').trim();
+            const cardAmenityIds = cardAmenityIdsRaw
+                ? cardAmenityIdsRaw.split(',').map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n))
+                : [];
             
             // Check filters
             const priceMatch = cardPrice <= maxPrice;
             const typeMatch = showAll || selectedTypes.length === 0 || selectedTypes.includes(cardType);
+            
+            // Amenity: when any amenity is checked, show only cards that have ALL checked amenities
+            const amenityMatch = selectedAmenityIds.length === 0 ||
+                selectedAmenityIds.every(aid => cardAmenityIds.indexOf(aid) !== -1);
             
             // Check search term
             let searchMatch = true;
@@ -149,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
                              cardDescription.includes(searchTerm);
             }
             
-            if (priceMatch && typeMatch && searchMatch) {
+            if (priceMatch && typeMatch && amenityMatch && searchMatch) {
                 card.style.display = 'block';
                 visibleCount++;
             } else {
@@ -250,6 +269,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     filter.checked = false;
                 }
+            });
+            
+            // Uncheck all amenity filters
+            document.querySelectorAll('.amenity-filter').forEach(amenity => {
+                amenity.checked = false;
             });
             
             // Re-filter to show all properties

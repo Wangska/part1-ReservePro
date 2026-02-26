@@ -20,9 +20,33 @@ CREATE TABLE IF NOT EXISTS `users` (
   `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
   `role` enum('guest','host','admin') DEFAULT 'guest',
+  `host_verified` tinyint(1) NOT NULL DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================
+-- Table: host_documents
+-- Stores KYC / verification data for hosts
+-- ============================================
+CREATE TABLE IF NOT EXISTS `host_documents` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `gov_id_type` varchar(100) NOT NULL,
+  `gov_id_number` varchar(100) DEFAULT NULL,
+  `ownership_proof_type` varchar(100) NOT NULL,
+  `ownership_reference` varchar(255) DEFAULT NULL,
+  `business_registration` varchar(255) DEFAULT NULL,
+  `tax_id` varchar(100) DEFAULT NULL,
+  `tourism_license` varchar(255) DEFAULT NULL,
+  `bank_name` varchar(255) NOT NULL,
+  `bank_account_name` varchar(255) NOT NULL,
+  `bank_account_number` varchar(100) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `host_documents_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ============================================
@@ -42,7 +66,10 @@ CREATE TABLE IF NOT EXISTS `properties` (
   `max_guests` int(11) NOT NULL,
   `bedrooms` int(11) NOT NULL,
   `bathrooms` int(11) NOT NULL,
-  `status` enum('pending','approved','rejected','suspended') DEFAULT 'pending',
+  `latitude` decimal(10,8) DEFAULT NULL,
+  `longitude` decimal(11,8) DEFAULT NULL,
+  `auto_accept_bookings` tinyint(1) NOT NULL DEFAULT 0,
+  `status` enum('pending','approved','rejected','suspended','out_of_order') DEFAULT 'pending',
   `admin_notes` text,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

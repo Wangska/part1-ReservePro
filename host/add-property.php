@@ -6,6 +6,12 @@ require_once __DIR__ . '/../config/database_schema.php';
 requireLogin();
 $user = getCurrentUser();
 
+// Hosts must complete verification before adding properties
+if ($user && $user['role'] === 'host' && empty($user['host_verified'])) {
+    header('Location: verify-account.php');
+    exit();
+}
+
 $errors = [];
 $success = false;
 
@@ -24,6 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $address = trim($_POST['address'] ?? '');
     $city = trim($_POST['city'] ?? '');
     $country = trim($_POST['country'] ?? '');
+    $latitude_input = trim($_POST['latitude'] ?? '');
+    $longitude_input = trim($_POST['longitude'] ?? '');
     $price = floatval($_POST['price_per_night'] ?? 0);
     $max_guests = intval($_POST['max_guests'] ?? 0);
     $bedrooms = intval($_POST['bedrooms'] ?? 0);
@@ -42,10 +50,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($bedrooms <= 0) $errors[] = "Number of bedrooms is required";
     if ($bathrooms <= 0) $errors[] = "Number of bathrooms is required";
     
+    // Optional: basic validation for coordinates if provided
+    $latitude = $latitude_input === '' ? 0 : floatval($latitude_input);
+    $longitude = $longitude_input === '' ? 0 : floatval($longitude_input);
+    
     if (empty($errors)) {
-        // Insert property
-        $stmt = $conn->prepare("INSERT INTO properties (host_id, title, description, property_type, address, city, country, price_per_night, max_guests, bedrooms, bathrooms, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')");
-        $stmt->bind_param("issssssdiid", $user['id'], $title, $description, $property_type, $address, $city, $country, $price, $max_guests, $bedrooms, $bathrooms);
+        // Insert property (with optional latitude/longitude for precise map pin)
+        $stmt = $conn->prepare("INSERT INTO properties (host_id, title, description, property_type, address, city, country, price_per_night, max_guests, bedrooms, bathrooms, latitude, longitude, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')");
+        $stmt->bind_param("issssssdiiddd", $user['id'], $title, $description, $property_type, $address, $city, $country, $price, $max_guests, $bedrooms, $bathrooms, $latitude, $longitude);
         
         if ($stmt->execute()) {
             $property_id = $stmt->insert_id;
@@ -282,6 +294,18 @@ $conn->close();
                         <div class="form-group">
                             <label for="country">Country *</label>
                             <input type="text" id="country" name="country" value="<?php echo htmlspecialchars($_POST['country'] ?? ''); ?>" placeholder="Philippines" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="latitude">Latitude (optional)</label>
+                            <input type="text" id="latitude" name="latitude" value="<?php echo htmlspecialchars($_POST['latitude'] ?? ''); ?>" placeholder="14.5995">
+                            <small class="helper-text">Paste coordinates from a map for an exact pin (e.g. from Google Maps).</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="longitude">Longitude (optional)</label>
+                            <input type="text" id="longitude" name="longitude" value="<?php echo htmlspecialchars($_POST['longitude'] ?? ''); ?>" placeholder="120.9842">
                         </div>
                     </div>
                 </div>

@@ -40,19 +40,35 @@ $price_range = $price_result->fetch_assoc();
 $min_price = $price_range['min_price'] ?? 0;
 $max_price = $price_range['max_price'] ?? 10000;
 
-// Get property amenities count
+// Get property amenities count and list of amenity IDs per property (for filtering)
 $property_amenities = [];
+$property_amenity_ids = [];
 foreach ($properties as $property) {
     $stmt = $conn->prepare("
-        SELECT COUNT(*) as amenity_count 
-        FROM property_amenities 
-        WHERE property_id = ?
+        SELECT amenity_id FROM property_amenities WHERE property_id = ?
     ");
     $stmt->bind_param("i", $property['id']);
     $stmt->execute();
-    $amenity_result = $stmt->get_result();
-    $property_amenities[$property['id']] = $amenity_result->fetch_assoc()['amenity_count'];
+    $ar = $stmt->get_result();
+    $ids = [];
+    while ($row = $ar->fetch_assoc()) {
+        $ids[] = $row['amenity_id'];
+    }
     $stmt->close();
+    $property_amenity_ids[$property['id']] = $ids;
+    $property_amenities[$property['id']] = count($ids);
+}
+
+// Get all amenities offered by the site (for filter sidebar)
+$amenities_result = $conn->query("
+    SELECT a.id, a.name, a.icon,
+    (SELECT COUNT(DISTINCT pa.property_id) FROM property_amenities pa JOIN properties p ON p.id = pa.property_id WHERE pa.amenity_id = a.id AND p.status = 'approved') as prop_count
+    FROM amenities a
+    ORDER BY a.category, a.name
+");
+$all_amenities = [];
+if ($amenities_result) {
+    $all_amenities = $amenities_result->fetch_all(MYSQLI_ASSOC);
 }
 
 $conn->close();
@@ -171,6 +187,17 @@ $conn->close();
                     </div>
                 </div>
 
+                <div class="filter-section">
+                    <h4>Amenities</h4>
+                    <?php foreach ($all_amenities as $amenity): ?>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" class="amenity-filter" value="<?php echo (int)$amenity['id']; ?>">
+                        <span><?php echo $amenity['icon'] ? $amenity['icon'] . ' ' : ''; ?><?php echo htmlspecialchars($amenity['name']); ?></span>
+                        <span class="filter-count">(<?php echo (int)$amenity['prop_count']; ?>)</span>
+                    </label>
+                    <?php endforeach; ?>
+                </div>
+
             </aside>
 
             <!-- Services Grid -->
@@ -218,7 +245,8 @@ $conn->close();
                              data-title="<?php echo htmlspecialchars(strtolower($property['title'])); ?>"
                              data-city="<?php echo htmlspecialchars(strtolower($property['city'])); ?>"
                              data-country="<?php echo htmlspecialchars(strtolower($property['country'])); ?>"
-                             data-description="<?php echo htmlspecialchars(strtolower($property['description'])); ?>">
+                             data-description="<?php echo htmlspecialchars(strtolower($property['description'])); ?>"
+                             data-amenity-ids="<?php echo implode(',', array_map('intval', $property_amenity_ids[$property['id']] ?? [])); ?>">
                             <div class="card-image">
                                 <img src="<?php echo htmlspecialchars($image_url); ?>" alt="<?php echo htmlspecialchars($property['title']); ?>" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400'">
                                 <span class="card-badge"><?php echo ucfirst($property['property_type']); ?></span>
@@ -423,6 +451,6 @@ $conn->close();
     <script src="assets/js/theme-toggle.js"></script>
     <script src="assets/js/landing.js"></script>
     <script src="assets/js/modal.js"></script>
-    <script src="assets/js/property-modal.js?v=3.0"></script>
+    <script src="assets/js/property-modal.js?v=4.0"></script>
 </body>
 </html>

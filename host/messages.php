@@ -5,6 +5,12 @@ require_once __DIR__ . '/../config/database.php';
 requireLogin();
 $user = getCurrentUser();
 
+// Hosts must complete verification before accessing messages
+if ($user && $user['role'] === 'host' && empty($user['host_verified'])) {
+    header('Location: verify-account.php');
+    exit();
+}
+
 // Ensure user is a host
 if ($user['role'] !== 'host') {
     header('Location: ../home.php');
