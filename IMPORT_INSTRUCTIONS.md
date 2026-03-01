@@ -2,7 +2,7 @@
 
 ## Quick Setup Guide
 
-Follow these steps to import the complete ServePro database:
+Follow these steps to import the complete ReservePro database:
 
 ### **Step 1: Open phpMyAdmin**
 

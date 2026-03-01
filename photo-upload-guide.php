@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Photo Upload Guide - ServePro</title>
+    <title>Photo Upload Guide - ReservePro</title>
     <style>
         body {
             font-family: Arial, sans-serif;

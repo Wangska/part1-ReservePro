@@ -12,7 +12,10 @@ $user = getCurrentUser();
 $conn = getDBConnection();
 $result = $conn->query("
     SELECT p.*, u.first_name, u.last_name, u.email,
-    (SELECT photo_url FROM property_photos WHERE property_id = p.id AND is_primary = 1 LIMIT 1) as primary_photo
+    COALESCE(
+        (SELECT photo_url FROM property_photos WHERE property_id = p.id AND is_primary = 1 LIMIT 1),
+        (SELECT photo_url FROM property_photos WHERE property_id = p.id LIMIT 1)
+    ) as primary_photo
     FROM properties p
     JOIN users u ON p.host_id = u.id
     WHERE p.status = 'pending'
@@ -35,7 +38,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - ServePro</title>
+    <title>Admin Dashboard - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=13.0">
     <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=13.0">
     <link rel="stylesheet" href="../assets/css/admin.css?v=13.0">
@@ -47,10 +50,8 @@ $conn->close();
         <aside class="host-sidebar">
             <div class="sidebar-header">
                 <a href="../home.php" class="sidebar-brand">
-                    <svg class="brand-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M16 1c2 0 3.46 1.63 3.46 3.41 0 1.78-1.46 3.41-3.46 3.41s-3.46-1.63-3.46-3.41C12.54 2.63 14 1 16 1zm0 6.82c2.52 0 4.61-1.84 4.61-4.41C20.61 1.84 18.52 0 16 0s-4.61 1.84-4.61 4.41c0 2.57 2.09 4.41 4.61 4.41zM13.96 28.85l6.72-11.87c-1.41-.83-3.07-1.33-4.86-1.33-1.79 0-3.45.5-4.86 1.33l6.72 11.87h.28zm-1.27-1.89l-5.12-9.04C8.47 16.02 9.99 15 11.71 15h8.58c1.72 0 3.24 1.02 4.14 2.92l-5.12 9.04h-7.62z"/>
-                    </svg>
-                    <span>ServePro</span>
+                    <?php require __DIR__ . '/../includes/brand-icon-svg.php'; ?>
+                    <span>ReservePro</span>
                 </a>
             </div>
             
@@ -102,7 +103,7 @@ $conn->close();
         <main class="host-main">
             <div class="host-header">
                 <h1>Admin Dashboard 👑</h1>
-                <p class="subtitle">Manage ServePro platform</p>
+                <p class="subtitle">Manage ReservePro platform</p>
             </div>
 
             <!-- Stats Grid -->
@@ -155,7 +156,12 @@ $conn->close();
             <?php else: ?>
                 <div class="review-list">
                     <?php foreach ($pending_properties as $property): 
-                        $photo_url = !empty($property['primary_photo']) ? htmlspecialchars($property['primary_photo']) : 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400';
+                        $raw_photo = $property['primary_photo'] ?? '';
+                        if (!empty($raw_photo) && strpos($raw_photo, 'http') !== 0) {
+                            $photo_url = htmlspecialchars('../' . ltrim($raw_photo, '/'));
+                        } else {
+                            $photo_url = !empty($raw_photo) ? htmlspecialchars($raw_photo) : 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400';
+                        }
                     ?>
                         <div class="review-card">
                             <div class="review-image">

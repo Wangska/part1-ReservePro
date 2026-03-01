@@ -133,6 +133,21 @@ function initializeHostTables() {
     )";
     $conn->query($sql);
     
+    // Messages: guest -> host (about a property)
+    $sql = "CREATE TABLE IF NOT EXISTS messages (
+        id INT(11) AUTO_INCREMENT PRIMARY KEY,
+        property_id INT(11) NOT NULL,
+        sender_id INT(11) NOT NULL,
+        receiver_id INT(11) NOT NULL,
+        message TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        read_at TIMESTAMP NULL,
+        FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE,
+        FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
+    )";
+    $conn->query($sql);
+    
     // Insert default amenities
     $amenitiesList = [
         ['WiFi', '📶', 'basic'],

@@ -1,5 +1,5 @@
 -- ============================================
--- ServePro - Create Admin Account Only
+-- ReservePro - Create Admin Account Only
 -- Use this if role column already exists
 -- ============================================
 
@@ -11,7 +11,7 @@ USE servepro_auth;
 INSERT INTO users (first_name, last_name, email, password, role) 
 VALUES (
     'Admin',
-    'ServePro',
+    'ReservePro',
     'admin@servepro.com',
     '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
     'admin'

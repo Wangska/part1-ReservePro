@@ -1,8 +1,8 @@
-# ServePro Host Dashboard - Complete Guide
+# ReservePro Host Dashboard - Complete Guide
 
 ## 🎉 What's Been Built
 
-A complete property management system with Host Dashboard and Admin Panel for ServePro!
+A complete property management system with Host Dashboard and Admin Panel for ReservePro!
 
 ### **Features Implemented**
 
@@ -193,7 +193,7 @@ SELECT * FROM amenities ORDER BY category, name;
 
 ## 🎊 You're All Set!
 
-Your ServePro platform now has:
+Your ReservePro platform now has:
 - ✅ Complete authentication system
 - ✅ Beautiful landing page
 - ✅ Full host dashboard with property management

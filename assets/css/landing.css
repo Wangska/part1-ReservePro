@@ -1,4 +1,4 @@
-/* Landing Page Styles - ServePro */
+/* Landing Page Styles - ReservePro */
 
 :root {
     /* Luxury Dark Theme */
@@ -83,7 +83,17 @@ p {
 .brand-icon {
     width: 36px;
     height: 36px;
-    fill: var(--primary-color);
+    flex-shrink: 0;
+}
+.brand-icon circle,
+.brand-icon g {
+    fill: inherit;
+}
+.brand .brand-icon circle:first-of-type {
+    fill: url(#rpLogoBg);
+}
+.brand .brand-icon g {
+    fill: #FFFFFF;
 }
 
 .brand-name {
@@ -679,9 +689,9 @@ p {
     border-color: var(--primary-color);
 }
 
-/* Footer */
+/* Footer - dark by default (dark mode) */
 .footer {
-    background: var(--text-dark);
+    background: #1A1A1A;
     color: white;
     padding: 60px 24px 24px;
     margin-top: 80px;

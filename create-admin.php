@@ -6,7 +6,7 @@ require_once __DIR__ . '/config/database_schema.php';
 $admin_email = 'admin@servepro.com';
 $admin_password = 'admin123';  // Change this after first login!
 $admin_first_name = 'Admin';
-$admin_last_name = 'ServePro';
+$admin_last_name = 'ReservePro';
 
 $message = '';
 $success = false;
@@ -50,7 +50,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Admin Account - ServePro</title>
+    <title>Create Admin Account - ReservePro</title>
     <style>
         * {
             margin: 0;
@@ -207,7 +207,7 @@ $conn->close();
         <div class="logo">
             <div class="icon">👑</div>
             <h1>Admin Account Setup</h1>
-            <p>ServePro Platform</p>
+            <p>ReservePro Platform</p>
         </div>
 
         <div class="status <?php echo $success ? 'success' : 'error'; ?>">

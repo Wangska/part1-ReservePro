@@ -36,7 +36,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Role Column - ServePro</title>
+    <title>Add Role Column - ReservePro</title>
     <style>
         * {
             margin: 0;

@@ -1,5 +1,5 @@
 -- ============================================
--- ServePro Complete Database Setup
+-- ReservePro Complete Database Setup
 -- Airbnb-style Property Rental Platform
 -- ============================================
 -- Import this file in phpMyAdmin to set up everything!
@@ -142,6 +142,27 @@ CREATE TABLE IF NOT EXISTS `bookings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ============================================
+-- Table: messages
+-- Guest-to-host messages about a property
+-- ============================================
+CREATE TABLE IF NOT EXISTS `messages` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `property_id` int(11) NOT NULL,
+  `sender_id` int(11) NOT NULL,
+  `receiver_id` int(11) NOT NULL,
+  `message` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `read_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `property_id` (`property_id`),
+  KEY `sender_id` (`sender_id`),
+  KEY `receiver_id` (`receiver_id`),
+  CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`property_id`) REFERENCES `properties` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `messages_ibfk_2` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `messages_ibfk_3` FOREIGN KEY (`receiver_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================
 -- INSERT DEFAULT DATA
 -- ============================================
 
@@ -177,7 +198,7 @@ ON DUPLICATE KEY UPDATE name=name;
 INSERT INTO `users` (`first_name`, `last_name`, `email`, `password`, `role`) 
 VALUES (
     'Admin',
-    'ServePro',
+    'ReservePro',
     'admin@servepro.com',
     '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
     'admin'

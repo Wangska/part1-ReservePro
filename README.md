@@ -1,4 +1,4 @@
-# ServePro Authentication System
+# ReservePro Authentication System
 
 A modern, secure login and registration system built with PHP, featuring a sleek and professional design.
 
@@ -51,7 +51,7 @@ A modern, secure login and registration system built with PHP, featuring a sleek
 part1/
 ├── assets/
 │   ├── css/
-│   │   └── style.css          # ServePro CSS
+│   │   └── style.css          # ReservePro CSS
 │   └── js/
 │       └── validation.js      # Form validation & UX
 ├── config/
@@ -160,7 +160,7 @@ define('DB_NAME', 'servepro_auth');
 - **Backend**: PHP 7.4+
 - **Database**: MySQL/MariaDB
 - **Frontend**: HTML5, CSS3, JavaScript (Vanilla)
-- **Design**: Professional ServePro UI
+- **Design**: Professional ReservePro UI
 
 ## License
 
@@ -168,4 +168,4 @@ This project is open source and available for educational purposes.
 
 ## Credits
 
-Professional design for ServePro authentication system.
+Professional design for ReservePro authentication system.

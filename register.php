@@ -42,10 +42,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign up - ServePro</title>
+    <title>Sign up - ReservePro</title>
     <link rel="stylesheet" href="assets/css/style.css?v=8.0">
     <link rel="stylesheet" href="assets/css/role-select.css?v=8.0">
     <link rel="stylesheet" href="assets/css/theme-toggle.css?v=2.0">
+    <link rel="stylesheet" href="assets/css/animations.css?v=1.0">
 </head>
 <body>
     <!-- Theme Toggle -->
@@ -58,13 +59,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="auth-box">
             <div class="auth-header">
                 <div class="logo">
-                    <svg class="logo-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M16 1c2 0 3.46 1.63 3.46 3.41 0 1.78-1.46 3.41-3.46 3.41s-3.46-1.63-3.46-3.41C12.54 2.63 14 1 16 1zm0 6.82c2.52 0 4.61-1.84 4.61-4.41C20.61 1.84 18.52 0 16 0s-4.61 1.84-4.61 4.41c0 2.57 2.09 4.41 4.61 4.41zM13.96 28.85l6.72-11.87c-1.41-.83-3.07-1.33-4.86-1.33-1.79 0-3.45.5-4.86 1.33l6.72 11.87h.28zm-1.27-1.89l-5.12-9.04C8.47 16.02 9.99 15 11.71 15h8.58c1.72 0 3.24 1.02 4.14 2.92l-5.12 9.04h-7.62z"/>
-                    </svg>
-                    <span class="logo-text">ServePro</span>
+                    <?php $brand_icon_class = 'logo-icon'; require __DIR__ . '/includes/brand-icon-svg.php'; ?>
+                    <span class="logo-text">ReservePro</span>
                 </div>
                 <div style="font-size: 48px; margin: 20px 0;">🎉</div>
-                <h1>Join ServePro</h1>
+                <h1>Join ReservePro</h1>
                 <p>Create an account to get started</p>
             </div>
 

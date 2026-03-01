@@ -78,12 +78,13 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ServePro - Discover Amazing Services</title>
+    <title>ReservePro - Discover Amazing Services</title>
     <link rel="stylesheet" href="assets/css/style.css?v=23.0">
     <link rel="stylesheet" href="assets/css/landing.css?v=23.0">
     <link rel="stylesheet" href="assets/css/modal.css?v=23.0">
     <link rel="stylesheet" href="assets/css/role-select.css?v=23.0">
     <link rel="stylesheet" href="assets/css/theme-toggle.css?v=23.0">
+    <link rel="stylesheet" href="assets/css/animations.css?v=1.0">
 </head>
 <body>
     <!-- Navigation -->
@@ -91,10 +92,8 @@ $conn->close();
         <div class="nav-container">
             <div class="nav-left">
                 <a href="home.php" class="brand">
-                    <svg class="brand-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M16 1c2 0 3.46 1.63 3.46 3.41 0 1.78-1.46 3.41-3.46 3.41s-3.46-1.63-3.46-3.41C12.54 2.63 14 1 16 1zm0 6.82c2.52 0 4.61-1.84 4.61-4.41C20.61 1.84 18.52 0 16 0s-4.61 1.84-4.61 4.41c0 2.57 2.09 4.41 4.61 4.41zM13.96 28.85l6.72-11.87c-1.41-.83-3.07-1.33-4.86-1.33-1.79 0-3.45.5-4.86 1.33l6.72 11.87h.28zm-1.27-1.89l-5.12-9.04C8.47 16.02 9.99 15 11.71 15h8.58c1.72 0 3.24 1.02 4.14 2.92l-5.12 9.04h-7.62z"/>
-                    </svg>
-                    <span class="brand-name">ServePro</span>
+                    <?php require __DIR__ . '/includes/brand-icon-svg.php'; ?>
+                    <span class="brand-name">ReservePro</span>
                 </a>
                 <div class="nav-links">
                     <a href="home.php">Home</a>
@@ -107,7 +106,11 @@ $conn->close();
                 <?php if ($user): ?>
                     <div class="user-nav">
                         <span class="user-greeting">Hi, <?php echo htmlspecialchars($user['first_name']); ?></span>
-                        <a href="dashboard.php" class="nav-btn">Dashboard</a>
+                        <?php if (isset($user['role']) && $user['role'] === 'admin'): ?>
+                            <a href="admin/dashboard.php" class="nav-btn">Admin Panel</a>
+                        <?php elseif (isset($user['role']) && $user['role'] === 'host'): ?>
+                            <a href="host/dashboard.php" class="nav-btn">Dashboard</a>
+                        <?php endif; ?>
                         <a href="logout.php" class="nav-btn-outline">Logout</a>
                     </div>
                 <?php else: ?>
@@ -301,7 +304,7 @@ $conn->close();
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-section">
-                <h4>About ServePro</h4>
+                <h4>About ReservePro</h4>
                 <ul>
                     <li><a href="#">About Us</a></li>
                     <li><a href="#">Careers</a></li>
@@ -338,7 +341,7 @@ $conn->close();
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 ServePro. All rights reserved.</p>
+            <p>&copy; 2026 ReservePro. All rights reserved.</p>
         </div>
     </footer>
 
@@ -350,7 +353,7 @@ $conn->close();
             <div class="modal-header">
                 <div style="font-size: 48px; margin-bottom: 16px;">🔐</div>
                 <h2>Welcome Back</h2>
-                <p>Log in to your ServePro account</p>
+                <p>Log in to your ReservePro account</p>
             </div>
             <form class="modal-form" method="POST" action="login.php">
                 <div class="form-group">
@@ -388,7 +391,7 @@ $conn->close();
             <button class="modal-close" onclick="closeModal('registerModal')">&times;</button>
             <div class="modal-header">
                 <div style="font-size: 48px; margin-bottom: 16px;">🎉</div>
-                <h2>Join ServePro</h2>
+                <h2>Join ReservePro</h2>
                 <p>Create your account to get started</p>
             </div>
             <form class="modal-form" method="POST" action="register-handler.php">

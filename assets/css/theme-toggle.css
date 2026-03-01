@@ -159,6 +159,19 @@ body.light-mode .cta-button {
     color: #FFFFFF !important;
 }
 
+/* CTA section (e.g. "Ready to Get Started?" on About) - light mode */
+body.light-mode .cta-section {
+    background: linear-gradient(135deg, #E8DDD0 0%, #D4C4B0 50%, #C9B89A 100%) !important;
+    color: #1F1F1F !important;
+}
+body.light-mode .cta-section h2 {
+    color: #1F1F1F !important;
+}
+body.light-mode .cta-section p {
+    color: #4A4A4A !important;
+    opacity: 1 !important;
+}
+
 body.light-mode .nav-btn {
     background: linear-gradient(135deg, #B8935F, #8B6F47) !important;
     color: #FFFFFF !important;
@@ -183,6 +196,32 @@ body.light-mode .amenities-count {
 body.light-mode .experience-info,
 body.light-mode .card-content {
     background: #FFFFFF !important;
+}
+
+/* Footer - light mode */
+body.light-mode .footer {
+    background: #F0F0F0 !important;
+    border-top: 1px solid #E0E0E0 !important;
+}
+
+body.light-mode .footer-section h4 {
+    color: #1F1F1F !important;
+}
+
+body.light-mode .footer-section ul li a {
+    color: #4A4A4A !important;
+}
+
+body.light-mode .footer-section ul li a:hover {
+    color: #B8935F !important;
+}
+
+body.light-mode .footer-bottom {
+    border-top-color: #E0E0E0 !important;
+}
+
+body.light-mode .footer-bottom p {
+    color: #666666 !important;
 }
 
 body.light-mode .experience-title,
@@ -440,6 +479,270 @@ body.light-mode .form-group textarea:focus {
     box-shadow: 0 0 0 3px rgba(184, 147, 95, 0.1) !important;
 }
 
+/* ===================================
+   EARNINGS PAGE & HOST MAIN LIGHT MODE
+   (overrides page-inline dark styles)
+   =================================== */
+body.light-mode .host-main {
+    background: #F8F8F8 !important;
+}
+
+body.light-mode .host-main .earnings-header {
+    background: linear-gradient(135deg, #E8DDD0 0%, #D4C4B0 50%, #C9B89A 100%) !important;
+    color: #1F1F1F !important;
+}
+
+body.light-mode .host-main .earnings-header h1 {
+    color: #1F1F1F !important;
+}
+
+body.light-mode .host-main .earnings-header p {
+    color: #4A4A4A !important;
+}
+
+body.light-mode .host-main .earnings-stat-card {
+    background: #FFFFFF !important;
+    border: 1px solid #E0E0E0 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+}
+
+body.light-mode .host-main .earnings-stat-card:hover {
+    box-shadow: 0 4px 16px rgba(184, 147, 95, 0.15) !important;
+    border-color: #B8935F !important;
+}
+
+body.light-mode .host-main .earnings-stat-card .stat-label {
+    color: #666666 !important;
+}
+
+body.light-mode .host-main .earnings-stat-card .stat-value {
+    background: linear-gradient(135deg, #B8935F, #8B6F47) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+body.light-mode .host-main .earnings-stat-card .stat-change {
+    color: #666666 !important;
+}
+
+body.light-mode .host-main .earnings-table-container,
+body.light-mode .host-main .table-header {
+    background: #FFFFFF !important;
+    border: 1px solid #E0E0E0 !important;
+    border-bottom-color: #E0E0E0 !important;
+}
+
+body.light-mode .host-main .table-header h2 {
+    color: #1F1F1F !important;
+}
+
+body.light-mode .host-main .filter-btn {
+    background: #FFFFFF !important;
+    border: 1px solid #E0E0E0 !important;
+    color: #4A4A4A !important;
+}
+
+body.light-mode .host-main .filter-btn:hover {
+    background: #F0F0F0 !important;
+    color: #B8935F !important;
+    border-color: #B8935F !important;
+}
+
+body.light-mode .host-main .filter-btn.active {
+    background: linear-gradient(135deg, #D4A574, #B8935F) !important;
+    color: #FFFFFF !important;
+    border-color: transparent !important;
+}
+
+body.light-mode .host-main .earnings-table thead {
+    background: #F8F8F8 !important;
+}
+
+body.light-mode .host-main .earnings-table th {
+    color: #4A4A4A !important;
+    border-bottom-color: #E0E0E0 !important;
+}
+
+body.light-mode .host-main .earnings-table td {
+    color: #4A4A4A !important;
+    border-bottom-color: #F0F0F0 !important;
+}
+
+body.light-mode .host-main .earnings-table tbody tr:hover {
+    background: #F8F8F8 !important;
+}
+
+body.light-mode .host-main .booking-id {
+    color: #B8935F !important;
+}
+
+body.light-mode .host-main .guest-name {
+    color: #1F1F1F !important;
+}
+
+body.light-mode .host-main .amount {
+    color: #B8935F !important;
+}
+
+body.light-mode .host-main .status-labels {
+    background: #FFFFFF !important;
+    border: 1px solid #E0E0E0 !important;
+}
+
+body.light-mode .host-main .status-labels h3 {
+    color: #1F1F1F !important;
+}
+
+body.light-mode .host-main .status-labels li {
+    color: #4A4A4A !important;
+}
+
+body.light-mode .host-main .empty-earnings {
+    color: #4A4A4A !important;
+}
+
+body.light-mode .host-main .empty-earnings h3 {
+    color: #1F1F1F !important;
+}
+
+body.light-mode .host-main .empty-earnings p {
+    color: #666666 !important;
+}
+
+body.light-mode .host-main .status-completed {
+    background: rgba(34, 197, 94, 0.15) !important;
+    color: #15803D !important;
+}
+
+/* ===================================
+   MESSAGES PAGE LIGHT MODE
+   =================================== */
+body.light-mode .host-main .messages-header {
+    background: linear-gradient(135deg, #E8DDD0 0%, #D4C4B0 50%, #C9B89A 100%) !important;
+    color: #1F1F1F !important;
+}
+
+body.light-mode .host-main .messages-header h1 {
+    color: #1F1F1F !important;
+}
+
+body.light-mode .host-main .messages-header p {
+    color: #4A4A4A !important;
+}
+
+body.light-mode .host-main .conversations-list {
+    background: #FFFFFF !important;
+    border: 1px solid #E0E0E0 !important;
+}
+
+body.light-mode .host-main .conversations-header {
+    border-bottom-color: #E0E0E0 !important;
+}
+
+body.light-mode .host-main .conversations-list .search-box {
+    background: #F8F8F8 !important;
+    border-color: #E0E0E0 !important;
+    color: #1F1F1F !important;
+}
+
+body.light-mode .host-main .conversations-list .search-box::placeholder {
+    color: #888 !important;
+}
+
+body.light-mode .host-main .conversation-item {
+    border-bottom: 1px solid #F0F0F0 !important;
+}
+
+body.light-mode .host-main .conversation-item:hover,
+body.light-mode .host-main .conversation-item.active {
+    background: #F8F8F8 !important;
+    border-left-color: #B8935F !important;
+}
+
+body.light-mode .host-main .conversation-item strong,
+body.light-mode .host-main .conversation-name {
+    color: #1F1F1F !important;
+}
+
+body.light-mode .host-main .conversation-item .conversation-property,
+body.light-mode .host-main .conversation-preview {
+    color: #666666 !important;
+}
+
+body.light-mode .host-main .conversation-item .message-snippet {
+    color: #4A4A4A !important;
+}
+
+body.light-mode .host-main .conversation-time {
+    color: #888 !important;
+}
+
+body.light-mode .host-main .chat-container {
+    background: #FFFFFF !important;
+    border: 1px solid #E0E0E0 !important;
+}
+
+body.light-mode .host-main .chat-header {
+    border-bottom-color: #E0E0E0 !important;
+}
+
+body.light-mode .host-main .chat-header-info h3 {
+    color: #1F1F1F !important;
+}
+
+body.light-mode .host-main .chat-header-info p {
+    color: #666666 !important;
+}
+
+body.light-mode .host-main .message-bubble {
+    background: #F0F0F0 !important;
+    color: #1F1F1F !important;
+}
+
+body.light-mode .host-main .message.sent .message-bubble {
+    background: linear-gradient(135deg, #D4A574, #B8935F) !important;
+    color: #FFFFFF !important;
+}
+
+body.light-mode .host-main .message-time {
+    color: #888 !important;
+}
+
+body.light-mode .host-main .chat-input-area {
+    border-top-color: #E0E0E0 !important;
+}
+
+body.light-mode .host-main .chat-input {
+    background: #F8F8F8 !important;
+    border-color: #E0E0E0 !important;
+    color: #1F1F1F !important;
+}
+
+body.light-mode .host-main .chat-input::placeholder {
+    color: #888 !important;
+}
+
+body.light-mode .host-main #chatMessageDetail {
+    background: #FFFFFF !important;
+}
+
+body.light-mode .host-main #chatMessageDetail #chatMessageHeader {
+    border-bottom-color: #E0E0E0 !important;
+    color: #1F1F1F !important;
+}
+
+body.light-mode .host-main #chatMessageDetail #chatMessageBody {
+    color: #4A4A4A !important;
+}
+
+body.light-mode .host-main .empty-messages h3 {
+    color: #1F1F1F !important;
+}
+
+body.light-mode .host-main .empty-messages p {
+    color: #666666 !important;
+}
+
 /* Amenity Labels */
 body.light-mode .amenity-label {
     background: #F8F8F8 !important;
@@ -611,4 +914,129 @@ textarea,
     .theme-toggle-icon {
         font-size: 16px;
     }
+}
+
+/* ===================================
+   PROPERTY MODAL - LIGHT MODE
+   (fix invisible content when theme is light)
+   =================================== */
+body.light-mode #propertyModal .modal-content {
+    background: #FFFFFF !important;
+    border-color: #E0E0E0 !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important;
+}
+
+body.light-mode #propertyModalContent .property-modal-inner {
+    background: #FFFFFF !important;
+}
+
+body.light-mode #propertyModalContent,
+body.light-mode #propertyModalContent * {
+    color: #1F1F1F !important;
+}
+
+body.light-mode #propertyModalContent h1,
+body.light-mode #propertyModalContent h2,
+body.light-mode #propertyModalContent h3,
+body.light-mode #propertyModalContent h4 {
+    color: #1F1F1F !important;
+}
+
+body.light-mode #propertyModalContent p,
+body.light-mode #propertyModalContent span,
+body.light-mode #propertyModalContent label {
+    color: #4A4A4A !important;
+}
+
+body.light-mode #propertyModalContent .property-location-click {
+    color: #666666 !important;
+}
+
+body.light-mode #propertyModalContent .gallery-item,
+body.light-mode #propertyModalContent .property-modal-gallery {
+    background: #F0F0F0 !important;
+}
+body.light-mode #propertyModalContent [style*="background: #2C2C2C"],
+body.light-mode #propertyModalContent [style*="background:#2C2C2C"] {
+    background: #F0F0F0 !important;
+}
+
+body.light-mode #propertyModalContent .info-section,
+body.light-mode #propertyModalContent [style*="border-bottom: 1px solid #3A3A3A"] {
+    border-bottom-color: #E0E0E0 !important;
+}
+
+/* Booking card inside modal */
+body.light-mode #propertyModalContent [style*="background: #1F1F1F"],
+body.light-mode #propertyModalContent [style*="background:#1F1F1F"] {
+    background: #F8F8F8 !important;
+    border-color: #E0E0E0 !important;
+}
+
+body.light-mode #propertyModalContent #bookingSummary,
+body.light-mode #propertyModalContent [style*="background: #2C2C2C"] {
+    background: #F0F0F0 !important;
+}
+
+body.light-mode #propertyModalContent input[type="date"],
+body.light-mode #propertyModalContent input[type="number"] {
+    background: #FFFFFF !important;
+    color: #1F1F1F !important;
+    border-color: #E0E0E0 !important;
+}
+
+/* Host card gradient - keep readable in light mode */
+body.light-mode #propertyModalContent [style*="linear-gradient(135deg, #2C1810"] {
+    background: linear-gradient(135deg, #E8DDD0 0%, #D4C4B0 50%, #F5F0E8 100%) !important;
+    border-color: #D4A574 !important;
+}
+
+body.light-mode #propertyModalContent [style*="linear-gradient(135deg, #2C1810"] h3,
+body.light-mode #propertyModalContent [style*="linear-gradient(135deg, #2C1810"] p {
+    color: #1F1F1F !important;
+}
+
+/* Price and accent in modal */
+body.light-mode #propertyModalContent [style*="color: #D4A574"] {
+    color: #8B6F47 !important;
+}
+
+body.light-mode #propertyModal .modal-close {
+    color: #4A4A4A !important;
+}
+
+body.light-mode #propertyModal .modal-close:hover {
+    color: #B8935F !important;
+    background: #F0F0F0 !important;
+}
+
+body.light-mode #propertyModalContent::-webkit-scrollbar-track {
+    background: #F0F0F0 !important;
+}
+
+body.light-mode #propertyModalContent::-webkit-scrollbar-thumb {
+    background: #B8935F !important;
+}
+
+/* Calendar and amenity chips in property modal */
+body.light-mode #propertyModalContent .calendar-day {
+    color: #1F1F1F !important;
+}
+
+body.light-mode #propertyModalContent .calendar-day-booked {
+    background: #FEE2E2 !important;
+    color: #991B1B !important;
+}
+
+/* Contact Host form in property modal */
+body.light-mode #propertyModalContent #contactHostMessage {
+    background: #F0F0F0 !important;
+    border-color: #E0E0E0 !important;
+    color: #1F1F1F !important;
+}
+body.light-mode #propertyModalContent #contactHostMessage::placeholder {
+    color: #888 !important;
+}
+body.light-mode #propertyModalContent #contactHostStatus {
+    color: #4A4A4A !important;
 }

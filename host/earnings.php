@@ -62,6 +62,10 @@ foreach ($bookings as $booking) {
     }
 }
 
+// Count host's properties (for "First" vs "Add" button text)
+$count_result = $conn->query("SELECT COUNT(*) as n FROM properties WHERE host_id = " . (int)$user['id']);
+$host_property_count = $count_result ? (int)$count_result->fetch_assoc()['n'] : 0;
+
 $conn->close();
 ?>
 <!DOCTYPE html>
@@ -69,7 +73,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Earnings - ServePro</title>
+    <title>Earnings - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=11.0">
     <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=11.0">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=11.0">
@@ -345,10 +349,8 @@ $conn->close();
         <aside class="host-sidebar">
             <div class="sidebar-header">
                 <a href="../home.php" class="sidebar-brand">
-                    <svg class="brand-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M16 1c2 0 3.46 1.63 3.46 3.41 0 1.78-1.46 3.41-3.46 3.41s-3.46-1.63-3.46-3.41C12.54 2.63 14 1 16 1zm0 6.82c2.52 0 4.61-1.84 4.61-4.41C20.61 1.84 18.52 0 16 0s-4.61 1.84-4.61 4.41c0 2.57 2.09 4.41 4.61 4.41zM13.96 28.85l6.72-11.87c-1.41-.83-3.07-1.33-4.86-1.33-1.79 0-3.45.5-4.86 1.33l6.72 11.87h.28zm-1.27-1.89l-5.12-9.04C8.47 16.02 9.99 15 11.71 15h8.58c1.72 0 3.24 1.02 4.14 2.92l-5.12 9.04h-7.62z"/>
-                    </svg>
-                    <span>ServePro</span>
+                    <?php require __DIR__ . '/../includes/brand-icon-svg.php'; ?>
+                    <span>ReservePro</span>
                 </a>
             </div>
             
@@ -452,7 +454,7 @@ $conn->close();
                     <div class="empty-earnings">
                         <h3>📊 No Earnings Yet</h3>
                         <p>You haven't received any bookings yet. Start by adding properties!</p>
-                        <a href="add-property.php" class="btn-primary">Add Your First Property</a>
+                        <a href="add-property.php" class="btn-primary"><?php echo $host_property_count === 0 ? 'Add Your First Property' : 'Add Your Property'; ?></a>
                     </div>
                 <?php else: ?>
                     <table class="earnings-table">

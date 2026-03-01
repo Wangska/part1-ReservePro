@@ -9,7 +9,7 @@ $success = false;
 $email = 'admin@servepro.com';
 $password = 'admin123';
 $first_name = 'Admin';
-$last_name = 'ServePro';
+$last_name = 'ReservePro';
 $role = 'admin';
 
 try {
@@ -73,7 +73,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Admin - ServePro</title>
+    <title>Create Admin - ReservePro</title>
     <style>
         * {
             margin: 0;
@@ -208,7 +208,7 @@ try {
         <div class="header">
             <div class="icon">👑</div>
             <h1>Admin Account Setup</h1>
-            <p class="subtitle">ServePro Platform</p>
+            <p class="subtitle">ReservePro Platform</p>
         </div>
 
         <div class="message-box <?php echo $success ? 'success' : 'error'; ?>">

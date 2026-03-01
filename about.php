@@ -33,12 +33,13 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us - ServePro</title>
+    <title>About Us - ReservePro</title>
     <link rel="stylesheet" href="assets/css/style.css?v=8.0">
     <link rel="stylesheet" href="assets/css/landing.css?v=8.0">
     <link rel="stylesheet" href="assets/css/modal.css?v=8.0">
     <link rel="stylesheet" href="assets/css/role-select.css?v=8.0">
     <link rel="stylesheet" href="assets/css/theme-toggle.css?v=2.0">
+    <link rel="stylesheet" href="assets/css/animations.css?v=1.0">
     <style>
         .about-hero {
             background: linear-gradient(135deg, #2C1810 0%, #3E2723 50%, #0F0F0F 100%);
@@ -274,10 +275,8 @@ $conn->close();
         <div class="nav-container">
             <div class="nav-left">
                 <a href="home.php" class="brand">
-                    <svg class="brand-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M16 1c2 0 3.46 1.63 3.46 3.41 0 1.78-1.46 3.41-3.46 3.41s-3.46-1.63-3.46-3.41C12.54 2.63 14 1 16 1zm0 6.82c2.52 0 4.61-1.84 4.61-4.41C20.61 1.84 18.52 0 16 0s-4.61 1.84-4.61 4.41c0 2.57 2.09 4.41 4.61 4.41zM13.96 28.85l6.72-11.87c-1.41-.83-3.07-1.33-4.86-1.33-1.79 0-3.45.5-4.86 1.33l6.72 11.87h.28zm-1.27-1.89l-5.12-9.04C8.47 16.02 9.99 15 11.71 15h8.58c1.72 0 3.24 1.02 4.14 2.92l-5.12 9.04h-7.62z"/>
-                    </svg>
-                    <span class="brand-name">ServePro</span>
+                    <?php require __DIR__ . '/includes/brand-icon-svg.php'; ?>
+                    <span class="brand-name">ReservePro</span>
                 </a>
                 <div class="nav-links">
                     <a href="home.php">Home</a>
@@ -316,7 +315,7 @@ $conn->close();
     <!-- Hero Section -->
     <section class="about-hero">
         <div class="about-icon">🌟</div>
-        <h1>About ServePro</h1>
+        <h1>About ReservePro</h1>
         <p>Connecting hosts and guests worldwide through exceptional property experiences</p>
     </section>
 
@@ -325,7 +324,7 @@ $conn->close();
         <!-- Mission Section -->
         <div class="about-section">
             <h2>Our Mission</h2>
-            <p>At ServePro, we believe everyone deserves access to amazing places and unique experiences. We're building a platform that connects property owners with travelers, creating memorable stays and sustainable income opportunities for hosts around the world.</p>
+            <p>At ReservePro, we believe everyone deserves access to amazing places and unique experiences. We're building a platform that connects property owners with travelers, creating memorable stays and sustainable income opportunities for hosts around the world.</p>
         </div>
 
         <!-- Features -->
@@ -428,7 +427,7 @@ $conn->close();
         <!-- CTA Section -->
         <div class="cta-section">
             <h2>Ready to Get Started?</h2>
-            <p>Join thousands of hosts and guests who trust ServePro for their property rental needs</p>
+            <p>Join thousands of hosts and guests who trust ReservePro for their property rental needs</p>
             <a href="home.php" class="cta-button">Explore Properties</a>
         </div>
     </div>
@@ -490,7 +489,7 @@ $conn->close();
             <div class="modal-header">
                 <div style="font-size: 48px; margin-bottom: 10px;">🎉</div>
                 <h2>Create an account</h2>
-                <p>Join ServePro today</p>
+                <p>Join ReservePro today</p>
             </div>
 
             <form class="modal-form" method="POST" action="register-handler.php">

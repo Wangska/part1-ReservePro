@@ -19,9 +19,35 @@ if ($user['role'] !== 'host') {
 
 $conn = getDBConnection();
 
-// Get messages for host (from guests who booked their properties)
-// For now, we'll create a placeholder since messages table doesn't exist yet
-$messages = [];
+// Ensure messages table exists (schema may not have been run yet)
+$conn->query("CREATE TABLE IF NOT EXISTS messages (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    property_id INT(11) NOT NULL,
+    sender_id INT(11) NOT NULL,
+    receiver_id INT(11) NOT NULL,
+    message TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    read_at TIMESTAMP NULL,
+    FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE,
+    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
+)");
+
+// Get messages for this host (receiver_id = current user), with sender and property info
+$stmt = $conn->prepare("
+    SELECT m.id, m.property_id, m.sender_id, m.receiver_id, m.message, m.created_at, m.read_at,
+           u.first_name AS sender_first_name, u.last_name AS sender_last_name, u.email AS sender_email,
+           p.title AS property_title
+    FROM messages m
+    JOIN users u ON m.sender_id = u.id
+    JOIN properties p ON m.property_id = p.id
+    WHERE m.receiver_id = ?
+    ORDER BY m.created_at DESC
+");
+$stmt->bind_param("i", $user['id']);
+$stmt->execute();
+$messages = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
 
 $conn->close();
 ?>
@@ -30,7 +56,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Messages - ServePro</title>
+    <title>Messages - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=11.0">
     <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=11.0">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=11.0">
@@ -346,10 +372,8 @@ $conn->close();
         <aside class="host-sidebar">
             <div class="sidebar-header">
                 <a href="../home.php" class="sidebar-brand">
-                    <svg class="brand-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M16 1c2 0 3.46 1.63 3.46 3.41 0 1.78-1.46 3.41-3.46 3.41s-3.46-1.63-3.46-3.41C12.54 2.63 14 1 16 1zm0 6.82c2.52 0 4.61-1.84 4.61-4.41C20.61 1.84 18.52 0 16 0s-4.61 1.84-4.61 4.41c0 2.57 2.09 4.41 4.61 4.41zM13.96 28.85l6.72-11.87c-1.41-.83-3.07-1.33-4.86-1.33-1.79 0-3.45.5-4.86 1.33l6.72 11.87h.28zm-1.27-1.89l-5.12-9.04C8.47 16.02 9.99 15 11.71 15h8.58c1.72 0 3.24 1.02 4.14 2.92l-5.12 9.04h-7.62z"/>
-                    </svg>
-                    <span>ServePro</span>
+                    <?php require __DIR__ . '/../includes/brand-icon-svg.php'; ?>
+                    <span>ReservePro</span>
                 </a>
             </div>
             
@@ -417,26 +441,82 @@ $conn->close();
                 <!-- Conversations List -->
                 <div class="conversations-list">
                     <div class="conversations-header">
-                        <input type="text" class="search-box" placeholder="Search messages...">
+                        <input type="text" class="search-box" placeholder="Search messages..." id="messagesSearch">
                     </div>
 
-                    <!-- Empty State -->
+                    <?php if (empty($messages)): ?>
                     <div class="empty-messages">
                         <div class="empty-messages-icon">📭</div>
                         <h3>No Messages Yet</h3>
-                        <p>When guests contact you about your properties, messages will appear here.</p>
+                        <p>When guests contact you about your properties (via "Contact Host" on a listing), messages will appear here.</p>
                     </div>
+                    <?php else: ?>
+                    <div class="conversation-items" id="conversationItems">
+                        <?php foreach ($messages as $msg): ?>
+                        <div class="conversation-item" data-message-id="<?php echo (int)$msg['id']; ?>" style="padding: 16px; border-bottom: 1px solid #3A3A3A; cursor: pointer; transition: background 0.2s;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 6px;">
+                                <strong style="color: #FFFFFF;"><?php echo htmlspecialchars($msg['sender_first_name'] . ' ' . $msg['sender_last_name']); ?></strong>
+                                <span style="font-size: 12px; color: #888;"><?php echo date('M j, g:i A', strtotime($msg['created_at'])); ?></span>
+                            </div>
+                            <div class="conversation-property" style="font-size: 12px; color: #B8B8B8; margin-bottom: 4px;"><?php echo htmlspecialchars($msg['property_title']); ?></div>
+                            <div class="message-snippet" style="font-size: 13px; color: #E0E0E0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><?php echo htmlspecialchars(mb_substr($msg['message'], 0, 80)); ?><?php echo mb_strlen($msg['message']) > 80 ? '…' : ''; ?></div>
+                            <div class="message-full" style="display: none;"><?php echo htmlspecialchars($msg['message']); ?></div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php endif; ?>
                 </div>
 
-                <!-- Chat Container -->
-                <div class="chat-container">
-                    <div class="empty-messages">
+                <!-- Chat Container - selected message detail -->
+                <div class="chat-container" id="chatContainer">
+                    <div class="empty-messages" id="chatPlaceholder">
                         <div class="empty-messages-icon">💬</div>
-                        <h3>Select a Conversation</h3>
-                        <p>Choose a conversation from the list to start chatting with your guests.</p>
+                        <h3>Select a message</h3>
+                        <p>Click a message from the list to read it.</p>
+                    </div>
+                    <div id="chatMessageDetail" style="display: none; padding: 24px; color: #E0E0E0;">
+                        <div id="chatMessageHeader" style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #3A3A3A;"></div>
+                        <div id="chatMessageBody" style="white-space: pre-wrap; line-height: 1.6;"></div>
                     </div>
                 </div>
             </div>
+            <script>
+            (function() {
+                var items = document.querySelectorAll('.conversation-item');
+                var placeholder = document.getElementById('chatPlaceholder');
+                var detail = document.getElementById('chatMessageDetail');
+                var headerEl = document.getElementById('chatMessageHeader');
+                var bodyEl = document.getElementById('chatMessageBody');
+                var searchInput = document.getElementById('messagesSearch');
+                items.forEach(function(el) {
+                    el.addEventListener('click', function() {
+                        var snippet = this.querySelector('.message-snippet');
+                        var full = this.querySelector('.message-full');
+                        var name = this.querySelector('strong').textContent;
+                        var date = this.querySelector('span').textContent;
+                        var prop = this.querySelector('.conversation-property');
+                        var propTitle = prop ? prop.textContent : '';
+                        if (placeholder) placeholder.style.display = 'none';
+                        if (detail) detail.style.display = 'block';
+                        if (headerEl) headerEl.innerHTML = '<strong style="color: #D4A574;">' + name + '</strong><br><span style="font-size: 13px; color: #888;">' + propTitle + ' · ' + date + '</span>';
+                        if (bodyEl && full) bodyEl.textContent = full.textContent;
+                        items.forEach(function(i) { i.style.background = ''; });
+                        this.style.background = 'rgba(212, 165, 116, 0.1)';
+                    });
+                });
+                if (searchInput && document.getElementById('conversationItems')) {
+                    searchInput.addEventListener('input', function() {
+                        var q = this.value.toLowerCase().trim();
+                        var list = document.getElementById('conversationItems');
+                        if (!list) return;
+                        list.querySelectorAll('.conversation-item').forEach(function(item) {
+                            var text = (item.textContent || '').toLowerCase();
+                            item.style.display = q === '' || text.indexOf(q) !== -1 ? 'block' : 'none';
+                        });
+                    });
+                }
+            })();
+            </script>
         </main>
     </div>
 

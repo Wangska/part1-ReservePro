@@ -91,21 +91,13 @@ function renderPropertyDetails(property, bookedDates) {
     bookedDates = bookedDates || [];
     bookedDatesSet = new Set(bookedDates);
     
-    // Build photos HTML
-    let photosHTML = '';
-    if (property.photos && property.photos.length > 0) {
-        photosHTML = property.photos.map((photo, index) => `
-            <div class="gallery-item ${index === 0 ? 'gallery-main' : ''}" style="${index >= 5 ? 'display: none;' : ''}">
-                <img src="${photo.photo_url}" alt="Property photo" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800'" style="width: 100%; height: 100%; object-fit: cover;">
-            </div>
-        `).join('');
-    } else {
-        photosHTML = `
-            <div class="gallery-item gallery-main">
-                <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800" alt="Property" style="width: 100%; height: 100%; object-fit: cover;">
-            </div>
-        `;
-    }
+    // Single full-bleed image (no grid)
+    const primaryPhoto = property.photos && property.photos.length > 0 ? property.photos[0].photo_url : 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800';
+    const photosHTML = `
+        <div class="property-modal-hero-image">
+            <img src="${primaryPhoto}" alt="${property.title || 'Property'}" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800'">
+        </div>
+    `;
     
     // Build amenities HTML
     let amenitiesHTML = '';
@@ -126,7 +118,7 @@ function renderPropertyDetails(property, bookedDates) {
     }
     
     const html = `
-        <div style="padding: 24px;">
+        <div class="property-modal-inner" style="padding: 24px;">
             <!-- Header -->
             <div style="margin-bottom: 24px;">
                 <h1 style="font-size: 28px; font-weight: 700; color: #FFFFFF; margin-bottom: 12px;">${property.title}</h1>
@@ -135,16 +127,60 @@ function renderPropertyDetails(property, bookedDates) {
                 </div>
             </div>
 
-            <!-- Photo Gallery -->
-            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 200px 200px; gap: 8px; border-radius: 12px; overflow: hidden; margin-bottom: 32px;">
-                ${photosHTML}
+            <!-- Top row: Gallery + Price/Booking (same level) -->
+            <div class="property-modal-top-row" style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; align-items: stretch; margin-bottom: 32px;">
+                <!-- Single hero image - fills entire left column, no grid -->
+                <div class="property-modal-gallery">
+                    ${photosHTML}
+                </div>
+                <!-- Price / Booking Card -->
+                <div>
+                    <div style="background: #1F1F1F; padding: 20px; border-radius: 12px; border: 2px solid #3A3A3A; position: sticky; top: 20px;">
+                        <div style="font-size: 28px; font-weight: 700; color: #D4A574; margin-bottom: 4px;">₱${parseFloat(property.price_per_night).toLocaleString('en-PH', {minimumFractionDigits: 2})}</div>
+                        <div style="color: #B8B8B8; font-size: 13px; margin-bottom: 20px;">per night</div>
+                        
+                        <form id="bookingForm" style="display: flex; flex-direction: column; gap: 14px;">
+                            <div id="bookingCalendarSection" style="margin-bottom: 8px;">
+                                <label style="display: block; color: #E0E0E0; font-size: 13px; font-weight: 600; margin-bottom: 8px;">Availability — booked dates in red are not available</label>
+                                <div id="bookingCalendar" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; font-size: 12px;"></div>
+                            </div>
+                            <div>
+                                <label style="display: block; color: #E0E0E0; font-size: 13px; font-weight: 600; margin-bottom: 6px;">Check-in</label>
+                                <input type="date" id="modal_check_in" required min="${new Date().toISOString().split('T')[0]}" style="width: 100%; padding: 10px; background: #2C2C2C; border: 2px solid #3A3A3A; border-radius: 8px; color: #FFFFFF; font-size: 13px;">
+                            </div>
+                            <div>
+                                <label style="display: block; color: #E0E0E0; font-size: 13px; font-weight: 600; margin-bottom: 6px;">Check-out</label>
+                                <input type="date" id="modal_check_out" required style="width: 100%; padding: 10px; background: #2C2C2C; border: 2px solid #3A3A3A; border-radius: 8px; color: #FFFFFF; font-size: 13px;">
+                            </div>
+                            <div>
+                                <label style="display: block; color: #E0E0E0; font-size: 13px; font-weight: 600; margin-bottom: 6px;">Guests</label>
+                                <input type="number" id="modal_guests" value="1" min="1" max="${property.max_guests}" required style="width: 100%; padding: 10px; background: #2C2C2C; border: 2px solid #3A3A3A; border-radius: 8px; color: #FFFFFF; font-size: 13px;">
+                            </div>
+                            
+                            <div id="bookingSummary" style="padding: 14px; background: #2C2C2C; border-radius: 8px; margin: 10px 0; display: none;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; color: #E0E0E0; font-size: 14px;">
+                                    <span>₱${parseFloat(property.price_per_night).toLocaleString('en-PH', {minimumFractionDigits: 2})} × <span id="modal_nights">0</span> night<span id="modal_nightsPlural"></span></span>
+                                    <span id="modal_subtotal">₱0.00</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; color: #E0E0E0; font-size: 14px;">
+                                    <span>Service fee (10%)</span>
+                                    <span id="modal_serviceFee">₱0.00</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding-top: 10px; border-top: 1px solid #3A3A3A; font-size: 16px; font-weight: 700; color: #D4A574;">
+                                    <span>Total</span>
+                                    <span id="modal_total">₱0.00</span>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="modal-btn" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #D4A574, #B8935E); color: #FFFFFF; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer;">Reserve Now</button>
+                        </form>
+                    </div>
+                </div>
             </div>
 
-            <!-- Content Grid -->
-            <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 32px;">
-                <!-- Left Column -->
-                <div>
-                    <!-- Features -->
+            <!-- Content below: Features, Description, Amenities, Host -->
+            <div>
+                <!-- Features -->
                     <div style="padding: 24px 0; border-bottom: 1px solid #3A3A3A;">
                         <h2 style="font-size: 20px; font-weight: 700; color: #FFFFFF; margin-bottom: 16px;">Property Features</h2>
                         <div style="display: flex; gap: 24px; flex-wrap: wrap;">
@@ -189,52 +225,12 @@ function renderPropertyDetails(property, bookedDates) {
                                     <p style="color: #B8B8B8; font-size: 13px;">Property Host</p>
                                 </div>
                             </div>
-                            <button onclick="alert('Contact feature coming soon!')" style="width: 100%; padding: 10px; background: transparent; color: #D4A574; border: 2px solid #D4A574; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">Contact Host</button>
+                            <form id="contactHostForm" class="contact-host-form" data-property-id="${property.id}" style="margin-top: 12px;">
+                                <textarea name="message" id="contactHostMessage" placeholder="Ask ${property.first_name} about this property..." rows="3" required style="width: 100%; padding: 10px; background: #1a1a1a; border: 2px solid #3A3A3A; border-radius: 8px; color: #E0E0E0; font-size: 14px; resize: vertical; margin-bottom: 10px;"></textarea>
+                                <div id="contactHostStatus" style="font-size: 13px; margin-bottom: 8px; min-height: 18px;"></div>
+                                <button type="submit" id="contactHostSubmit" style="width: 100%; padding: 10px; background: #D4A574; color: #0F0F0F; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">Send message</button>
+                            </form>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Right Column - Booking Card -->
-                <div>
-                    <div style="background: #1F1F1F; padding: 20px; border-radius: 12px; border: 2px solid #3A3A3A; position: sticky; top: 20px;">
-                        <div style="font-size: 28px; font-weight: 700; color: #D4A574; margin-bottom: 4px;">₱${parseFloat(property.price_per_night).toLocaleString('en-PH', {minimumFractionDigits: 2})}</div>
-                        <div style="color: #B8B8B8; font-size: 13px; margin-bottom: 20px;">per night</div>
-                        
-                        <form id="bookingForm" style="display: flex; flex-direction: column; gap: 14px;">
-                            <div id="bookingCalendarSection" style="margin-bottom: 8px;">
-                                <label style="display: block; color: #E0E0E0; font-size: 13px; font-weight: 600; margin-bottom: 8px;">Availability — booked dates in red are not available</label>
-                                <div id="bookingCalendar" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; font-size: 12px;"></div>
-                            </div>
-                            <div>
-                                <label style="display: block; color: #E0E0E0; font-size: 13px; font-weight: 600; margin-bottom: 6px;">Check-in</label>
-                                <input type="date" id="modal_check_in" required min="${new Date().toISOString().split('T')[0]}" style="width: 100%; padding: 10px; background: #2C2C2C; border: 2px solid #3A3A3A; border-radius: 8px; color: #FFFFFF; font-size: 13px;">
-                            </div>
-                            <div>
-                                <label style="display: block; color: #E0E0E0; font-size: 13px; font-weight: 600; margin-bottom: 6px;">Check-out</label>
-                                <input type="date" id="modal_check_out" required style="width: 100%; padding: 10px; background: #2C2C2C; border: 2px solid #3A3A3A; border-radius: 8px; color: #FFFFFF; font-size: 13px;">
-                            </div>
-                            <div>
-                                <label style="display: block; color: #E0E0E0; font-size: 13px; font-weight: 600; margin-bottom: 6px;">Guests</label>
-                                <input type="number" id="modal_guests" value="1" min="1" max="${property.max_guests}" required style="width: 100%; padding: 10px; background: #2C2C2C; border: 2px solid #3A3A3A; border-radius: 8px; color: #FFFFFF; font-size: 13px;">
-                            </div>
-                            
-                            <div id="bookingSummary" style="padding: 14px; background: #2C2C2C; border-radius: 8px; margin: 10px 0; display: none;">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; color: #E0E0E0; font-size: 14px;">
-                                    <span>₱${parseFloat(property.price_per_night).toLocaleString('en-PH', {minimumFractionDigits: 2})} × <span id="modal_nights">0</span> night<span id="modal_nightsPlural"></span></span>
-                                    <span id="modal_subtotal">₱0.00</span>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; color: #E0E0E0; font-size: 14px;">
-                                    <span>Service fee (10%)</span>
-                                    <span id="modal_serviceFee">₱0.00</span>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; padding-top: 10px; border-top: 1px solid #3A3A3A; font-size: 16px; font-weight: 700; color: #D4A574;">
-                                    <span>Total</span>
-                                    <span id="modal_total">₱0.00</span>
-                                </div>
-                            </div>
-                            
-                            <button type="submit" class="modal-btn" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #D4A574, #B8935E); color: #FFFFFF; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer;">Reserve Now</button>
-                        </form>
                     </div>
                 </div>
             </div>
@@ -242,6 +238,60 @@ function renderPropertyDetails(property, bookedDates) {
     `;
     
     modalContent.innerHTML = html;
+    
+    // Contact Host form: submit to API with real property id and message
+    const contactForm = document.getElementById('contactHostForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const propertyId = this.getAttribute('data-property-id');
+            const messageEl = document.getElementById('contactHostMessage');
+            const statusEl = document.getElementById('contactHostStatus');
+            const submitBtn = document.getElementById('contactHostSubmit');
+            const message = messageEl && messageEl.value ? messageEl.value.trim() : '';
+            if (!message) return;
+            if (!propertyId) {
+                if (statusEl) statusEl.textContent = 'Error: property not found.';
+                return;
+            }
+            if (statusEl) statusEl.textContent = '';
+            if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending...'; }
+            const formData = new FormData();
+            formData.append('property_id', propertyId);
+            formData.append('message', message);
+            var contactUrl = 'contact-host.php';
+            if (window.location.pathname.indexOf('/') !== -1) {
+                var pathParts = window.location.pathname.split('/');
+                pathParts.pop();
+                var base = pathParts.length ? pathParts.join('/') + '/' : '/';
+                contactUrl = base + 'contact-host.php';
+            }
+            fetch(contactUrl, { method: 'POST', body: formData })
+                .then(function(r) {
+                    return r.text().then(function(text) {
+                        try {
+                            return { ok: r.ok, data: JSON.parse(text) };
+                        } catch (e) {
+                            return { ok: false, data: { success: false, error: r.ok ? 'Invalid response.' : (r.status === 302 || r.status === 301 ? 'Please sign in to contact the host.' : 'Something went wrong. Please try again.') } };
+                        }
+                    });
+                })
+                .then(function(result) {
+                    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Send message'; }
+                    var data = result.data;
+                    if (data.success) {
+                        if (statusEl) { statusEl.style.color = '#22c55e'; statusEl.textContent = data.message || 'Message sent!'; }
+                        if (messageEl) messageEl.value = '';
+                    } else {
+                        if (statusEl) { statusEl.style.color = '#e57373'; statusEl.textContent = data.error || 'Failed to send.'; }
+                    }
+                })
+                .catch(function(err) {
+                    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Send message'; }
+                    if (statusEl) { statusEl.style.color = '#e57373'; statusEl.textContent = 'Network error. Please check your connection and try again.'; }
+                });
+        });
+    }
     
     // Build availability calendar (booked dates in different color, non-clickable)
     renderBookingCalendar(bookedDates);
@@ -336,7 +386,7 @@ function showPropertyMap(property) {
     } else {
         mapContainer = document.createElement('div');
         mapContainer.id = 'propertyMapContainer';
-        mapContainer.style.cssText = 'display: block; height: 280px; margin-top: 16px; border-radius: 12px; overflow: hidden; background: #2C2C2C;';
+        mapContainer.style.cssText = 'display: block; height: 420px; min-height: 380px; margin-top: 16px; border-radius: 12px; overflow: hidden; background: #2C2C2C;';
         const locationEl = modalContent.querySelector('.property-location-click');
         const insertAfter = locationEl && locationEl.closest('div');
         if (insertAfter) {
@@ -383,7 +433,7 @@ function showPropertyMap(property) {
         else if (cityLower.includes('iloilo')) searchQuery = (property.address ? property.address + ', ' : '') + (city + ', Iloilo, ' + country);
     }
     const geocodeUrl = 'https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(searchQuery) + '&limit=5';
-    fetch(geocodeUrl, { headers: { 'Accept': 'application/json', 'User-Agent': 'ServeProPropertyMap/1.0' } })
+    fetch(geocodeUrl, { headers: { 'Accept': 'application/json', 'User-Agent': 'ReserveProPropertyMap/1.0' } })
         .then(r => r.json())
         .then(results => {
             // Prefer result that matches the intended region (avoid Manila when searching for Cebu, etc.)

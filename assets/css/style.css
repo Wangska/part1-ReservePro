@@ -1,4 +1,4 @@
-/* ServePro Authentication System */
+/* ReservePro Authentication System */
 
 * {
     margin: 0;
@@ -79,9 +79,15 @@ p, span, div {
 }
 
 .logo-icon {
-    width: 32px;
-    height: 32px;
-    fill: var(--primary-color);
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+}
+.logo .logo-icon circle:first-of-type {
+    fill: url(#rpLogoBg);
+}
+.logo .logo-icon g {
+    fill: #FFFFFF;
 }
 
 .logo-text {

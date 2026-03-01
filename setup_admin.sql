@@ -1,4 +1,4 @@
--- ServePro Admin Account Setup
+-- ReservePro Admin Account Setup
 -- Run this in phpMyAdmin to create admin account
 
 USE servepro_auth;
@@ -14,7 +14,7 @@ ADD COLUMN role ENUM('guest', 'host', 'admin') DEFAULT 'guest' AFTER password;
 INSERT INTO users (first_name, last_name, email, password, role) 
 VALUES (
     'Admin',
-    'ServePro',
+    'ReservePro',
     'admin@servepro.com',
     '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',  -- Password: admin123
     'admin'
