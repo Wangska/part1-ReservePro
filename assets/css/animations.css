@@ -1,0 +1,192 @@
+/* ReservePro – UI Animations */
+
+/* ========== Keyframes ========== */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes gentlePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* ========== Navbar ========== */
+.navbar {
+    animation: slideDown 0.5s ease forwards;
+}
+
+/* ========== Hero (home) ========== */
+.hero-content .hero-title {
+    opacity: 0;
+    animation: fadeInUp 0.7s ease 0.1s forwards;
+}
+
+.hero-content .hero-subtitle {
+    opacity: 0;
+    animation: fadeInUp 0.7s ease 0.25s forwards;
+}
+
+.hero-content .search-container {
+    opacity: 0;
+    animation: fadeInUp 0.7s ease 0.4s forwards;
+}
+
+/* ========== Card hover – smoother lift & image zoom ========== */
+.service-card,
+.experience-card {
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease, border-color 0.3s ease;
+}
+
+.service-card .card-image img,
+.experience-card img {
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ========== Buttons ========== */
+.nav-btn,
+.nav-btn-outline,
+.search-btn,
+.cta-button,
+.btn-primary,
+.btn-submit {
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, color 0.25s ease !important;
+}
+
+.nav-btn:hover,
+.nav-btn-outline:hover,
+.search-btn:hover,
+.cta-button:hover,
+.btn-primary:hover,
+.btn-submit:hover {
+    transform: translateY(-2px) scale(1.02);
+}
+
+/* ========== Brand logo – subtle hover ========== */
+.brand {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.brand:hover {
+    transform: scale(1.05);
+}
+
+/* ========== Modal open ========== */
+.modal.active .modal-content {
+    animation: scaleIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.modal.active .modal-overlay {
+    animation: fadeIn 0.3s ease forwards;
+}
+
+/* ========== Filters sidebar (landing) ========== */
+.filters-sidebar {
+    animation: fadeInUp 0.5s ease 0.2s backwards;
+}
+
+/* ========== Section headings ========== */
+.grid-header h2,
+.section-header h2,
+.quick-actions h2 {
+    opacity: 0;
+    animation: fadeInUp 0.5s ease 0.15s forwards;
+}
+
+/* ========== Footer ========== */
+.footer {
+    animation: fadeIn 0.6s ease 0.3s backwards;
+}
+
+/* ========== Theme toggle icon ========== */
+.theme-toggle:hover .theme-toggle-icon {
+    transform: rotate(20deg);
+    transition: transform 0.3s ease;
+}
+
+.theme-toggle-icon {
+    transition: transform 0.3s ease;
+}
+
+/* ========== Auth (login/register) ========== */
+.auth-box {
+    opacity: 0;
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+/* ========== Reduce motion (accessibility) ========== */
+@media (prefers-reduced-motion: reduce) {
+    .navbar,
+    .hero-content .hero-title,
+    .hero-content .hero-subtitle,
+    .hero-content .search-container,
+    .service-card,
+    .experience-card,
+    .property-card,
+    .action-card,
+    .stat-card,
+    .filters-sidebar,
+    .grid-header h2,
+    .section-header h2,
+    .quick-actions h2,
+    .footer,
+    .modal.active .modal-content,
+    .modal.active .modal-overlay {
+        animation: none !important;
+        opacity: 1 !important;
+    }
+    
+    .service-card:hover,
+    .experience-card:hover {
+        transform: none;
+    }
+    
+    .nav-btn:hover,
+    .cta-button:hover,
+    .brand:hover {
+        transform: none;
+    }
+}
