@@ -103,7 +103,8 @@ $user = getCurrentUser();
                 
                 // Handle photos
                 if (isset($_FILES['photos']) && !empty($_FILES['photos']['name'][0])) {
-                    $upload_dir = $_SERVER['DOCUMENT_ROOT'] . '/part1/uploads/properties/';
+                    // Store test uploads inside this project so URLs 'uploads/properties/...' resolve correctly
+                    $upload_dir = __DIR__ . '/uploads/properties/';
                     
                     if (!file_exists($upload_dir)) {
                         mkdir($upload_dir, 0777, true);

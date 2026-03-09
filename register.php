@@ -14,7 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
-    $role = $_POST['role'] ?? 'guest'; // Get selected role
+    // All new signups are guests by default
+    $role = 'guest';
     
     // Check if passwords match
     if ($password !== $confirm_password) {
@@ -23,13 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = Auth::register($first_name, $last_name, $email, $password, $role);
         
         if ($result['success']) {
-            // Redirect based on selected role
-            if ($role === 'host') {
-                header('Location: host/dashboard.php');
-            } else {
-                // Guests go to browse properties (home page)
-                header('Location: home.php');
-            }
+            // After signup, show "check your email" instructions
+            header('Location: verify-pending.php');
             exit();
         } else {
             $errors = $result['errors'];
@@ -44,11 +40,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign up - ReservePro</title>
     <link rel="stylesheet" href="assets/css/style.css?v=8.0">
-    <link rel="stylesheet" href="assets/css/role-select.css?v=8.0">
     <link rel="stylesheet" href="assets/css/theme-toggle.css?v=2.0">
     <link rel="stylesheet" href="assets/css/animations.css?v=1.0">
 </head>
-<body>
+<body class="auth-page">
     <!-- Theme Toggle -->
     <div class="theme-toggle" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
         <span class="theme-toggle-icon">☀️</span>
@@ -115,23 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     >
                 </div>
 
-                <div class="form-group">
-                    <label for="role">I want to</label>
-                    <select 
-                        id="role" 
-                        name="role" 
-                        required
-                        style="padding: 12px 16px; border: 1px solid #DDDDDD; border-radius: 8px; font-size: 16px;"
-                        onchange="showRoleInfo(this.value)"
-                    >
-                        <option value="guest" <?php echo (($_POST['role'] ?? '') === 'guest') ? 'selected' : ''; ?>>🏖️ Browse & Book Properties (Guest)</option>
-                        <option value="host" <?php echo (($_POST['role'] ?? '') === 'host') ? 'selected' : ''; ?>>🏠 List My Properties (Host)</option>
-                    </select>
-                    <div id="role-description" class="role-info guest">
-                        <strong>🏖️ Guest Account</strong>
-                        Browse properties, make bookings, and enjoy amazing experiences. After signup, you'll go to the <strong>Guest Dashboard</strong>.
-                    </div>
-                </div>
+                <!-- Role selection removed: all new accounts register as Guests -->
 
                 <div class="form-group">
                     <label for="password">Password</label>
@@ -166,33 +145,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 
-    <script>
-        // Show role description
-        function showRoleInfo(role) {
-            const roleDesc = document.getElementById('role-description');
-            
-            if (roleDesc) {
-                roleDesc.style.display = 'block';
-                
-                if (role === 'guest') {
-                    roleDesc.className = 'role-info guest';
-                    roleDesc.innerHTML = '<strong>🏖️ Guest Account</strong><br>Browse properties, make bookings, and enjoy amazing experiences. After signup, you\'ll go to the <strong>Guest Dashboard</strong>.';
-                } else if (role === 'host') {
-                    roleDesc.className = 'role-info host';
-                    roleDesc.innerHTML = '<strong>🏠 Host Account</strong><br>List your properties, manage bookings, and earn money as a host. After signup, you\'ll go to the <strong>Host Dashboard</strong> to add your first property.';
-                }
-            }
-        }
-        
-        // Show role info on page load
-        window.addEventListener('DOMContentLoaded', function() {
-            const roleSelect = document.getElementById('role');
-            if (roleSelect && roleSelect.value) {
-                showRoleInfo(roleSelect.value);
-            }
-        });
-    </script>
-    
+    <script src="assets/js/theme-toggle.js"></script>
+    <script src="assets/js/validation.js"></script>
+</body>
+</html>
+
     <script src="assets/js/theme-toggle.js"></script>
     <script src="assets/js/validation.js"></script>
 </body>

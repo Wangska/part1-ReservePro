@@ -13,7 +13,38 @@ if ($user['role'] !== 'admin') {
 
 $conn = getDBConnection();
 
-// Get all properties with host information
+// Handle admin delete property (POST)
+$delete_message = null;
+$delete_error = null;
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete_property') {
+    $property_id = (int) ($_POST['property_id'] ?? 0);
+    if ($property_id > 0) {
+        $stmt = $conn->prepare("SELECT COUNT(*) AS cnt FROM bookings WHERE property_id = ?");
+        $stmt->bind_param("i", $property_id);
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+        if ($row && $row['cnt'] > 0) {
+            $delete_error = 'Cannot delete: this property has bookings. Cancel or complete them first.';
+        } else {
+            $stmt = $conn->prepare("DELETE FROM properties WHERE id = ?");
+            $stmt->bind_param("i", $property_id);
+            if ($stmt->execute()) {
+                $delete_message = 'Property deleted successfully.';
+            } else {
+                $delete_error = 'Failed to delete property.';
+            }
+            $stmt->close();
+        }
+    }
+    if ($delete_message || $delete_error) {
+        $conn->close();
+        header('Location: properties.php?' . ($delete_message ? 'deleted=1' : 'delete_error=1'));
+        exit();
+    }
+}
+
+// Get all properties with host information (limit to avoid huge pages and timeouts)
 $query = "
     SELECT 
         p.*,
@@ -28,6 +59,7 @@ $query = "
     FROM properties p
     JOIN users u ON p.host_id = u.id
     ORDER BY p.created_at DESC
+    LIMIT 500
 ";
 $result = $conn->query($query);
 $properties = $result->fetch_all(MYSQLI_ASSOC);
@@ -58,7 +90,8 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=10.0">
     <style>
         .properties-header {
-            background: linear-gradient(135deg, #2C1810 0%, #3E2723 50%, #0F0F0F 100%);
+            /* Trendy gray header instead of brown */
+            background: linear-gradient(135deg, #111827 0%, #1F2933 45%, #020617 100%);
             padding: 40px;
             border-radius: 16px;
             margin-bottom: 32px;
@@ -225,7 +258,7 @@ $conn->close();
         }
     </style>
 </head>
-<body>
+<body class="dashboard-page">
     <div class="host-layout">
         <!-- Sidebar -->
         <aside class="host-sidebar">
@@ -240,6 +273,10 @@ $conn->close();
                 <a href="dashboard.php" class="nav-item">
                     <span class="nav-icon">📊</span>
                     <span>Dashboard</span>
+                </a>
+                <a href="host-verifications.php" class="nav-item">
+                    <span class="nav-icon">✅</span>
+                    <span>Host Verifications</span>
                 </a>
                 <a href="properties.php" class="nav-item active">
                     <span class="nav-icon">🏠</span>
@@ -287,6 +324,19 @@ $conn->close();
                 <p>Manage all property listings across the platform</p>
             </div>
 
+            <?php if (isset($_GET['deleted']) && $_GET['deleted'] == '1'): ?>
+                <div class="alert alert-success" style="margin-bottom: 20px;">Property deleted successfully.</div>
+            <?php endif; ?>
+            <?php if (isset($_GET['delete_error']) && $_GET['delete_error'] == '1'): ?>
+                <div class="alert alert-error" style="margin-bottom: 20px;">Cannot delete: this property has bookings. Cancel or complete them first.</div>
+            <?php endif; ?>
+
+            <!-- Hidden form for delete (submitted via JS) -->
+            <form id="deletePropertyForm" method="POST" action="properties.php" style="display: none;">
+                <input type="hidden" name="action" value="delete_property">
+                <input type="hidden" name="property_id" id="deletePropertyId" value="">
+            </form>
+
             <!-- Statistics -->
             <div class="properties-stats">
                 <div class="stat-card">
@@ -297,14 +347,18 @@ $conn->close();
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #22C55E, #16A34A);">✅</div>
+                    <div class="stat-icon stat-icon-img-wrap" style="background: linear-gradient(135deg, #22C55E, #16A34A);">
+                        <img src="../background%20image/p.webp" alt="Approved" class="stat-icon-img">
+                    </div>
                     <div class="stat-content">
                         <h3><?php echo $stats['approved']; ?></h3>
                         <p>Approved</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #FBBF24, #F59E0B);">⏳</div>
+                    <div class="stat-icon stat-icon-img-wrap" style="background: linear-gradient(135deg, #FBBF24, #F59E0B);">
+                        <img src="../background%20image/o.webp" alt="Pending Review" class="stat-icon-img">
+                    </div>
                     <div class="stat-content">
                         <h3><?php echo $stats['pending']; ?></h3>
                         <p>Pending Review</p>
@@ -366,7 +420,7 @@ $conn->close();
                                         }
                                     ?>
                                             <img src="<?php echo $img_src; ?>" 
-                                                 alt="Property" class="property-image" onerror="this.src='https://via.placeholder.com/80x60?text=No+Image'">
+                                                 alt="Property" class="property-image" loading="lazy" decoding="async" onerror="this.src='https://via.placeholder.com/80x60?text=No+Image'">
                                             <div class="property-info">
                                                 <h3><?php echo htmlspecialchars($property['title']); ?></h3>
                                                 <p><?php echo htmlspecialchars(substr($property['description'], 0, 50)) . '...'; ?></p>
@@ -416,13 +470,13 @@ $conn->close();
         }
 
         function viewProperty(id) {
-            window.location.href = 'dashboard.php?property_id=' + id;
+            window.location.href = 'view-property.php?id=' + id;
         }
 
         function deleteProperty(id) {
             if (confirm('Are you sure you want to delete this property? This action cannot be undone.')) {
-                // Add delete logic here
-                alert('Delete functionality will be implemented');
+                document.getElementById('deletePropertyId').value = id;
+                document.getElementById('deletePropertyForm').submit();
             }
         }
     </script>

@@ -46,19 +46,25 @@ $bookings = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 
 // Calculate earnings statistics
-$total_earnings = 0;
-$pending_earnings = 0;
+// Only confirmed/completed bookings should count toward total earnings.
+$total_earnings     = 0;
+$pending_earnings   = 0;
 $completed_earnings = 0;
-$total_bookings = count($bookings);
+$total_bookings     = count($bookings);
 
 foreach ($bookings as $booking) {
-    if ($booking['status'] === 'confirmed') {
-        $completed_earnings += $booking['total_price'];
-    } elseif ($booking['status'] === 'pending') {
-        $pending_earnings += $booking['total_price'];
+    $amount = (float) $booking['total_price'];
+
+    // Pending = awaiting payment, do NOT include in totals
+    if ($booking['status'] === 'pending') {
+        $pending_earnings += $amount;
+        continue;
     }
-    if ($booking['status'] !== 'cancelled') {
-        $total_earnings += $booking['total_price'];
+
+    // Confirmed/completed = paid earnings
+    if ($booking['status'] === 'confirmed' || $booking['status'] === 'completed') {
+        $completed_earnings += $amount;
+        $total_earnings     += $amount;
     }
 }
 
@@ -79,7 +85,8 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=11.0">
     <style>
         .earnings-header {
-            background: linear-gradient(135deg, #2C1810 0%, #3E2723 50%, #0F0F0F 100%);
+            /* Trendy gray header instead of brown */
+            background: linear-gradient(135deg, #111827 0%, #1F2933 45%, #020617 100%);
             padding: 40px;
             border-radius: 16px;
             margin-bottom: 32px;
@@ -343,7 +350,7 @@ $conn->close();
         }
     </style>
 </head>
-<body>
+<body class="dashboard-page">
     <div class="host-layout">
         <!-- Sidebar -->
         <aside class="host-sidebar">

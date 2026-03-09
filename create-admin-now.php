@@ -217,7 +217,12 @@ try {
 
         <?php if ($success): ?>
             <div class="credentials">
-                <h3>🔐 Login Credentials</h3>
+                <h3>
+                    <img src="background%20image/z.jpg"
+                         alt="Secure"
+                         style="width:28px; height:28px; border-radius:8px; object-fit:cover; vertical-align:middle; margin-right:8px;">
+                    Login Credentials
+                </h3>
                 <div class="cred-item">
                     <span class="cred-label">Email:</span>
                     <span class="cred-value">admin@servepro.com</span>

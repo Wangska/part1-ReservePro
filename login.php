@@ -46,13 +46,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Log in - ReservePro</title>
-    <link rel="stylesheet" href="assets/css/style.css?v=8.0">
-    <link rel="stylesheet" href="assets/css/modal.css?v=8.0">
-    <link rel="stylesheet" href="assets/css/role-select.css?v=8.0">
+    <link rel="stylesheet" href="assets/css/style.css?v=25.0">
+    <link rel="stylesheet" href="assets/css/modal.css?v=25.0">
+    <link rel="stylesheet" href="assets/css/role-select.css?v=25.0">
     <link rel="stylesheet" href="assets/css/theme-toggle.css?v=2.0">
     <link rel="stylesheet" href="assets/css/animations.css?v=1.0">
 </head>
-<body>
+<body class="auth-page">
+    <!-- 3D ReservePro loading overlay -->
+    <div id="rp-loader">
+        <div class="rp-loader-inner">
+            <div class="rp-logo-3d">
+                <img src="background%20image/asd.webp" alt="ReservePro logo">
+            </div>
+            <div class="rp-loader-text">ReservePro</div>
+            <div class="rp-loader-subtext">Loading your account</div>
+        </div>
+    </div>
     <!-- Theme Toggle -->
     <div class="theme-toggle" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
         <span class="theme-toggle-icon">☀️</span>
@@ -66,7 +76,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <?php $brand_icon_class = 'logo-icon'; require __DIR__ . '/includes/brand-icon-svg.php'; ?>
                     <span class="logo-text">ReservePro</span>
                 </div>
-                <div style="font-size: 48px; margin: 20px 0;">🔐</div>
+                <div style="margin: 16px 0 12px 0;">
+                    <img src="background%20image/z.jpg"
+                         alt="Secure login"
+                         style="width:64px; height:64px; border-radius:18px; object-fit:cover; display:block; margin:0 auto;">
+                </div>
                 <h1>Welcome back</h1>
                 <p>Log in to your account</p>
             </div>
@@ -115,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div class="social-buttons">
-                <button class="btn-social" onclick="alert('Social login coming soon!')">
+                <button class="btn-social" onclick="window.location.href='google-login.php'; return false;">
                     <svg width="20" height="20" viewBox="0 0 24 24">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                         <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -223,5 +237,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="assets/js/theme-toggle.js"></script>
     <script src="assets/js/validation.js"></script>
     <script src="assets/js/modal.js"></script>
+    <script>
+        // Fade out 3D loader on login page when everything is ready
+        window.addEventListener('load', function () {
+            var loader = document.getElementById('rp-loader');
+            if (!loader) return;
+            setTimeout(function () {
+                loader.classList.add('rp-loader-hide');
+                setTimeout(function () {
+                    if (loader && loader.parentNode) {
+                        loader.parentNode.removeChild(loader);
+                    }
+                }, 600);
+            }, 300);
+        });
+    </script>
 </body>
 </html>

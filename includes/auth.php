@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/session.php';
+require_once __DIR__ . '/../config/database_schema.php';
+require_once __DIR__ . '/mailer2.php';
 
 class Auth {
     
@@ -39,6 +41,9 @@ class Auth {
             return ['success' => false, 'errors' => $errors];
         }
         
+        // Ensure extended schema (roles, verification fields, etc.) exists
+        initializeHostTables();
+
         $conn = getDBConnection();
         
         // Check if email already exists
@@ -56,18 +61,25 @@ class Auth {
         
         // Hash password
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+        // Generate verification token
+        try {
+            $verification_token = bin2hex(random_bytes(32));
+        } catch (Exception $e) {
+            $verification_token = bin2hex(uniqid((string)mt_rand(), true));
+        }
         
-        // Insert user with role
-        $stmt = $conn->prepare("INSERT INTO users (first_name, last_name, email, password, role) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssss", $first_name, $last_name, $email, $hashed_password, $role);
+        // Insert user with role and verification info
+        $stmt = $conn->prepare("INSERT INTO users (first_name, last_name, email, password, role, email_verified, verification_token) VALUES (?, ?, ?, ?, ?, 0, ?)");
+        $stmt->bind_param("ssssss", $first_name, $last_name, $email, $hashed_password, $role, $verification_token);
         
         if ($stmt->execute()) {
             $user_id = $stmt->insert_id;
             $stmt->close();
             $conn->close();
-            
-            // Auto login after registration
-            $_SESSION['user_id'] = $user_id;
+
+            // Fire-and-forget verification email
+            sendVerificationEmail($email, $first_name, $verification_token);
             
             return ['success' => true, 'user_id' => $user_id];
         } else {
@@ -96,8 +108,8 @@ class Auth {
         
         $conn = getDBConnection();
         
-        // Get user
-        $stmt = $conn->prepare("SELECT id, password FROM users WHERE email = ?");
+        // Get user (including email_verified to enforce verification)
+        $stmt = $conn->prepare("SELECT id, password, email_verified, first_name, verification_token FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -110,15 +122,48 @@ class Auth {
         
         $user = $result->fetch_assoc();
         $stmt->close();
-        $conn->close();
         
         // Verify password
-        if (password_verify($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
-            return ['success' => true, 'user_id' => $user['id']];
-        } else {
+        if (!password_verify($password, $user['password'])) {
+            $conn->close();
             return ['success' => false, 'errors' => ['Invalid email or password']];
         }
+
+        // Block login if email not verified yet
+        if (isset($user['email_verified']) && (int)$user['email_verified'] !== 1) {
+            // If there is no verification token (older accounts), generate a new one and send email again
+            if (empty($user['verification_token'])) {
+                try {
+                    $newToken = bin2hex(random_bytes(32));
+                } catch (Exception $e) {
+                    $newToken = bin2hex(uniqid((string)mt_rand(), true));
+                }
+                $update = $conn->prepare("UPDATE users SET verification_token = ? WHERE id = ?");
+                if ($update) {
+                    $update->bind_param("si", $newToken, $user['id']);
+                    $update->execute();
+                    $update->close();
+                    sendVerificationEmail($email, $user['first_name'] ?? '', $newToken);
+                }
+            } else {
+                // Resend existing token for convenience
+                sendVerificationEmail($email, $user['first_name'] ?? '', $user['verification_token']);
+            }
+
+            $conn->close();
+            return [
+                'success' => false,
+                'errors'  => [
+                    'Your email is not verified yet. Please check your inbox (Mailtrap) and click the verification link before signing in.'
+                ],
+            ];
+        }
+
+        $conn->close();
+
+        // Successful login
+        $_SESSION['user_id'] = $user['id'];
+        return ['success' => true, 'user_id' => $user['id']];
     }
     
     // Logout user

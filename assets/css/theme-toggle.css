@@ -44,15 +44,16 @@ body.light-mode {
     --text-dark: #1F1F1F;
     --text-gray: #4A4A4A;
     --bg-light: #FFFFFF;
-    --bg-primary: #F8F8F8;
+    --bg-primary: #F9FAFB;
     --bg-secondary: #FFFFFF;
-    --bg-tertiary: #F0F0F0;
-    --bg-dark: #F8F8F8;
-    --bg-darker: #F0F0F0;
+    --bg-tertiary: #E5E7EB;
+    --bg-dark: #F9FAFB;
+    --bg-darker: #E5E7EB;
     --border-color: #E0E0E0;
-    --wood-dark: #D4A574;
-    --wood-medium: #C9A66B;
-    --wood-light: #E6C89C;
+    /* Light-mode “wood” tones also use gray now */
+    --wood-dark: #111827;
+    --wood-medium: #4B5563;
+    --wood-light: #9CA3AF;
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
     --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
     --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
@@ -62,6 +63,21 @@ body.light-mode {
 body.light-mode {
     background: #F8F8F8 !important;
     color: #1F1F1F !important;
+}
+
+/* Auth & dashboard pages: keep body and main layout transparent so blurred image shows (dark + light) */
+body.auth-page,
+body.auth-page.light-mode,
+body.dashboard-page,
+body.dashboard-page.light-mode {
+    background: transparent !important;
+}
+
+/* Light mode: keep dashboard/auth layout wrappers transparent so background image shows */
+body.dashboard-page.light-mode .host-layout,
+body.dashboard-page.light-mode .dashboard-container,
+body.auth-page.light-mode .auth-container {
+    background: transparent !important;
 }
 
 body.light-mode h1,
@@ -77,6 +93,14 @@ body.light-mode p,
 body.light-mode span,
 body.light-mode div {
     color: #4A4A4A !important;
+}
+
+/* Do NOT override explicit review star colors in light mode */
+body.light-mode .review-star {
+    color: #6B7280 !important;
+}
+body.light-mode .review-star.review-star-active {
+    color: #EF4444 !important;
 }
 
 body.light-mode .navbar {
@@ -102,6 +126,16 @@ body.light-mode .contact-form-wrapper {
     background: #FFFFFF !important;
     border: 1px solid #E0E0E0 !important;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Auth (login / signup) pages - make card and background light in light mode */
+body.light-mode .auth-container {
+    background: transparent !important;
+}
+body.light-mode .auth-box {
+    background: #FFFFFF !important;
+    border: 1px solid #E0E0E0 !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08) !important;
 }
 
 body.light-mode .service-card:hover,
@@ -170,6 +204,15 @@ body.light-mode .cta-section h2 {
 body.light-mode .cta-section p {
     color: #4A4A4A !important;
     opacity: 1 !important;
+}
+
+/* Stats section (About page) - light mode */
+body.light-mode .stats-section {
+    background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%) !important;
+    border-color: #E0E0E0 !important;
+}
+body.light-mode .stats-section .stat-label {
+    color: #6B7280 !important;
 }
 
 body.light-mode .nav-btn {
@@ -822,6 +865,12 @@ body.light-mode .main-content {
     background: #F8F8F8 !important;
 }
 
+/* On dashboard pages, let the blurred background show through */
+.dashboard-page .host-main,
+.dashboard-page .main-content {
+    background: transparent !important;
+}
+
 /* Welcome Card */
 body.light-mode .welcome-card {
     background: #FFFFFF !important;
@@ -1039,4 +1088,355 @@ body.light-mode #propertyModalContent #contactHostMessage::placeholder {
 }
 body.light-mode #propertyModalContent #contactHostStatus {
     color: #4A4A4A !important;
+}
+
+/* ===================================
+   ADMIN ALL PROPERTIES PAGE - LIGHT MODE
+   =================================== */
+body.light-mode .properties-header {
+    background: linear-gradient(135deg, #E8DDD0 0%, #D4C4B0 50%, #C9B89A 100%) !important;
+    color: #1F1F1F !important;
+    border: 1px solid #E0E0E0 !important;
+}
+
+body.light-mode .properties-header h1 {
+    color: #1F1F1F !important;
+}
+
+body.light-mode .properties-header p {
+    color: #4A4A4A !important;
+}
+
+body.light-mode .properties-table-container {
+    background: #FFFFFF !important;
+    border: 1px solid #E0E0E0 !important;
+}
+
+body.light-mode .table-header {
+    border-bottom-color: #E0E0E0 !important;
+    background: #F8F8F8 !important;
+}
+
+body.light-mode .table-header h2 {
+    color: #1F1F1F !important;
+}
+
+body.light-mode .filter-tab {
+    background: #FFFFFF !important;
+    border-color: #E0E0E0 !important;
+    color: #4A4A4A !important;
+}
+
+body.light-mode .filter-tab:hover {
+    background: #F0F0F0 !important;
+    color: #B8935F !important;
+    border-color: #B8935F !important;
+}
+
+body.light-mode .filter-tab.active {
+    background: linear-gradient(135deg, #D4A574, #B8935F) !important;
+    color: #FFFFFF !important;
+    border-color: transparent !important;
+}
+
+body.light-mode .properties-table thead {
+    background: #F8F8F8 !important;
+}
+
+body.light-mode .properties-table th {
+    color: #4A4A4A !important;
+    border-bottom-color: #E0E0E0 !important;
+}
+
+body.light-mode .properties-table td {
+    color: #4A4A4A !important;
+    border-bottom-color: #F0F0F0 !important;
+}
+
+body.light-mode .properties-table tbody tr:hover {
+    background: #F8F8F8 !important;
+}
+
+body.light-mode .property-image {
+    background: #F0F0F0 !important;
+}
+
+body.light-mode .property-info h3 {
+    color: #1F1F1F !important;
+}
+
+body.light-mode .property-info p {
+    color: #666666 !important;
+}
+
+body.light-mode .host-main .host-header h1,
+body.light-mode .host-main .host-header .subtitle {
+    color: #1F1F1F !important;
+}
+
+body.light-mode .host-main .host-header p {
+    color: #666666 !important;
+}
+
+/* ===================================
+   ADMIN USERS PAGE - LIGHT MODE
+   =================================== */
+body.light-mode .users-header {
+    background: linear-gradient(135deg, #E8DDD0 0%, #D4C4B0 50%, #C9B89A 100%) !important;
+    color: #1F1F1F !important;
+    border: 1px solid #E0E0E0 !important;
+}
+
+body.light-mode .users-header h1 {
+    color: #1F1F1F !important;
+}
+
+body.light-mode .users-header p {
+    color: #4A4A4A !important;
+}
+
+body.light-mode .user-details h3 {
+    color: #1F1F1F !important;
+}
+
+body.light-mode .user-details p {
+    color: #666666 !important;
+}
+
+body.light-mode .role-guest {
+    background: rgba(59, 130, 246, 0.15) !important;
+    color: #1D4ED8 !important;
+    border-color: rgba(59, 130, 246, 0.3) !important;
+}
+
+body.light-mode .role-host {
+    background: rgba(184, 147, 95, 0.15) !important;
+    color: #8B6F47 !important;
+    border-color: rgba(184, 147, 95, 0.3) !important;
+}
+
+body.light-mode .role-admin {
+    background: rgba(239, 68, 68, 0.15) !important;
+    color: #B91C1C !important;
+    border-color: rgba(239, 68, 68, 0.3) !important;
+}
+
+/* ===================================
+   ADMIN ALL BOOKINGS PAGE - LIGHT MODE
+   =================================== */
+body.light-mode .bookings-header {
+    background: linear-gradient(135deg, #E8DDD0 0%, #D4C4B0 50%, #C9B89A 100%) !important;
+    color: #1F1F1F !important;
+    border: 1px solid #E0E0E0 !important;
+}
+
+body.light-mode .bookings-header h1 {
+    color: #1F1F1F !important;
+}
+
+body.light-mode .bookings-header p {
+    color: #4A4A4A !important;
+}
+
+body.light-mode .booking-id {
+    color: #8B6F47 !important;
+}
+
+/* ===================================
+   GUEST MESSAGES PAGE - LIGHT MODE
+   =================================== */
+body.light-mode .messages-page {
+    background: #F8F8F8 !important;
+}
+
+body.light-mode .messages-page .messages-header {
+    background: linear-gradient(135deg, #E8DDD0 0%, #D4C4B0 50%, #C9B89A 100%) !important;
+    color: #1F1F1F !important;
+    border: 1px solid #E0E0E0 !important;
+}
+
+body.light-mode .messages-page .messages-header h1 {
+    color: #1F1F1F !important;
+}
+
+body.light-mode .messages-page .messages-header p {
+    color: #4A4A4A !important;
+}
+
+body.light-mode .messages-page .nav-links-messages a {
+    color: #4A4A4A !important;
+}
+
+body.light-mode .messages-page .nav-links-messages a:hover {
+    background: #F0F0F0 !important;
+    color: #1F1F1F !important;
+}
+
+body.light-mode .messages-page .conversations-list {
+    background: #FFFFFF !important;
+    border: 1px solid #E0E0E0 !important;
+}
+
+body.light-mode .messages-page .conversations-header {
+    border-bottom-color: #E0E0E0 !important;
+}
+
+body.light-mode .messages-page .search-box {
+    background: #F8F8F8 !important;
+    border-color: #E0E0E0 !important;
+    color: #1F1F1F !important;
+}
+
+body.light-mode .messages-page .search-box::placeholder {
+    color: #888 !important;
+}
+
+body.light-mode .messages-page .conversation-item {
+    border-bottom-color: #F0F0F0 !important;
+}
+
+body.light-mode .messages-page .conversation-item:hover {
+    background: #F8F8F8 !important;
+}
+
+body.light-mode .messages-page .conversation-item.active {
+    background: rgba(184, 147, 95, 0.12) !important;
+    border-left-color: #B8935F !important;
+}
+
+body.light-mode .messages-page .conv-name {
+    color: #1F1F1F !important;
+}
+
+body.light-mode .messages-page .conv-meta {
+    color: #666666 !important;
+}
+
+body.light-mode .messages-page .conv-preview {
+    color: #4A4A4A !important;
+}
+
+body.light-mode .messages-page .chat-container {
+    background: #FFFFFF !important;
+    border: 1px solid #E0E0E0 !important;
+}
+
+body.light-mode .messages-page .chat-header {
+    border-bottom-color: #E0E0E0 !important;
+}
+
+body.light-mode .messages-page .chat-messages {
+    background: #FFFFFF !important;
+}
+
+body.light-mode .messages-page .message-bubble {
+    background: #F0F0F0 !important;
+    color: #1F1F1F !important;
+}
+
+body.light-mode .messages-page .message.sent .message-bubble {
+    background: linear-gradient(135deg, #D4A574, #B8935F) !important;
+    color: #0F0F0F !important;
+}
+
+body.light-mode .messages-page .message-time {
+    color: #888 !important;
+}
+
+body.light-mode .messages-page .chat-input-area {
+    border-top-color: #E0E0E0 !important;
+}
+
+body.light-mode .messages-page .chat-input {
+    background: #F8F8F8 !important;
+    border-color: #E0E0E0 !important;
+    color: #1F1F1F !important;
+}
+
+body.light-mode .messages-page .chat-input::placeholder {
+    color: #888 !important;
+}
+
+body.light-mode .messages-page .empty-state {
+    color: #666666 !important;
+    background: transparent !important;
+}
+
+body.light-mode .messages-page .empty-state h3 {
+    color: #1F1F1F !important;
+}
+
+body.light-mode .messages-page .empty-state p {
+    color: #666666 !important;
+}
+
+/* ===================================
+   GUEST PROFILE PAGE - LIGHT MODE
+   =================================== */
+body.light-mode .profile-page {
+    background: #F8F8F8 !important;
+}
+
+body.light-mode .profile-page .profile-header {
+    background: linear-gradient(135deg, #E8DDD0 0%, #D4C4B0 50%, #C9B89A 100%) !important;
+    color: #1F1F1F !important;
+    border: 1px solid #E0E0E0 !important;
+}
+
+body.light-mode .profile-page .profile-header h1 {
+    color: #1F1F1F !important;
+}
+
+body.light-mode .profile-page .profile-header p {
+    color: #4A4A4A !important;
+}
+
+body.light-mode .profile-page .profile-nav a {
+    color: #4A4A4A !important;
+}
+
+body.light-mode .profile-page .profile-nav a:hover {
+    background: #F0F0F0 !important;
+    color: #1F1F1F !important;
+}
+
+body.light-mode .profile-page .profile-card {
+    background: #FFFFFF !important;
+    border: 1px solid #E0E0E0 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+}
+
+body.light-mode .profile-page .profile-card h2 {
+    color: #8B6F47 !important;
+}
+
+body.light-mode .profile-page .form-group label {
+    color: #1F1F1F !important;
+}
+
+body.light-mode .profile-page .form-group input {
+    background: #F8F8F8 !important;
+    border-color: #E0E0E0 !important;
+    color: #1F1F1F !important;
+}
+
+body.light-mode .profile-page .form-group input:focus {
+    border-color: #B8935F !important;
+}
+
+body.light-mode .profile-page .form-group input.readonly {
+    background: #F0F0F0 !important;
+    color: #4A4A4A !important;
+}
+
+body.light-mode .profile-page .alert-error {
+    background: rgba(239, 68, 68, 0.1) !important;
+    border-color: rgba(239, 68, 68, 0.3) !important;
+    color: #B91C1C !important;
+}
+
+body.light-mode .profile-page .alert-success {
+    background: rgba(34, 197, 94, 0.1) !important;
+    border-color: rgba(34, 197, 94, 0.3) !important;
+    color: #15803D !important;
 }

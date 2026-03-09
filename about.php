@@ -42,7 +42,8 @@ $conn->close();
     <link rel="stylesheet" href="assets/css/animations.css?v=1.0">
     <style>
         .about-hero {
-            background: linear-gradient(135deg, #2C1810 0%, #3E2723 50%, #0F0F0F 100%);
+            /* Trendy gray hero instead of brown */
+            background: linear-gradient(135deg, #111827 0%, #1F2933 45%, #020617 100%);
             padding: 100px 20px 80px;
             text-align: center;
             color: white;
@@ -147,10 +148,11 @@ $conn->close();
         }
         
         .stats-section {
-            background: linear-gradient(135deg, #F3F4F6, #E5E7EB);
+            background: linear-gradient(135deg, #1F1F1F 0%, #2C2C2C 50%, #252525 100%);
             padding: 60px 20px;
             border-radius: 24px;
             margin: 80px 0;
+            border: 1px solid #3A3A3A;
         }
         
         .stats-grid {
@@ -171,12 +173,13 @@ $conn->close();
             background: linear-gradient(135deg, #D4A574, #B8935F);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 8px;
         }
         
         .stat-label {
             font-size: 16px;
-            color: #D0D0D0 !important;
+            color: #B8B8B8 !important;
             font-weight: 500;
         }
         
@@ -185,10 +188,23 @@ $conn->close();
         }
         
         .team-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
             margin-top: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 48px;
+        }
+        .team-grid-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 40px;
+            width: 100%;
+            max-width: 1100px;
+        }
+        .team-grid-row.team-grid-row-center {
+            justify-content: center;
+            max-width: 600px;
+            margin: 0 auto;
         }
         
         .team-member {
@@ -199,13 +215,42 @@ $conn->close();
             width: 120px;
             height: 120px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #D4A574, #B8935F);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
+            background:
+                radial-gradient(circle at 20% 0%, rgba(255,255,255,0.18), rgba(15,15,15,0.85));
+            display: block;
             margin: 0 auto 20px;
-            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.2);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.85), 0 0 0 2px rgba(212, 165, 116, 0.7);
+            overflow: hidden;
+        }
+        .team-avatar-rey {
+            background:
+                radial-gradient(circle at 20% 0%, rgba(255,255,255,0.18), rgba(15,15,15,0.85)),
+                url('background%20image/rey.png') center center / cover no-repeat;
+        }
+        .team-avatar-angel {
+            background:
+                radial-gradient(circle at 20% 0%, rgba(255,255,255,0.18), rgba(15,15,15,0.85)),
+                url('background%20image/angel.jpg') center center / cover no-repeat;
+        }
+        .team-avatar-valentino {
+            background:
+                radial-gradient(circle at 20% 0%, rgba(255,255,255,0.18), rgba(15,15,15,0.85)),
+                url('background%20image/valentino.jpg') center center / cover no-repeat;
+        }
+        .team-avatar-borjaa {
+            background:
+                radial-gradient(circle at 20% 0%, rgba(255,255,255,0.18), rgba(15,15,15,0.85)),
+                url('background%20image/borjaa.avif') center center / cover no-repeat;
+        }
+        .team-avatar-niko {
+            background:
+                radial-gradient(circle at 20% 0%, rgba(255,255,255,0.18), rgba(15,15,15,0.85)),
+                url('background%20image/niko.avif') center center / cover no-repeat;
+        }
+        .team-avatar-dyubilee {
+            background:
+                radial-gradient(circle at 20% 0%, rgba(255,255,255,0.18), rgba(15,15,15,0.85)),
+                url('background%20image/dyub.webp') center center / cover no-repeat;
         }
         
         .team-member h3 {
@@ -229,7 +274,8 @@ $conn->close();
         }
         
         .cta-section {
-            background: linear-gradient(135deg, #2C1810, #3E2723);
+            /* Match gray theme for call-to-action */
+            background: linear-gradient(135deg, #111827, #1F2933);
             padding: 80px 20px;
             border-radius: 24px;
             text-align: center;
@@ -300,7 +346,7 @@ $conn->close();
                     </div>
                 <?php else: ?>
                     <button onclick="openModal('loginModal')" class="nav-btn-outline">Sign in</button>
-                    <button onclick="openModal('registerModal')" class="nav-btn">Sign up</button>
+                    <button onclick="openModal('registerModal')" class="nav-btn">Sign up as Guest</button>
                 <?php endif; ?>
                 
                 <!-- Theme Toggle -->
@@ -394,32 +440,45 @@ $conn->close();
             <p>Passionate individuals dedicated to revolutionizing the property rental experience</p>
             
             <div class="team-grid">
-                <div class="team-member">
-                    <div class="team-avatar">👨‍💼</div>
-                    <h3>John Martinez</h3>
-                    <div class="team-role">CEO & Founder</div>
-                    <p class="team-bio">Visionary leader with 15+ years in hospitality and tech innovation.</p>
+                <div class="team-grid-row">
+                    <div class="team-member">
+                        <div class="team-avatar team-avatar-rey"></div>
+                        <h3>Rey</h3>
+                        <div class="team-role">CEO & Founder</div>
+                        <p class="team-bio">Visionary leader with 15+ years in hospitality and tech innovation.</p>
+                    </div>
+                    <div class="team-member">
+                        <div class="team-avatar team-avatar-angel"></div>
+                        <h3>Angel</h3>
+                        <div class="team-role">CTO</div>
+                        <p class="team-bio">Technology expert building secure, scalable platforms for millions of users.</p>
+                    </div>
+                    <div class="team-member">
+                        <div class="team-avatar team-avatar-valentino"></div>
+                        <h3>Valentino</h3>
+                        <div class="team-role">Head of Design</div>
+                        <p class="team-bio">Creating beautiful, intuitive experiences that users love.</p>
+                    </div>
+                    <div class="team-member">
+                        <div class="team-avatar team-avatar-borjaa"></div>
+                        <h3>Borjaa</h3>
+                        <div class="team-role">Customer Success</div>
+                        <p class="team-bio">Ensuring every host and guest has an exceptional experience.</p>
+                    </div>
                 </div>
-                
-                <div class="team-member">
-                    <div class="team-avatar">👩‍💻</div>
-                    <h3>Sarah Chen</h3>
-                    <div class="team-role">CTO</div>
-                    <p class="team-bio">Technology expert building secure, scalable platforms for millions of users.</p>
-                </div>
-                
-                <div class="team-member">
-                    <div class="team-avatar">👨‍🎨</div>
-                    <h3>Mike Johnson</h3>
-                    <div class="team-role">Head of Design</div>
-                    <p class="team-bio">Creating beautiful, intuitive experiences that users love.</p>
-                </div>
-                
-                <div class="team-member">
-                    <div class="team-avatar">👩‍💼</div>
-                    <h3>Lisa Wang</h3>
-                    <div class="team-role">Customer Success</div>
-                    <p class="team-bio">Ensuring every host and guest has an exceptional experience.</p>
+                <div class="team-grid-row team-grid-row-center">
+                    <div class="team-member">
+                        <div class="team-avatar team-avatar-niko"></div>
+                        <h3>Niko</h3>
+                        <div class="team-role">Head of Operations</div>
+                        <p class="team-bio">Streamlining processes and ensuring smooth operations across the platform.</p>
+                    </div>
+                    <div class="team-member">
+                        <div class="team-avatar team-avatar-dyubilee"></div>
+                        <h3>Dyubilee</h3>
+                        <div class="team-role">Head of Marketing</div>
+                        <p class="team-bio">Connecting hosts with guests through creative campaigns and community building.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -439,7 +498,11 @@ $conn->close();
             <button class="modal-close" onclick="closeModal('loginModal')">&times;</button>
             
             <div class="modal-header">
-                <div style="font-size: 48px; margin-bottom: 10px;">🔐</div>
+                <div style="margin-bottom: 12px;">
+                    <img src="background%20image/z.jpg"
+                         alt="Secure login"
+                         style="width:64px; height:64px; border-radius:18px; object-fit:cover; display:block; margin:0 auto;">
+                </div>
                 <h2>Welcome back</h2>
                 <p>Log in to your account</p>
             </div>
@@ -463,7 +526,7 @@ $conn->close();
             </div>
 
             <div class="social-buttons">
-                <button class="modal-btn-social" onclick="alert('Social login coming soon!')">
+                <button class="modal-btn-social" onclick="window.location.href='google-login.php'; return false;">
                     <svg width="20" height="20" viewBox="0 0 24 24">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                         <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -538,7 +601,7 @@ $conn->close();
             </div>
 
             <div class="social-buttons">
-                <button class="modal-btn-social" onclick="alert('Social signup coming soon!')">
+                <button class="modal-btn-social" onclick="window.location.href='google-login.php'; return false;">
                     <svg width="20" height="20" viewBox="0 0 24 24">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                         <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>

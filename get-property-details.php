@@ -27,6 +27,7 @@ $stmt->close();
 
 if (!$property) {
     echo json_encode(['error' => 'Property not found']);
+    $conn->close();
     exit();
 }
 
@@ -56,6 +57,30 @@ $stmt->execute();
 $amenities_result = $stmt->get_result();
 $property['amenities'] = $amenities_result->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
+
+// Get latest reviews for this property (if reviews table exists)
+$property['reviews'] = [];
+$checkReviewsTable = $conn->query("SHOW TABLES LIKE 'property_reviews'");
+if ($checkReviewsTable && $checkReviewsTable->num_rows > 0) {
+    $stmt = $conn->prepare("
+        SELECT r.id, r.rating, r.comment, r.created_at,
+               u.first_name, u.last_name
+        FROM property_reviews r
+        JOIN users u ON r.guest_id = u.id
+        WHERE r.property_id = ?
+        ORDER BY r.created_at DESC
+        LIMIT 20
+    ");
+    if ($stmt) {
+        $stmt->bind_param("i", $property_id);
+        $stmt->execute();
+        $reviews_result = $stmt->get_result();
+        if ($reviews_result) {
+            $property['reviews'] = $reviews_result->fetch_all(MYSQLI_ASSOC);
+        }
+        $stmt->close();
+    }
+}
 
 $conn->close();
 

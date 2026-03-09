@@ -37,7 +37,7 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=11.0">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=11.0">
 </head>
-<body>
+<body class="dashboard-page">
     <div class="host-layout">
         <!-- Sidebar -->
         <aside class="host-sidebar">
@@ -97,9 +97,12 @@ $conn->close();
         <!-- Main Content -->
         <main class="host-main">
             <div class="host-header" style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <h1>Bookings 📅</h1>
-                    <p class="subtitle">Manage your reservations</p>
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <img src="../background%20image/u.webp" alt="Bookings icon" style="width:40px; height:40px; border-radius:8px; object-fit:cover;">
+                    <div>
+                        <h1>Bookings</h1>
+                        <p class="subtitle">Manage your reservations</p>
+                    </div>
                 </div>
                 <!-- Theme Toggle -->
                 <div class="theme-toggle">
@@ -110,7 +113,9 @@ $conn->close();
 
             <?php if (empty($bookings)): ?>
                 <div class="empty-state">
-                    <span class="empty-icon">📅</span>
+                    <span class="empty-icon">
+                        <img src="../background%20image/u.webp" alt="No bookings icon" style="width:56px; height:56px; border-radius:12px; object-fit:cover;">
+                    </span>
                     <h3>No bookings yet</h3>
                     <p>Your bookings will appear here once guests make reservations</p>
                 </div>
@@ -147,7 +152,7 @@ $conn->close();
                                 <td><strong>₱<?php echo number_format($booking['total_price'], 2); ?></strong></td>
                                 <td><span class="badge badge-<?php echo $booking['status']; ?>"><?php echo ucfirst($booking['status']); ?></span></td>
                                 <td>
-                                    <button class="btn-edit" style="padding: 6px 12px; font-size: 12px;">View</button>
+                                    <a href="view-booking.php?id=<?php echo (int)$booking['id']; ?>" class="btn-edit" style="padding: 6px 12px; font-size: 12px;">View</a>
                                 </td>
                             </tr>
                             <?php endforeach; ?>

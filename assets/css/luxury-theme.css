@@ -12,11 +12,11 @@
     --bg-tertiary: #2C2C2C;
     --bg-card: #1F1F1F;
     
-    /* Wood Tones */
-    --wood-dark: #2C1810;
-    --wood-medium: #3E2723;
-    --wood-light: #5D4037;
-    --wood-accent: #6D4C41;
+    /* Wood Tones replaced by trendy grays */
+    --wood-dark: #111827;
+    --wood-medium: #1F2933;
+    --wood-light: #4B5563;
+    --wood-accent: #6B7280;
     
     /* Text Colors */
     --text-primary: #FFFFFF;

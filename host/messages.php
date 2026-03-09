@@ -33,21 +33,56 @@ $conn->query("CREATE TABLE IF NOT EXISTS messages (
     FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
 )");
 
-// Get messages for this host (receiver_id = current user), with sender and property info
+// Get all messages where host is sender or receiver, for their properties (full threads)
 $stmt = $conn->prepare("
     SELECT m.id, m.property_id, m.sender_id, m.receiver_id, m.message, m.created_at, m.read_at,
-           u.first_name AS sender_first_name, u.last_name AS sender_last_name, u.email AS sender_email,
+           sender.first_name AS sender_first_name, sender.last_name AS sender_last_name,
+           receiver.first_name AS receiver_first_name, receiver.last_name AS receiver_last_name,
            p.title AS property_title
     FROM messages m
-    JOIN users u ON m.sender_id = u.id
-    JOIN properties p ON m.property_id = p.id
-    WHERE m.receiver_id = ?
-    ORDER BY m.created_at DESC
+    JOIN users sender ON m.sender_id = sender.id
+    JOIN users receiver ON m.receiver_id = receiver.id
+    JOIN properties p ON m.property_id = p.id AND p.host_id = ?
+    WHERE (m.receiver_id = ? OR m.sender_id = ?)
+    ORDER BY m.created_at ASC
 ");
-$stmt->bind_param("i", $user['id']);
+$stmt->bind_param("iii", $user['id'], $user['id'], $user['id']);
 $stmt->execute();
-$messages = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$all_messages = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
+
+// Group into conversations: (property_id, guest_id) -> { property_id, property_title, guest_id, guest_name, messages[] }
+$conversations = [];
+foreach ($all_messages as $m) {
+    $guest_id = (int)$m['receiver_id'] === (int)$user['id'] ? (int)$m['sender_id'] : (int)$m['receiver_id'];
+    $guest_name = (int)$m['receiver_id'] === (int)$user['id']
+        ? trim($m['sender_first_name'] . ' ' . $m['sender_last_name'])
+        : trim($m['receiver_first_name'] . ' ' . $m['receiver_last_name']);
+    $key = $m['property_id'] . '-' . $guest_id;
+    if (!isset($conversations[$key])) {
+        $conversations[$key] = [
+            'property_id' => (int)$m['property_id'],
+            'property_title' => $m['property_title'],
+            'guest_id' => $guest_id,
+            'guest_name' => $guest_name,
+            'messages' => []
+        ];
+    }
+    $conversations[$key]['messages'][] = [
+        'id' => (int)$m['id'],
+        'sender_id' => (int)$m['sender_id'],
+        'message' => $m['message'],
+        'created_at' => $m['created_at'],
+        'is_sent' => (int)$m['sender_id'] === (int)$user['id']
+    ];
+}
+// Sort each conversation's messages by time (already ASC from query); sort conversation list by latest message
+$messages = array_values($conversations);
+usort($messages, function ($a, $b) {
+    $aLast = end($a['messages'])['created_at'] ?? '';
+    $bLast = end($b['messages'])['created_at'] ?? '';
+    return strcmp($bLast, $aLast);
+});
 
 $conn->close();
 ?>
@@ -62,7 +97,8 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=11.0">
     <style>
         .messages-header {
-            background: linear-gradient(135deg, #2C1810 0%, #3E2723 50%, #0F0F0F 100%);
+            /* Trendy gray header instead of brown */
+            background: linear-gradient(135deg, #111827 0%, #1F2933 45%, #020617 100%);
             padding: 40px;
             border-radius: 16px;
             margin-bottom: 32px;
@@ -366,7 +402,7 @@ $conn->close();
         }
     </style>
 </head>
-<body>
+<body class="dashboard-page">
     <div class="host-layout">
         <!-- Sidebar -->
         <aside class="host-sidebar">
@@ -452,54 +488,143 @@ $conn->close();
                     </div>
                     <?php else: ?>
                     <div class="conversation-items" id="conversationItems">
-                        <?php foreach ($messages as $msg): ?>
-                        <div class="conversation-item" data-message-id="<?php echo (int)$msg['id']; ?>" style="padding: 16px; border-bottom: 1px solid #3A3A3A; cursor: pointer; transition: background 0.2s;">
+                        <?php foreach ($messages as $conv): 
+                            $last = end($conv['messages']);
+                            $preview = $last ? mb_substr($last['message'], 0, 80) . (mb_strlen($last['message']) > 80 ? '…' : '') : '';
+                            $lastTime = $last ? $last['created_at'] : '';
+                        ?>
+                        <div class="conversation-item" data-property-id="<?php echo (int)$conv['property_id']; ?>" data-guest-id="<?php echo (int)$conv['guest_id']; ?>" data-guest-name="<?php echo htmlspecialchars($conv['guest_name']); ?>" data-property-title="<?php echo htmlspecialchars($conv['property_title']); ?>" style="padding: 16px; border-bottom: 1px solid #3A3A3A; cursor: pointer; transition: background 0.2s;">
                             <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 6px;">
-                                <strong style="color: #FFFFFF;"><?php echo htmlspecialchars($msg['sender_first_name'] . ' ' . $msg['sender_last_name']); ?></strong>
-                                <span style="font-size: 12px; color: #888;"><?php echo date('M j, g:i A', strtotime($msg['created_at'])); ?></span>
+                                <strong style="color: #FFFFFF;"><?php echo htmlspecialchars($conv['guest_name']); ?></strong>
+                                <span style="font-size: 12px; color: #888;"><?php echo $lastTime ? date('M j, g:i A', strtotime($lastTime)) : ''; ?></span>
                             </div>
-                            <div class="conversation-property" style="font-size: 12px; color: #B8B8B8; margin-bottom: 4px;"><?php echo htmlspecialchars($msg['property_title']); ?></div>
-                            <div class="message-snippet" style="font-size: 13px; color: #E0E0E0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><?php echo htmlspecialchars(mb_substr($msg['message'], 0, 80)); ?><?php echo mb_strlen($msg['message']) > 80 ? '…' : ''; ?></div>
-                            <div class="message-full" style="display: none;"><?php echo htmlspecialchars($msg['message']); ?></div>
+                            <div class="conversation-property" style="font-size: 12px; color: #B8B8B8; margin-bottom: 4px;"><?php echo htmlspecialchars($conv['property_title']); ?></div>
+                            <div class="message-snippet" style="font-size: 13px; color: #E0E0E0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><?php echo htmlspecialchars($preview); ?></div>
                         </div>
                         <?php endforeach; ?>
                     </div>
                     <?php endif; ?>
                 </div>
 
-                <!-- Chat Container - selected message detail -->
+                <!-- Chat Container - selected conversation with thread and reply -->
                 <div class="chat-container" id="chatContainer">
                     <div class="empty-messages" id="chatPlaceholder">
                         <div class="empty-messages-icon">💬</div>
-                        <h3>Select a message</h3>
-                        <p>Click a message from the list to read it.</p>
+                        <h3>Select a conversation</h3>
+                        <p>Click a conversation from the list to view the thread and reply.</p>
                     </div>
-                    <div id="chatMessageDetail" style="display: none; padding: 24px; color: #E0E0E0;">
-                        <div id="chatMessageHeader" style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #3A3A3A;"></div>
-                        <div id="chatMessageBody" style="white-space: pre-wrap; line-height: 1.6;"></div>
+                    <div id="chatMessageDetail" style="display: none; flex: 1; flex-direction: column; min-height: 0;">
+                        <div id="chatMessageHeader" style="padding: 20px; border-bottom: 1px solid #3A3A3A;"></div>
+                        <div id="chatMessages" class="chat-messages" style="flex: 1; overflow-y: auto; padding: 24px;"></div>
+                        <div class="chat-input-area" id="chatReplyArea">
+                            <textarea class="chat-input" id="replyInput" placeholder="Type your reply..." rows="2"></textarea>
+                            <button type="button" class="btn-send" id="replySendBtn">Send</button>
+                        </div>
                     </div>
                 </div>
             </div>
+            <script>
+            window.conversationsData = <?php echo json_encode($messages); ?>;
+            </script>
             <script>
             (function() {
                 var items = document.querySelectorAll('.conversation-item');
                 var placeholder = document.getElementById('chatPlaceholder');
                 var detail = document.getElementById('chatMessageDetail');
                 var headerEl = document.getElementById('chatMessageHeader');
-                var bodyEl = document.getElementById('chatMessageBody');
+                var messagesEl = document.getElementById('chatMessages');
+                var replyArea = document.getElementById('chatReplyArea');
+                var replyInput = document.getElementById('replyInput');
+                var replyBtn = document.getElementById('replySendBtn');
                 var searchInput = document.getElementById('messagesSearch');
+                var currentPropertyId = null;
+                var currentGuestId = null;
+
+                function getConversation(propertyId, guestId) {
+                    var key = propertyId + '-' + guestId;
+                    return (window.conversationsData || []).find(function(c) {
+                        return (c.property_id + '-' + c.guest_id) === key;
+                    });
+                }
+
+                function renderThread(conv) {
+                    if (!messagesEl || !conv) return;
+                    messagesEl.innerHTML = '';
+                    (conv.messages || []).forEach(function(msg) {
+                        var div = document.createElement('div');
+                        div.className = 'message' + (msg.is_sent ? ' sent' : '');
+                        var initial = msg.is_sent ? 'You' : (conv.guest_name || 'G').charAt(0);
+                        div.innerHTML = '<div class="message-avatar">' + initial + '</div><div class="message-content"><div class="message-bubble">' + escapeHtml(msg.message) + '</div><div class="message-time">' + formatTime(msg.created_at) + '</div></div>';
+                        messagesEl.appendChild(div);
+                    });
+                    messagesEl.scrollTop = messagesEl.scrollHeight;
+                }
+
+                function escapeHtml(s) {
+                    var div = document.createElement('div');
+                    div.textContent = s;
+                    return div.innerHTML;
+                }
+
+                function formatTime(iso) {
+                    if (!iso) return '';
+                    var d = new Date(iso);
+                    var now = new Date();
+                    var sameDay = d.toDateString() === now.toDateString();
+                    return sameDay ? d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                }
+
+                function sendReply() {
+                    var text = (replyInput && replyInput.value || '').trim();
+                    if (!text || !currentPropertyId || !currentGuestId) return;
+                    replyBtn.disabled = true;
+                    var formData = new FormData();
+                    formData.append('property_id', currentPropertyId);
+                    formData.append('receiver_id', currentGuestId);
+                    formData.append('message', text);
+                    fetch('../reply-message.php', { method: 'POST', body: formData })
+                        .then(function(r) { return r.json(); })
+                        .then(function(data) {
+                            replyBtn.disabled = false;
+                            if (data.success) {
+                                replyInput.value = '';
+                                var conv = getConversation(currentPropertyId, currentGuestId);
+                                if (conv) {
+                                    conv.messages = conv.messages || [];
+                                    conv.messages.push({ id: data.id, sender_id: 0, message: text, created_at: data.created_at, is_sent: true });
+                                    renderThread(conv);
+                                }
+                            } else {
+                                alert(data.error || 'Failed to send reply.');
+                            }
+                        })
+                        .catch(function() {
+                            replyBtn.disabled = false;
+                            alert('Failed to send reply. Please try again.');
+                        });
+                }
+
+                if (replyBtn && replyInput) {
+                    replyBtn.addEventListener('click', sendReply);
+                    replyInput.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendReply(); }
+                    });
+                }
+
                 items.forEach(function(el) {
                     el.addEventListener('click', function() {
-                        var snippet = this.querySelector('.message-snippet');
-                        var full = this.querySelector('.message-full');
-                        var name = this.querySelector('strong').textContent;
-                        var date = this.querySelector('span').textContent;
-                        var prop = this.querySelector('.conversation-property');
-                        var propTitle = prop ? prop.textContent : '';
+                        var propertyId = parseInt(this.getAttribute('data-property-id'), 10);
+                        var guestId = parseInt(this.getAttribute('data-guest-id'), 10);
+                        var guestName = this.getAttribute('data-guest-name') || '';
+                        var propertyTitle = this.getAttribute('data-property-title') || '';
+                        currentPropertyId = propertyId;
+                        currentGuestId = guestId;
                         if (placeholder) placeholder.style.display = 'none';
-                        if (detail) detail.style.display = 'block';
-                        if (headerEl) headerEl.innerHTML = '<strong style="color: #D4A574;">' + name + '</strong><br><span style="font-size: 13px; color: #888;">' + propTitle + ' · ' + date + '</span>';
-                        if (bodyEl && full) bodyEl.textContent = full.textContent;
+                        if (detail) detail.style.display = 'flex';
+                        if (headerEl) headerEl.innerHTML = '<strong style="color: #D4A574;">' + escapeHtml(guestName) + '</strong><br><span style="font-size: 13px; color: #888;">' + escapeHtml(propertyTitle) + '</span>';
+                        var conv = getConversation(propertyId, guestId);
+                        renderThread(conv || { messages: [], guest_name: guestName });
+                        if (replyArea) replyArea.style.display = 'flex';
                         items.forEach(function(i) { i.style.background = ''; });
                         this.style.background = 'rgba(212, 165, 116, 0.1)';
                     });

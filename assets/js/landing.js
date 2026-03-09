@@ -54,6 +54,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         const priceA2 = parseFloat(a.getAttribute('data-price'));
                         const priceB2 = parseFloat(b.getAttribute('data-price'));
                         return priceB2 - priceA2;
+
+                    case 'rating-high':
+                        const ratingA = parseFloat(a.getAttribute('data-rating') || '0');
+                        const ratingB = parseFloat(b.getAttribute('data-rating') || '0');
+                        // Higher rating first; if equal, fallback to newer date
+                        if (ratingB !== ratingA) {
+                            return ratingB - ratingA;
+                        }
+                        const dateAR = new Date(a.getAttribute('data-date'));
+                        const dateBR = new Date(b.getAttribute('data-date'));
+                        return dateBR - dateAR;
                         
                     case 'newest':
                         const dateA = new Date(a.getAttribute('data-date'));

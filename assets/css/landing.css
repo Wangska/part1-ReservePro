@@ -9,11 +9,12 @@
     --text-dark: #FFFFFF;
     --text-light: #B8B8B8;
     --bg-light: #1F1F1F;
-    --bg-dark: #0F0F0F;
-    --bg-darker: #0A0A0A;
+    --bg-dark: #020617;
+    --bg-darker: #020617;
     --border-color: #3A3A3A;
-    --wood-dark: #2C1810;
-    --wood-medium: #3E2723;
+    /* Former wood tones remapped to gray */
+    --wood-dark: #111827;
+    --wood-medium: #1F2933;
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
     --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
@@ -207,7 +208,8 @@ p {
 .hero {
     position: relative;
     height: 500px;
-    background: linear-gradient(135deg, var(--wood-dark) 0%, var(--wood-medium) 50%, var(--bg-dark) 100%);
+    /* Trendy gray gradient instead of brown */
+    background: linear-gradient(135deg, #111827 0%, #1F2933 45%, #020617 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -315,12 +317,18 @@ p {
     position: sticky;
     top: 90px;
     height: fit-content;
-    background: var(--bg-light);
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
+    /* Stronger glassmorphism: more transparent + brighter edge */
+    background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+        linear-gradient(135deg, rgba(15, 15, 15, 0.70), rgba(31, 31, 31, 0.58));
+    border-radius: 18px;
+    border: 1px solid rgba(212, 165, 116, 0.9);
     padding: 24px;
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--border-color);
+    box-shadow:
+        0 26px 80px rgba(0, 0, 0, 0.95),
+        0 0 0 2px rgba(212, 165, 116, 0.7);
+    backdrop-filter: blur(22px) saturate(160%);
+    -webkit-backdrop-filter: blur(22px) saturate(160%);
 }
 
 .filter-header {
@@ -461,19 +469,27 @@ p {
 
 /* Service Card */
 .service-card {
-    background: var(--bg-light);
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
+    /* Stronger glassmorphism on property cards */
+    background:
+        linear-gradient(150deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03)),
+        linear-gradient(145deg, rgba(15, 15, 15, 0.72), rgba(31, 31, 31, 0.60));
+    border-radius: 18px;
+    border: 1px solid rgba(212, 165, 116, 0.9);
     overflow: hidden;
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--border-color);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow:
+        0 26px 80px rgba(0, 0, 0, 0.96),
+        0 0 0 2px rgba(212, 165, 116, 0.7);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     cursor: pointer;
+    backdrop-filter: blur(22px) saturate(170%);
+    -webkit-backdrop-filter: blur(22px) saturate(170%);
 }
 
 .service-card:hover {
     transform: translateY(-8px);
-    box-shadow: var(--shadow-lg);
+    box-shadow:
+        0 30px 90px rgba(0, 0, 0, 0.98),
+        0 0 0 1px rgba(212, 165, 116, 0.65);
     border-color: var(--primary-color);
 }
 
@@ -613,7 +629,8 @@ p {
     display: inline-block;
     padding: 4px 8px;
     background: #ECFDF5;
-    color: var(--secondary-color);
+    /* Force dark text so it stays visible on light pill even with global span color */
+    color: #0F172A !important;
     font-size: 12px;
     border-radius: 4px;
     font-weight: 600;

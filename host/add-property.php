@@ -74,7 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Handle photo uploads
             $upload_errors = [];
             if (isset($_FILES['property_photos'])) {
-                $upload_dir = $_SERVER['DOCUMENT_ROOT'] . '/part1/uploads/properties/';
+                // Store uploads inside this project directory so 'uploads/properties/...' URLs work reliably
+                $upload_dir = dirname(__DIR__) . '/uploads/properties/';
                 
                 // Create directory if it doesn't exist
                 if (!file_exists($upload_dir)) {
@@ -134,9 +135,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
             
-            $success = true;
-            header('Location: dashboard.php?success=property_added');
-            exit();
+            // Surface any upload-specific errors to the user
+            if (!empty($upload_errors)) {
+                $errors = array_merge($errors, $upload_errors);
+            }
+            
+            if (empty($errors)) {
+                $success = true;
+                header('Location: dashboard.php?success=property_added');
+                exit();
+            }
         } else {
             $errors[] = "Failed to create property. Please try again.";
         }
@@ -157,7 +165,7 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/add-property.css?v=14.0">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=14.0">
 </head>
-<body>
+<body class="dashboard-page">
     <div class="host-layout">
         <!-- Sidebar -->
         <aside class="host-sidebar">
@@ -217,9 +225,12 @@ $conn->close();
         <!-- Main Content -->
         <main class="host-main">
             <div class="host-header" style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <h1>Add New Property 🏠</h1>
-                    <p class="subtitle">List your place and start hosting</p>
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <img src="../background%20image/y.webp" alt="Add property icon" style="width:40px; height:40px; border-radius:8px; object-fit:cover;">
+                    <div>
+                        <h1>Add New Property</h1>
+                        <p class="subtitle">List your place and start hosting</p>
+                    </div>
                 </div>
                 <!-- Theme Toggle -->
                 <div class="theme-toggle">
@@ -239,9 +250,19 @@ $conn->close();
             </div>
             <?php endif; ?>
 
-            <form method="POST" action="add-property.php" class="property-form" enctype="multipart/form-data">
+            <!-- Multi-step wizard wrapper -->
+            <form method="POST" action="add-property.php" class="property-form" enctype="multipart/form-data" id="addPropertyForm">
+                <div class="wizard-steps-indicator">
+                    <span class="wizard-step-dot wizard-step-dot-active" data-step="1">1</span>
+                    <span class="wizard-step-label">Basics</span>
+                    <span class="wizard-step-dot" data-step="2">2</span>
+                    <span class="wizard-step-label">Details</span>
+                    <span class="wizard-step-dot" data-step="3">3</span>
+                    <span class="wizard-step-label">Photos</span>
+                </div>
+
                 <!-- Basic Information -->
-                <div class="form-section">
+                <div class="form-section wizard-step step-1">
                     <h2 class="section-title">📝 Basic Information</h2>
                     
                     <div class="form-group">
@@ -275,7 +296,7 @@ $conn->close();
                 </div>
 
                 <!-- Location -->
-                <div class="form-section">
+                <div class="form-section wizard-step step-1">
                     <h2 class="section-title">📍 Location</h2>
                     
                     <div class="form-group">
@@ -309,7 +330,7 @@ $conn->close();
                 </div>
 
                 <!-- Property Details -->
-                <div class="form-section">
+                <div class="form-section wizard-step step-2">
                     <h2 class="section-title">🛏️ Property Details</h2>
                     
                     <div class="form-row">
@@ -331,7 +352,7 @@ $conn->close();
                 </div>
 
                 <!-- Amenities -->
-                <div class="form-section">
+                <div class="form-section wizard-step step-2">
                     <h2 class="section-title">✨ Amenities</h2>
                     <p class="section-description">Select all amenities available at your property</p>
                     
@@ -355,7 +376,7 @@ $conn->close();
                 </div>
 
                 <!-- Photos Section -->
-                <div class="form-section">
+                <div class="form-section wizard-step step-3">
                     <h2 class="section-title">📸 Property Photos</h2>
                     <p class="section-description">Upload high-quality photos of your property (Maximum 5 photos)</p>
                     
@@ -393,7 +414,9 @@ $conn->close();
                 <!-- Submit -->
                 <div class="form-actions">
                     <a href="dashboard.php" class="btn-secondary">Cancel</a>
-                    <button type="submit" class="btn-primary">Submit for Review</button>
+                    <button type="button" class="btn-secondary" id="wizardBackBtn" style="display:none;">Back</button>
+                    <button type="button" class="btn-primary" id="wizardNextBtn">Next</button>
+                    <button type="submit" class="btn-primary" id="wizardSubmitBtn" style="display:none;">Submit for Review</button>
                 </div>
                 
                 <div class="form-note">
@@ -535,6 +558,55 @@ $conn->close();
                 photoPreviewGrid: !!photoPreviewGrid
             });
         }
+
+        // Simple multi-step wizard logic
+        (function() {
+            const steps = Array.from(document.querySelectorAll('.wizard-step'));
+            if (!steps.length) return;
+            let currentStep = 1;
+            const maxStep = 3;
+            const backBtn = document.getElementById('wizardBackBtn');
+            const nextBtn = document.getElementById('wizardNextBtn');
+            const submitBtn = document.getElementById('wizardSubmitBtn');
+            const dots = Array.from(document.querySelectorAll('.wizard-step-dot'));
+
+            function updateUI() {
+                steps.forEach(s => {
+                    s.classList.remove('wizard-step-active');
+                    if (s.classList.contains('step-' + currentStep)) {
+                        s.classList.add('wizard-step-active');
+                    }
+                });
+                dots.forEach(d => {
+                    const step = parseInt(d.getAttribute('data-step') || '0', 10);
+                    d.classList.toggle('wizard-step-dot-active', step === currentStep);
+                });
+                if (backBtn) backBtn.style.display = currentStep > 1 ? 'inline-block' : 'none';
+                if (nextBtn) nextBtn.style.display = currentStep < maxStep ? 'inline-block' : 'none';
+                if (submitBtn) submitBtn.style.display = currentStep === maxStep ? 'inline-block' : 'none';
+            }
+
+            if (nextBtn) {
+                nextBtn.addEventListener('click', function() {
+                    if (currentStep < maxStep) {
+                        currentStep++;
+                        updateUI();
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                });
+            }
+            if (backBtn) {
+                backBtn.addEventListener('click', function() {
+                    if (currentStep > 1) {
+                        currentStep--;
+                        updateUI();
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                });
+            }
+
+            updateUI();
+        })();
     </script>
 </body>
 </html>

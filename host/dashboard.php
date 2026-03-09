@@ -77,11 +77,11 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Host Dashboard - ReservePro</title>
-    <link rel="stylesheet" href="../assets/css/style.css?v=13.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=13.0">
-    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=13.0">
+    <link rel="stylesheet" href="../assets/css/style.css?v=25.0">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=25.0">
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=25.0">
 </head>
-<body>
+<body class="dashboard-page">
     <div class="host-layout">
         <!-- Sidebar -->
         <aside class="host-sidebar">
@@ -165,7 +165,9 @@ $conn->close();
                 </a>
                 
                 <a href="properties.php" class="stat-card stat-card-link" title="View approved properties">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #10B981, #059669);">✅</div>
+                    <div class="stat-icon stat-icon-img-wrap" style="background: linear-gradient(135deg, #10B981, #059669);">
+                        <img src="../background%20image/p.webp" alt="Approved" class="stat-icon-img">
+                    </div>
                     <div class="stat-content">
                         <h3><?php echo $stats['approved']; ?></h3>
                         <p>Approved</p>
@@ -173,7 +175,9 @@ $conn->close();
                 </a>
                 
                 <a href="properties.php" class="stat-card stat-card-link" title="View pending properties">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #F59E0B, #D97706);">⏳</div>
+                    <div class="stat-icon stat-icon-img-wrap" style="background: linear-gradient(135deg, #F59E0B, #D97706);">
+                        <img src="../background%20image/o.webp" alt="Pending Review" class="stat-icon-img">
+                    </div>
                     <div class="stat-content">
                         <h3><?php echo $stats['pending']; ?></h3>
                         <p>Pending Review</p>
@@ -181,7 +185,9 @@ $conn->close();
                 </a>
                 
                 <a href="bookings.php" class="stat-card stat-card-link" title="View bookings">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #3B82F6, #2563EB);">📅</div>
+                    <div class="stat-icon stat-icon-img-wrap" style="background: linear-gradient(135deg, #3B82F6, #2563EB);">
+                        <img src="../background%20image/u.webp" alt="Bookings" class="stat-icon-img">
+                    </div>
                     <div class="stat-content">
                         <h3><?php echo count($bookings); ?></h3>
                         <p>Recent Bookings</p>
@@ -194,17 +200,23 @@ $conn->close();
                 <h2>Quick Actions</h2>
                 <div class="actions-grid">
                     <a href="add-property.php" class="action-card">
-                        <span class="action-icon">➕</span>
+                        <span class="action-icon">
+                            <img src="../background%20image/y.webp" alt="Add property" style="width:32px; height:32px; border-radius:6px; object-fit:cover;">
+                        </span>
                         <h3>Add New Property</h3>
                         <p>List a new place for guests</p>
                     </a>
                     <a href="properties.php" class="action-card">
-                        <span class="action-icon">📝</span>
+                        <span class="action-icon">
+                            <img src="../background%20image/i.webp" alt="Manage listings" style="width:32px; height:32px; border-radius:6px; object-fit:cover;">
+                        </span>
                         <h3>Manage Listings</h3>
                         <p>Edit your properties</p>
                     </a>
                     <a href="bookings.php" class="action-card">
-                        <span class="action-icon">📅</span>
+                        <span class="action-icon">
+                            <img src="../background%20image/u.webp" alt="View bookings" style="width:32px; height:32px; border-radius:6px; object-fit:cover;">
+                        </span>
                         <h3>View Bookings</h3>
                         <p>Check reservations</p>
                     </a>

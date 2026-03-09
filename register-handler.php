@@ -9,7 +9,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
-    $role = $_POST['role'] ?? 'guest';
+    // Modal sign-up always creates a Guest account
+    $role = 'guest';
     
     // Check if passwords match
     if ($password !== $confirm_password) {
@@ -21,14 +22,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = Auth::register($first_name, $last_name, $email, $password, $role);
     
     if ($result['success']) {
-        // Redirect based on selected role
-        if ($role === 'host') {
-            // Hosts must complete verification before accessing the dashboard
-            header('Location: host/verify-account.php');
-        } else {
-            // Guests go to browse properties (home page)
-            header('Location: home.php');
-        }
+        // Show "check your email" screen instead of logging in
+        header('Location: verify-pending.php');
         exit();
     } else {
         $_SESSION['register_errors'] = $result['errors'];

@@ -63,6 +63,116 @@ function closePropertyModal() {
     document.body.style.overflow = 'auto';
 }
 
+function setupReviewFormHandler() {
+    const form = document.getElementById('reviewForm');
+    const ratingInput = document.getElementById('reviewRating');
+    const starsContainer = document.getElementById('reviewStars');
+    const errorEl = document.getElementById('reviewError');
+
+    if (!form || !ratingInput) return;
+
+    if (starsContainer && !starsContainer.dataset.bound) {
+        const applyRatingColor = (rating) => {
+            Array.from(starsContainer.querySelectorAll('span')).forEach(span => {
+                const v = parseInt(span.getAttribute('data-value') || '0', 10);
+                if (v <= rating) {
+                    span.classList.add('review-star-active');
+                } else {
+                    span.classList.remove('review-star-active');
+                }
+            });
+        };
+
+        // Click = set rating (red stars)
+        starsContainer.addEventListener('click', (e) => {
+            const target = e.target;
+            const value = target && target.getAttribute && target.getAttribute('data-value');
+            if (!value) return;
+            const rating = parseInt(value, 10);
+            ratingInput.value = String(rating);
+            applyRatingColor(rating);
+        });
+
+        // Hover preview = temporarily show red up to hovered star
+        starsContainer.addEventListener('mouseover', (e) => {
+            const target = e.target;
+            const value = target && target.getAttribute && target.getAttribute('data-value');
+            if (!value) return;
+            const rating = parseInt(value, 10);
+            applyRatingColor(rating);
+        });
+
+        // When leaving the stars row, restore to actual selected rating
+        starsContainer.addEventListener('mouseleave', () => {
+            const current = parseInt(ratingInput.value || '0', 10);
+            applyRatingColor(current);
+        });
+
+        starsContainer.dataset.bound = '1';
+    }
+
+    if (!form.dataset.bound) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (!currentPropertyId) return;
+
+            const rating = parseInt(ratingInput.value || '0', 10);
+            const commentEl = document.getElementById('reviewComment');
+            const comment = commentEl ? commentEl.value.trim() : '';
+
+            if (rating < 1 || rating > 5) {
+                if (errorEl) {
+                    errorEl.textContent = 'Please select a rating between 1 and 5 stars.';
+                    errorEl.style.display = 'block';
+                }
+                return;
+            }
+            if (!comment || comment.length < 10) {
+                if (errorEl) {
+                    errorEl.textContent = 'Please enter at least 10 characters in your review.';
+                    errorEl.style.display = 'block';
+                }
+                return;
+            }
+
+            if (errorEl) {
+                errorEl.textContent = '';
+                errorEl.style.display = 'none';
+            }
+
+            const formData = new FormData();
+            formData.append('property_id', String(currentPropertyId));
+            formData.append('rating', String(rating));
+            formData.append('comment', comment);
+
+            fetch('submit-review.php', {
+                method: 'POST',
+                body: formData,
+            })
+                .then(r => r.json())
+                .then(res => {
+                    if (!res || res.error) {
+                        if (errorEl) {
+                            errorEl.textContent = res && res.error ? res.error : 'Failed to submit review.';
+                            errorEl.style.display = 'block';
+                        }
+                        return;
+                    }
+                    // Simple behavior: close and reopen modal to refresh reviews/summary
+                    closePropertyModal();
+                    openPropertyModal(currentPropertyId);
+                })
+                .catch(() => {
+                    if (errorEl) {
+                        errorEl.textContent = 'Something went wrong while submitting your review.';
+                        errorEl.style.display = 'block';
+                    }
+                });
+        });
+        form.dataset.bound = '1';
+    }
+}
+
 function fetchBookedDatesAndRender(property) {
     if (!property.id) {
         renderPropertyDetails(property, []);
@@ -91,12 +201,50 @@ function renderPropertyDetails(property, bookedDates) {
     bookedDates = bookedDates || [];
     bookedDatesSet = new Set(bookedDates);
     
-    // Single full-bleed image (no grid)
-    const primaryPhoto = property.photos && property.photos.length > 0 ? property.photos[0].photo_url : 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800';
+    const averageRating = typeof property.average_rating !== 'undefined' && property.average_rating !== null
+        ? parseFloat(property.average_rating)
+        : null;
+    const reviewCount = typeof property.review_count !== 'undefined' && property.review_count !== null
+        ? parseInt(property.review_count, 10)
+        : 0;
+
+    // Photos: main hero + clickable thumbnails so guests can view all images
+    const photosArray = Array.isArray(property.photos) ? property.photos : [];
+    const fallbackPhoto = 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800';
+    const normalizePhotoUrl = (url) => {
+        if (!url) return fallbackPhoto;
+        if (typeof url === 'string' && url.startsWith('http')) return url;
+        return String(url || '').replace(/^\/+/, '');
+    };
+    const mainPhotoUrl = normalizePhotoUrl(
+        photosArray.length > 0
+            ? photosArray[0].photo_url
+            : (property.primary_photo || '')
+    );
+    const thumbnailsHTML = photosArray.length > 1
+        ? `
+            <div style="margin-top:12px; background:#1F1F1F; border-radius:12px; border:1px solid #3A3A3A; padding:14px;">
+                <div style="font-size:14px; font-weight:600; color:#D4A574; margin-bottom:10px;">Photo gallery</div>
+                <div class="property-modal-thumbnails" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:4px;">
+                    ${photosArray.map((p, idx) => {
+                        const thumbUrl = normalizePhotoUrl(p.photo_url);
+                        const border = idx === 0 ? '#D4A574' : 'transparent';
+                        return `
+                            <div style="flex:0 0 auto; border-radius:8px; overflow:hidden; border:2px solid ${border}; cursor:pointer;"
+                                 onclick="document.getElementById('propertyModalMainPhoto').src='${thumbUrl}';">
+                                <img src="${thumbUrl}" alt="Photo ${idx + 1}" style="width:110px; height:75px; object-fit:cover;" onerror="this.src='${fallbackPhoto}'">
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            </div>
+        `
+        : '';
     const photosHTML = `
         <div class="property-modal-hero-image">
-            <img src="${primaryPhoto}" alt="${property.title || 'Property'}" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800'">
+            <img id="propertyModalMainPhoto" src="${mainPhotoUrl}" alt="${property.title || 'Property'}" onerror="this.src='${fallbackPhoto}'">
         </div>
+        ${thumbnailsHTML}
     `;
     
     // Build amenities HTML
@@ -105,11 +253,13 @@ function renderPropertyDetails(property, bookedDates) {
         amenitiesHTML = `
             <div class="info-section" style="padding: 24px 0; border-bottom: 1px solid #3A3A3A;">
                 <h2 style="font-size: 20px; font-weight: 700; color: #FFFFFF; margin-bottom: 16px;">Amenities</h2>
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                <div class="amenities-pill-grid">
                     ${property.amenities.map(amenity => `
-                        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: #2C2C2C; border-radius: 8px; color: #E0E0E0;">
-                            <span style="font-size: 18px;">${amenity.icon || '✓'}</span>
-                            <span>${amenity.name}</span>
+                        <div class="amenity-pill">
+                            <div class="amenity-pill-icon">
+                                <span>${(amenity.icon || '✓').trim().charAt(0) || '✓'}</span>
+                            </div>
+                            <div class="amenity-pill-label">${amenity.name}</div>
                         </div>
                     `).join('')}
                 </div>
@@ -117,11 +267,31 @@ function renderPropertyDetails(property, bookedDates) {
         `;
     }
     
+    const ratingSummaryHTML = (() => {
+        if (averageRating && reviewCount > 0) {
+            const rounded = averageRating.toFixed(1);
+            const label = reviewCount === 1 ? 'review' : 'reviews';
+            return `
+                <div style="display:flex; align-items:center; gap:8px; margin-top:4px; font-size:14px;">
+                    <span style="color:#FBBF24;">★</span>
+                    <span style="color:#FBBF24; font-weight:600;">${rounded}</span>
+                    <span style="color:#9CA3AF;">(${reviewCount} ${label})</span>
+                </div>
+            `;
+        }
+        return `
+            <div style="margin-top:4px; font-size:14px; color:#6B7280;">
+                No reviews yet
+            </div>
+        `;
+    })();
+
     const html = `
         <div class="property-modal-inner" style="padding: 24px;">
             <!-- Header -->
             <div style="margin-bottom: 24px;">
                 <h1 style="font-size: 28px; font-weight: 700; color: #FFFFFF; margin-bottom: 12px;">${property.title}</h1>
+                ${ratingSummaryHTML}
                 <div class="property-location-click" style="font-size: 16px; color: #B8B8B8; display: flex; align-items: center; gap: 8px; cursor: pointer; text-decoration: underline; text-underline-offset: 4px;" title="Click to show on map">
                     📍 ${property.city}, ${property.country}
                 </div>
@@ -211,6 +381,9 @@ function renderPropertyDetails(property, bookedDates) {
 
                     <!-- Amenities -->
                     ${amenitiesHTML}
+
+                    <!-- Reviews -->
+                    ${renderReviewsSection(property)}
 
                     <!-- Host Info -->
                     <div style="padding: 24px 0;">
@@ -309,6 +482,73 @@ function renderPropertyDetails(property, bookedDates) {
     setTimeout(() => {
         setupBookingCalculator(property.price_per_night, bookedDates);
     }, 100);
+
+    // Setup review stars & form after DOM is in place
+    setupReviewFormHandler();
+}
+
+function renderReviewsSection(property) {
+    const reviews = Array.isArray(property.reviews) ? property.reviews : [];
+    const user = window.currentUser || null;
+    const isGuest = user && user.role === 'guest';
+
+    const reviewsListHTML = reviews.length > 0
+        ? reviews.map(r => {
+            const name = ((r.first_name || '') + ' ' + (r.last_name || '')).trim() || 'Guest';
+            const createdAt = r.created_at ? new Date(r.created_at).toLocaleDateString() : '';
+            const rating = parseInt(r.rating, 10) || 0;
+            const stars = '★'.repeat(Math.max(0, Math.min(5, rating))) + '☆'.repeat(Math.max(0, 5 - rating));
+            const safeComment = (r.comment || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return `
+                <div style="padding:14px 0; border-bottom:1px solid #3A3A3A;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                        <div style="font-weight:600; color:#FFFFFF;">${name}</div>
+                        <div style="font-size:12px; color:#9CA3AF;">${createdAt}</div>
+                    </div>
+                    <div style="font-size:14px; color:#FBBF24; margin-bottom:6px;">${stars}</div>
+                    <div style="font-size:14px; color:#E5E7EB; line-height:1.5;">${safeComment}</div>
+                </div>
+            `;
+        }).join('')
+        : `
+            <p style="color:#9CA3AF; font-size:14px; margin-bottom:0;">
+                No reviews yet. ${isGuest ? 'Be the first to share your experience!' : 'Sign in as a guest to leave a review.'}
+            </p>
+        `;
+
+    const formHTML = isGuest ? `
+        <form id="reviewForm" style="margin-top:18px; display:flex; flex-direction:column; gap:10px;">
+            <div>
+                <label style="display:block; font-size:14px; color:#E5E7EB; font-weight:600; margin-bottom:6px;">Your rating</label>
+                <div id="reviewStars" style="display:flex; gap:4px; font-size:22px; cursor:pointer;">
+                    ${[1,2,3,4,5].map(i => `<span class="review-star" data-value="${i}">★</span>`).join('')}
+                </div>
+                <input type="hidden" id="reviewRating" name="rating" value="0">
+            </div>
+            <div>
+                <label for="reviewComment" style="display:block; font-size:14px; color:#E5E7EB; font-weight:600; margin-bottom:6px;">Your review</label>
+                <textarea id="reviewComment" name="comment" rows="3" style="width:100%; padding:10px; background:#111827; border:1px solid #374151; border-radius:8px; color:#F9FAFB; font-size:14px; resize:vertical;"></textarea>
+            </div>
+            <div id="reviewError" style="font-size:13px; color:#FCA5A5; display:none;"></div>
+            <button type="submit" style="align-self:flex-start; padding:10px 18px; border-radius:999px; border:none; background:linear-gradient(135deg,#D4A574,#B8935E); color:#FFFFFF; font-weight:600; cursor:pointer; font-size:14px;">
+                Submit review
+            </button>
+        </form>
+    ` : `
+        <p style="color:#9CA3AF; font-size:14px; margin-top:14px;">
+            Sign in as a guest to leave a review.
+        </p>
+    `;
+
+    return `
+        <div style="padding:24px 0; border-top:1px solid #3A3A3A; border-bottom:1px solid #3A3A3A; margin-top:8px;">
+            <h2 style="font-size:20px; font-weight:700; color:#FFFFFF; margin-bottom:12px;">Guest reviews</h2>
+            <div>
+                ${reviewsListHTML}
+            </div>
+            ${formHTML}
+        </div>
+    `;
 }
 
 function renderBookingCalendar(bookedDates) {
@@ -398,57 +638,23 @@ function showPropertyMap(property) {
     }
     mapContainer.innerHTML = '<div id="propertyMapDiv" style="width: 100%; height: 100%;"></div>';
 
-    // Prefer exact coordinates from the database if available
+    const cityLower = ((property.city || '').trim()).toLowerCase();
+    const addressLower = ((property.address || '').trim()).toLowerCase();
+    const combined = (cityLower + ' ' + addressLower);
+    const cebuBounds = { latMin: 10.0, latMax: 11.0, lngMin: 123.5, lngMax: 124.2 };
+    const phBounds = { latMin: 4.5, latMax: 21, lngMin: 116, lngMax: 127 };
+    const manilaBounds = { latMin: 14.4, latMax: 14.8, lngMin: 120.9, lngMax: 121.1 };
+    const isManilaArea = /manila|quezon city|makati|caloocan|pasig|mandaluyong|marikina|las piñas|taguig|parañaque|paranaque|valenzuela|malabon|navotas|san juan|pateros|muntinlupa|metro manila|ncr/i.test(combined);
+    const isLapuLapuOrCebu = cityLower.includes('lapu-lapu') || cityLower.includes('lapu lapu') || cityLower.includes('cebu') || cityLower.includes('talamban') || addressLower.includes('cebu city') || addressLower.includes('cebu') || addressLower.includes('talamban');
+
+    // Use stored coordinates only if they're in the correct region (reject Manila coords when address is not Manila/NCR)
     const hasCoords = property.latitude && property.longitude;
     if (hasCoords) {
         const lat = parseFloat(property.latitude);
         const lng = parseFloat(property.longitude);
-        if (!window.L) {
-            const script = document.createElement('script');
-            script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-            script.onload = () => initMap(mapContainer, lat, lng, property);
-            document.head.appendChild(script);
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-            document.head.appendChild(link);
-        } else {
-            initMap(mapContainer, lat, lng, property);
-        }
-        return;
-    }
-
-    // Otherwise, fall back to geocoding the address (approximate)
-    // Build query with region hint so e.g. "Lapu-Lapu City" maps to Cebu, not Manila
-    const city = (property.city || '').trim();
-    const country = (property.country || 'Philippines').trim();
-    let searchQuery = [property.address, city, country].filter(Boolean).join(', ');
-    if (!searchQuery) searchQuery = city + ', ' + country;
-    // Philippine cities that need a region hint so Nominatim returns the right island
-    const cityLower = city.toLowerCase();
-    if (country.toLowerCase().includes('philippines')) {
-        if (cityLower.includes('lapu-lapu') || cityLower.includes('lapu lapu')) searchQuery = (property.address ? property.address + ', ' : '') + (city + ', Cebu, ' + country);
-        else if (cityLower.includes('cebu city') || cityLower === 'cebu') searchQuery = (property.address ? property.address + ', ' : '') + (city + ', Cebu, ' + country);
-        else if (cityLower.includes('davao')) searchQuery = (property.address ? property.address + ', ' : '') + (city + ', Davao del Sur, ' + country);
-        else if (cityLower.includes('iloilo')) searchQuery = (property.address ? property.address + ', ' : '') + (city + ', Iloilo, ' + country);
-    }
-    const geocodeUrl = 'https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(searchQuery) + '&limit=5';
-    fetch(geocodeUrl, { headers: { 'Accept': 'application/json', 'User-Agent': 'ReserveProPropertyMap/1.0' } })
-        .then(r => r.json())
-        .then(results => {
-            // Prefer result that matches the intended region (avoid Manila when searching for Cebu, etc.)
-            let lat = 14.5995, lng = 120.9842;
-            if (results && results.length > 0) {
-                const cebuBounds = { latMin: 10.0, latMax: 11.0, lngMin: 123.5, lngMax: 124.2 };   // Cebu island
-                const manilaBounds = { latMin: 14.4, latMax: 14.8, lngMin: 120.9, lngMax: 121.1 }; // Manila
-                const pick = results.find(r => {
-                    const la = parseFloat(r.lat), ln = parseFloat(r.lon);
-                    if (cityLower.includes('lapu-lapu') || cityLower.includes('cebu')) return la >= cebuBounds.latMin && la <= cebuBounds.latMax && ln >= cebuBounds.lngMin && ln <= cebuBounds.lngMax;
-                    return true;
-                }) || results[0];
-                lat = parseFloat(pick.lat);
-                lng = parseFloat(pick.lon);
-            }
+        const inManila = lat >= manilaBounds.latMin && lat <= manilaBounds.latMax && lng >= manilaBounds.lngMin && lng <= manilaBounds.lngMax;
+        const wrongRegion = inManila && !isManilaArea;
+        if (!wrongRegion) {
             if (!window.L) {
                 const script = document.createElement('script');
                 script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
@@ -461,11 +667,89 @@ function showPropertyMap(property) {
             } else {
                 initMap(mapContainer, lat, lng, property);
             }
+            return;
+        }
+    }
+
+    // Otherwise, fall back to geocoding the address (approximate)
+    const city = (property.city || '').trim();
+    const country = (property.country || 'Philippines').trim();
+    let searchQuery = [property.address, city, country].filter(Boolean).join(', ');
+    if (!searchQuery) searchQuery = city + ', ' + country;
+    if (country.toLowerCase().includes('philippines')) {
+        if (cityLower.includes('lapu-lapu') || cityLower.includes('lapu lapu')) searchQuery = (property.address ? property.address + ', ' : '') + (city + ', Cebu, ' + country);
+        else if (cityLower.includes('cebu city') || cityLower === 'cebu' || cityLower.includes('talamban') || addressLower.includes('cebu city') || addressLower.includes('talamban')) searchQuery = (property.address ? property.address + ', ' : '') + (city + ', Cebu, ' + country);
+        else if (cityLower.includes('davao') || addressLower.includes('davao')) searchQuery = (property.address ? property.address + ', ' : '') + (city + ', Davao del Sur, ' + country);
+        else if (cityLower.includes('iloilo') || addressLower.includes('iloilo')) searchQuery = (property.address ? property.address + ', ' : '') + (city + ', Iloilo, ' + country);
+        else if (cityLower.includes('baguio') || addressLower.includes('baguio')) searchQuery = (property.address ? property.address + ', ' : '') + (city + ', Benguet, ' + country);
+        else if (cityLower.includes('bacolod') || addressLower.includes('bacolod')) searchQuery = (property.address ? property.address + ', ' : '') + (city + ', Negros Occidental, ' + country);
+        else if (cityLower.includes('cagayan de oro') || cityLower.includes('cdo') || addressLower.includes('cagayan de oro')) searchQuery = (property.address ? property.address + ', ' : '') + (city + ', Misamis Oriental, ' + country);
+        else if (cityLower.includes('zamboanga') || addressLower.includes('zamboanga')) searchQuery = (property.address ? property.address + ', ' : '') + (city + ', Zamboanga del Sur, ' + country);
+        else if (cityLower.includes('general santos') || cityLower.includes('gensan') || addressLower.includes('general santos')) searchQuery = (property.address ? property.address + ', ' : '') + (city + ', South Cotabato, ' + country);
+    }
+    const runMap = (lat, lng) => {
+        if (!window.L) {
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+            script.onload = () => initMap(mapContainer, lat, lng, property);
+            document.head.appendChild(script);
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+            document.head.appendChild(link);
+        } else {
+            initMap(mapContainer, lat, lng, property);
+        }
+    };
+    const defaultLapuLapu = { lat: 10.3119, lng: 123.9494 };
+    const defaultManila = { lat: 14.5995, lng: 120.9842 };
+    const geocodeUrl = 'https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(searchQuery) + '&limit=5';
+    fetch(geocodeUrl, { headers: { 'Accept': 'application/json', 'User-Agent': 'ReserveProPropertyMap/1.0' } })
+        .then(r => r.json())
+        .then(results => {
+            let lat = isLapuLapuOrCebu ? defaultLapuLapu.lat : defaultManila.lat;
+            let lng = isLapuLapuOrCebu ? defaultLapuLapu.lng : defaultManila.lng;
+            if (results && results.length > 0) {
+                const pick = results.find(r => {
+                    const la = parseFloat(r.lat), ln = parseFloat(r.lon);
+                    if (la < phBounds.latMin || la > phBounds.latMax || ln < phBounds.lngMin || ln > phBounds.lngMax) return false;
+                    if (isLapuLapuOrCebu) return la >= cebuBounds.latMin && la <= cebuBounds.latMax && ln >= cebuBounds.lngMin && ln <= cebuBounds.lngMax;
+                    return true;
+                });
+                if (pick) {
+                    lat = parseFloat(pick.lat);
+                    lng = parseFloat(pick.lon);
+                } else if (isLapuLapuOrCebu) {
+                    const addr = (property.address || '').toLowerCase();
+                    let fallbackQuery = 'Cebu City, Cebu, Philippines';
+                    if (addr.includes('maribago')) fallbackQuery = 'Maribago, Lapu-Lapu City, Cebu, Philippines';
+                    else if (addr.includes('talamban')) fallbackQuery = 'Talamban, Cebu City, Cebu, Philippines';
+                    else if (addr.includes('lapu-lapu')) fallbackQuery = 'Lapu-Lapu City, Cebu, Philippines';
+                    return fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(fallbackQuery) + '&limit=1', { headers: { 'Accept': 'application/json', 'User-Agent': 'ReserveProPropertyMap/1.0' } })
+                        .then(r2 => r2.json())
+                        .then(r2 => {
+                            if (r2 && r2[0]) {
+                                runMap(parseFloat(r2[0].lat), parseFloat(r2[0].lon));
+                            } else {
+                                runMap(defaultLapuLapu.lat, defaultLapuLapu.lng);
+                            }
+                        })
+                        .catch(() => runMap(defaultLapuLapu.lat, defaultLapuLapu.lng));
+                } else {
+                    const first = results.find(r => {
+                        const la = parseFloat(r.lat), ln = parseFloat(r.lon);
+                        return la >= phBounds.latMin && la <= phBounds.latMax && ln >= phBounds.lngMin && ln <= phBounds.lngMax;
+                    }) || results[0];
+                    lat = parseFloat(first.lat);
+                    lng = parseFloat(first.lon);
+                }
+            }
+            runMap(lat, lng);
         })
         .catch(() => {
-            const lat = 14.5995;
-            const lng = 120.9842;
-            if (window.L) initMap(mapContainer, lat, lng, property);
+            const lat = isLapuLapuOrCebu ? defaultLapuLapu.lat : defaultManila.lat;
+            const lng = isLapuLapuOrCebu ? defaultLapuLapu.lng : defaultManila.lng;
+            if (window.L) runMap(lat, lng);
             else mapContainer.innerHTML = '<p style="padding: 20px; color: #B8B8B8;">Map could not be loaded. Location: ' + (property.city + ', ' + property.country) + '</p>';
         });
 }
@@ -477,7 +761,8 @@ function initMap(container, lat, lng, property) {
     const map = L.map(div).setView([lat, lng], 16);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
     const marker = L.marker([lat, lng]).addTo(map);
-    marker.bindPopup('<strong>' + (property.title || '') + '</strong><br>' + (property.city + ', ' + property.country)).openPopup();
+    const addressLine = [property.address, property.city, property.country].filter(Boolean).join(', ') || (property.city + ', ' + property.country);
+    marker.bindPopup('<strong>' + (property.title || '') + '</strong><br>' + addressLine).openPopup();
     window.propertyMap = map;
     window.propertyMapMarker = marker;
 }
@@ -566,11 +851,79 @@ function setupBookingCalculator(pricePerNight, bookedDates) {
     const bookingForm = document.getElementById('bookingForm');
     bookingForm.addEventListener('submit', function(e) {
         e.preventDefault();
+
+        const user = window.currentUser || null;
+        if (!user || user.role !== 'guest') {
+            alert('Please sign in as a guest to make a booking.');
+            window.location.href = 'login.php';
+            return;
+        }
+
         if (checkIn.value && checkOut.value && isRangeBlocked(checkIn.value, checkOut.value)) {
             alert('Some selected dates are already booked. Please choose different dates.');
             return;
         }
-        alert('Booking feature coming soon! Total: ' + document.getElementById('modal_total').textContent);
+
+        if (!checkIn.value || !checkOut.value) {
+            alert('Please select both check-in and check-out dates.');
+            return;
+        }
+
+        const guestsInput = document.getElementById('modal_guests');
+        const guestsVal = guestsInput ? parseInt(guestsInput.value || '0', 10) : 0;
+        if (!guestsVal || guestsVal < 1) {
+            alert('Please enter the number of guests.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('property_id', String(currentPropertyId));
+        formData.append('check_in', checkIn.value);
+        formData.append('check_out', checkOut.value);
+        formData.append('guests', String(guestsVal));
+
+        const reserveBtn = bookingForm.querySelector('button[type="submit"]');
+        if (reserveBtn) {
+            reserveBtn.disabled = true;
+            reserveBtn.textContent = 'Processing...';
+        }
+
+        fetch('create-booking.php', {
+            method: 'POST',
+            body: formData
+        })
+            .then(r => r.json())
+            .then(res => {
+                if (!res || res.error) {
+                    alert(res && res.error ? res.error : 'Failed to create booking. Please try again.');
+                    return;
+                }
+
+                const totalText = (res.total !== undefined)
+                    ? '₱' + Number(res.total).toLocaleString('en-PH', { minimumFractionDigits: 2 })
+                    : document.getElementById('modal_total').textContent;
+
+                // If backend returns a payment_url (once GCash is integrated), redirect there
+                if (res.payment_url) {
+                    alert('Booking created. You will be redirected to GCash to complete your payment.\n\nTotal: ' + totalText);
+                    window.location.href = res.payment_url;
+                    return;
+                }
+
+                // Fallback: booking without live payment integration
+                alert((res.message || 'Booking created successfully.') + '\n\nTotal: ' + totalText + '\n\nPayment method: GCash (to be completed separately).');
+                closePropertyModal();
+                window.location.href = 'dashboard.php';
+            })
+            .catch(() => {
+                alert('Network error while creating booking. Please try again.');
+            })
+            .finally(() => {
+                if (reserveBtn) {
+                    reserveBtn.disabled = false;
+                    reserveBtn.textContent = 'Reserve Now';
+                }
+            });
     });
 }
 

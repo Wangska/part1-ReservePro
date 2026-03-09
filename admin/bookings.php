@@ -64,7 +64,8 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=10.0">
     <style>
         .bookings-header {
-            background: linear-gradient(135deg, #2C1810 0%, #3E2723 50%, #0F0F0F 100%);
+            /* Trendy gray header instead of brown */
+            background: linear-gradient(135deg, #111827 0%, #1F2933 45%, #020617 100%);
             padding: 40px;
             border-radius: 16px;
             margin-bottom: 32px;
@@ -84,7 +85,7 @@ $conn->close();
         }
     </style>
 </head>
-<body>
+<body class="dashboard-page">
     <div class="host-layout">
         <!-- Sidebar -->
         <aside class="host-sidebar">
@@ -99,6 +100,10 @@ $conn->close();
                 <a href="dashboard.php" class="nav-item">
                     <span class="nav-icon">📊</span>
                     <span>Dashboard</span>
+                </a>
+                <a href="host-verifications.php" class="nav-item">
+                    <span class="nav-icon">✅</span>
+                    <span>Host Verifications</span>
                 </a>
                 <a href="properties.php" class="nav-item">
                     <span class="nav-icon">🏠</span>

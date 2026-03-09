@@ -35,7 +35,8 @@ function getCurrentUser() {
 // Redirect if not logged in
 function requireLogin() {
     if (!isLoggedIn()) {
-        header('Location: login.php');
+        // Always redirect to the main login page at the project root
+        header('Location: /part1-ReservePro/login.php');
         exit();
     }
 }

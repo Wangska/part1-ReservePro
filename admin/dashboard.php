@@ -39,12 +39,12 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - ReservePro</title>
-    <link rel="stylesheet" href="../assets/css/style.css?v=13.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=13.0">
-    <link rel="stylesheet" href="../assets/css/admin.css?v=13.0">
-    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=13.0">
+    <link rel="stylesheet" href="../assets/css/style.css?v=25.0">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=25.0">
+    <link rel="stylesheet" href="../assets/css/admin.css?v=25.0">
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=25.0">
 </head>
-<body>
+<body class="dashboard-page">
     <div class="host-layout">
         <!-- Sidebar -->
         <aside class="host-sidebar">
@@ -59,6 +59,10 @@ $conn->close();
                 <a href="dashboard.php" class="nav-item active">
                     <span class="nav-icon">👑</span>
                     <span>Admin Panel</span>
+                </a>
+                <a href="host-verifications.php" class="nav-item">
+                    <span class="nav-icon">✅</span>
+                    <span>Host Verifications</span>
                 </a>
                 <a href="properties.php" class="nav-item">
                     <span class="nav-icon">🏠</span>
@@ -117,7 +121,9 @@ $conn->close();
                 </div>
                 
                 <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #F59E0B, #D97706);">⏳</div>
+                    <div class="stat-icon stat-icon-img-wrap" style="background: linear-gradient(135deg, #F59E0B, #D97706);">
+                        <img src="../background%20image/o.webp" alt="Pending Review" class="stat-icon-img">
+                    </div>
                     <div class="stat-content">
                         <h3><?php echo $stats['pending']; ?></h3>
                         <p>Pending Review</p>
@@ -159,13 +165,16 @@ $conn->close();
                         $raw_photo = $property['primary_photo'] ?? '';
                         if (!empty($raw_photo) && strpos($raw_photo, 'http') !== 0) {
                             $photo_url = htmlspecialchars('../' . ltrim($raw_photo, '/'));
+                        } elseif (!empty($raw_photo)) {
+                            $photo_url = htmlspecialchars($raw_photo);
                         } else {
-                            $photo_url = !empty($raw_photo) ? htmlspecialchars($raw_photo) : 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400';
+                            // Clear "no photo" placeholder so it's obvious the host hasn't uploaded images yet
+                            $photo_url = 'https://via.placeholder.com/400x260?text=No+Photo';
                         }
                     ?>
                         <div class="review-card">
                             <div class="review-image">
-                                <img src="<?php echo $photo_url; ?>" alt="Property" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400'">
+                                <img src="<?php echo $photo_url; ?>" alt="Property" onerror="this.src='https://via.placeholder.com/400x260?text=No+Photo'">
                             </div>
                             <div class="review-content">
                                 <div class="review-header">
@@ -200,7 +209,7 @@ $conn->close();
                                         <input type="hidden" name="action" value="reject">
                                         <button type="submit" class="btn-reject">✗ Reject</button>
                                     </form>
-                                    <a href="property-detail.php?id=<?php echo $property['id']; ?>" class="btn-view">View Details</a>
+                                    <a href="view-property.php?id=<?php echo $property['id']; ?>" class="btn-view">View Details</a>
                                 </div>
                             </div>
                         </div>

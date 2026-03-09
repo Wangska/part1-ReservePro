@@ -50,7 +50,8 @@ $conn->close();
     <link rel="stylesheet" href="assets/css/animations.css?v=1.0">
     <style>
         .experiences-hero {
-            background: linear-gradient(135deg, #2C1810 0%, #3E2723 50%, #0F0F0F 100%);
+            /* Trendy gray hero instead of brown */
+            background: linear-gradient(135deg, #111827 0%, #1F2933 45%, #020617 100%);
             padding: 80px 20px 60px;
             text-align: center;
             color: white;
@@ -280,6 +281,21 @@ $conn->close();
     </style>
 </head>
 <body>
+    <script>
+        window.currentUser = <?php
+            if ($user) {
+                $safeUser = [
+                    'id' => (int) $user['id'],
+                    'role' => $user['role'] ?? null,
+                    'first_name' => $user['first_name'] ?? '',
+                    'last_name' => $user['last_name'] ?? '',
+                ];
+                echo json_encode($safeUser);
+            } else {
+                echo 'null';
+            }
+        ?>;
+    </script>
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
@@ -310,7 +326,7 @@ $conn->close();
                     </div>
                 <?php else: ?>
                     <button onclick="openModal('loginModal')" class="nav-btn-outline">Sign in</button>
-                    <button onclick="openModal('registerModal')" class="nav-btn">Sign up</button>
+                    <button onclick="openModal('registerModal')" class="nav-btn">Sign up as Guest</button>
                 <?php endif; ?>
                 
                 <!-- Theme Toggle -->
@@ -403,7 +419,11 @@ $conn->close();
             <button class="modal-close" onclick="closeModal('loginModal')">&times;</button>
             
             <div class="modal-header">
-                <div style="font-size: 48px; margin-bottom: 10px;">🔐</div>
+                <div style="margin-bottom: 12px;">
+                    <img src="background%20image/z.jpg"
+                         alt="Secure login"
+                         style="width:64px; height:64px; border-radius:18px; object-fit:cover; display:block; margin:0 auto;">
+                </div>
                 <h2>Welcome back</h2>
                 <p>Log in to your account</p>
             </div>
@@ -427,7 +447,7 @@ $conn->close();
             </div>
 
             <div class="social-buttons">
-                <button class="modal-btn-social" onclick="alert('Social login coming soon!')">
+                <button class="modal-btn-social" onclick="window.location.href='google-login.php'; return false;">
                     <svg width="20" height="20" viewBox="0 0 24 24">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                         <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -502,7 +522,7 @@ $conn->close();
             </div>
 
             <div class="social-buttons">
-                <button class="modal-btn-social" onclick="alert('Social signup coming soon!')">
+                <button class="modal-btn-social" onclick="window.location.href='google-login.php'; return false;">
                     <svg width="20" height="20" viewBox="0 0 24 24">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                         <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -537,7 +557,7 @@ $conn->close();
     <script src="assets/js/theme-toggle.js"></script>
     <script src="assets/js/landing.js"></script>
     <script src="assets/js/modal.js"></script>
-    <script src="assets/js/property-modal.js?v=4.0"></script>
+    <script src="assets/js/property-modal.js?v=6.0"></script>
     <script>
         // Sort functionality for experiences page
         const experienceSort = document.querySelector('.experience-sort');

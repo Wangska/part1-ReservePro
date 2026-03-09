@@ -106,7 +106,7 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=13.0">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=13.0">
 </head>
-<body>
+<body class="dashboard-page">
     <div class="host-layout">
         <!-- Sidebar (same as dashboard) -->
         <aside class="host-sidebar">
@@ -187,6 +187,9 @@ $conn->close();
                     <?php echo htmlspecialchars($action_error); ?>
                 </div>
             <?php endif; ?>
+            <?php if (isset($_GET['error']) && $_GET['error'] === 'notfound'): ?>
+                <div class="alert alert-error">Property not found or you do not have permission to view it.</div>
+            <?php endif; ?>
 
             <?php if (empty($properties)): ?>
                 <div class="empty-state">
@@ -221,9 +224,19 @@ $conn->close();
                                     <span>👥 <?php echo $property['max_guests']; ?> guests</span>
                                 </div>
                                 <div class="property-footer" style="display: flex; flex-direction: column; gap: 8px;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
                                         <span class="price">₱<?php echo number_format($property['price_per_night'], 2); ?>/night</span>
-                                        <a href="edit-property.php?id=<?php echo $property['id']; ?>" class="btn-edit">Edit</a>
+                                        <div style="display: flex; gap: 8px;">
+                                            <a href="view-property.php?id=<?php echo (int)$property['id']; ?>" class="btn-view-property" style="display: inline-block; padding: 8px 16px; background: #3B82F6; color: #fff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 13px;">View</a>
+                                            <form method="POST" action="properties.php" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this property? This cannot be undone.');">
+                                                <input type="hidden" name="property_id" value="<?php echo (int)$property['id']; ?>">
+                                                <input type="hidden" name="action" value="delete_property">
+                                                <button type="submit" class="btn-delete-property" style="padding: 8px 16px; background: #EF4444; color: #fff; border: none; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer;">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; align-items: center;">
+                                        <a href="edit-property.php?id=<?php echo (int)$property['id']; ?>" class="btn-edit">Edit</a>
                                     </div>
 
                                     <?php if (in_array($property['status'], ['approved', 'out_of_order'])): ?>
@@ -259,12 +272,6 @@ $conn->close();
                                             <button type="submit" class="btn-small btn-outline">
                                                 <?php echo $property['auto_accept_bookings'] ? 'Disable' : 'Enable'; ?>
                                             </button>
-                                        </form>
-
-                                        <form method="POST" action="properties.php" onsubmit="return confirm('Are you sure you want to delete this property? This cannot be undone.');">
-                                            <input type="hidden" name="property_id" value="<?php echo (int)$property['id']; ?>">
-                                            <input type="hidden" name="action" value="delete_property">
-                                            <button type="submit" class="btn-small btn-danger">Delete</button>
                                         </form>
                                     </div>
                                 </div>

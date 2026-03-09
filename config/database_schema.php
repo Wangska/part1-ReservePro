@@ -77,6 +77,23 @@ function initializeHostTables() {
     )";
     $conn->query($sql);
     
+    // Payments table (track external payment for bookings, e.g. GCash)
+    $sql = "CREATE TABLE IF NOT EXISTS payments (
+        id INT(11) AUTO_INCREMENT PRIMARY KEY,
+        booking_id INT(11) NOT NULL,
+        provider VARCHAR(50) NOT NULL,
+        method VARCHAR(50) NOT NULL,
+        amount DECIMAL(10, 2) NOT NULL,
+        currency VARCHAR(10) NOT NULL DEFAULT 'PHP',
+        status ENUM('pending', 'paid', 'failed', 'cancelled') NOT NULL DEFAULT 'pending',
+        external_reference VARCHAR(191) DEFAULT NULL,
+        raw_payload TEXT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE
+    )";
+    $conn->query($sql);
+    
     // Add 'out_of_order' to properties.status only if not already present (avoids repeated ALTER = no table lock)
     $col = $conn->query("SHOW COLUMNS FROM properties WHERE Field = 'status'");
     if ($col && $col->num_rows > 0) {
@@ -100,7 +117,31 @@ function initializeHostTables() {
         $conn->query("ALTER TABLE properties ADD COLUMN auto_accept_bookings TINYINT(1) NOT NULL DEFAULT 0 AFTER longitude");
     }
     
-    // User roles (extend users table)
+    // Property reviews table (guests reviewing properties)
+    $sql = "CREATE TABLE IF NOT EXISTS property_reviews (
+        id INT(11) AUTO_INCREMENT PRIMARY KEY,
+        property_id INT(11) NOT NULL,
+        guest_id INT(11) NOT NULL,
+        rating TINYINT(1) NOT NULL,
+        comment TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE,
+        FOREIGN KEY (guest_id) REFERENCES users(id) ON DELETE CASCADE,
+        UNIQUE KEY uniq_property_guest (property_id, guest_id)
+    )";
+    $conn->query($sql);
+
+    // Add rating summary columns to properties (for fast listing display)
+    $result = $conn->query("SHOW COLUMNS FROM properties LIKE 'average_rating'");
+    if ($result && $result->num_rows == 0) {
+        $conn->query("ALTER TABLE properties ADD COLUMN average_rating DECIMAL(3,2) NULL DEFAULT NULL AFTER auto_accept_bookings");
+    }
+    $result = $conn->query("SHOW COLUMNS FROM properties LIKE 'review_count'");
+    if ($result && $result->num_rows == 0) {
+        $conn->query("ALTER TABLE properties ADD COLUMN review_count INT NOT NULL DEFAULT 0 AFTER average_rating");
+    }
+    
+    // User roles and profile fields (extend users table)
     // Check if role column exists before adding
     $result = $conn->query("SHOW COLUMNS FROM users LIKE 'role'");
     if ($result && $result->num_rows == 0) {
@@ -108,10 +149,42 @@ function initializeHostTables() {
         $conn->query($sql);
     }
 
+    // Date of birth for users (optional, used for host onboarding)
+    $result = $conn->query("SHOW COLUMNS FROM users LIKE 'date_of_birth'");
+    if ($result && $result->num_rows == 0) {
+        $conn->query("ALTER TABLE users ADD COLUMN date_of_birth DATE NULL AFTER last_name");
+    }
+
+    // Email verification fields
+    $result = $conn->query("SHOW COLUMNS FROM users LIKE 'email_verified'");
+    if ($result && $result->num_rows == 0) {
+        $conn->query("ALTER TABLE users ADD COLUMN email_verified TINYINT(1) NOT NULL DEFAULT 0 AFTER role");
+    }
+    $result = $conn->query("SHOW COLUMNS FROM users LIKE 'verification_token'");
+    if ($result && $result->num_rows == 0) {
+        $conn->query("ALTER TABLE users ADD COLUMN verification_token VARCHAR(100) DEFAULT NULL AFTER email_verified");
+    }
+
     // Host verification flag
     $result = $conn->query("SHOW COLUMNS FROM users LIKE 'host_verified'");
     if ($result && $result->num_rows == 0) {
         $conn->query("ALTER TABLE users ADD COLUMN host_verified TINYINT(1) NOT NULL DEFAULT 0 AFTER role");
+    }
+
+    // Host verification status for DB display: none, under review, approved, rejected
+    $result = $conn->query("SHOW COLUMNS FROM users LIKE 'host_verification_status'");
+    if ($result && $result->num_rows == 0) {
+        $conn->query("ALTER TABLE users ADD COLUMN host_verification_status ENUM('none','under review','approved','rejected') NOT NULL DEFAULT 'none' AFTER host_verified");
+        $conn->query("UPDATE users SET host_verification_status = 'approved' WHERE host_verified = 1");
+    } else {
+        $row = $result->fetch_assoc();
+        if ($row && strpos($row['Type'], 'pending') !== false) {
+            $conn->query("ALTER TABLE users MODIFY COLUMN host_verification_status ENUM('none','pending','under review','approved','rejected') NOT NULL DEFAULT 'none'");
+            $conn->query("UPDATE users SET host_verification_status = 'under review' WHERE host_verification_status = 'pending'");
+            $conn->query("ALTER TABLE users MODIFY COLUMN host_verification_status ENUM('none','under review','approved','rejected') NOT NULL DEFAULT 'none'");
+        }
+        // Sync: any host with pending verification in host_documents should show 'under review' in users
+        $conn->query("UPDATE users u JOIN host_documents h ON h.user_id = u.id SET u.host_verification_status = 'under review' WHERE h.verification_status = 'pending' AND u.host_verification_status = 'none'");
     }
 
     // Host documents table (stores KYC/verification data for hosts)
@@ -132,6 +205,12 @@ function initializeHostTables() {
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     )";
     $conn->query($sql);
+
+    // Host verification status: pending (awaiting admin), approved, rejected
+    $result = $conn->query("SHOW COLUMNS FROM host_documents LIKE 'verification_status'");
+    if ($result && $result->num_rows == 0) {
+        $conn->query("ALTER TABLE host_documents ADD COLUMN verification_status ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending' AFTER bank_account_number");
+    }
     
     // Messages: guest -> host (about a property)
     $sql = "CREATE TABLE IF NOT EXISTS messages (

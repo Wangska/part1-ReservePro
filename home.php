@@ -79,14 +79,24 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ReservePro - Discover Amazing Services</title>
-    <link rel="stylesheet" href="assets/css/style.css?v=23.0">
-    <link rel="stylesheet" href="assets/css/landing.css?v=23.0">
-    <link rel="stylesheet" href="assets/css/modal.css?v=23.0">
-    <link rel="stylesheet" href="assets/css/role-select.css?v=23.0">
-    <link rel="stylesheet" href="assets/css/theme-toggle.css?v=23.0">
+    <link rel="stylesheet" href="assets/css/style.css?v=25.0">
+    <link rel="stylesheet" href="assets/css/landing.css?v=25.0">
+    <link rel="stylesheet" href="assets/css/modal.css?v=25.0">
+    <link rel="stylesheet" href="assets/css/role-select.css?v=25.0">
+    <link rel="stylesheet" href="assets/css/theme-toggle.css?v=25.0">
     <link rel="stylesheet" href="assets/css/animations.css?v=1.0">
 </head>
-<body>
+<body class="dashboard-page">
+    <!-- 3D ReservePro loading overlay -->
+    <div id="rp-loader">
+        <div class="rp-loader-inner">
+            <div class="rp-logo-3d">
+                <img src="background%20image/asd.webp" alt="ReservePro logo">
+            </div>
+            <div class="rp-loader-text">ReservePro</div>
+            <div class="rp-loader-subtext">Loading your next stay</div>
+        </div>
+    </div>
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
@@ -103,9 +113,18 @@ $conn->close();
                 </div>
             </div>
             <div class="nav-right">
+                <?php if (!$user): ?>
+                    <button onclick="window.location.href='become-host.php';" class="nav-btn-outline" style="margin-right:8px;">
+                        Become a Host
+                    </button>
+                <?php endif; ?>
                 <?php if ($user): ?>
                     <div class="user-nav">
                         <span class="user-greeting">Hi, <?php echo htmlspecialchars($user['first_name']); ?></span>
+                        <a href="messages.php" class="nav-btn-outline">Messages</a>
+                        <?php if (isset($user['role']) && $user['role'] === 'guest'): ?>
+                        <a href="profile.php" class="nav-btn-outline">Profile</a>
+                        <?php endif; ?>
                         <?php if (isset($user['role']) && $user['role'] === 'admin'): ?>
                             <a href="admin/dashboard.php" class="nav-btn">Admin Panel</a>
                         <?php elseif (isset($user['role']) && $user['role'] === 'host'): ?>
@@ -115,7 +134,7 @@ $conn->close();
                     </div>
                 <?php else: ?>
                     <button onclick="openModal('loginModal')" class="nav-btn-outline">Sign in</button>
-                    <button onclick="openModal('registerModal')" class="nav-btn">Sign up</button>
+                    <button onclick="openModal('registerModal')" class="nav-btn">Sign up as Guest</button>
                 <?php endif; ?>
                 
                 <!-- Theme Toggle -->
@@ -126,6 +145,23 @@ $conn->close();
             </div>
         </div>
     </nav>
+
+    <!-- Expose current user info to JS (used for things like reviews) -->
+    <script>
+        window.currentUser = <?php
+            if ($user) {
+                $safeUser = [
+                    'id' => (int) $user['id'],
+                    'role' => $user['role'] ?? null,
+                    'first_name' => $user['first_name'] ?? '',
+                    'last_name' => $user['last_name'] ?? '',
+                ];
+                echo json_encode($safeUser);
+            } else {
+                echo 'null';
+            }
+        ?>;
+    </script>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -216,6 +252,7 @@ $conn->close();
                             <option value="popular">Popular</option>
                             <option value="price-low">Price: Low to High</option>
                             <option value="price-high">Price: High to Low</option>
+                            <option value="rating-high">Rating: High to Low</option>
                             <option value="newest">Newest First</option>
                         </select>
                     </div>
@@ -240,6 +277,9 @@ $conn->close();
                                 $image_url = 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400';
                             }
                             $amenity_count = $property_amenities[$property['id']] ?? 0;
+                            $avg_rating = isset($property['average_rating']) ? (float) $property['average_rating'] : null;
+                            $review_count = isset($property['review_count']) ? (int) $property['review_count'] : 0;
+                            $rating_for_data = $avg_rating !== null ? number_format($avg_rating, 2, '.', '') : '0';
                         ?>
                         <div class="service-card" onclick="openPropertyModal(<?php echo $property['id']; ?>)" 
                              data-price="<?php echo $property['price_per_night']; ?>" 
@@ -249,7 +289,8 @@ $conn->close();
                              data-city="<?php echo htmlspecialchars(strtolower($property['city'])); ?>"
                              data-country="<?php echo htmlspecialchars(strtolower($property['country'])); ?>"
                              data-description="<?php echo htmlspecialchars(strtolower($property['description'])); ?>"
-                             data-amenity-ids="<?php echo implode(',', array_map('intval', $property_amenity_ids[$property['id']] ?? [])); ?>">
+                             data-amenity-ids="<?php echo implode(',', array_map('intval', $property_amenity_ids[$property['id']] ?? [])); ?>"
+                             data-rating="<?php echo $rating_for_data; ?>">
                             <div class="card-image">
                                 <img src="<?php echo htmlspecialchars($image_url); ?>" alt="<?php echo htmlspecialchars($property['title']); ?>" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400'">
                                 <span class="card-badge"><?php echo ucfirst($property['property_type']); ?></span>
@@ -260,6 +301,17 @@ $conn->close();
                                 <div class="card-location">
                                     📍 <?php echo htmlspecialchars($property['city'] . ', ' . $property['country']); ?>
                                 </div>
+                                <?php if ($avg_rating !== null && $review_count > 0): ?>
+                                    <div class="card-rating" style="display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 13px;">
+                                        <span style="color: #FBBF24;">★</span>
+                                        <span style="color: #FBBF24;"><?php echo number_format($avg_rating, 1); ?></span>
+                                        <span style="color: #9CA3AF;">(<?php echo $review_count; ?>)</span>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="card-rating" style="margin-top: 6px; font-size: 13px; color: #6B7280;">
+                                        No reviews yet
+                                    </div>
+                                <?php endif; ?>
                                 <div class="card-details">
                                     <span>🛏️ <?php echo $property['bedrooms']; ?> bed<?php echo $property['bedrooms'] > 1 ? 's' : ''; ?></span>
                                     <span>🚿 <?php echo $property['bathrooms']; ?> bath<?php echo $property['bathrooms'] > 1 ? 's' : ''; ?></span>
@@ -351,7 +403,11 @@ $conn->close();
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal('loginModal')">&times;</button>
             <div class="modal-header">
-                <div style="font-size: 48px; margin-bottom: 16px;">🔐</div>
+                <div style="margin-bottom: 12px;">
+                    <img src="background%20image/z.jpg"
+                         alt="Secure login"
+                         style="width:64px; height:64px; border-radius:18px; object-fit:cover; display:block; margin:0 auto;">
+                </div>
                 <h2>Welcome Back</h2>
                 <p>Log in to your ReservePro account</p>
             </div>
@@ -369,7 +425,7 @@ $conn->close();
             <div class="modal-divider">
                 <span>or</span>
             </div>
-            <button class="modal-btn-social" onclick="alert('Social login coming soon!')">
+            <button class="modal-btn-social" onclick="window.location.href='google-login.php'; return false;">
                 <svg width="20" height="20" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                     <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -379,7 +435,7 @@ $conn->close();
                 Continue with Google
             </button>
             <div class="modal-footer">
-                <p>Don't have an account? <a href="#" onclick="switchModal('loginModal', 'registerModal')">Sign up</a></p>
+                <p>Don't have an account? <a href="register.php">Sign up as Guest</a></p>
             </div>
         </div>
     </div>
@@ -392,7 +448,7 @@ $conn->close();
             <div class="modal-header">
                 <div style="font-size: 48px; margin-bottom: 16px;">🎉</div>
                 <h2>Join ReservePro</h2>
-                <p>Create your account to get started</p>
+                <p>Create your guest account to get started</p>
             </div>
             <form class="modal-form" method="POST" action="register-handler.php">
                 <div class="form-row">
@@ -409,17 +465,7 @@ $conn->close();
                     <label for="register-email">Email</label>
                     <input type="email" id="register-email" name="email" placeholder="john@example.com" required>
                 </div>
-                <div class="form-group">
-                    <label for="register-role">I want to</label>
-                    <select id="register-role" name="role" required onchange="showRoleInfo(this.value)">
-                        <option value="guest">🏖️ Browse & Book Properties (Guest)</option>
-                        <option value="host">🏠 List My Properties (Host)</option>
-                    </select>
-                    <div id="role-description" class="role-info guest">
-                        <strong>🏖️ Guest Account</strong>
-                        Browse properties, make bookings, and enjoy amazing experiences. After signup, you'll go to the <strong>Guest Dashboard</strong>.
-                    </div>
-                </div>
+                <!-- Role selection removed: modal sign-up always creates a Guest account -->
                 <div class="form-group">
                     <label for="register-password">Password</label>
                     <input type="password" id="register-password" name="password" placeholder="At least 8 characters" required>
@@ -454,6 +500,21 @@ $conn->close();
     <script src="assets/js/theme-toggle.js"></script>
     <script src="assets/js/landing.js"></script>
     <script src="assets/js/modal.js"></script>
-    <script src="assets/js/property-modal.js?v=4.0"></script>
+    <script src="assets/js/property-modal.js?v=6.0"></script>
+    <script>
+        // Fade out 3D loader when page finishes loading
+        window.addEventListener('load', function () {
+            var loader = document.getElementById('rp-loader');
+            if (!loader) return;
+            setTimeout(function () {
+                loader.classList.add('rp-loader-hide');
+                setTimeout(function () {
+                    if (loader && loader.parentNode) {
+                        loader.parentNode.removeChild(loader);
+                    }
+                }, 600);
+            }, 300); // small delay so logo is visible briefly
+        });
+    </script>
 </body>
 </html>
