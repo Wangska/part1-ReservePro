@@ -310,6 +310,11 @@ body.light-mode .logo-text {
     -webkit-text-fill-color: transparent !important;
 }
 
+body.light-mode .brand-icon,
+body.light-mode .sidebar-brand .brand-icon {
+    border-color: rgba(184, 147, 95, 0.65) !important;
+}
+
 body.light-mode .nav-item {
     color: #4A4A4A !important;
 }

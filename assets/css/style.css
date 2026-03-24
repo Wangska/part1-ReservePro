@@ -210,6 +210,10 @@ p, span, div {
     width: 48px;
     height: 48px;
     flex-shrink: 0;
+    object-fit: contain;
+    border: 2px solid rgba(212, 165, 116, 0.6);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 .logo .logo-icon circle:first-of-type {
     fill: url(#rpLogoBg);

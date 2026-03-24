@@ -4,6 +4,35 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Global search term variable
     let searchTerm = '';
+
+    // Mobile filters drawer
+    const filtersSidebar = document.getElementById('filtersSidebar');
+    const filterOverlay = document.getElementById('filterOverlay');
+    const filterToggle = document.getElementById('filterToggle');
+    const filterClose = document.getElementById('filterClose');
+    const filterBadge = document.getElementById('filterBadge');
+
+    function openFilters() {
+        if (!filtersSidebar) return;
+        filtersSidebar.classList.add('is-open');
+        document.body.classList.add('rp-filters-open');
+        if (filterOverlay) {
+            filterOverlay.setAttribute('aria-hidden', 'false');
+        }
+    }
+
+    function closeFilters() {
+        if (!filtersSidebar) return;
+        filtersSidebar.classList.remove('is-open');
+        document.body.classList.remove('rp-filters-open');
+        if (filterOverlay) {
+            filterOverlay.setAttribute('aria-hidden', 'true');
+        }
+    }
+
+    if (filterToggle) filterToggle.addEventListener('click', openFilters);
+    if (filterClose) filterClose.addEventListener('click', closeFilters);
+    if (filterOverlay) filterOverlay.addEventListener('click', closeFilters);
     
     // Favorite buttons
     const favoriteButtons = document.querySelectorAll('.card-favorite');
@@ -186,6 +215,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 card.style.display = 'none';
             }
         });
+
+        updateAppliedFiltersUI({
+            searchTerm,
+            maxPrice,
+            showAll,
+            selectedTypes,
+            selectedAmenityIds
+        });
         
         // Show/hide empty state
         const cardsGrid = document.querySelector('.cards-grid');
@@ -200,16 +237,15 @@ document.addEventListener('DOMContentLoaded', function() {
             // Create new message
             const message = document.createElement('div');
             message.className = 'no-results-message';
-            message.style.cssText = 'grid-column: 1 / -1; text-align: center; padding: 60px 20px;';
             
             const messageText = searchTerm 
                 ? `No properties found for "${searchTerm}". Try a different search term or adjust filters.`
                 : 'No properties match your filters. Try adjusting your selection.';
             
             message.innerHTML = `
-                <div style="font-size: 64px; margin-bottom: 20px;">🔍</div>
-                <h3 style="font-size: 24px; color: #FFFFFF !important; margin-bottom: 12px;">No Properties Found</h3>
-                <p style="color: #E0E0E0 !important; font-size: 16px;">${messageText}</p>
+                <div class="rp-empty-icon">🔍</div>
+                <h3 class="rp-empty-title">No Properties Found</h3>
+                <p class="rp-empty-text">${messageText}</p>
             `;
             cardsGrid.appendChild(message);
         } else if (emptyState) {
@@ -224,6 +260,102 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 resultsCount.textContent = `Showing ${visibleCount} ${visibleCount === 1 ? 'property' : 'properties'}`;
             }
+        }
+    }
+
+    function updateAppliedFiltersUI(state) {
+        const el = document.getElementById('appliedFilters');
+        if (!el) return;
+
+        const chips = [];
+
+        if (state.searchTerm) {
+            chips.push({ key: 'search', label: `Search: "${state.searchTerm}"`, onRemove: () => {
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) searchInput.value = '';
+                searchTerm = '';
+                filterProperties();
+            }});
+        }
+
+        // Price chip (only when not at slider max)
+        if (priceSlider && String(state.maxPrice) !== String(priceSlider.max)) {
+            chips.push({ key: 'price', label: `Up to ₱${Number(state.maxPrice).toLocaleString()}`, onRemove: () => {
+                priceSlider.value = priceSlider.max;
+                const currentPrice = document.getElementById('currentPrice');
+                if (currentPrice) currentPrice.textContent = '₱' + parseInt(priceSlider.max).toLocaleString() + '+';
+                filterProperties();
+            }});
+        }
+
+        // Property type chips
+        if (!state.showAll && state.selectedTypes.length > 0) {
+            state.selectedTypes.forEach(t => {
+                chips.push({ key: `type:${t}`, label: `Type: ${t}`, onRemove: () => {
+                    categoryFilters.forEach(f => {
+                        if (f.value === t) f.checked = false;
+                    });
+                    // Ensure "all" is checked if no types remain
+                    const anyChecked = Array.from(categoryFilters).some(f => f.checked && f.value !== 'all');
+                    if (!anyChecked) {
+                        categoryFilters.forEach(f => { if (f.value === 'all') f.checked = true; });
+                    }
+                    filterProperties();
+                }});
+            });
+        }
+
+        // Amenity chips (use label text from DOM)
+        if (state.selectedAmenityIds.length > 0) {
+            state.selectedAmenityIds.forEach(id => {
+                const input = document.querySelector(`.amenity-filter[value="${id}"]`);
+                const labelEl = input ? input.closest('label') : null;
+                const text = labelEl ? (labelEl.querySelector('span')?.textContent || '').trim() : `Amenity ${id}`;
+                chips.push({ key: `amenity:${id}`, label: text, onRemove: () => {
+                    const cb = document.querySelector(`.amenity-filter[value="${id}"]`);
+                    if (cb) cb.checked = false;
+                    filterProperties();
+                }});
+            });
+        }
+
+        if (chips.length === 0) {
+            el.innerHTML = '';
+            el.style.display = 'none';
+            return;
+        }
+
+        el.style.display = 'flex';
+        el.innerHTML = `
+            <div class="rp-applied-label">Applied:</div>
+            <div class="rp-chips" role="list"></div>
+            <button type="button" class="rp-clear-filters" id="clearFiltersChips">Clear</button>
+        `;
+
+        const chipsWrap = el.querySelector('.rp-chips');
+        chips.forEach(chip => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'rp-chip';
+            btn.setAttribute('role', 'listitem');
+            btn.innerHTML = `<span class="rp-chip-text"></span><span class="rp-chip-x" aria-hidden="true">×</span>`;
+            btn.querySelector('.rp-chip-text').textContent = chip.label;
+            btn.addEventListener('click', chip.onRemove);
+            chipsWrap.appendChild(btn);
+        });
+
+        const clearBtn = el.querySelector('#clearFiltersChips');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function() {
+                const clearFiltersBtn = document.getElementById('clearFilters');
+                if (clearFiltersBtn) clearFiltersBtn.click();
+            }, { once: true });
+        }
+
+        // Update badge count (for mobile Filters button)
+        if (filterBadge) {
+            filterBadge.textContent = String(chips.length);
+            filterBadge.style.display = chips.length > 0 ? 'inline-flex' : 'none';
         }
     }
     
@@ -254,6 +386,19 @@ document.addEventListener('DOMContentLoaded', function() {
             filterProperties();
         });
     }
+
+    // Quick search chips (hero)
+    document.querySelectorAll('.rp-quick-chip').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const term = (this.getAttribute('data-search') || '').toLowerCase().trim();
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.value = term;
+                searchTerm = term;
+                filterProperties();
+            }
+        });
+    });
     
     // Clear all filters button
     const clearFiltersBtn = document.getElementById('clearFilters');
@@ -289,8 +434,12 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Re-filter to show all properties
             filterProperties();
+            closeFilters();
         });
     }
+
+    // Initial UI sync
+    filterProperties();
     
     // Smooth scroll for nav links
     const navLinks = document.querySelectorAll('.nav-links a');
@@ -327,4 +476,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // Add transition to navbar
         navbar.style.transition = 'transform 0.3s ease';
     }
+
+    // Close filters on Escape (unless a modal is open)
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            if (document.body.classList.contains('modal-open')) return;
+            closeFilters();
+        }
+    });
 });

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="icon" href="background%20image/asd.webp" type="image/webp">
     <title>Photo Upload Guide - ReservePro</title>
     <style>
         body {

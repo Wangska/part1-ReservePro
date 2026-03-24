@@ -428,6 +428,7 @@ body.light-mode .review-star.review-star-active {
     width: 100%;
     height: 100%;
     min-height: 320px;
+    background: #0B1220;
 }
 
 .property-modal-hero-image img {
@@ -435,6 +436,7 @@ body.light-mode .review-star.review-star-active {
     height: 100%;
     min-height: 320px;
     object-fit: cover;
+    object-position: center;
     display: block;
 }
 

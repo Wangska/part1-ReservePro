@@ -12,6 +12,7 @@ if (isLoggedIn()) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="background%20image/asd.webp" type="image/webp">
     <title>Check your email - ReservePro</title>
     <link rel="stylesheet" href="assets/css/style.css?v=25.0">
     <link rel="stylesheet" href="assets/css/theme-toggle.css?v=25.0">

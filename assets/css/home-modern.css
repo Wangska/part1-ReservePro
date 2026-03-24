@@ -1,0 +1,876 @@
+/* Modern UI overrides for home.php (loaded last) */
+
+:root {
+  /* Typography */
+  --rp-font-sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+
+  /* Soft, modern neutrals + subtle accent (keeps existing theme) */
+  --rp-surface: rgba(255, 255, 255, 0.06);
+  --rp-surface-2: rgba(255, 255, 255, 0.09);
+  --rp-border: rgba(255, 255, 255, 0.10);
+  --rp-border-strong: rgba(212, 165, 116, 0.35);
+  --rp-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+  --rp-radius-sm: 12px;
+  --rp-radius-md: 16px;
+  --rp-radius-lg: 20px;
+}
+
+html, body {
+  font-family: var(--rp-font-sans) !important;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Clear hierarchy: slightly calmer body, stronger headings */
+body {
+  line-height: 1.55;
+  color: #E5E7EB !important;
+}
+
+h1, h2, h3, h4 {
+  letter-spacing: -0.02em;
+}
+
+.hero-title {
+  letter-spacing: -0.04em;
+}
+
+/* Make “glass” feel cleaner (reduce heavy gold outlines) */
+/* Brand icon border (ensure it shows) */
+.navbar .brand .brand-icon,
+.brand .brand-icon {
+  border: 2px solid rgba(212, 165, 116, 0.6) !important;
+  border-radius: 10px !important;
+  box-sizing: border-box !important;
+}
+body.light-mode .navbar .brand .brand-icon,
+body.light-mode .brand .brand-icon {
+  border-color: rgba(184, 147, 95, 0.65) !important;
+}
+
+.navbar {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.filters-sidebar,
+.service-card,
+.modal-content,
+.search-box {
+  border-color: var(--rp-border) !important;
+  box-shadow: var(--rp-shadow) !important;
+}
+
+.filters-sidebar,
+.service-card,
+.modal-content {
+  border-radius: var(--rp-radius-lg) !important;
+}
+
+.search-box {
+  border-radius: 999px !important;
+  padding: 10px 12px !important;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)) !important;
+}
+
+.search-input {
+  background: transparent !important;
+  color: #F9FAFB !important;
+  font-family: inherit !important;
+}
+
+.search-input::placeholder {
+  color: rgba(229, 231, 235, 0.62) !important;
+}
+
+/* Buttons: rounded, minimal, consistent */
+.nav-btn,
+button.nav-btn,
+.search-btn,
+.modal-btn,
+.page-btn {
+  border-radius: 999px !important;
+}
+
+.nav-btn-outline,
+button.nav-btn-outline {
+  border-radius: 999px !important;
+  border-width: 1px !important;
+  border-color: var(--rp-border-strong) !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+}
+
+.nav-btn-outline:hover,
+button.nav-btn-outline:hover {
+  color: #0B1220 !important;
+}
+
+.search-btn {
+  padding: 12px 22px !important;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+}
+
+.search-btn:hover {
+  transform: translateY(-1px) scale(1.02) !important;
+}
+
+/* Inputs/selects in filters & modals */
+.sort-select,
+.form-group input,
+.form-group select {
+  border-radius: 12px !important;
+  border-width: 1px !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  background: rgba(17, 24, 39, 0.55) !important;
+  color: #F9FAFB !important;
+  font-family: inherit !important;
+}
+
+.sort-select:focus,
+.form-group input:focus,
+.form-group select:focus {
+  border-color: rgba(212, 165, 116, 0.75) !important;
+  box-shadow: 0 0 0 4px rgba(212, 165, 116, 0.16) !important;
+}
+
+/* Sidebar filter checkbox alignment and subtle hover */
+.filter-checkbox {
+  border-radius: 12px;
+  padding: 8px 10px;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.filter-checkbox:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Cards: slightly tighter typography and calmer badge/favorite */
+.card-title {
+  font-size: 16px !important;
+  line-height: 1.35 !important;
+}
+
+.card-location,
+.card-details,
+.host-info {
+  color: rgba(229, 231, 235, 0.72) !important;
+}
+
+.card-badge {
+  border-radius: 999px !important;
+  background: rgba(2, 6, 23, 0.72) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.card-favorite {
+  background: rgba(2, 6, 23, 0.55) !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+}
+
+/* Pagination: cleaner buttons */
+.page-btn {
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+.page-btn.active {
+  box-shadow: 0 10px 30px rgba(212, 165, 116, 0.22);
+}
+
+/* Footer links: slightly higher contrast */
+.footer-section ul li a {
+  color: rgba(229, 231, 235, 0.72) !important;
+}
+
+/* Light mode compatibility (theme-toggle.js toggles body.light-mode) */
+body.light-mode {
+  color: #111827 !important;
+}
+
+body.light-mode p,
+body.light-mode span,
+body.light-mode div {
+  color: #334155 !important;
+}
+
+body.light-mode .navbar {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
+}
+
+body.light-mode .filters-sidebar,
+body.light-mode .service-card,
+body.light-mode .modal-content,
+body.light-mode .search-box {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border-color: rgba(15, 23, 42, 0.10) !important;
+  box-shadow: 0 18px 60px rgba(2, 6, 23, 0.12) !important;
+}
+
+body.light-mode .search-input,
+body.light-mode .sort-select,
+body.light-mode .form-group input,
+body.light-mode .form-group select {
+  color: #0F172A !important;
+}
+
+body.light-mode .search-input::placeholder {
+  color: rgba(15, 23, 42, 0.50) !important;
+}
+
+/* Results count */
+.rp-results-count {
+  margin-top: 8px;
+  font-size: 14px;
+  color: rgba(229, 231, 235, 0.72) !important;
+}
+
+body.light-mode .rp-results-count {
+  color: rgba(15, 23, 42, 0.70) !important;
+}
+
+/* Applied filters chip bar */
+.rp-applied-filters {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  margin: 12px 0 18px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.rp-applied-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(229, 231, 235, 0.72) !important;
+}
+
+.rp-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  flex: 1;
+  min-width: 220px;
+}
+
+.rp-chip {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(2, 6, 23, 0.35);
+  color: rgba(249, 250, 251, 0.92) !important;
+  border-radius: 999px;
+  padding: 8px 10px;
+  font-size: 13px;
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.rp-chip:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(212, 165, 116, 0.35);
+}
+
+.rp-chip:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(212, 165, 116, 0.18);
+}
+
+.rp-chip-x {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(229, 231, 235, 0.95) !important;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.rp-clear-filters {
+  border: 1px solid rgba(212, 165, 116, 0.35);
+  background: rgba(255, 255, 255, 0.02);
+  color: rgba(249, 250, 251, 0.92);
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.rp-clear-filters:hover {
+  background: rgba(212, 165, 116, 0.16);
+  transform: translateY(-1px);
+}
+
+body.light-mode .rp-applied-filters {
+  background: rgba(255, 255, 255, 0.75);
+  border-color: rgba(15, 23, 42, 0.10);
+}
+
+body.light-mode .rp-applied-label {
+  color: rgba(15, 23, 42, 0.65) !important;
+}
+
+body.light-mode .rp-chip {
+  background: rgba(255, 255, 255, 0.90);
+  color: rgba(15, 23, 42, 0.92) !important;
+  border-color: rgba(15, 23, 42, 0.10);
+}
+
+body.light-mode .rp-chip-x {
+  background: rgba(15, 23, 42, 0.06);
+  color: rgba(15, 23, 42, 0.75) !important;
+}
+
+body.light-mode .rp-clear-filters {
+  color: rgba(15, 23, 42, 0.90);
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(15, 23, 42, 0.12);
+}
+
+/* Card rating (remove inline styles) */
+.card-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.card-rating-star,
+.card-rating-score {
+  color: #FBBF24 !important;
+  font-weight: 600;
+}
+
+.card-rating-count {
+  color: rgba(229, 231, 235, 0.55) !important;
+}
+
+.card-rating--empty {
+  color: rgba(229, 231, 235, 0.55) !important;
+}
+
+body.light-mode .card-rating-count,
+body.light-mode .card-rating--empty {
+  color: rgba(15, 23, 42, 0.60) !important;
+}
+
+/* Empty state (no results) */
+.no-results-message {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 56px 20px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.rp-empty-icon {
+  font-size: 56px;
+  margin-bottom: 14px;
+}
+
+.rp-empty-title {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #F9FAFB !important;
+}
+
+.rp-empty-text {
+  font-size: 15px;
+  color: rgba(229, 231, 235, 0.72) !important;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+body.light-mode .no-results-message {
+  background: rgba(255, 255, 255, 0.75);
+  border-color: rgba(15, 23, 42, 0.10);
+}
+
+body.light-mode .rp-empty-title {
+  color: #0F172A !important;
+}
+
+body.light-mode .rp-empty-text {
+  color: rgba(15, 23, 42, 0.70) !important;
+}
+
+/* Mobile-first filters drawer */
+.rp-filter-toggle {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  border-radius: 999px;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(249, 250, 251, 0.92);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.rp-filter-toggle:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.rp-filter-badge {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgba(212, 165, 116, 0.22);
+  border: 1px solid rgba(212, 165, 116, 0.35);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.rp-filter-close {
+  display: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(249, 250, 251, 0.9);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.rp-filter-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.62);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 1200;
+}
+
+/* On smaller screens, turn sidebar into drawer */
+@media (max-width: 1024px) {
+  .rp-filter-toggle {
+    display: inline-flex;
+  }
+
+  /* Keep header controls tidy */
+  .sort-options {
+    gap: 10px !important;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .filters-sidebar {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: min(380px, 92vw);
+    z-index: 1300;
+    transform: translateX(-105%);
+    transition: transform 0.22s ease;
+    overflow-y: auto;
+    border-radius: 0 20px 20px 0 !important;
+  }
+
+  .filters-sidebar.is-open {
+    transform: translateX(0);
+  }
+
+  .rp-filter-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+  }
+
+  /* When drawer is open, show overlay */
+  body.rp-filters-open .rp-filter-overlay {
+    display: block;
+  }
+
+  body.rp-filters-open {
+    overflow: hidden;
+  }
+}
+
+body.light-mode .rp-filter-toggle,
+body.light-mode .rp-filter-close {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(15, 23, 42, 0.10);
+  color: rgba(15, 23, 42, 0.90);
+}
+
+body.light-mode .rp-filter-overlay {
+  background: rgba(15, 23, 42, 0.25);
+}
+
+/* Hero quick chips + trust row (subtle refresh, same design) */
+.rp-hero-chips {
+  margin-top: 14px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.rp-quick-chip {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(249, 250, 251, 0.92);
+  border-radius: 999px;
+  padding: 9px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.rp-quick-chip:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(212, 165, 116, 0.30);
+}
+
+.rp-quick-chip:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(212, 165, 116, 0.18);
+}
+
+.rp-hero-trust {
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: rgba(229, 231, 235, 0.70) !important;
+  font-size: 13px;
+}
+
+.rp-trust-item {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(2, 6, 23, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.rp-trust-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(212, 165, 116, 0.55);
+}
+
+body.light-mode .rp-quick-chip,
+body.light-mode .rp-trust-item {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(15, 23, 42, 0.10);
+  color: rgba(15, 23, 42, 0.90);
+}
+
+body.light-mode .rp-hero-trust {
+  color: rgba(15, 23, 42, 0.65) !important;
+}
+
+/* Light mode background fix (home/dashboard pages)
+   Theme-toggle.css makes dashboard pages transparent to show the blurred photo overlay
+   from style.css. That looks "dirty" in light mode, so we replace it with a clean
+   light backdrop and neutralize the dark overlay layers. */
+body.dashboard-page.light-mode {
+  background: linear-gradient(180deg, #F8FAFC 0%, #F1F5F9 55%, #EEF2F7 100%) !important;
+}
+
+body.dashboard-page.light-mode::before {
+  opacity: 0 !important;
+}
+
+body.dashboard-page.light-mode::after {
+  background: transparent !important;
+}
+
+/* Ensure main content sits on the light backdrop */
+body.dashboard-page.light-mode .main-content {
+  background: transparent !important;
+}
+
+/* Slightly softer hero in light mode (still on-brand) */
+body.dashboard-page.light-mode .hero {
+  background: linear-gradient(135deg, rgba(212, 165, 116, 0.55) 0%, rgba(230, 200, 156, 0.55) 45%, rgba(248, 250, 252, 0.85) 100%) !important;
+}
+
+body.dashboard-page.light-mode .hero::before {
+  opacity: 0.18;
+}
+
+body.dashboard-page.light-mode .hero-title {
+  color: #0F172A !important;
+  text-shadow: none !important;
+}
+
+body.dashboard-page.light-mode .hero-subtitle {
+  color: rgba(15, 23, 42, 0.70) !important;
+}
+
+/* Ensure experiences/about/contact pages (which also use dashboard-page) get the same light backdrop,
+   even if they don't use the .hero class name. */
+body.light-mode.experiences-page,
+body.light-mode.about-page,
+body.light-mode.contact-page {
+  background: linear-gradient(180deg, #F8FAFC 0%, #F1F5F9 55%, #EEF2F7 100%) !important;
+}
+
+body.light-mode.experiences-page::before,
+body.light-mode.about-page::before,
+body.light-mode.contact-page::before {
+  opacity: 0 !important;
+}
+
+body.light-mode.experiences-page::after,
+body.light-mode.about-page::after,
+body.light-mode.contact-page::after {
+  background: transparent !important;
+}
+
+/* Experiences hero in light mode */
+body.light-mode.experiences-page .experiences-hero {
+  background: linear-gradient(135deg, rgba(212, 165, 116, 0.55) 0%, rgba(230, 200, 156, 0.55) 45%, rgba(248, 250, 252, 0.9) 100%) !important;
+}
+
+body.light-mode.experiences-page .experiences-hero h1 {
+  color: #0F172A !important;
+  text-shadow: none !important;
+}
+
+body.light-mode.experiences-page .experiences-hero p {
+  color: rgba(15, 23, 42, 0.70) !important;
+}
+
+/* About page light mode */
+body.light-mode.about-page .about-hero {
+  background: linear-gradient(135deg, rgba(212, 165, 116, 0.45) 0%, rgba(230, 200, 156, 0.6) 40%, rgba(248, 250, 252, 0.96) 100%) !important;
+}
+
+body.light-mode.about-page .about-hero h1 {
+  color: #0F172A !important;
+  text-shadow: none !important;
+}
+
+body.light-mode.about-page .about-hero p {
+  color: rgba(15, 23, 42, 0.70) !important;
+}
+
+body.light-mode.about-page .about-content {
+  background: transparent !important;
+}
+
+body.light-mode.about-page .feature-card,
+body.light-mode.about-page .stats-section,
+body.light-mode.about-page .team-card,
+body.light-mode.about-page .team-member,
+body.light-mode.about-page .cta-section {
+  background: #FFFFFF !important;
+  border-color: #E0E0E0 !important;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08) !important;
+}
+
+body.light-mode.about-page .feature-card h3,
+body.light-mode.about-page .stat-label,
+body.light-mode.about-page .team-member h3,
+body.light-mode.about-page .team-bio,
+body.light-mode.about-page .cta-section h2,
+body.light-mode.about-page .cta-section p {
+  color: #111827 !important;
+}
+
+body.light-mode.about-page .team-role {
+  color: #8B6F47 !important;
+}
+
+/* Contact page light mode */
+body.light-mode.contact-page .contact-hero {
+  background: linear-gradient(135deg, rgba(212, 165, 116, 0.45) 0%, rgba(230, 200, 156, 0.6) 40%, rgba(248, 250, 252, 0.96) 100%) !important;
+}
+
+body.light-mode.contact-page .contact-hero h1 {
+  color: #0F172A !important;
+  text-shadow: none !important;
+}
+
+body.light-mode.contact-page .contact-hero p {
+  color: rgba(15, 23, 42, 0.70) !important;
+}
+
+body.light-mode.contact-page .contact-content {
+  background: transparent !important;
+}
+
+body.light-mode.contact-page .info-card,
+body.light-mode.contact-page .contact-form-wrapper,
+body.light-mode.contact-page .faq-item {
+  background: #FFFFFF !important;
+  border-color: #E0E0E0 !important;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08) !important;
+}
+
+body.light-mode.contact-page .info-content h3,
+body.light-mode.contact-page .info-content p,
+body.light-mode.contact-page .contact-form-wrapper h2,
+body.light-mode.contact-page .contact-form label,
+body.light-mode.contact-page .faq-question,
+body.light-mode.contact-page .faq-answer {
+  color: #111827 !important;
+}
+
+body.light-mode.contact-page .contact-form input,
+body.light-mode.contact-page .contact-form textarea {
+  background: #FFFFFF !important;
+  border-color: #E0E0E0 !important;
+  color: #111827 !important;
+}
+
+body.light-mode.contact-page .contact-form input::placeholder,
+body.light-mode.contact-page .contact-form textarea::placeholder {
+  color: #9CA3AF !important;
+}
+
+/* Guest sliding menu (home.php) - matches glass cards & gold accent */
+.guest-menu {
+  position: relative;
+}
+.guest-menu-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--rp-border);
+  border-radius: 999px;
+  color: #F3F4F6;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: inherit;
+  letter-spacing: -0.01em;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.guest-menu-trigger:hover {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
+  border-color: var(--rp-border-strong);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+.guest-menu.guest-menu-open .guest-menu-trigger {
+  border-color: rgba(212, 165, 116, 0.5);
+  box-shadow: 0 0 0 1px rgba(212, 165, 116, 0.15);
+}
+.guest-menu-chevron {
+  opacity: 0.7;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.guest-menu.guest-menu-open .guest-menu-chevron {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+.guest-menu-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 180px;
+  background: linear-gradient(160deg, rgba(30, 41, 59, 0.97), rgba(15, 23, 39, 0.98));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--rp-radius-md);
+  box-shadow: var(--rp-shadow), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-12px) scale(0.96);
+  transform-origin: top right;
+  transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.22s;
+  z-index: 1100;
+}
+.guest-menu-panel-open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+.guest-menu-item {
+  display: block;
+  padding: 12px 18px;
+  color: #E5E7EB;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease, padding-left 0.2s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.guest-menu-item:last-child {
+  border-bottom: none;
+}
+.guest-menu-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #D4A574;
+  padding-left: 22px;
+}
+.guest-menu-item-logout {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin-top: 4px;
+  padding-top: 12px;
+}
+.guest-menu-item-logout:hover {
+  color: #FCA5A5;
+}
+body.light-mode .guest-menu-trigger {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
+  border-color: rgba(15, 23, 42, 0.1);
+  color: #111827;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+body.light-mode .guest-menu-trigger:hover {
+  background: linear-gradient(145deg, #FFFFFF, #F8FAFC);
+  border-color: rgba(184, 147, 95, 0.4);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+}
+body.light-mode .guest-menu.guest-menu-open .guest-menu-trigger {
+  border-color: rgba(184, 147, 95, 0.6);
+  box-shadow: 0 0 0 1px rgba(184, 147, 95, 0.2);
+}
+body.light-mode .guest-menu-panel {
+  background: linear-gradient(160deg, #FFFFFF, #F8FAFC);
+  border-color: rgba(15, 23, 42, 0.08);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(15, 23, 42, 0.04);
+}
+body.light-mode .guest-menu-item {
+  color: #374151;
+  border-bottom-color: rgba(15, 23, 42, 0.06);
+}
+body.light-mode .guest-menu-item:hover {
+  background: rgba(15, 23, 42, 0.04);
+  color: #8B6F47;
+}
+body.light-mode .guest-menu-item-logout {
+  border-top-color: rgba(15, 23, 42, 0.08);
+}
+body.light-mode .guest-menu-item-logout:hover {
+  color: #DC2626;
+}
+

@@ -85,6 +85,9 @@ p {
     width: 36px;
     height: 36px;
     flex-shrink: 0;
+    border: 2px solid rgba(212, 165, 116, 0.6);
+    border-radius: 10px;
+    box-sizing: border-box;
 }
 .brand-icon circle,
 .brand-icon g {

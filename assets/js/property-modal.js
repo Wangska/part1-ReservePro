@@ -210,7 +210,7 @@ function renderPropertyDetails(property, bookedDates) {
 
     // Photos: main hero + clickable thumbnails so guests can view all images
     const photosArray = Array.isArray(property.photos) ? property.photos : [];
-    const fallbackPhoto = 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800';
+    const fallbackPhoto = 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1600&auto=format&fit=crop&q=80';
     const normalizePhotoUrl = (url) => {
         if (!url) return fallbackPhoto;
         if (typeof url === 'string' && url.startsWith('http')) return url;

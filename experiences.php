@@ -42,12 +42,17 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Experiences - ReservePro</title>
-    <link rel="stylesheet" href="assets/css/style.css?v=23.0">
-    <link rel="stylesheet" href="assets/css/landing.css?v=23.0">
-    <link rel="stylesheet" href="assets/css/modal.css?v=23.0">
-    <link rel="stylesheet" href="assets/css/role-select.css?v=23.0">
-    <link rel="stylesheet" href="assets/css/theme-toggle.css?v=23.0">
+    <link rel="icon" href="background%20image/asd.webp" type="image/webp">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css?v=25.0">
+    <link rel="stylesheet" href="assets/css/landing.css?v=25.0">
+    <link rel="stylesheet" href="assets/css/modal.css?v=25.0">
+    <link rel="stylesheet" href="assets/css/role-select.css?v=25.0">
+    <link rel="stylesheet" href="assets/css/theme-toggle.css?v=2.0">
     <link rel="stylesheet" href="assets/css/animations.css?v=1.0">
+    <link rel="stylesheet" href="assets/css/home-modern.css?v=4.0">
     <style>
         .experiences-hero {
             /* Trendy gray hero instead of brown */
@@ -140,6 +145,9 @@ $conn->close();
             box-shadow: 0 12px 24px rgba(212, 165, 116, 0.3);
             border-color: #D4A574;
         }
+        .experience-card:hover .experience-image img {
+            transform: scale(1.08);
+        }
         
         .experience-image {
             width: 100%;
@@ -157,6 +165,7 @@ $conn->close();
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.3s ease;
         }
         
         .experience-badge {
@@ -209,7 +218,7 @@ $conn->close();
         .experience-price {
             font-size: 24px;
             font-weight: 700;
-            background: linear-gradient(135deg, #D4A574, #B8935F);
+            background: linear-gradient(135deg,rgb(255, 255, 255),rgb(255, 255, 255));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -280,7 +289,7 @@ $conn->close();
         }
     </style>
 </head>
-<body>
+<body class="dashboard-page experiences-page">
     <script>
         window.currentUser = <?php
             if ($user) {
@@ -306,7 +315,7 @@ $conn->close();
                 </a>
                 <div class="nav-links">
                     <a href="home.php">Home</a>
-                    <a href="experiences.php" class="active">Experiences</a>
+                    <a href="experiences.php" class="active">Browse</a>
                     <a href="about.php">About</a>
                     <a href="contact.php">Contact</a>
                 </div>
@@ -314,19 +323,31 @@ $conn->close();
             <div class="nav-right">
                 <?php if ($user): ?>
                     <div class="user-nav">
-                        <span class="user-greeting">Hi, <?php echo htmlspecialchars($user['first_name']); ?></span>
-                        <?php if ($user['role'] === 'admin'): ?>
-                            <a href="admin/dashboard.php" class="nav-btn">Admin Panel</a>
-                        <?php elseif ($user['role'] === 'host'): ?>
-                            <a href="host/dashboard.php" class="nav-btn">Dashboard</a>
-                        <?php else: ?>
-                            <a href="home.php" class="nav-btn">Browse</a>
+                        <?php if ($user): ?>
+                        <div class="guest-menu">
+                            <button type="button" class="guest-menu-trigger" id="guestMenuTrigger" aria-expanded="false" aria-haspopup="true">
+                                <span class="guest-menu-name">Hi, <?php echo htmlspecialchars($user['first_name']); ?></span>
+                                <svg class="guest-menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                            </button>
+                            <div class="guest-menu-panel" id="guestMenuPanel" role="menu" aria-hidden="true">
+                                <a href="messages.php" role="menuitem" class="guest-menu-item">Messages</a>
+                                <?php if (isset($user['role']) && $user['role'] === 'guest'): ?>
+                                <a href="profile.php" role="menuitem" class="guest-menu-item">Profile</a>
+                                <?php elseif (isset($user['role']) && $user['role'] === 'host'): ?>
+                                <a href="host/dashboard.php" role="menuitem" class="guest-menu-item">Dashboard</a>
+                                <?php elseif (isset($user['role']) && $user['role'] === 'admin'): ?>
+                                <a href="admin/dashboard.php" role="menuitem" class="guest-menu-item">Admin</a>
+                                <?php endif; ?>
+                                <a href="logout.php" role="menuitem" class="guest-menu-item guest-menu-item-logout">Logout</a>
+                            </div>
+                        </div>
                         <?php endif; ?>
-                        <a href="logout.php" class="nav-btn-outline">Logout</a>
                     </div>
                 <?php else: ?>
+                    <button onclick="window.location.href='become-host.php';" class="nav-btn" style="margin-right:8px;">
+                        Become a Host
+                    </button>
                     <button onclick="openModal('loginModal')" class="nav-btn-outline">Sign in</button>
-                    <button onclick="openModal('registerModal')" class="nav-btn">Sign up as Guest</button>
                 <?php endif; ?>
                 
                 <!-- Theme Toggle -->
@@ -370,14 +391,37 @@ $conn->close();
                     <a href="home.php" class="btn-home">Back to Home</a>
                 </div>
             <?php else: ?>
-                <?php foreach ($properties as $property): ?>
+                <?php foreach ($properties as $property):
+                    // Demo-friendly titles/locations (Experiences page display only; does not change DB)
+                    $demo_titles = [
+                        'Sunrise Studio Apartment',
+                        'Harborview Apartment Suite',
+                        'Modern Loft Near IT Park',
+                        'Cozy Urban Apartment',
+                        'Cityscape 1BR Apartment',
+                        'Seaside Apartment Retreat',
+                        'Minimalist Apartment Haven',
+                        'Executive Apartment Residence',
+                        'Skyline Apartment Getaway',
+                        'Boutique Apartment Stay',
+                    ];
+                    $demo_locations = [
+                        ['Cebu City', 'Philippines'],
+                        ['Manila', 'Philippines'],
+                    ];
+                    $demo_seed = (int)($property['id'] ?? 0);
+                    $demo_title = $demo_titles[$demo_seed % count($demo_titles)];
+                    $demo_loc = $demo_locations[$demo_seed % count($demo_locations)];
+                    $demo_city = $demo_loc[0];
+                    $demo_country = $demo_loc[1];
+                ?>
                     <div class="experience-card" onclick="openPropertyModal(<?php echo $property['id']; ?>)" data-price="<?php echo $property['price_per_night']; ?>" data-date="<?php echo $property['created_at']; ?>">
                         <div class="experience-image">
                             <?php if (!empty($property['primary_photo'])): 
                                 $photo_path = ltrim($property['primary_photo'], '/');
                             ?>
                                 <img src="<?php echo htmlspecialchars($photo_path); ?>" 
-                                     alt="<?php echo htmlspecialchars($property['title']); ?>"
+                                     alt="<?php echo htmlspecialchars($demo_title); ?>"
                                      onerror="this.style.display='none'; this.parentElement.innerHTML='🏠';">
                             <?php else: ?>
                                 <div style="font-size: 80px; text-align: center; padding: 40px;">🏠</div>
@@ -385,9 +429,9 @@ $conn->close();
                             <div class="experience-badge">Verified</div>
                         </div>
                         <div class="experience-info">
-                            <h3 class="experience-title"><?php echo htmlspecialchars($property['title']); ?></h3>
+                            <h3 class="experience-title"><?php echo htmlspecialchars($demo_title); ?></h3>
                             <div class="experience-location">
-                                📍 <?php echo htmlspecialchars($property['city'] . ', ' . $property['country']); ?>
+                                📍 <?php echo htmlspecialchars($demo_city . ', ' . $demo_country); ?>
                             </div>
                             
                             <?php if (isset($property_amenities[$property['id']]) && $property_amenities[$property['id']] > 0): ?>
@@ -558,6 +602,9 @@ $conn->close();
     <script src="assets/js/landing.js"></script>
     <script src="assets/js/modal.js"></script>
     <script src="assets/js/property-modal.js?v=6.0"></script>
+    <script>
+        (function(){var t=document.getElementById('guestMenuTrigger'),p=document.getElementById('guestMenuPanel'),m=t&&t.closest('.guest-menu');if(!t||!p)return;function o(){var x=p.classList.toggle('guest-menu-panel-open');t.setAttribute('aria-expanded',x);p.setAttribute('aria-hidden',!x);if(m)m.classList.toggle('guest-menu-open',x);}function c(){p.classList.remove('guest-menu-panel-open');t.setAttribute('aria-expanded','false');p.setAttribute('aria-hidden','true');if(m)m.classList.remove('guest-menu-open');}t.addEventListener('click',function(e){e.stopPropagation();o();});document.addEventListener('click',c);p.addEventListener('click',function(e){e.stopPropagation();});})();
+    </script>
     <script>
         // Sort functionality for experiences page
         const experienceSort = document.querySelector('.experience-sort');

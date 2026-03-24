@@ -79,12 +79,17 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ReservePro - Discover Amazing Services</title>
+    <link rel="icon" href="background%20image/asd.webp" type="image/webp">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css?v=25.0">
     <link rel="stylesheet" href="assets/css/landing.css?v=25.0">
     <link rel="stylesheet" href="assets/css/modal.css?v=25.0">
     <link rel="stylesheet" href="assets/css/role-select.css?v=25.0">
     <link rel="stylesheet" href="assets/css/theme-toggle.css?v=25.0">
     <link rel="stylesheet" href="assets/css/animations.css?v=1.0">
+    <link rel="stylesheet" href="assets/css/home-modern.css?v=4.0">
 </head>
 <body class="dashboard-page">
     <!-- 3D ReservePro loading overlay -->
@@ -107,34 +112,41 @@ $conn->close();
                 </a>
                 <div class="nav-links">
                     <a href="home.php">Home</a>
-                    <a href="experiences.php">Experiences</a>
+                    <a href="experiences.php">Browse</a>
                     <a href="about.php">About</a>
                     <a href="contact.php">Contact</a>
                 </div>
             </div>
             <div class="nav-right">
-                <?php if (!$user): ?>
-                    <button onclick="window.location.href='become-host.php';" class="nav-btn-outline" style="margin-right:8px;">
-                        Become a Host
-                    </button>
-                <?php endif; ?>
                 <?php if ($user): ?>
                     <div class="user-nav">
-                        <span class="user-greeting">Hi, <?php echo htmlspecialchars($user['first_name']); ?></span>
-                        <a href="messages.php" class="nav-btn-outline">Messages</a>
-                        <?php if (isset($user['role']) && $user['role'] === 'guest'): ?>
-                        <a href="profile.php" class="nav-btn-outline">Profile</a>
+                        <?php if ($user): ?>
+                        <div class="guest-menu">
+                            <button type="button" class="guest-menu-trigger" id="guestMenuTrigger" aria-expanded="false" aria-haspopup="true">
+                                <span class="guest-menu-name">Hi, <?php echo htmlspecialchars($user['first_name']); ?></span>
+                                <svg class="guest-menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                            </button>
+                            <div class="guest-menu-panel" id="guestMenuPanel" role="menu" aria-hidden="true">
+                                <a href="messages.php" role="menuitem" class="guest-menu-item">Messages</a>
+                                <?php if (isset($user['role']) && $user['role'] === 'guest'): ?>
+                                <a href="profile.php" role="menuitem" class="guest-menu-item">Profile</a>
+                                <?php elseif (isset($user['role']) && $user['role'] === 'host'): ?>
+                                <a href="host/dashboard.php" role="menuitem" class="guest-menu-item">Dashboard</a>
+                                <?php elseif (isset($user['role']) && $user['role'] === 'admin'): ?>
+                                <a href="admin/dashboard.php" role="menuitem" class="guest-menu-item">Admin</a>
+                                <?php endif; ?>
+                                <a href="logout.php" role="menuitem" class="guest-menu-item guest-menu-item-logout">Logout</a>
+                            </div>
+                        </div>
                         <?php endif; ?>
-                        <?php if (isset($user['role']) && $user['role'] === 'admin'): ?>
-                            <a href="admin/dashboard.php" class="nav-btn">Admin Panel</a>
-                        <?php elseif (isset($user['role']) && $user['role'] === 'host'): ?>
-                            <a href="host/dashboard.php" class="nav-btn">Dashboard</a>
-                        <?php endif; ?>
-                        <a href="logout.php" class="nav-btn-outline">Logout</a>
                     </div>
                 <?php else: ?>
-                    <button onclick="openModal('loginModal')" class="nav-btn-outline">Sign in</button>
-                    <button onclick="openModal('registerModal')" class="nav-btn">Sign up as Guest</button>
+                    <button onclick="window.location.href='become-host.php';" class="nav-btn" style="margin-right:8px;">
+                        Become a Host
+                    </button>
+                    <button onclick="openModal('loginModal')" class="nav-btn-outline">
+                        Sign in
+                    </button>
                 <?php endif; ?>
                 
                 <!-- Theme Toggle -->
@@ -181,6 +193,22 @@ $conn->close();
                     <button class="search-btn" id="searchBtn">Search</button>
                 </div>
             </div>
+
+            <div class="rp-hero-chips" aria-label="Quick searches">
+                <button type="button" class="rp-quick-chip" data-search="cebu">Cebu</button>
+                <button type="button" class="rp-quick-chip" data-search="beach">Beach</button>
+                <button type="button" class="rp-quick-chip" data-search="mountain">Mountain</button>
+                <button type="button" class="rp-quick-chip" data-search="city">City</button>
+                <button type="button" class="rp-quick-chip" data-search="budget">Budget</button>
+            </div>
+
+            <div class="rp-hero-trust" aria-label="Platform highlights">
+                <div class="rp-trust-item">Verified hosts</div>
+                <div class="rp-trust-dot" aria-hidden="true"></div>
+                <div class="rp-trust-item">Secure booking</div>
+                <div class="rp-trust-dot" aria-hidden="true"></div>
+                <div class="rp-trust-item">Fast support</div>
+            </div>
         </div>
     </section>
 
@@ -188,9 +216,10 @@ $conn->close();
     <section class="main-content">
         <div class="content-wrapper">
             <!-- Sidebar Filters -->
-            <aside class="filters-sidebar">
+            <aside class="filters-sidebar" id="filtersSidebar" aria-label="Filters">
                 <div class="filter-header">
                     <h3>Filters</h3>
+                    <button class="rp-filter-close" id="filterClose" type="button" aria-label="Close filters">×</button>
                     <button class="filter-reset" id="clearFilters">Clear all</button>
                 </div>
 
@@ -238,15 +267,19 @@ $conn->close();
                 </div>
 
             </aside>
+            <div class="rp-filter-overlay" id="filterOverlay" aria-hidden="true"></div>
 
             <!-- Services Grid -->
             <main class="services-grid">
                 <div class="grid-header">
                     <div>
                         <h2>Popular Services</h2>
-                        <p id="resultsCount" style="color: #B8B8B8; font-size: 14px; margin-top: 8px;">Showing <?php echo count($properties); ?> properties</p>
+                        <p id="resultsCount" class="rp-results-count">Showing <?php echo count($properties); ?> properties</p>
                     </div>
                     <div class="sort-options">
+                        <button type="button" class="rp-filter-toggle" id="filterToggle">
+                            Filters <span class="rp-filter-badge" id="filterBadge" aria-hidden="true">0</span>
+                        </button>
                         <label>Sort by:</label>
                         <select class="sort-select" id="sortSelect">
                             <option value="popular">Popular</option>
@@ -257,6 +290,8 @@ $conn->close();
                         </select>
                     </div>
                 </div>
+
+                <div class="rp-applied-filters" id="appliedFilters" aria-live="polite"></div>
 
                 <div class="cards-grid">
                     <?php if (empty($properties)): ?>
@@ -274,8 +309,32 @@ $conn->close();
                                 $photo_path = ltrim($property['primary_photo'], '/');
                                 $image_url = $photo_path;
                             } else {
-                                $image_url = 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400';
+                                $image_url = 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&auto=format&fit=crop&q=80';
                             }
+
+                            // Demo-friendly titles/locations (Home page only; does not change DB)
+                            $demo_titles = [
+                                'Sunrise Studio Apartment',
+                                'Harborview Apartment Suite',
+                                'Modern Loft Near IT Park',
+                                'Cozy Urban Apartment',
+                                'Cityscape 1BR Apartment',
+                                'Seaside Apartment Retreat',
+                                'Minimalist Apartment Haven',
+                                'Executive Apartment Residence',
+                                'Skyline Apartment Getaway',
+                                'Boutique Apartment Stay',
+                            ];
+                            $demo_locations = [
+                                ['Cebu City', 'Philippines'],
+                                ['Manila', 'Philippines'],
+                            ];
+                            $demo_seed = (int)($property['id'] ?? 0);
+                            $demo_title = $demo_titles[$demo_seed % count($demo_titles)];
+                            $demo_loc = $demo_locations[$demo_seed % count($demo_locations)];
+                            $demo_city = $demo_loc[0];
+                            $demo_country = $demo_loc[1];
+
                             $amenity_count = $property_amenities[$property['id']] ?? 0;
                             $avg_rating = isset($property['average_rating']) ? (float) $property['average_rating'] : null;
                             $review_count = isset($property['review_count']) ? (int) $property['review_count'] : 0;
@@ -285,32 +344,30 @@ $conn->close();
                              data-price="<?php echo $property['price_per_night']; ?>" 
                              data-date="<?php echo $property['created_at']; ?>"
                              data-type="<?php echo htmlspecialchars($property['property_type']); ?>"
-                             data-title="<?php echo htmlspecialchars(strtolower($property['title'])); ?>"
-                             data-city="<?php echo htmlspecialchars(strtolower($property['city'])); ?>"
-                             data-country="<?php echo htmlspecialchars(strtolower($property['country'])); ?>"
+                             data-title="<?php echo htmlspecialchars(strtolower($demo_title)); ?>"
+                             data-city="<?php echo htmlspecialchars(strtolower($demo_city)); ?>"
+                             data-country="<?php echo htmlspecialchars(strtolower($demo_country)); ?>"
                              data-description="<?php echo htmlspecialchars(strtolower($property['description'])); ?>"
                              data-amenity-ids="<?php echo implode(',', array_map('intval', $property_amenity_ids[$property['id']] ?? [])); ?>"
                              data-rating="<?php echo $rating_for_data; ?>">
                             <div class="card-image">
-                                <img src="<?php echo htmlspecialchars($image_url); ?>" alt="<?php echo htmlspecialchars($property['title']); ?>" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400'">
+                                <img src="<?php echo htmlspecialchars($image_url); ?>" alt="<?php echo htmlspecialchars($demo_title); ?>" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&auto=format&fit=crop&q=80'">
                                 <span class="card-badge"><?php echo ucfirst($property['property_type']); ?></span>
                                 <button class="card-favorite">♡</button>
                             </div>
                             <div class="card-content">
-                                <h3 class="card-title"><?php echo htmlspecialchars($property['title']); ?></h3>
+                                <h3 class="card-title"><?php echo htmlspecialchars($demo_title); ?></h3>
                                 <div class="card-location">
-                                    📍 <?php echo htmlspecialchars($property['city'] . ', ' . $property['country']); ?>
+                                    📍 <?php echo htmlspecialchars($demo_city . ', ' . $demo_country); ?>
                                 </div>
                                 <?php if ($avg_rating !== null && $review_count > 0): ?>
-                                    <div class="card-rating" style="display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 13px;">
-                                        <span style="color: #FBBF24;">★</span>
-                                        <span style="color: #FBBF24;"><?php echo number_format($avg_rating, 1); ?></span>
-                                        <span style="color: #9CA3AF;">(<?php echo $review_count; ?>)</span>
+                                    <div class="card-rating">
+                                        <span class="card-rating-star">★</span>
+                                        <span class="card-rating-score"><?php echo number_format($avg_rating, 1); ?></span>
+                                        <span class="card-rating-count">(<?php echo $review_count; ?>)</span>
                                     </div>
                                 <?php else: ?>
-                                    <div class="card-rating" style="margin-top: 6px; font-size: 13px; color: #6B7280;">
-                                        No reviews yet
-                                    </div>
+                                    <div class="card-rating card-rating--empty">No reviews yet</div>
                                 <?php endif; ?>
                                 <div class="card-details">
                                     <span>🛏️ <?php echo $property['bedrooms']; ?> bed<?php echo $property['bedrooms'] > 1 ? 's' : ''; ?></span>
@@ -515,6 +572,28 @@ $conn->close();
                 }, 600);
             }, 300); // small delay so logo is visible briefly
         });
+        // Guest sliding menu
+        (function () {
+            var trigger = document.getElementById('guestMenuTrigger');
+            var panel = document.getElementById('guestMenuPanel');
+            var menu = trigger && trigger.closest('.guest-menu');
+            if (!trigger || !panel) return;
+            function toggle() {
+                var open = panel.classList.toggle('guest-menu-panel-open');
+                trigger.setAttribute('aria-expanded', open);
+                panel.setAttribute('aria-hidden', !open);
+                if (menu) menu.classList.toggle('guest-menu-open', open);
+            }
+            function close() {
+                panel.classList.remove('guest-menu-panel-open');
+                trigger.setAttribute('aria-expanded', 'false');
+                panel.setAttribute('aria-hidden', 'true');
+                if (menu) menu.classList.remove('guest-menu-open');
+            }
+            trigger.addEventListener('click', function (e) { e.stopPropagation(); toggle(); });
+            document.addEventListener('click', function () { close(); });
+            panel.addEventListener('click', function (e) { e.stopPropagation(); });
+        })();
     </script>
 </body>
 </html>
