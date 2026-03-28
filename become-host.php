@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Become a Host - ReservePro</title>
-    <link rel="icon" href="background%20image/asd.webp" type="image/webp">
+    <link rel="icon" href="background%20image/newicon.png" type="image/png">
     <link rel="stylesheet" href="assets/css/style.css?v=25.0">
     <link rel="stylesheet" href="assets/css/landing.css?v=25.0">
     <link rel="stylesheet" href="assets/css/theme-toggle.css?v=25.0">

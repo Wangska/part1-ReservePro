@@ -9,16 +9,33 @@ document.addEventListener('DOMContentLoaded', function() {
     if (registerForm) {
         const password = document.getElementById('password');
         const confirmPassword = document.getElementById('confirm_password');
+        const firstName = document.getElementById('first_name');
+        const lastName = document.getElementById('last_name');
+        const emailInput = document.getElementById('email');
         const submitBtn = document.getElementById('submitBtn');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        function setFieldError(el, hasError) {
+            if (!el) return;
+            if (hasError) el.classList.add('field-error');
+            else el.classList.remove('field-error');
+        }
+
+        function clearFieldErrors() {
+            const marked = registerForm.querySelectorAll('input.field-error');
+            marked.forEach(el => el.classList.remove('field-error'));
+        }
         
         // Real-time password match validation
         confirmPassword.addEventListener('input', function() {
             if (password.value !== confirmPassword.value) {
                 confirmPassword.setCustomValidity("Passwords don't match");
                 confirmPassword.style.borderColor = '#FF385C';
+                setFieldError(confirmPassword, true);
             } else {
                 confirmPassword.setCustomValidity('');
                 confirmPassword.style.borderColor = '#DDDDDD';
+                setFieldError(confirmPassword, false);
             }
         });
         
@@ -26,9 +43,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (confirmPassword.value && password.value !== confirmPassword.value) {
                 confirmPassword.setCustomValidity("Passwords don't match");
                 confirmPassword.style.borderColor = '#FF385C';
+                setFieldError(confirmPassword, true);
             } else {
                 confirmPassword.setCustomValidity('');
                 confirmPassword.style.borderColor = '#DDDDDD';
+                setFieldError(confirmPassword, false);
             }
         });
         
@@ -46,15 +65,51 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Form submit with loading state
         registerForm.addEventListener('submit', function(e) {
-            if (password.value !== confirmPassword.value) {
+            clearFieldErrors();
+
+            const email = (emailInput?.value || '').trim();
+            const first = (firstName?.value || '').trim();
+            const last = (lastName?.value || '').trim();
+            const pass = (password?.value || '');
+            const confirm = (confirmPassword?.value || '');
+
+            let hasError = false;
+
+            if (!first) { setFieldError(firstName, true); hasError = true; }
+            if (!last) { setFieldError(lastName, true); hasError = true; }
+            if (!email || !emailRegex.test(email)) { setFieldError(emailInput, true); hasError = true; }
+
+            if (!pass || pass.length < 8) { setFieldError(password, true); hasError = true; }
+            if (!confirm || confirm !== pass) { setFieldError(confirmPassword, true); hasError = true; }
+
+            if (hasError) {
                 e.preventDefault();
-                alert("Passwords don't match!");
+                alert("Please fix the highlighted fields.");
                 return;
             }
             
             submitBtn.classList.add('loading');
             submitBtn.disabled = true;
         });
+
+        // Highlight invalid email after user interacts
+        emailInput.addEventListener('blur', function() {
+            const email = (this.value || '').trim();
+            if (email && !emailRegex.test(email)) setFieldError(emailInput, true);
+            else setFieldError(emailInput, false);
+        });
+
+        emailInput.addEventListener('input', function() {
+            const email = (this.value || '').trim();
+            if (!email || emailRegex.test(email)) setFieldError(emailInput, false);
+        });
+
+        // If the browser triggers constraint validation first, we still mark the field
+        registerForm.addEventListener('invalid', function(e) {
+            if (e.target !== emailInput) return;
+            const email = (emailInput.value || '').trim();
+            if (email && !emailRegex.test(email)) setFieldError(emailInput, true);
+        }, true);
     }
     
     // Login form submit with loading state
@@ -91,23 +146,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 500);
         }, 5000);
     }
-    
-    // Email validation
-    const emailInputs = document.querySelectorAll('input[type="email"]');
-    emailInputs.forEach(input => {
-        input.addEventListener('blur', function() {
-            const email = this.value;
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            
-            if (email && !emailRegex.test(email)) {
-                this.style.borderColor = '#FF385C';
-            } else if (email) {
-                this.style.borderColor = '#00A699';
-            } else {
-                this.style.borderColor = '#DDDDDD';
-            }
-        });
-    });
     
     // Add smooth animations
     const authBox = document.querySelector('.auth-box');

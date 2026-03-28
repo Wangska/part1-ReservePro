@@ -7,6 +7,13 @@ requireGuest();
 
 $errors = [];
 $success = false;
+$fieldErrors = [
+    'first_name' => false,
+    'last_name' => false,
+    'email' => false,
+    'password' => false,
+    'confirm_password' => false,
+];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $first_name = trim($_POST['first_name'] ?? '');
@@ -32,17 +39,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
+// Map generic error messages to specific fields for red borders
+foreach ($errors as $error) {
+    $msg = strtolower((string)$error);
+
+    if (strpos($msg, 'passwords do not match') !== false) {
+        $fieldErrors['password'] = true;
+        $fieldErrors['confirm_password'] = true;
+        continue;
+    }
+
+    if (strpos($msg, 'first name') !== false) {
+        $fieldErrors['first_name'] = true;
+        continue;
+    }
+
+    if (strpos($msg, 'last name') !== false) {
+        $fieldErrors['last_name'] = true;
+        continue;
+    }
+
+    if (strpos($msg, 'email') !== false) {
+        $fieldErrors['email'] = true;
+        continue;
+    }
+
+    if (strpos($msg, 'password') !== false) {
+        $fieldErrors['password'] = true;
+        continue;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="background%20image/asd.webp" type="image/webp">
+    <link rel="icon" href="background%20image/newicon.png" type="image/png">
     <title>Sign up - ReservePro</title>
-    <link rel="stylesheet" href="assets/css/style.css?v=8.0">
+    <link rel="stylesheet" href="assets/css/style.css?v=8.3">
     <link rel="stylesheet" href="assets/css/landing.css?v=25.0">
-    <link rel="stylesheet" href="assets/css/theme-toggle.css?v=2.0">
+    <link rel="stylesheet" href="assets/css/theme-toggle.css?v=2.2">
     <link rel="stylesheet" href="assets/css/animations.css?v=1.0">
 </head>
 <body class="auth-page">
@@ -87,6 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             name="first_name" 
                             placeholder="John"
                             value="<?php echo htmlspecialchars($_POST['first_name'] ?? ''); ?>"
+                            <?php echo $fieldErrors['first_name'] ? 'class="field-error"' : ''; ?>
                             required
                         >
                     </div>
@@ -98,6 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             name="last_name" 
                             placeholder="Doe"
                             value="<?php echo htmlspecialchars($_POST['last_name'] ?? ''); ?>"
+                            <?php echo $fieldErrors['last_name'] ? 'class="field-error"' : ''; ?>
                             required
                         >
                     </div>
@@ -111,6 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         name="email" 
                         placeholder="john@example.com"
                         value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>"
+                        <?php echo $fieldErrors['email'] ? 'class="field-error"' : ''; ?>
                         required
                     >
                 </div>
@@ -124,6 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         id="password" 
                         name="password" 
                         placeholder="Must be at least 8 characters"
+                        <?php echo $fieldErrors['password'] ? 'class="field-error"' : ''; ?>
                         required
                     >
                 </div>
@@ -135,6 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         id="confirm_password" 
                         name="confirm_password" 
                         placeholder="Re-enter your password"
+                        <?php echo $fieldErrors['confirm_password'] ? 'class="field-error"' : ''; ?>
                         required
                     >
                 </div>
@@ -151,6 +194,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <script src="assets/js/theme-toggle.js"></script>
-    <script src="assets/js/validation.js"></script>
+    <script src="assets/js/validation.js?v=1.2"></script>
 </body>
 </html>

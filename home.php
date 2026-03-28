@@ -79,17 +79,17 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ReservePro - Discover Amazing Services</title>
-    <link rel="icon" href="background%20image/asd.webp" type="image/webp">
+    <link rel="icon" href="background%20image/newicon.png" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css?v=25.0">
-    <link rel="stylesheet" href="assets/css/landing.css?v=25.0">
+    <link rel="stylesheet" href="assets/css/landing.css?v=25.1">
     <link rel="stylesheet" href="assets/css/modal.css?v=25.0">
     <link rel="stylesheet" href="assets/css/role-select.css?v=25.0">
-    <link rel="stylesheet" href="assets/css/theme-toggle.css?v=25.0">
+    <link rel="stylesheet" href="assets/css/theme-toggle.css?v=25.1">
     <link rel="stylesheet" href="assets/css/animations.css?v=1.0">
-    <link rel="stylesheet" href="assets/css/home-modern.css?v=4.0">
+    <link rel="stylesheet" href="assets/css/home-modern.css?v=4.1">
 </head>
 <body class="dashboard-page">
     <!-- 3D ReservePro loading overlay -->
@@ -260,7 +260,7 @@ $conn->close();
                     <?php foreach ($all_amenities as $amenity): ?>
                     <label class="filter-checkbox">
                         <input type="checkbox" class="amenity-filter" value="<?php echo (int)$amenity['id']; ?>">
-                        <span><?php echo $amenity['icon'] ? $amenity['icon'] . ' ' : ''; ?><?php echo htmlspecialchars($amenity['name']); ?></span>
+                        <span><?php echo htmlspecialchars($amenity['name']); ?></span>
                         <span class="filter-count">(<?php echo (int)$amenity['prop_count']; ?>)</span>
                     </label>
                     <?php endforeach; ?>

@@ -95,6 +95,11 @@ body.light-mode div {
     color: #4A4A4A !important;
 }
 
+/* Keep property type badge text readable in light mode */
+body.light-mode .card-badge {
+    color: #FFFFFF !important;
+}
+
 /* Do NOT override explicit review star colors in light mode */
 body.light-mode .review-star {
     color: #6B7280 !important;
@@ -157,6 +162,13 @@ body.light-mode textarea {
     background: #FFFFFF !important;
     color: #1F1F1F !important;
     border: 2px solid #E0E0E0 !important;
+}
+
+/* Keep red error borders visible in light mode */
+body.light-mode .form-group input.field-error,
+body.light-mode .form-group input.field-error:focus {
+    border: 2px solid #FF385C !important;
+    box-shadow: 0 0 0 3px rgba(255, 56, 92, 0.12) !important;
 }
 
 body.light-mode input::placeholder,
@@ -525,6 +537,184 @@ body.light-mode .form-group select:focus,
 body.light-mode .form-group textarea:focus {
     border-color: #B8935F !important;
     box-shadow: 0 0 0 3px rgba(184, 147, 95, 0.1) !important;
+}
+
+/* ===================================
+   MESSAGES PAGE - Light mode (warm, soft, readable)
+   =================================== */
+body.light-mode.page-messages,
+body.light-mode.page-messages.dashboard-page {
+    background: #F5F0E8 !important;
+}
+
+body.light-mode.page-messages::before,
+body.light-mode.page-messages::after {
+    opacity: 0 !important;
+    background: transparent !important;
+}
+
+body.light-mode .messages-page {
+    color: #3D3832 !important;
+}
+
+body.light-mode .messages-header {
+    background: #FFFFFF !important;
+    border: none !important;
+    border-radius: 20px !important;
+    box-shadow: 0 8px 32px rgba(139, 111, 71, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+    border: 1px solid rgba(184, 147, 95, 0.2) !important;
+}
+
+body.light-mode .messages-header h1 {
+    color: #2C2420 !important;
+}
+
+body.light-mode .messages-header p {
+    color: #6B5D52 !important;
+}
+
+body.light-mode .nav-links-messages a {
+    color: #5C5248 !important;
+    background: transparent !important;
+}
+
+body.light-mode .nav-links-messages a:hover {
+    background: rgba(184, 147, 95, 0.15) !important;
+    color: #8B6F47 !important;
+}
+
+body.light-mode .conversations-list,
+body.light-mode .chat-container {
+    background: #FFFFFF !important;
+    border: 1px solid rgba(184, 147, 95, 0.18) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 20px rgba(139, 111, 71, 0.06) !important;
+}
+
+body.light-mode .conversations-header {
+    border-bottom: 1px solid rgba(184, 147, 95, 0.12) !important;
+}
+
+body.light-mode .messages-page .search-box {
+    background: #FBF9F6 !important;
+    border: 1px solid rgba(184, 147, 95, 0.2) !important;
+    color: #3D3832 !important;
+    border-radius: 10px !important;
+}
+
+body.light-mode .messages-page .search-box:focus {
+    border-color: rgba(184, 147, 95, 0.5) !important;
+    box-shadow: 0 0 0 2px rgba(184, 147, 95, 0.1) !important;
+}
+
+body.light-mode .messages-page .search-box::placeholder {
+    color: #9A8F82 !important;
+}
+
+body.light-mode .conversation-item {
+    border-bottom: 1px solid #F5F0E8 !important;
+}
+
+body.light-mode .conversation-item:hover {
+    background: #FBF9F6 !important;
+}
+
+body.light-mode .conversation-item.active {
+    background: linear-gradient(90deg, rgba(212, 165, 116, 0.18) 0%, rgba(212, 165, 116, 0.06) 100%) !important;
+    border-left: 4px solid #B8935F !important;
+}
+
+body.light-mode .conv-name {
+    color: #2C2420 !important;
+    font-weight: 600 !important;
+}
+
+body.light-mode .conv-meta {
+    color: #7A6E62 !important;
+}
+
+body.light-mode .conv-preview {
+    color: #9A8F82 !important;
+}
+
+body.light-mode .chat-header {
+    border-bottom: 1px solid rgba(184, 147, 95, 0.12) !important;
+    background: #FBF9F6 !important;
+    color: #3D3832 !important;
+}
+
+body.light-mode .chat-header strong {
+    color: #8B6F47 !important;
+}
+
+body.light-mode .chat-header span {
+    color: #7A6E62 !important;
+}
+
+body.light-mode .chat-messages {
+    background: #FAF7F3 !important;
+}
+
+body.light-mode .message-bubble {
+    background: #FFFFFF !important;
+    color: #3D3832 !important;
+    border: 1px solid rgba(184, 147, 95, 0.15) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 2px 6px rgba(139, 111, 71, 0.04) !important;
+}
+
+body.light-mode .message.sent .message-bubble {
+    background: linear-gradient(135deg, #E8DDD0 0%, #DDCFBF 100%) !important;
+    color: #2C2420 !important;
+    border-color: rgba(184, 147, 95, 0.25) !important;
+}
+
+body.light-mode .message-time {
+    color: #9A8F82 !important;
+}
+
+body.light-mode .message-avatar {
+    background: linear-gradient(135deg, #D4A574, #B8935F) !important;
+    color: #FFFFFF !important;
+}
+
+body.light-mode .chat-input-area {
+    border-top: 1px solid rgba(184, 147, 95, 0.12) !important;
+    background: #FFFFFF !important;
+}
+
+body.light-mode .messages-page .chat-input {
+    background: #FBF9F6 !important;
+    border: 1px solid rgba(184, 147, 95, 0.2) !important;
+    color: #3D3832 !important;
+    border-radius: 12px !important;
+}
+
+body.light-mode .messages-page .chat-input:focus {
+    border-color: rgba(184, 147, 95, 0.45) !important;
+    box-shadow: 0 0 0 2px rgba(184, 147, 95, 0.08) !important;
+}
+
+body.light-mode .messages-page .chat-input::placeholder {
+    color: #9A8F82 !important;
+}
+
+body.light-mode .btn-send {
+    background: linear-gradient(135deg, #B8935F, #9A7B4A) !important;
+    color: #FFFFFF !important;
+    border-radius: 12px !important;
+}
+
+body.light-mode .btn-send:hover {
+    box-shadow: 0 6px 16px rgba(184, 147, 95, 0.35) !important;
+}
+
+body.light-mode .messages-page .empty-state {
+    color: #7A6E62 !important;
+}
+
+body.light-mode .messages-page .empty-state h3 {
+    color: #2C2420 !important;
 }
 
 /* ===================================

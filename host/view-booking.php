@@ -92,7 +92,7 @@ $canApprove = ($booking['status'] === 'pending');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="../background%20image/asd.webp" type="image/webp">
+    <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>Booking #<?php echo htmlspecialchars($booking['id']); ?> - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=14.0">
     <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=14.0">

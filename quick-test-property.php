@@ -10,7 +10,7 @@ $user = getCurrentUser();
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="icon" href="background%20image/asd.webp" type="image/webp">
+    <link rel="icon" href="background%20image/newicon.png" type="image/png">
     <title>Quick Photo Upload Test</title>
     <style>
         body {

@@ -83,10 +83,10 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="background%20image/asd.webp" type="image/webp">
+    <link rel="icon" href="background%20image/newicon.png" type="image/png">
     <title>Messages - ReservePro</title>
     <link rel="stylesheet" href="assets/css/style.css?v=12.0">
-    <link rel="stylesheet" href="assets/css/theme-toggle.css?v=2.0">
+    <link rel="stylesheet" href="assets/css/theme-toggle.css?v=4.0">
     <style>
         .messages-page { max-width: 1200px; margin: 0 auto; padding: 24px; }
         .messages-header {
@@ -177,7 +177,7 @@ $conn->close();
         }
     </style>
 </head>
-<body class="dashboard-page">
+<body class="dashboard-page page-messages">
     <div class="messages-page">
         <div class="messages-header">
             <div>

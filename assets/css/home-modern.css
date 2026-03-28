@@ -160,6 +160,7 @@ button.nav-btn-outline:hover {
   border-radius: 999px !important;
   background: rgba(2, 6, 23, 0.72) !important;
   border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #fff !important;
 }
 
 .card-favorite {
@@ -190,6 +191,10 @@ body.light-mode p,
 body.light-mode span,
 body.light-mode div {
   color: #334155 !important;
+}
+
+body.light-mode .card-badge {
+  color: #FFFFFF !important;
 }
 
 body.light-mode .navbar {
