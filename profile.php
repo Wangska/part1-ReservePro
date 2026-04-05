@@ -40,7 +40,7 @@ $role_label = isset($user['role']) ? ucfirst($user['role']) : 'Guest';
     <link rel="icon" href="background%20image/newicon.png" type="image/png">
     <title>Profile - ReservePro</title>
     <link rel="stylesheet" href="assets/css/style.css?v=12.0">
-    <link rel="stylesheet" href="assets/css/theme-toggle.css?v=2.0">
+    <link rel="stylesheet" href="assets/css/theme-toggle.css?v=27.2">
     <style>
         .profile-page { max-width: 640px; margin: 0 auto; padding: 24px; }
         .profile-header {

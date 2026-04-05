@@ -60,9 +60,9 @@ $conn->close();
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>All Bookings - Admin - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=10.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=10.0">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.1">
     <link rel="stylesheet" href="../assets/css/admin.css?v=10.0">
-    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=10.0">
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.0">
     <style>
         .bookings-header {
             /* Trendy gray header instead of brown */
@@ -83,6 +83,15 @@ $conn->close();
             font-family: 'Courier New', monospace;
             color: #D4A574;
             font-weight: 600;
+        }
+        .properties-table-container .table-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+        }
+        .properties-table-container .filter-tabs {
+            flex-wrap: wrap;
+            width: 100%;
         }
     </style>
 </head>
@@ -118,6 +127,14 @@ $conn->close();
                     <span class="nav-icon">📅</span>
                     <span>All Bookings</span>
                 </a>
+                <a href="earnings.php" class="nav-item">
+                    <span class="nav-icon">💰</span>
+                    <span>Earnings</span>
+                </a>
+                <a href="commission.php" class="nav-item">
+                    <span class="nav-icon">💎</span>
+                    <span>Commission</span>
+                </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon">🌐</span>
                     <span>View Site</span>
@@ -134,13 +151,6 @@ $conn->close();
                         <div class="user-role">Administrator</div>
                     </div>
                 </div>
-                
-                <!-- Theme Toggle -->
-                <div class="theme-toggle" style="margin-bottom: 12px;">
-                    <span class="theme-toggle-icon">☀️</span>
-                    <span class="theme-toggle-text">Light</span>
-                </div>
-                
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
         </aside>
@@ -189,10 +199,10 @@ $conn->close();
                 <div class="table-header">
                     <h2>Booking History</h2>
                     <div class="filter-tabs">
-                        <button class="filter-tab active" onclick="filterBookings('all')">All</button>
-                        <button class="filter-tab" onclick="filterBookings('confirmed')">Confirmed</button>
-                        <button class="filter-tab" onclick="filterBookings('pending')">Pending</button>
-                        <button class="filter-tab" onclick="filterBookings('cancelled')">Cancelled</button>
+                        <button type="button" class="filter-tab active" onclick="filterBookings('all', this)">All</button>
+                        <button type="button" class="filter-tab" onclick="filterBookings('confirmed', this)">Confirmed</button>
+                        <button type="button" class="filter-tab" onclick="filterBookings('pending', this)">Pending</button>
+                        <button type="button" class="filter-tab" onclick="filterBookings('cancelled', this)">Cancelled</button>
                     </div>
                 </div>
 
@@ -239,14 +249,13 @@ $conn->close();
         </main>
     </div>
 
-    <script src="../assets/js/theme-toggle.js"></script>
+    <script src="../assets/js/theme-toggle.js?v=27.0"></script>
     <script>
-        function filterBookings(status) {
+        function filterBookings(status, el) {
             const rows = document.querySelectorAll('.properties-table tbody tr');
-            const buttons = document.querySelectorAll('.filter-tab');
-            
+            const buttons = document.querySelectorAll('.properties-table-container .filter-tab');
             buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            if (el) el.classList.add('active');
             
             rows.forEach(row => {
                 if (status === 'all') {

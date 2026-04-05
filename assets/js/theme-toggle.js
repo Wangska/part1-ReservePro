@@ -18,12 +18,12 @@ function setTheme(theme) {
     localStorage.setItem('theme', theme);
 }
 
-// Update toggle button appearance
+// Update every theme toggle on the page (sidebar + header, etc.)
 function updateToggleButton(theme) {
-    const icon = document.querySelector('.theme-toggle-icon');
-    const text = document.querySelector('.theme-toggle-text');
-    
-    if (icon && text) {
+    document.querySelectorAll('.theme-toggle').forEach(function (toggle) {
+        var icon = toggle.querySelector('.theme-toggle-icon');
+        var text = toggle.querySelector('.theme-toggle-text');
+        if (!icon || !text) return;
         if (theme === 'light') {
             icon.textContent = '🌙';
             text.textContent = 'Dark';
@@ -31,7 +31,7 @@ function updateToggleButton(theme) {
             icon.textContent = '☀️';
             text.textContent = 'Light';
         }
-    }
+    });
 }
 
 // Toggle theme
@@ -46,11 +46,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const theme = getTheme();
     setTheme(theme);
     
-    // Add click event to toggle button
-    const toggleButton = document.querySelector('.theme-toggle');
-    if (toggleButton) {
+    document.querySelectorAll('.theme-toggle').forEach(function (toggleButton) {
         toggleButton.addEventListener('click', toggleTheme);
-    }
+    });
 });
 
 // Apply theme immediately (before DOM loads) to prevent flash

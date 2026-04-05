@@ -130,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>Host Verification - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=14.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=14.0">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.1">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=14.0">
     <style>
         .field-error { display: block; color: #ef4444; font-size: 13px; margin-top: 6px; }

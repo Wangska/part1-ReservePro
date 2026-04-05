@@ -376,15 +376,21 @@ a.stat-card-link {
     object-fit: cover;
 }
 
+/* Tables and lists: stay in normal flow. Corner overlay only inside property card photos. */
 .status-badge {
-    position: absolute;
-    top: 12px;
-    right: 12px;
+    position: static;
+    display: inline-block;
     padding: 6px 12px;
     border-radius: 6px;
     font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
+}
+
+.property-image .status-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
 }
 
 .status-pending {

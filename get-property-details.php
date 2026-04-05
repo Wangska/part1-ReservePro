@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/config/paymongo.php';
 
 header('Content-Type: application/json');
 
@@ -83,6 +84,8 @@ if ($checkReviewsTable && $checkReviewsTable->num_rows > 0) {
 }
 
 $conn->close();
+
+$property['paymongo_available'] = paymongo_is_configured();
 
 echo json_encode($property);
 ?>

@@ -86,9 +86,9 @@ $conn->close();
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>All Properties - Admin - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=10.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=10.0">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.1">
     <link rel="stylesheet" href="../assets/css/admin.css?v=10.0">
-    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=10.0">
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=26.0">
     <style>
         .properties-header {
             /* Trendy gray header instead of brown */
@@ -291,6 +291,14 @@ $conn->close();
                     <span class="nav-icon">📅</span>
                     <span>All Bookings</span>
                 </a>
+                <a href="earnings.php" class="nav-item">
+                    <span class="nav-icon">💰</span>
+                    <span>Earnings</span>
+                </a>
+                <a href="commission.php" class="nav-item">
+                    <span class="nav-icon">💎</span>
+                    <span>Commission</span>
+                </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon">🌐</span>
                     <span>View Site</span>
@@ -379,10 +387,10 @@ $conn->close();
                 <div class="table-header">
                     <h2>Property Listings</h2>
                     <div class="filter-tabs">
-                        <button class="filter-tab active" onclick="filterProperties('all')">All</button>
-                        <button class="filter-tab" onclick="filterProperties('approved')">Approved</button>
-                        <button class="filter-tab" onclick="filterProperties('pending')">Pending</button>
-                        <button class="filter-tab" onclick="filterProperties('rejected')">Rejected</button>
+                        <button type="button" class="filter-tab active" onclick="filterProperties('all', this)">All</button>
+                        <button type="button" class="filter-tab" onclick="filterProperties('approved', this)">Approved</button>
+                        <button type="button" class="filter-tab" onclick="filterProperties('pending', this)">Pending</button>
+                        <button type="button" class="filter-tab" onclick="filterProperties('rejected', this)">Rejected</button>
                     </div>
                 </div>
 
@@ -452,14 +460,13 @@ $conn->close();
         </main>
     </div>
 
-    <script src="../assets/js/theme-toggle.js"></script>
+    <script src="../assets/js/theme-toggle.js?v=26.0"></script>
     <script>
-        function filterProperties(status) {
+        function filterProperties(status, el) {
             const rows = document.querySelectorAll('.properties-table tbody tr');
-            const buttons = document.querySelectorAll('.filter-tab');
-            
+            const buttons = document.querySelectorAll('.properties-table-container .filter-tab');
             buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            if (el) el.classList.add('active');
             
             rows.forEach(row => {
                 if (status === 'all') {

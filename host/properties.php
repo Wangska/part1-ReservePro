@@ -104,7 +104,7 @@ $conn->close();
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>My Properties - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=13.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=13.0">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.1">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=13.0">
 </head>
 <body class="dashboard-page">

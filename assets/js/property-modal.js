@@ -7,6 +7,11 @@ function openPropertyModal(propertyId) {
     bookedDatesSet = new Set();
     const modal = document.getElementById('propertyModal');
     const modalContent = document.getElementById('propertyModalContent');
+
+    const prevSlideshow = document.getElementById('propertyModalSlideshow');
+    if (prevSlideshow && typeof prevSlideshow._slideshowStop === 'function') {
+        prevSlideshow._slideshowStop();
+    }
     
     // Show modal
     modal.style.display = 'flex';
@@ -58,6 +63,10 @@ function openPropertyModal(propertyId) {
 }
 
 function closePropertyModal() {
+    const slideshow = document.getElementById('propertyModalSlideshow');
+    if (slideshow && typeof slideshow._slideshowStop === 'function') {
+        slideshow._slideshowStop();
+    }
     const modal = document.getElementById('propertyModal');
     modal.style.display = 'none';
     document.body.style.overflow = 'auto';
@@ -173,6 +182,94 @@ function setupReviewFormHandler() {
     }
 }
 
+/**
+ * Guest property modal: prev/next, dots, thumbnails, autoplay (pauses on hover).
+ */
+function setupPropertyGallerySlideshow(urls) {
+    if (!urls || urls.length === 0) return;
+    const root = document.getElementById('propertyModalSlideshow');
+    const img = document.getElementById('propertyModalMainPhoto');
+    if (!root || !img) return;
+
+    const n = urls.length;
+    if (n <= 1) return;
+
+    let index = 0;
+    let timer = null;
+
+    function stopAuto() {
+        if (timer) {
+            clearInterval(timer);
+            timer = null;
+        }
+    }
+
+    function startAuto() {
+        stopAuto();
+        timer = setInterval(function () {
+            show(index + 1);
+        }, 5000);
+    }
+
+    function updateChrome() {
+        const curEl = root.querySelector('.property-slideshow-cur');
+        const totalEl = root.querySelector('.property-slideshow-total');
+        if (curEl) curEl.textContent = String(index + 1);
+        if (totalEl) totalEl.textContent = String(n);
+        root.querySelectorAll('[data-slideshow-dot]').forEach(function (d, i) {
+            d.classList.toggle('is-active', i === index);
+            d.setAttribute('aria-current', i === index ? 'true' : 'false');
+        });
+        root.querySelectorAll('.property-slideshow-thumb').forEach(function (t, i) {
+            t.style.borderColor = i === index ? '#D4A574' : 'transparent';
+            t.classList.toggle('is-active', i === index);
+        });
+    }
+
+    function show(i) {
+        index = ((i % n) + n) % n;
+        img.src = urls[index];
+        updateChrome();
+    }
+
+    root._slideshowStop = function () {
+        stopAuto();
+    };
+
+    root.querySelector('[data-slideshow-prev]') &&
+        root.querySelector('[data-slideshow-prev]').addEventListener('click', function () {
+            show(index - 1);
+            startAuto();
+        });
+    root.querySelector('[data-slideshow-next]') &&
+        root.querySelector('[data-slideshow-next]').addEventListener('click', function () {
+            show(index + 1);
+            startAuto();
+        });
+
+    root.querySelectorAll('[data-slideshow-dot]').forEach(function (dot) {
+        dot.addEventListener('click', function () {
+            const i = parseInt(dot.getAttribute('data-index') || '0', 10);
+            show(i);
+            startAuto();
+        });
+    });
+
+    root.querySelectorAll('.property-slideshow-thumb').forEach(function (thumb) {
+        thumb.addEventListener('click', function () {
+            const i = parseInt(thumb.getAttribute('data-thumb-index') || '0', 10);
+            show(i);
+            startAuto();
+        });
+    });
+
+    root.addEventListener('mouseenter', stopAuto);
+    root.addEventListener('mouseleave', startAuto);
+
+    updateChrome();
+    startAuto();
+}
+
 function fetchBookedDatesAndRender(property) {
     if (!property.id) {
         renderPropertyDetails(property, []);
@@ -208,7 +305,7 @@ function renderPropertyDetails(property, bookedDates) {
         ? parseInt(property.review_count, 10)
         : 0;
 
-    // Photos: main hero + clickable thumbnails so guests can view all images
+    // Photos: slideshow (guest) — arrows, dots, thumbnails, autoplay
     const photosArray = Array.isArray(property.photos) ? property.photos : [];
     const fallbackPhoto = 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1600&auto=format&fit=crop&q=80';
     const normalizePhotoUrl = (url) => {
@@ -216,23 +313,35 @@ function renderPropertyDetails(property, bookedDates) {
         if (typeof url === 'string' && url.startsWith('http')) return url;
         return String(url || '').replace(/^\/+/, '');
     };
-    const mainPhotoUrl = normalizePhotoUrl(
-        photosArray.length > 0
-            ? photosArray[0].photo_url
-            : (property.primary_photo || '')
-    );
-    const thumbnailsHTML = photosArray.length > 1
+    const galleryUrls = photosArray.length > 0
+        ? photosArray.map(function (p) { return normalizePhotoUrl(p.photo_url); })
+        : [normalizePhotoUrl(property.primary_photo || '')];
+    const mainPhotoUrl = galleryUrls[0] || fallbackPhoto;
+    const multiPhoto = galleryUrls.length > 1;
+    const safeTitle = String(property.title || 'Property').replace(/"/g, '&quot;');
+    const slideshowControls = multiPhoto
         ? `
-            <div style="margin-top:12px; background:#1F1F1F; border-radius:12px; border:1px solid #3A3A3A; padding:14px;">
+            <button type="button" class="property-slideshow-btn property-slideshow-prev" data-slideshow-prev aria-label="Previous photo">‹</button>
+            <button type="button" class="property-slideshow-btn property-slideshow-next" data-slideshow-next aria-label="Next photo">›</button>
+            <div class="property-slideshow-meta" aria-live="polite">
+                <div class="property-slideshow-dots" role="tablist" aria-label="Photos">
+                    ${galleryUrls.map(function (_, idx) {
+                        return '<button type="button" class="property-slideshow-dot' + (idx === 0 ? ' is-active' : '') + '" data-slideshow-dot data-index="' + idx + '" aria-label="Photo ' + (idx + 1) + '" aria-current="' + (idx === 0 ? 'true' : 'false') + '"></button>';
+                    }).join('')}
+                </div>
+                <div class="property-slideshow-counter"><span class="property-slideshow-cur">1</span> / <span class="property-slideshow-total">${galleryUrls.length}</span></div>
+            </div>`
+        : '';
+    const thumbnailsHTML = multiPhoto
+        ? `
+            <div class="property-modal-thumbnails-wrap" style="margin-top:12px; background:#1F1F1F; border-radius:12px; border:1px solid #3A3A3A; padding:14px;">
                 <div style="font-size:14px; font-weight:600; color:#D4A574; margin-bottom:10px;">Photo gallery</div>
                 <div class="property-modal-thumbnails" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:4px;">
-                    ${photosArray.map((p, idx) => {
-                        const thumbUrl = normalizePhotoUrl(p.photo_url);
+                    ${galleryUrls.map(function (thumbUrl, idx) {
                         const border = idx === 0 ? '#D4A574' : 'transparent';
                         return `
-                            <div style="flex:0 0 auto; border-radius:8px; overflow:hidden; border:2px solid ${border}; cursor:pointer;"
-                                 onclick="document.getElementById('propertyModalMainPhoto').src='${thumbUrl}';">
-                                <img src="${thumbUrl}" alt="Photo ${idx + 1}" style="width:110px; height:75px; object-fit:cover;" onerror="this.src='${fallbackPhoto}'">
+                            <div class="property-slideshow-thumb${idx === 0 ? ' is-active' : ''}" data-thumb-index="${idx}" style="flex:0 0 auto; border-radius:8px; overflow:hidden; border:2px solid ${border}; cursor:pointer;">
+                                <img src="${thumbUrl}" alt="" style="width:110px; height:75px; object-fit:cover;" onerror="this.src='${fallbackPhoto}'">
                             </div>
                         `;
                     }).join('')}
@@ -241,10 +350,13 @@ function renderPropertyDetails(property, bookedDates) {
         `
         : '';
     const photosHTML = `
-        <div class="property-modal-hero-image">
-            <img id="propertyModalMainPhoto" src="${mainPhotoUrl}" alt="${property.title || 'Property'}" onerror="this.src='${fallbackPhoto}'">
+        <div id="propertyModalSlideshow" class="property-modal-slideshow">
+            <div class="property-modal-hero-image">
+                <img id="propertyModalMainPhoto" src="${mainPhotoUrl}" alt="${safeTitle}" onerror="this.src='${fallbackPhoto}'">
+                ${slideshowControls}
+            </div>
+            ${thumbnailsHTML}
         </div>
-        ${thumbnailsHTML}
     `;
     
     // Build amenities HTML
@@ -286,6 +398,21 @@ function renderPropertyDetails(property, bookedDates) {
         `;
     })();
 
+    const paymongoOn = !!property.paymongo_available;
+    const paymentMethodsHTML = paymongoOn
+        ? `
+                            <div id="modalPaymentSection" style="margin-top: 2px;">
+                                <div style="display: block; color: #E0E0E0; font-size: 13px; font-weight: 600; margin-bottom: 8px;">Payment</div>
+                                <div style="padding: 14px; background: #2C2C2C; border: 2px solid #D4A574; border-radius: 10px;">
+                                    <div style="font-weight: 700; color: #FFFFFF; font-size: 14px; margin-bottom: 6px;">PayMongo checkout</div>
+                                    <div style="font-size: 12px; color: #9CA3AF; line-height: 1.45;">After you confirm, you will be sent to PayMongo to pay securely (Card, GCash, Maya, GrabPay, and other methods enabled on your account).</div>
+                                </div>
+                            </div>`
+        : `
+                            <div id="modalPaymentSection" style="margin-top: 2px;">
+                                <p style="margin: 0; font-size: 12px; color: #e57373; line-height: 1.5;">Online payment is not configured. Add your PayMongo keys in <code style="font-size:11px;color:#fca5a5;">config/paymongo.local.php</code> to enable bookings.</p>
+                            </div>`;
+
     const html = `
         <div class="property-modal-inner" style="padding: 24px;">
             <!-- Header -->
@@ -298,7 +425,7 @@ function renderPropertyDetails(property, bookedDates) {
             </div>
 
             <!-- Top row: Gallery + Price/Booking (same level) -->
-            <div class="property-modal-top-row" style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; align-items: stretch; margin-bottom: 32px;">
+            <div class="property-modal-top-row" style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; align-items: start; margin-bottom: 32px;">
                 <!-- Single hero image - fills entire left column, no grid -->
                 <div class="property-modal-gallery">
                     ${photosHTML}
@@ -341,8 +468,10 @@ function renderPropertyDetails(property, bookedDates) {
                                     <span id="modal_total">₱0.00</span>
                                 </div>
                             </div>
+
+                            ${paymentMethodsHTML}
                             
-                            <button type="submit" class="modal-btn" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #D4A574, #B8935E); color: #FFFFFF; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer;">Reserve Now</button>
+                            <button type="submit" class="modal-btn modal-reserve-submit" ${paymongoOn ? '' : 'disabled'} style="width: 100%; padding: 14px; background: linear-gradient(135deg, #D4A574, #B8935E); color: #FFFFFF; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: ${paymongoOn ? 'pointer' : 'not-allowed'}; opacity: ${paymongoOn ? '1' : '0.5'};">${paymongoOn ? 'Continue to PayMongo checkout' : 'Booking unavailable'}</button>
                         </form>
                     </div>
                 </div>
@@ -411,6 +540,8 @@ function renderPropertyDetails(property, bookedDates) {
     `;
     
     modalContent.innerHTML = html;
+
+    setupPropertyGallerySlideshow(galleryUrls);
     
     // Contact Host form: submit to API with real property id and message
     const contactForm = document.getElementById('contactHostForm');
@@ -480,7 +611,7 @@ function renderPropertyDetails(property, bookedDates) {
     
     // Setup booking calculator after DOM is updated
     setTimeout(() => {
-        setupBookingCalculator(property.price_per_night, bookedDates);
+        setupBookingCalculator(property, bookedDates);
     }, 100);
 
     // Setup review stars & form after DOM is in place
@@ -767,7 +898,8 @@ function initMap(container, lat, lng, property) {
     window.propertyMapMarker = marker;
 }
 
-function setupBookingCalculator(pricePerNight, bookedDates) {
+function setupBookingCalculator(property, bookedDates) {
+    const pricePerNight = parseFloat(property && property.price_per_night) || 0;
     const checkIn = document.getElementById('modal_check_in');
     const checkOut = document.getElementById('modal_check_out');
     const bookingSummary = document.getElementById('bookingSummary');
@@ -846,9 +978,15 @@ function setupBookingCalculator(pricePerNight, bookedDates) {
     });
     
     checkOut.addEventListener('change', calculatePrice);
-    
-    // Handle booking form
+
     const bookingForm = document.getElementById('bookingForm');
+    if (!bookingForm) {
+        console.error('Booking form #bookingForm not found');
+        return;
+    }
+
+    const paymongoAvailable = !!(property && property.paymongo_available);
+
     bookingForm.addEventListener('submit', function(e) {
         e.preventDefault();
 
@@ -876,16 +1014,22 @@ function setupBookingCalculator(pricePerNight, bookedDates) {
             return;
         }
 
+        if (!paymongoAvailable) {
+            alert('Online payment is not configured. Bookings are unavailable until PayMongo is set up.');
+            return;
+        }
+
         const formData = new FormData();
         formData.append('property_id', String(currentPropertyId));
         formData.append('check_in', checkIn.value);
         formData.append('check_out', checkOut.value);
         formData.append('guests', String(guestsVal));
 
-        const reserveBtn = bookingForm.querySelector('button[type="submit"]');
+        const reserveBtn = bookingForm.querySelector('.modal-reserve-submit');
+        let willRedirectToCheckout = false;
         if (reserveBtn) {
             reserveBtn.disabled = true;
-            reserveBtn.textContent = 'Processing...';
+            reserveBtn.textContent = 'Creating checkout…';
         }
 
         fetch('create-booking.php', {
@@ -903,25 +1047,36 @@ function setupBookingCalculator(pricePerNight, bookedDates) {
                     ? '₱' + Number(res.total).toLocaleString('en-PH', { minimumFractionDigits: 2 })
                     : document.getElementById('modal_total').textContent;
 
-                // If backend returns a payment_url (once GCash is integrated), redirect there
                 if (res.payment_url) {
-                    alert('Booking created. You will be redirected to GCash to complete your payment.\n\nTotal: ' + totalText);
+                    willRedirectToCheckout = true;
+                    if (reserveBtn) {
+                        reserveBtn.textContent = 'Opening PayMongo…';
+                    }
                     window.location.href = res.payment_url;
                     return;
                 }
 
-                // Fallback: booking without live payment integration
-                alert((res.message || 'Booking created successfully.') + '\n\nTotal: ' + totalText + '\n\nPayment method: GCash (to be completed separately).');
+                if (res.payment_checkout_failed) {
+                    alert(
+                        'Your booking was saved, but PayMongo checkout could not be started (check API keys and PayMongo dashboard). '
+                        + 'Please contact the host about payment.\n\nTotal: ' + totalText
+                    );
+                    closePropertyModal();
+                    window.location.href = 'home.php';
+                    return;
+                }
+
+                alert((res.message || 'Booking created successfully.') + '\n\nTotal: ' + totalText);
                 closePropertyModal();
-                window.location.href = 'dashboard.php';
+                window.location.href = 'home.php';
             })
             .catch(() => {
                 alert('Network error while creating booking. Please try again.');
             })
             .finally(() => {
-                if (reserveBtn) {
-                    reserveBtn.disabled = false;
-                    reserveBtn.textContent = 'Reserve Now';
+                if (reserveBtn && !willRedirectToCheckout) {
+                    reserveBtn.disabled = !paymongoAvailable;
+                    reserveBtn.textContent = paymongoAvailable ? 'Continue to PayMongo checkout' : 'Booking unavailable';
                 }
             });
     });

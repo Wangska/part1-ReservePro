@@ -39,6 +39,59 @@
     display: block;
 }
 
+/* Map pin picker (add / edit property) */
+.host-property-pin-map-wrap {
+    margin-top: 8px;
+}
+.host-property-pin-map-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.host-property-pin-map-actions .btn-map-geocode {
+    padding: 10px 18px;
+    border-radius: 10px;
+    border: 1px solid rgba(212, 165, 116, 0.85);
+    background: linear-gradient(135deg, rgba(212, 165, 116, 0.35), rgba(184, 147, 95, 0.2));
+    color: #F5F0E8;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+}
+.host-property-pin-map-actions .btn-map-geocode:hover {
+    border-color: #D4A574;
+    background: linear-gradient(135deg, rgba(212, 165, 116, 0.5), rgba(184, 147, 95, 0.35));
+}
+.host-property-pin-map-hint {
+    font-size: 13px;
+    color: #B8B8B8;
+    margin: 0;
+    flex: 1 1 200px;
+}
+#hostPropertyPinMap {
+    height: 360px;
+    width: 100%;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(212, 165, 116, 0.55);
+    background: #1a1a1a;
+    z-index: 1;
+}
+body.light-mode .host-property-pin-map-actions .btn-map-geocode {
+    border-color: #D4C4B0;
+    background: linear-gradient(135deg, #F5EFE6, #E8DDD0);
+    color: #1F1F1F;
+}
+body.light-mode .host-property-pin-map-hint {
+    color: #4A4A4A;
+}
+body.light-mode #hostPropertyPinMap {
+    border-color: #E0E0E0;
+    background: #E5E7EB;
+}
+
 .form-section {
     /* Glassy sections for add-property wizard */
     background:

@@ -41,9 +41,9 @@ $conn->close();
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>Admin Dashboard - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=25.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=25.0">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.1">
     <link rel="stylesheet" href="../assets/css/admin.css?v=25.0">
-    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=25.0">
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=26.0">
 </head>
 <body class="dashboard-page">
     <div class="host-layout">
@@ -76,6 +76,14 @@ $conn->close();
                 <a href="bookings.php" class="nav-item">
                     <span class="nav-icon">📅</span>
                     <span>All Bookings</span>
+                </a>
+                <a href="earnings.php" class="nav-item">
+                    <span class="nav-icon">💰</span>
+                    <span>Earnings</span>
+                </a>
+                <a href="commission.php" class="nav-item">
+                    <span class="nav-icon">💎</span>
+                    <span>Commission</span>
                 </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon">🌐</span>
@@ -220,6 +228,6 @@ $conn->close();
         </main>
     </div>
     
-    <script src="../assets/js/theme-toggle.js"></script>
+    <script src="../assets/js/theme-toggle.js?v=26.0"></script>
 </body>
 </html>

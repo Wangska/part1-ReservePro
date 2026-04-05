@@ -79,7 +79,7 @@ $conn->close();
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>Host Dashboard - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=25.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=25.0">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.1">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=25.0">
 </head>
 <body class="dashboard-page">

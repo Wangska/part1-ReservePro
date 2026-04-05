@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="assets/css/landing.css?v=25.0">
     <link rel="stylesheet" href="assets/css/modal.css?v=25.0">
     <link rel="stylesheet" href="assets/css/role-select.css?v=25.0">
-    <link rel="stylesheet" href="assets/css/theme-toggle.css?v=2.0">
+    <link rel="stylesheet" href="assets/css/theme-toggle.css?v=27.2">
     <link rel="stylesheet" href="assets/css/animations.css?v=1.0">
 </head>
 <body class="auth-page">
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <span class="logo-text">ReservePro</span>
                 </div>
                 <div style="margin: 16px 0 12px 0;">
-                    <img src="background%20image/z.jpg"
+                    <img src="background%20image/nobg.png"
                          alt="Secure login"
                          style="width:64px; height:64px; border-radius:18px; object-fit:cover; display:block; margin:0 auto;">
                 </div>

@@ -162,8 +162,8 @@ $conn->close();
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>Add Property - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=14.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=14.0">
-    <link rel="stylesheet" href="../assets/css/add-property.css?v=14.0">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.1">
+    <link rel="stylesheet" href="../assets/css/add-property.css?v=15.0">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=14.0">
 </head>
 <body class="dashboard-page">
@@ -317,15 +317,23 @@ $conn->close();
                         </div>
                     </div>
 
+                    <div class="host-property-pin-map-wrap">
+                        <p class="section-description" style="margin-bottom:12px;">Place the pin exactly where guests should arrive. Drag the marker, tap the map, or start from your address.</p>
+                        <div class="host-property-pin-map-actions">
+                            <button type="button" class="btn-map-geocode" id="hostPropertyPinGeocodeBtn">Place from address</button>
+                            <p class="host-property-pin-map-hint">Uses your address fields above, then fine-tune by dragging the pin.</p>
+                        </div>
+                        <div id="hostPropertyPinMap" role="application" aria-label="Map to position property pin"></div>
+                    </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label for="latitude">Latitude (optional)</label>
-                            <input type="text" id="latitude" name="latitude" value="<?php echo htmlspecialchars($_POST['latitude'] ?? ''); ?>" placeholder="14.5995">
-                            <small class="helper-text">Paste coordinates from a map for an exact pin (e.g. from Google Maps).</small>
+                            <input type="text" id="latitude" name="latitude" value="<?php echo htmlspecialchars($_POST['latitude'] ?? ''); ?>" placeholder="14.599512" inputmode="decimal" autocomplete="off">
+                            <small class="helper-text">Updates when you move the pin; you can paste coordinates too.</small>
                         </div>
                         <div class="form-group">
                             <label for="longitude">Longitude (optional)</label>
-                            <input type="text" id="longitude" name="longitude" value="<?php echo htmlspecialchars($_POST['longitude'] ?? ''); ?>" placeholder="120.9842">
+                            <input type="text" id="longitude" name="longitude" value="<?php echo htmlspecialchars($_POST['longitude'] ?? ''); ?>" placeholder="120.984219" inputmode="decimal" autocomplete="off">
                         </div>
                     </div>
                 </div>
@@ -428,6 +436,7 @@ $conn->close();
     </div>
     
     <script src="../assets/js/theme-toggle.js"></script>
+    <script src="../assets/js/host-property-pin-map.js?v=1"></script>
     <script>
         console.log('🎬 Photo upload script loading...');
         
@@ -585,6 +594,9 @@ $conn->close();
                 if (backBtn) backBtn.style.display = currentStep > 1 ? 'inline-block' : 'none';
                 if (nextBtn) nextBtn.style.display = currentStep < maxStep ? 'inline-block' : 'none';
                 if (submitBtn) submitBtn.style.display = currentStep === maxStep ? 'inline-block' : 'none';
+                if (currentStep === 1 && typeof window.hostPropertyPinMapRefresh === 'function') {
+                    window.hostPropertyPinMapRefresh();
+                }
             }
 
             if (nextBtn) {
@@ -607,6 +619,9 @@ $conn->close();
             }
 
             updateUI();
+            if (typeof window.initHostPropertyPinMap === 'function') {
+                window.initHostPropertyPinMap({});
+            }
         })();
     </script>
 </body>
