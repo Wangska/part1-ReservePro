@@ -41,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="assets/css/style.css?v=25.0">
     <link rel="stylesheet" href="assets/css/landing.css?v=25.0">
     <link rel="stylesheet" href="assets/css/theme-toggle.css?v=25.0">
+    <link rel="stylesheet" href="assets/css/theme-toggle-home-static.css?v=1.0">
     <link rel="stylesheet" href="assets/css/animations.css?v=1.0">
 </head>
 <body class="auth-page">
@@ -48,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <img src="background%20image/asd.webp" alt="ReservePro" style="width: 48px; height: 48px; object-fit: contain; border-radius: 12px; border: 2px solid rgba(212, 165, 116, 0.6); box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
     </a>
     <!-- Theme Toggle -->
-    <div class="theme-toggle" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+    <div class="theme-toggle theme-toggle-home-static" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
         <span class="theme-toggle-icon">☀️</span>
         <span class="theme-toggle-text">Light</span>
     </div>

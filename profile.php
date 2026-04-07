@@ -41,6 +41,7 @@ $role_label = isset($user['role']) ? ucfirst($user['role']) : 'Guest';
     <title>Profile - ReservePro</title>
     <link rel="stylesheet" href="assets/css/style.css?v=12.0">
     <link rel="stylesheet" href="assets/css/theme-toggle.css?v=27.2">
+    <link rel="stylesheet" href="assets/css/theme-toggle-home-static.css?v=1.0">
     <style>
         .profile-page { max-width: 640px; margin: 0 auto; padding: 24px; }
         .profile-header {
@@ -111,7 +112,7 @@ $role_label = isset($user['role']) ? ucfirst($user['role']) : 'Guest';
                 <a href="dashboard.php">Dashboard</a>
                 <a href="messages.php">Messages</a>
                 <a href="logout.php">Logout</a>
-                <div class="theme-toggle">
+                <div class="theme-toggle theme-toggle-home-static">
                     <span class="theme-toggle-icon">☀️</span>
                     <span class="theme-toggle-text">Light</span>
                 </div>

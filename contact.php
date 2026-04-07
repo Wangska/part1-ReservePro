@@ -46,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="assets/css/modal.css?v=25.0">
     <link rel="stylesheet" href="assets/css/role-select.css?v=25.0">
     <link rel="stylesheet" href="assets/css/theme-toggle.css?v=2.0">
+    <link rel="stylesheet" href="assets/css/theme-toggle-home-static.css?v=1.0">
     <link rel="stylesheet" href="assets/css/animations.css?v=1.0">
     <link rel="stylesheet" href="assets/css/home-modern.css?v=4.0">
     <style>
@@ -348,7 +349,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php endif; ?>
                 
                 <!-- Theme Toggle -->
-                <div class="theme-toggle">
+                <div class="theme-toggle theme-toggle-home-static">
                     <span class="theme-toggle-icon">☀️</span>
                     <span class="theme-toggle-text">Light</span>
                 </div>

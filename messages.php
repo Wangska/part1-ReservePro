@@ -87,6 +87,7 @@ $conn->close();
     <title>Messages - ReservePro</title>
     <link rel="stylesheet" href="assets/css/style.css?v=12.0">
     <link rel="stylesheet" href="assets/css/theme-toggle.css?v=4.0">
+    <link rel="stylesheet" href="assets/css/theme-toggle-home-static.css?v=1.0">
     <style>
         .messages-page { max-width: 1200px; margin: 0 auto; padding: 24px; }
         .messages-header {
@@ -189,7 +190,7 @@ $conn->close();
                 <a href="dashboard.php">Dashboard</a>
                 <a href="profile.php">Profile</a>
                 <a href="logout.php">Logout</a>
-                <div class="theme-toggle">
+                <div class="theme-toggle theme-toggle-home-static">
                     <span class="theme-toggle-icon">☀️</span>
                     <span class="theme-toggle-text">Light</span>
                 </div>

@@ -90,6 +90,50 @@ $conn->close();
     <link rel="stylesheet" href="assets/css/theme-toggle.css?v=25.2">
     <link rel="stylesheet" href="assets/css/animations.css?v=1.0">
     <link rel="stylesheet" href="assets/css/home-modern.css?v=4.1">
+    <style>
+        .theme-toggle.theme-toggle-home-static {
+            width: 42px;
+            min-height: 42px;
+            padding: 0;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(148, 163, 184, 0.18);
+            box-shadow: none;
+        }
+
+        .theme-toggle.theme-toggle-home-static .theme-toggle-icon {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: none;
+            color: #f8fafc;
+            transition: none;
+        }
+
+        .theme-toggle.theme-toggle-home-static:hover .theme-toggle-icon,
+        .theme-toggle.theme-toggle-home-static[aria-pressed="true"] .theme-toggle-icon,
+        .theme-toggle.theme-toggle-home-static[aria-pressed="true"]:hover .theme-toggle-icon {
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: none;
+            color: #f8fafc;
+        }
+
+        body.light-mode .theme-toggle.theme-toggle-home-static {
+            background: #ffffff;
+            border-color: rgba(15, 23, 42, 0.1);
+            box-shadow: none;
+        }
+
+        body.light-mode .theme-toggle.theme-toggle-home-static .theme-toggle-icon,
+        body.light-mode .theme-toggle.theme-toggle-home-static:hover .theme-toggle-icon,
+        body.light-mode .theme-toggle.theme-toggle-home-static[aria-pressed="true"] .theme-toggle-icon,
+        body.light-mode .theme-toggle.theme-toggle-home-static[aria-pressed="true"]:hover .theme-toggle-icon {
+            background: rgba(15, 23, 42, 0.08);
+            color: #0f172a;
+        }
+    </style>
 </head>
 <body class="dashboard-page">
     <!-- 3D ReservePro loading overlay -->
@@ -173,7 +217,7 @@ $conn->close();
                 <?php endif; ?>
                 
                 <!-- Theme Toggle -->
-                <button type="button" class="theme-toggle" aria-label="Toggle theme">
+                <button type="button" class="theme-toggle theme-toggle-home-static" aria-label="Toggle theme">
                     <span class="theme-toggle-icon" aria-hidden="true">
                         <!-- Sun (outline) -->
                         <svg class="theme-icon theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

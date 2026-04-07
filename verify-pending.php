@@ -16,6 +16,7 @@ if (isLoggedIn()) {
     <title>Check your email - ReservePro</title>
     <link rel="stylesheet" href="assets/css/style.css?v=25.0">
     <link rel="stylesheet" href="assets/css/theme-toggle.css?v=25.0">
+    <link rel="stylesheet" href="assets/css/theme-toggle-home-static.css?v=1.0">
     <style>
         .verify-wrapper {
             min-height: 100vh;
@@ -116,7 +117,7 @@ if (isLoggedIn()) {
     </style>
 </head>
 <body>
-    <div class="theme-toggle" style="position: fixed; top: 16px; right: 16px; z-index: 1000;">
+    <div class="theme-toggle theme-toggle-home-static" style="position: fixed; top: 16px; right: 16px; z-index: 1000;">
         <span class="theme-toggle-icon">☀️</span>
         <span class="theme-toggle-text">Light</span>
     </div>
