@@ -25,6 +25,22 @@ $stmt->bind_param("i", $user['id']);
 $stmt->execute();
 $bookings = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
+
+$booking_stats = [
+    'total' => count($bookings),
+    'pending' => 0,
+    'confirmed' => 0,
+    'completed' => 0,
+    'cancelled' => 0,
+];
+
+foreach ($bookings as $booking_item) {
+    $status_key = $booking_item['status'] ?? '';
+    if (isset($booking_stats[$status_key])) {
+        $booking_stats[$status_key]++;
+    }
+}
+
 $conn->close();
 ?>
 <!DOCTYPE html>
@@ -35,10 +51,11 @@ $conn->close();
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>Bookings - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=11.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.1">
-    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=11.1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.2">
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
 </head>
-<body class="dashboard-page">
+<body class="dashboard-page host-clean-page host-bookings-page">
     <div class="host-layout">
         <!-- Sidebar -->
         <aside class="host-sidebar">
@@ -51,31 +68,31 @@ $conn->close();
             
             <nav class="sidebar-nav">
                 <a href="dashboard.php" class="nav-item">
-                    <span class="nav-icon">📊</span>
+                    <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
                     <span>Dashboard</span>
                 </a>
                 <a href="properties.php" class="nav-item">
-                    <span class="nav-icon">🏠</span>
+                    <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
                     <span>My Properties</span>
                 </a>
                 <a href="add-property.php" class="nav-item">
-                    <span class="nav-icon">➕</span>
+                    <span class="nav-icon"><i class="fa-solid fa-plus" aria-hidden="true"></i></span>
                     <span>Add Property</span>
                 </a>
                 <a href="bookings.php" class="nav-item active">
-                    <span class="nav-icon">📅</span>
+                    <span class="nav-icon"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></span>
                     <span>Bookings</span>
                 </a>
                 <a href="earnings.php" class="nav-item">
-                    <span class="nav-icon">💰</span>
+                    <span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span>
                     <span>Earnings</span>
                 </a>
                 <a href="messages.php" class="nav-item">
-                    <span class="nav-icon">💬</span>
+                    <span class="nav-icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span>
                     <span>Messages</span>
                 </a>
                 <a href="../home.php" class="nav-item">
-                    <span class="nav-icon">🌐</span>
+                    <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
                     <span>View Site</span>
                 </a>
             </nav>
@@ -90,6 +107,11 @@ $conn->close();
                         <div class="user-role">Host</div>
                     </div>
                 </div>
+
+                <div class="theme-toggle">
+                    <span class="theme-toggle-icon">☀️</span>
+                    <span class="theme-toggle-text">Light</span>
+                </div>
                 
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
@@ -97,32 +119,73 @@ $conn->close();
 
         <!-- Main Content -->
         <main class="host-main">
-            <div class="host-header" style="display: flex; justify-content: space-between; align-items: center;">
-                <div style="display:flex; align-items:center; gap:12px;">
-                    <img src="../background%20image/u.webp" alt="Bookings icon" style="width:40px; height:40px; border-radius:8px; object-fit:cover;">
-                    <div>
-                        <h1>Bookings</h1>
-                        <p class="subtitle">Manage your reservations</p>
+            <div class="host-header host-page-hero">
+                <div class="host-page-hero-content">
+                    <span class="host-page-eyebrow">Reservation Activity</span>
+                    <h1>Bookings</h1>
+                    <p class="subtitle">Review every reservation across your properties and jump into the details when guest or booking status changes.</p>
+                </div>
+                <div style="display:flex; align-items:flex-start; gap:14px; margin-left:auto;">
+                    <div class="host-page-summary">
+                        <span class="host-page-summary-label">Confirmed Stays</span>
+                        <strong><?php echo $booking_stats['confirmed']; ?></strong>
+                        <span class="host-page-summary-text">reservations currently approved</span>
                     </div>
                 </div>
-                <!-- Theme Toggle -->
-                <div class="theme-toggle">
-                    <span class="theme-toggle-icon">☀️</span>
-                    <span class="theme-toggle-text">Light</span>
+            </div>
+
+            <div class="host-metric-grid">
+                <div class="host-metric-card">
+                    <div class="host-metric-icon is-sky"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i></div>
+                    <div class="host-metric-copy">
+                        <p>Total Bookings</p>
+                        <h3><?php echo $booking_stats['total']; ?></h3>
+                        <span class="host-metric-note">Every reservation received across your listings.</span>
+                    </div>
+                </div>
+                <div class="host-metric-card">
+                    <div class="host-metric-icon is-amber"><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i></div>
+                    <div class="host-metric-copy">
+                        <p>Pending</p>
+                        <h3><?php echo $booking_stats['pending']; ?></h3>
+                        <span class="host-metric-note">Reservations still waiting on progress or payment.</span>
+                    </div>
+                </div>
+                <div class="host-metric-card">
+                    <div class="host-metric-icon is-emerald"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></div>
+                    <div class="host-metric-copy">
+                        <p>Completed</p>
+                        <h3><?php echo $booking_stats['completed']; ?></h3>
+                        <span class="host-metric-note">Trips that have already finished successfully.</span>
+                    </div>
+                </div>
+                <div class="host-metric-card">
+                    <div class="host-metric-icon is-red"><i class="fa-solid fa-ban" aria-hidden="true"></i></div>
+                    <div class="host-metric-copy">
+                        <p>Cancelled</p>
+                        <h3><?php echo $booking_stats['cancelled']; ?></h3>
+                        <span class="host-metric-note">Reservations that will not move forward.</span>
+                    </div>
                 </div>
             </div>
 
             <?php if (empty($bookings)): ?>
-                <div class="empty-state">
-                    <span class="empty-icon">
-                        <img src="../background%20image/u.webp" alt="No bookings icon" style="width:56px; height:56px; border-radius:12px; object-fit:cover;">
-                    </span>
+                <div class="empty-state host-empty-state host-surface">
+                    <span class="empty-icon host-empty-icon"><i class="fa-solid fa-calendar-xmark" aria-hidden="true"></i></span>
                     <h3>No bookings yet</h3>
                     <p>Your bookings will appear here once guests make reservations</p>
                 </div>
             <?php else: ?>
-                <div class="bookings-table">
-                    <table>
+                <div class="bookings-table host-surface">
+                    <div class="host-surface-header">
+                        <div>
+                            <h2>Booking History</h2>
+                            <p>Open a booking to review stay details, payment status, and guest information.</p>
+                        </div>
+                        <span class="host-badge-neutral"><?php echo $booking_stats['total']; ?> total</span>
+                    </div>
+                    <div class="host-table-scroll">
+                    <table class="host-table">
                         <thead>
                             <tr>
                                 <th>Booking ID</th>
@@ -153,17 +216,19 @@ $conn->close();
                                 <td><strong>₱<?php echo number_format($booking['total_price'], 2); ?></strong></td>
                                 <td><span class="badge badge-<?php echo $booking['status']; ?>"><?php echo ucfirst($booking['status']); ?></span></td>
                                 <td>
-                                    <a href="view-booking.php?id=<?php echo (int)$booking['id']; ?>" class="btn-edit" style="padding: 6px 12px; font-size: 12px;">View</a>
+                                    <a href="view-booking.php?id=<?php echo (int)$booking['id']; ?>" class="host-action-btn is-info">View</a>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
+                    </div>
                 </div>
             <?php endif; ?>
         </main>
     </div>
     
-    <script src="../assets/js/theme-toggle.js"></script>
+    <script src="../assets/js/theme-toggle.js?v=27.5"></script>
+    <script src="../assets/js/host-view-site-confirm.js?v=1.0"></script>
 </body>
 </html>

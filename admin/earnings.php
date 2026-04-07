@@ -68,136 +68,16 @@ $conn->close();
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>Platform Earnings - Admin - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=25.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.1">
-    <link rel="stylesheet" href="../assets/css/admin.css?v=25.0">
-    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.2">
+    <link rel="stylesheet" href="../assets/css/admin.css?v=25.4">
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
-        .earnings-header {
-            background: linear-gradient(135deg, #111827 0%, #1F2933 45%, #020617 100%);
-            padding: 40px;
-            border-radius: 16px;
-            margin-bottom: 32px;
-            color: white;
-        }
-        .earnings-header h1 {
-            font-size: 32px;
-            margin-bottom: 8px;
-            color: #FFFFFF !important;
-        }
-        .earnings-header p {
-            opacity: 0.9;
-            font-size: 16px;
-            color: #E0E0E0 !important;
-        }
-        .earnings-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 24px;
-            margin-bottom: 32px;
-        }
-        .earnings-stat-card {
-            background: #1F1F1F;
-            padding: 24px;
-            border-radius: 12px;
-            border: 1px solid #3A3A3A;
-            transition: all 0.3s ease;
-        }
-        .earnings-stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(212, 165, 116, 0.2);
-            border-color: #D4A574;
-        }
-        .earnings-stat-card .stat-label {
-            font-size: 14px;
-            color: #B8B8B8;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .earnings-stat-card .stat-value {
-            font-size: 32px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #D4A574, #B8935F);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 4px;
-        }
-        .earnings-stat-card .stat-change {
-            font-size: 13px;
-            color: #22C55E;
-        }
-        .earnings-table-container {
-            background: #1F1F1F;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid #3A3A3A;
-        }
-        .earnings-table-container .table-header {
-            padding: 24px;
-            border-bottom: 1px solid #3A3A3A;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 16px;
-        }
-        .earnings-table-container .table-header h2 {
-            font-size: 20px;
-            font-weight: 600;
-            color: #FFFFFF !important;
-            margin: 0;
-        }
         .filter-buttons {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
             width: 100%;
-        }
-        .filter-btn {
-            padding: 8px 16px;
-            border: 1px solid #3A3A3A;
-            background: transparent;
-            color: #B8B8B8;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s ease;
-        }
-        .filter-btn:hover {
-            background: #2C2C2C;
-            color: #D4A574;
-            border-color: #D4A574;
-        }
-        .filter-btn.active {
-            background: linear-gradient(135deg, #D4A574, #B8935F);
-            color: #0F0F0F;
-            border-color: transparent;
-        }
-        .earnings-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .earnings-table thead {
-            background: #2C2C2C;
-        }
-        .earnings-table th {
-            padding: 14px 16px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 12px;
-            color: #B8B8B8;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid #3A3A3A;
-        }
-        .earnings-table td {
-            padding: 16px;
-            color: #E0E0E0;
-            border-bottom: 1px solid #2C2C2C;
-            font-size: 14px;
-        }
-        .earnings-table tbody tr:hover {
-            background: #2C2C2C;
         }
         .booking-id {
             font-family: 'Courier New', monospace;
@@ -208,45 +88,9 @@ $conn->close();
             font-weight: 700;
             color: #D4A574;
         }
-        .status-badge {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: capitalize;
-        }
-        .status-completed {
-            background: rgba(34, 197, 94, 0.2);
-            color: #22C55E;
-            border: 1px solid rgba(34, 197, 94, 0.3);
-        }
-        .status-pending {
-            background: rgba(251, 191, 36, 0.2);
-            color: #FBBF24;
-            border: 1px solid rgba(251, 191, 36, 0.3);
-        }
-        .status-confirmed {
-            background: rgba(59, 130, 246, 0.2);
-            color: #3B82F6;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-        }
-        .status-cancelled {
-            background: rgba(239, 68, 68, 0.2);
-            color: #EF4444;
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-        .empty-earnings {
-            text-align: center;
-            padding: 64px 20px;
-            color: #B8B8B8;
-        }
-        .empty-earnings h3 {
-            color: #FFFFFF !important;
-        }
     </style>
 </head>
-<body class="dashboard-page">
+<body class="dashboard-page admin-page admin-clean-page admin-earnings-page">
     <div class="host-layout">
         <aside class="host-sidebar">
             <div class="sidebar-header">
@@ -257,35 +101,35 @@ $conn->close();
             </div>
             <nav class="sidebar-nav">
                 <a href="dashboard.php" class="nav-item">
-                    <span class="nav-icon">📊</span>
+                    <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
                     <span>Admin Panel</span>
                 </a>
                 <a href="host-verifications.php" class="nav-item">
-                    <span class="nav-icon">✅</span>
+                    <span class="nav-icon"><i class="fa-solid fa-user-check" aria-hidden="true"></i></span>
                     <span>Host Verifications</span>
                 </a>
                 <a href="properties.php" class="nav-item">
-                    <span class="nav-icon">🏠</span>
+                    <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
                     <span>All Properties</span>
                 </a>
                 <a href="users.php" class="nav-item">
-                    <span class="nav-icon">👥</span>
+                    <span class="nav-icon"><i class="fa-solid fa-users" aria-hidden="true"></i></span>
                     <span>Users</span>
                 </a>
                 <a href="bookings.php" class="nav-item">
-                    <span class="nav-icon">📅</span>
+                    <span class="nav-icon"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i></span>
                     <span>All Bookings</span>
                 </a>
                 <a href="earnings.php" class="nav-item active">
-                    <span class="nav-icon">💰</span>
+                    <span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span>
                     <span>Earnings</span>
                 </a>
                 <a href="commission.php" class="nav-item">
-                    <span class="nav-icon">💎</span>
+                    <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
                     <span>Commission</span>
                 </a>
                 <a href="../home.php" class="nav-item">
-                    <span class="nav-icon">🌐</span>
+                    <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
                     <span>View Site</span>
                 </a>
             </nav>
@@ -299,42 +143,69 @@ $conn->close();
                         <div class="user-role">Administrator</div>
                     </div>
                 </div>
+                <div class="theme-toggle" style="margin-bottom: 12px;">
+                    <span class="theme-toggle-icon" aria-hidden="true"></span>
+                    <span class="theme-toggle-text">Theme</span>
+                </div>
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
         </aside>
 
         <main class="host-main">
-            <div class="earnings-header">
-                <h1>💰 Platform Earnings</h1>
-                <p>Gross guest totals (subtotal + 10% service fee) across all hosts and properties. For the platform’s 10% commission slice, see <a href="commission.php" style="color: #FDE68A; text-decoration: underline;">Commission</a>.</p>
-            </div>
-
-            <div class="earnings-stats">
-                <div class="earnings-stat-card">
-                    <div class="stat-label">Earned (confirmed + completed)</div>
-                    <div class="stat-value">₱<?php echo number_format($total_earnings, 2); ?></div>
-                    <div class="stat-change">Platform booking totals</div>
+            <div class="earnings-header admin-page-hero">
+                <div class="admin-page-hero-content">
+                    <span class="admin-page-eyebrow">Revenue Overview</span>
+                    <h1>Platform Earnings</h1>
+                    <p>Review guest-paid totals across the platform. For the platform’s commission-only view, open <a href="commission.php" style="color: #FDE68A; text-decoration: underline;">Commission</a>.</p>
                 </div>
-                <div class="earnings-stat-card">
-                    <div class="stat-label">Pending pipeline</div>
-                    <div class="stat-value">₱<?php echo number_format($pending_earnings, 2); ?></div>
-                    <div class="stat-change">Awaiting host / payment</div>
-                </div>
-                <div class="earnings-stat-card">
-                    <div class="stat-label">Cancelled (historical)</div>
-                    <div class="stat-value">₱<?php echo number_format($cancelled_value, 2); ?></div>
-                    <div class="stat-change">Not counted as revenue</div>
-                </div>
-                <div class="earnings-stat-card">
-                    <div class="stat-label">Total bookings</div>
-                    <div class="stat-value"><?php echo (int) $total_bookings; ?></div>
-                    <div class="stat-change">All statuses</div>
+                <div class="admin-page-summary">
+                    <span class="admin-page-summary-label">Earned Revenue</span>
+                    <strong>₱<?php echo number_format($total_earnings, 0); ?></strong>
+                    <span class="admin-page-summary-text">confirmed and completed booking totals</span>
                 </div>
             </div>
 
-            <div class="earnings-table-container">
-                <div class="table-header">
-                    <h2>All booking transactions</h2>
+            <div class="earnings-stats admin-metric-grid">
+                <div class="earnings-stat-card admin-metric-card">
+                    <div class="admin-metric-icon is-emerald"><i class="fa-solid fa-wallet" aria-hidden="true"></i></div>
+                    <div class="admin-metric-copy">
+                        <div class="stat-label">Earned Revenue</div>
+                        <div class="stat-value">₱<?php echo number_format($total_earnings, 2); ?></div>
+                        <div class="stat-change">Confirmed and completed booking totals.</div>
+                    </div>
+                </div>
+                <div class="earnings-stat-card admin-metric-card">
+                    <div class="admin-metric-icon is-amber"><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i></div>
+                    <div class="admin-metric-copy">
+                        <div class="stat-label">Pending Pipeline</div>
+                        <div class="stat-value">₱<?php echo number_format($pending_earnings, 2); ?></div>
+                        <div class="stat-change">Revenue waiting on booking completion.</div>
+                    </div>
+                </div>
+                <div class="earnings-stat-card admin-metric-card">
+                    <div class="admin-metric-icon is-red"><i class="fa-solid fa-ban" aria-hidden="true"></i></div>
+                    <div class="admin-metric-copy">
+                        <div class="stat-label">Cancelled Value</div>
+                        <div class="stat-value">₱<?php echo number_format($cancelled_value, 2); ?></div>
+                        <div class="stat-change">Historical totals excluded from earnings.</div>
+                    </div>
+                </div>
+                <div class="earnings-stat-card admin-metric-card">
+                    <div class="admin-metric-icon is-sky"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i></div>
+                    <div class="admin-metric-copy">
+                        <div class="stat-label">Total Bookings</div>
+                        <div class="stat-value"><?php echo (int) $total_bookings; ?></div>
+                        <div class="stat-change">Every reservation, regardless of status.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="earnings-table-container admin-surface">
+                <div class="table-header admin-surface-header">
+                    <div>
+                        <h2>All Booking Transactions</h2>
+                        <p>Use the filters to switch between earned, pending, and cancelled revenue.</p>
+                    </div>
                     <div class="filter-buttons">
                         <button type="button" class="filter-btn active" data-filter="all">All</button>
                         <button type="button" class="filter-btn" data-filter="earned">Earned</button>
@@ -344,12 +215,13 @@ $conn->close();
                 </div>
 
                 <?php if (empty($bookings)): ?>
-                    <div class="empty-earnings">
+                    <div class="empty-earnings admin-empty-state">
+                        <span class="admin-empty-icon"><i class="fa-solid fa-inbox" aria-hidden="true"></i></span>
                         <h3>No bookings yet</h3>
                         <p>When guests reserve properties, they will appear here with amounts and status.</p>
                     </div>
                 <?php else: ?>
-                    <div style="overflow-x: auto;">
+                    <div class="admin-scroll-x">
                         <table class="earnings-table">
                             <thead>
                                 <tr>
@@ -394,6 +266,7 @@ $conn->close();
     </div>
 
     <script src="../assets/js/theme-toggle.js?v=27.0"></script>
+    <script src="../assets/js/admin-view-site-confirm.js?v=1.0"></script>
     <script>
         (function () {
             var buttons = document.querySelectorAll('.earnings-table-container .filter-btn');

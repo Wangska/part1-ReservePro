@@ -95,8 +95,9 @@ $canApprove = ($booking['status'] === 'pending');
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>Booking #<?php echo htmlspecialchars($booking['id']); ?> - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=14.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.1">
-    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=14.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.2">
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
         .view-booking-page {
             max-width: 900px;
@@ -268,7 +269,7 @@ $canApprove = ($booking['status'] === 'pending');
         }
     </style>
 </head>
-<body class="dashboard-page">
+<body class="dashboard-page host-clean-page host-detail-page">
     <div class="host-layout">
         <aside class="host-sidebar">
             <div class="sidebar-header">
@@ -278,13 +279,13 @@ $canApprove = ($booking['status'] === 'pending');
                 </a>
             </div>
             <nav class="sidebar-nav">
-                <a href="dashboard.php" class="nav-item"><span class="nav-icon">📊</span><span>Dashboard</span></a>
-                <a href="properties.php" class="nav-item"><span class="nav-icon">🏠</span><span>My Properties</span></a>
-                <a href="add-property.php" class="nav-item"><span class="nav-icon">➕</span><span>Add Property</span></a>
-                <a href="bookings.php" class="nav-item active"><span class="nav-icon">📅</span><span>Bookings</span></a>
-                <a href="earnings.php" class="nav-item"><span class="nav-icon">💰</span><span>Earnings</span></a>
-                <a href="messages.php" class="nav-item"><span class="nav-icon">💬</span><span>Messages</span></a>
-                <a href="../home.php" class="nav-item"><span class="nav-icon">🌐</span><span>View Site</span></a>
+                <a href="dashboard.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span><span>Dashboard</span></a>
+                <a href="properties.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span><span>My Properties</span></a>
+                <a href="add-property.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-plus" aria-hidden="true"></i></span><span>Add Property</span></a>
+                <a href="bookings.php" class="nav-item active"><span class="nav-icon"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></span><span>Bookings</span></a>
+                <a href="earnings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span><span>Earnings</span></a>
+                <a href="messages.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span><span>Messages</span></a>
+                <a href="../home.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span><span>View Site</span></a>
             </nav>
             <div class="sidebar-footer">
                 <div class="user-profile">
@@ -296,55 +297,51 @@ $canApprove = ($booking['status'] === 'pending');
                         <div class="user-role">Host</div>
                     </div>
                 </div>
+                <div class="theme-toggle">
+                    <span class="theme-toggle-icon">☀️</span>
+                    <span class="theme-toggle-text">Light</span>
+                </div>
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
         </aside>
 
         <main class="host-main">
             <div class="view-booking-page">
-                <div class="view-booking-header">
-                    <div>
+                <div class="view-booking-header host-page-hero">
+                    <div class="host-page-hero-content">
+                        <span class="host-page-eyebrow">Booking Details</span>
                         <h1>Booking #<?php echo htmlspecialchars($booking['id']); ?></h1>
-                        <p class="subtitle">
-                            <?php echo htmlspecialchars($booking['property_title']); ?> ·
-                            <?php echo htmlspecialchars($booking['city'] . ', ' . $booking['country']); ?>
-                        </p>
-                        <p class="subtitle">
-                            <span class="status-badge <?php echo $statusClass; ?>">
-                                <?php echo ucfirst($booking['status']); ?>
-                            </span>
-                        </p>
+                        <p class="subtitle"><?php echo htmlspecialchars($booking['property_title']); ?> · <?php echo htmlspecialchars($booking['city'] . ', ' . $booking['country']); ?></p>
                     </div>
-                    <div class="actions">
-                        <a href="bookings.php" class="btn-view-back">← Back to bookings</a>
+                    <div class="actions" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-left:auto;">
+                        <span class="status-badge <?php echo $statusClass; ?>">
+                            <?php echo ucfirst($booking['status']); ?>
+                        </span>
+                        <a href="bookings.php" class="host-action-btn is-info">Back to bookings</a>
                         <?php if ($canApprove): ?>
                             <form method="POST" action="update-booking-status.php" style="display:inline;">
                                 <input type="hidden" name="booking_id" value="<?php echo (int)$booking['id']; ?>">
                                 <input type="hidden" name="new_status" value="confirmed">
-                                <button type="submit" class="btn-view-back" style="background:#22C55E; margin-left:8px;">
+                                <button type="submit" class="host-action-btn is-primary">
                                     Approve booking
                                 </button>
                             </form>
                         <?php endif; ?>
-                        <div class="theme-toggle">
-                            <span class="theme-toggle-icon">☀️</span>
-                            <span class="theme-toggle-text">Light</span>
-                        </div>
                     </div>
                 </div>
 
-                <div class="view-section">
+                <div class="view-section host-detail-shell">
                     <h2>Stay details</h2>
-                    <div class="detail-grid">
-                        <div class="detail-pill">Check-in: <?php echo $checkIn->format('M d, Y'); ?></div>
-                        <div class="detail-pill">Check-out: <?php echo $checkOut->format('M d, Y'); ?></div>
-                        <div class="detail-pill">Nights: <?php echo $nights; ?></div>
-                        <div class="detail-pill">Guests: <?php echo (int) $booking['guests']; ?></div>
-                        <div class="detail-pill">Booked on: <?php echo date('M d, Y H:i', strtotime($booking['booking_date'])); ?></div>
+                    <div class="host-detail-grid">
+                        <div class="host-detail-card"><span class="host-detail-label">Check-In</span><span class="host-detail-value"><?php echo $checkIn->format('M d, Y'); ?></span></div>
+                        <div class="host-detail-card"><span class="host-detail-label">Check-Out</span><span class="host-detail-value"><?php echo $checkOut->format('M d, Y'); ?></span></div>
+                        <div class="host-detail-card"><span class="host-detail-label">Nights</span><span class="host-detail-value"><?php echo $nights; ?></span></div>
+                        <div class="host-detail-card"><span class="host-detail-label">Guests</span><span class="host-detail-value"><?php echo (int) $booking['guests']; ?></span></div>
+                        <div class="host-detail-card"><span class="host-detail-label">Booked On</span><span class="host-detail-value"><?php echo date('M d, Y H:i', strtotime($booking['booking_date'])); ?></span></div>
                     </div>
                 </div>
 
-                <div class="view-section">
+                <div class="view-section host-detail-shell">
                     <h2>Pricing</h2>
                     <p class="detail-row">Nightly rate: ₱<?php echo number_format($nightly, 2); ?></p>
                     <p class="detail-row">Subtotal (<?php echo $nights; ?> nights): ₱<?php echo number_format($subtotal, 2); ?></p>
@@ -352,7 +349,7 @@ $canApprove = ($booking['status'] === 'pending');
                     <p class="detail-row" style="font-weight: 700;">Total: ₱<?php echo number_format($booking['total_price'], 2); ?></p>
                 </div>
 
-                <div class="view-section">
+                <div class="view-section host-detail-shell">
                     <h2>Guest</h2>
                     <p class="detail-row">
                         <strong><?php echo htmlspecialchars($booking['first_name'] . ' ' . $booking['last_name']); ?></strong><br>
@@ -360,7 +357,7 @@ $canApprove = ($booking['status'] === 'pending');
                     </p>
                 </div>
 
-                <div class="view-section">
+                <div class="view-section host-detail-shell">
                     <h2>Payment</h2>
                     <?php if (!empty($booking['payment_status'])): ?>
                         <p class="detail-row">
@@ -383,7 +380,8 @@ $canApprove = ($booking['status'] === 'pending');
         </main>
     </div>
 
-    <script src="../assets/js/theme-toggle.js"></script>
+    <script src="../assets/js/theme-toggle.js?v=27.5"></script>
+    <script src="../assets/js/host-view-site-confirm.js?v=1.0"></script>
 </body>
 </html>
 

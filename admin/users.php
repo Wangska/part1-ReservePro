@@ -47,25 +47,11 @@ $conn->close();
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>Users - Admin - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=10.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.1">
-    <link rel="stylesheet" href="../assets/css/admin.css?v=10.0">
-    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.2">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.2">
+    <link rel="stylesheet" href="../assets/css/admin.css?v=10.4">
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
-        .users-header {
-            /* Trendy gray header instead of brown */
-            background: linear-gradient(135deg, #111827 0%, #1F2933 45%, #020617 100%);
-            padding: 40px;
-            border-radius: 16px;
-            margin-bottom: 32px;
-            color: white;
-        }
-
-        .users-header h1 {
-            font-size: 32px;
-            margin-bottom: 8px;
-            color: #FFFFFF !important;
-        }
-
         .user-avatar-large {
             width: 48px;
             height: 48px;
@@ -125,7 +111,7 @@ $conn->close();
         }
     </style>
 </head>
-<body class="dashboard-page">
+<body class="dashboard-page admin-page admin-clean-page admin-users-page">
     <div class="host-layout">
         <!-- Sidebar -->
         <aside class="host-sidebar">
@@ -138,35 +124,35 @@ $conn->close();
             
             <nav class="sidebar-nav">
                 <a href="dashboard.php" class="nav-item">
-                    <span class="nav-icon">📊</span>
+                    <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
                     <span>Dashboard</span>
                 </a>
                 <a href="host-verifications.php" class="nav-item">
-                    <span class="nav-icon">✅</span>
+                    <span class="nav-icon"><i class="fa-solid fa-user-check" aria-hidden="true"></i></span>
                     <span>Host Verifications</span>
                 </a>
                 <a href="properties.php" class="nav-item">
-                    <span class="nav-icon">🏠</span>
+                    <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
                     <span>All Properties</span>
                 </a>
                 <a href="users.php" class="nav-item active">
-                    <span class="nav-icon">👥</span>
+                    <span class="nav-icon"><i class="fa-solid fa-users" aria-hidden="true"></i></span>
                     <span>Users</span>
                 </a>
                 <a href="bookings.php" class="nav-item">
-                    <span class="nav-icon">📅</span>
+                    <span class="nav-icon"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i></span>
                     <span>All Bookings</span>
                 </a>
                 <a href="earnings.php" class="nav-item">
-                    <span class="nav-icon">💰</span>
+                    <span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span>
                     <span>Earnings</span>
                 </a>
                 <a href="commission.php" class="nav-item">
-                    <span class="nav-icon">💎</span>
+                    <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
                     <span>Commission</span>
                 </a>
                 <a href="../home.php" class="nav-item">
-                    <span class="nav-icon">🌐</span>
+                    <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
                     <span>View Site</span>
                 </a>
             </nav>
@@ -184,8 +170,8 @@ $conn->close();
                 
                 <!-- Theme Toggle -->
                 <div class="theme-toggle" style="margin-bottom: 12px;">
-                    <span class="theme-toggle-icon">☀️</span>
-                    <span class="theme-toggle-text">Light</span>
+                    <span class="theme-toggle-icon" aria-hidden="true"></span>
+                    <span class="theme-toggle-text">Theme</span>
                 </div>
                 
                 <a href="../logout.php" class="btn-logout">Logout</a>
@@ -194,47 +180,62 @@ $conn->close();
 
         <!-- Main Content -->
         <main class="host-main">
-            <div class="users-header">
-                <h1>👥 Users</h1>
-                <p>Manage all users on the platform</p>
+            <div class="users-header admin-page-hero">
+                <div class="admin-page-hero-content">
+                    <span class="admin-page-eyebrow">Account Directory</span>
+                    <h1>Users</h1>
+                    <p>Monitor account growth, filter by role, and quickly open user details when you need context.</p>
+                </div>
+                <div class="admin-page-summary">
+                    <span class="admin-page-summary-label">Active Hosts</span>
+                    <strong><?php echo $stats['hosts']; ?></strong>
+                    <span class="admin-page-summary-text">host accounts currently in the platform</span>
+                </div>
             </div>
 
             <!-- Statistics -->
-            <div class="properties-stats">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #3B82F6, #2563EB);">👤</div>
-                    <div class="stat-content">
-                        <h3><?php echo $stats['total']; ?></h3>
+            <div class="properties-stats admin-metric-grid">
+                <div class="stat-card admin-metric-card">
+                    <div class="stat-icon admin-metric-icon is-sky"><i class="fa-solid fa-user-group" aria-hidden="true"></i></div>
+                    <div class="stat-content admin-metric-copy">
                         <p>Total Users</p>
+                        <h3><?php echo $stats['total']; ?></h3>
+                        <span class="admin-metric-note">Every registered account across all roles.</span>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #22C55E, #16A34A);">🧑</div>
-                    <div class="stat-content">
-                        <h3><?php echo $stats['guests']; ?></h3>
+                <div class="stat-card admin-metric-card">
+                    <div class="stat-icon admin-metric-icon is-emerald"><i class="fa-solid fa-user" aria-hidden="true"></i></div>
+                    <div class="stat-content admin-metric-copy">
                         <p>Guests</p>
+                        <h3><?php echo $stats['guests']; ?></h3>
+                        <span class="admin-metric-note">Users who browse and make bookings.</span>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #D4A574, #B8935F);">🏠</div>
-                    <div class="stat-content">
-                        <h3><?php echo $stats['hosts']; ?></h3>
+                <div class="stat-card admin-metric-card">
+                    <div class="stat-icon admin-metric-icon is-gold"><i class="fa-solid fa-house-user" aria-hidden="true"></i></div>
+                    <div class="stat-content admin-metric-copy">
                         <p>Hosts</p>
+                        <h3><?php echo $stats['hosts']; ?></h3>
+                        <span class="admin-metric-note">Accounts allowed to manage property listings.</span>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #EF4444, #DC2626);">👑</div>
-                    <div class="stat-content">
-                        <h3><?php echo $stats['admins']; ?></h3>
+                <div class="stat-card admin-metric-card">
+                    <div class="stat-icon admin-metric-icon is-red"><i class="fa-solid fa-user-shield" aria-hidden="true"></i></div>
+                    <div class="stat-content admin-metric-copy">
                         <p>Administrators</p>
+                        <h3><?php echo $stats['admins']; ?></h3>
+                        <span class="admin-metric-note">Accounts with platform-wide control.</span>
                     </div>
                 </div>
             </div>
 
             <!-- Users Table -->
-            <div class="properties-table-container">
-                <div class="table-header">
-                    <h2>All Users</h2>
+            <div class="properties-table-container admin-surface">
+                <div class="table-header admin-surface-header">
+                    <div>
+                        <h2>All Users</h2>
+                        <p>Use the role filters to focus on guests, hosts, or administrators.</p>
+                    </div>
                     <div class="filter-tabs">
                         <button type="button" class="filter-tab active" onclick="filterUsers('all', this)">All</button>
                         <button type="button" class="filter-tab" onclick="filterUsers('guest', this)">Guests</button>
@@ -292,6 +293,7 @@ $conn->close();
     </div>
 
     <script src="../assets/js/theme-toggle.js?v=26.0"></script>
+    <script src="../assets/js/admin-view-site-confirm.js?v=1.0"></script>
     <script>
         function filterUsers(role, el) {
             const rows = document.querySelectorAll('.properties-table tbody tr');

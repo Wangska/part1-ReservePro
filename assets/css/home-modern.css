@@ -291,11 +291,47 @@ button.nav-btn-outline:hover {
 
 /* Pagination: cleaner buttons */
 .page-btn {
-  background: rgba(255, 255, 255, 0.04) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: rgba(249, 250, 251, 0.94) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  font-weight: 700 !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+.page-btn:hover {
+  background: rgba(255, 255, 255, 0.14) !important;
+  border-color: rgba(212, 165, 116, 0.55) !important;
+  color: #FFFFFF !important;
+  transform: translateY(-1px);
 }
 
 .page-btn.active {
+  background: linear-gradient(135deg, #D4A574, #B8935F) !important;
+  color: #FFFFFF !important;
+  border-color: rgba(212, 165, 116, 0.9) !important;
   box-shadow: 0 10px 30px rgba(212, 165, 116, 0.22);
+}
+
+body.light-mode .page-btn {
+  background: #FFFFFF !important;
+  color: #0F172A !important;
+  border: 1px solid rgba(15, 23, 42, 0.18) !important;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+}
+
+body.light-mode .page-btn:hover {
+  background: #F8FAFC !important;
+  color: #0B1220 !important;
+  border-color: rgba(184, 147, 95, 0.55) !important;
+}
+
+body.light-mode .page-btn.active {
+  background: linear-gradient(135deg, #B8935F, #8B6F47) !important;
+  color: #FFFFFF !important;
+  border-color: rgba(139, 111, 71, 0.9) !important;
+  box-shadow: 0 10px 24px rgba(139, 111, 71, 0.24);
 }
 
 /* Footer links: slightly higher contrast */
@@ -599,6 +635,27 @@ body.light-mode .rp-empty-text {
 
 .filters-sidebar.is-collapsed .rp-sidebar-filter-chevron {
   transform: rotate(-90deg);
+}
+
+@media (min-width: 1025px) {
+  .content-wrapper.rp-filters-collapsed {
+    grid-template-columns: 280px 1fr !important;
+    gap: 20px !important;
+  }
+
+  .filters-sidebar.is-collapsed {
+    padding: 14px 12px !important;
+    border-radius: 14px !important;
+  }
+
+  .filters-sidebar.is-collapsed .filter-header {
+    margin-bottom: 0 !important;
+  }
+
+  .filters-sidebar.is-collapsed .rp-sidebar-filter-toggle {
+    font-size: 15px !important;
+    gap: 6px !important;
+  }
 }
 
 .rp-filter-toggle:hover {

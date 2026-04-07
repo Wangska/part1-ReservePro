@@ -162,11 +162,12 @@ $conn->close();
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>Add Property - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=14.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.2">
     <link rel="stylesheet" href="../assets/css/add-property.css?v=15.0">
-    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=14.0">
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
 </head>
-<body class="dashboard-page">
+<body class="dashboard-page host-clean-page host-form-page">
     <div class="host-layout">
         <!-- Sidebar -->
         <aside class="host-sidebar">
@@ -179,31 +180,31 @@ $conn->close();
             
             <nav class="sidebar-nav">
                 <a href="dashboard.php" class="nav-item">
-                    <span class="nav-icon">📊</span>
+                    <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
                     <span>Dashboard</span>
                 </a>
                 <a href="properties.php" class="nav-item">
-                    <span class="nav-icon">🏠</span>
+                    <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
                     <span>My Properties</span>
                 </a>
                 <a href="add-property.php" class="nav-item active">
-                    <span class="nav-icon">➕</span>
+                    <span class="nav-icon"><i class="fa-solid fa-plus" aria-hidden="true"></i></span>
                     <span>Add Property</span>
                 </a>
                 <a href="bookings.php" class="nav-item">
-                    <span class="nav-icon">📅</span>
+                    <span class="nav-icon"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></span>
                     <span>Bookings</span>
                 </a>
                 <a href="earnings.php" class="nav-item">
-                    <span class="nav-icon">💰</span>
+                    <span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span>
                     <span>Earnings</span>
                 </a>
                 <a href="messages.php" class="nav-item">
-                    <span class="nav-icon">💬</span>
+                    <span class="nav-icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span>
                     <span>Messages</span>
                 </a>
                 <a href="../home.php" class="nav-item">
-                    <span class="nav-icon">🌐</span>
+                    <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
                     <span>View Site</span>
                 </a>
             </nav>
@@ -218,6 +219,11 @@ $conn->close();
                         <div class="user-role">Host</div>
                     </div>
                 </div>
+
+                <div class="theme-toggle">
+                    <span class="theme-toggle-icon">☀️</span>
+                    <span class="theme-toggle-text">Light</span>
+                </div>
                 
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
@@ -225,18 +231,18 @@ $conn->close();
 
         <!-- Main Content -->
         <main class="host-main">
-            <div class="host-header" style="display: flex; justify-content: space-between; align-items: center;">
-                <div style="display:flex; align-items:center; gap:12px;">
-                    <img src="../background%20image/y.webp" alt="Add property icon" style="width:40px; height:40px; border-radius:8px; object-fit:cover;">
-                    <div>
-                        <h1>Add New Property</h1>
-                        <p class="subtitle">List your place and start hosting</p>
-                    </div>
+            <div class="host-header host-page-hero">
+                <div class="host-page-hero-content">
+                    <span class="host-page-eyebrow">Listing Setup</span>
+                    <h1>Add New Property</h1>
+                    <p class="subtitle">Create a complete listing with pricing, details, map pin, and photos so it is ready for review the first time.</p>
                 </div>
-                <!-- Theme Toggle -->
-                <div class="theme-toggle">
-                    <span class="theme-toggle-icon">☀️</span>
-                    <span class="theme-toggle-text">Light</span>
+                <div style="display:flex; align-items:flex-start; gap:14px; margin-left:auto;">
+                    <div class="host-page-summary">
+                        <span class="host-page-summary-label">Submission Flow</span>
+                        <strong>3</strong>
+                        <span class="host-page-summary-text">steps to complete before sending for review</span>
+                    </div>
                 </div>
             </div>
 
@@ -252,6 +258,7 @@ $conn->close();
             <?php endif; ?>
 
             <!-- Multi-step wizard wrapper -->
+            <div class="host-form-shell">
             <form method="POST" action="add-property.php" class="property-form" enctype="multipart/form-data" id="addPropertyForm">
                 <div class="wizard-steps-indicator">
                     <span class="wizard-step-dot wizard-step-dot-active" data-step="1">1</span>
@@ -432,10 +439,12 @@ $conn->close();
                     <p><strong>Note:</strong> Your property will be reviewed by our admin team before it goes live. You'll receive a notification once it's approved.</p>
                 </div>
             </form>
+            </div>
         </main>
     </div>
     
-    <script src="../assets/js/theme-toggle.js"></script>
+    <script src="../assets/js/theme-toggle.js?v=27.5"></script>
+    <script src="../assets/js/host-view-site-confirm.js?v=1.0"></script>
     <script src="../assets/js/host-property-pin-map.js?v=1"></script>
     <script>
         console.log('🎬 Photo upload script loading...');

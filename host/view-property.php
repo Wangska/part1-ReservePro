@@ -66,8 +66,9 @@ $conn->close();
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>View Property - <?php echo htmlspecialchars($property['title']); ?> - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=14.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.1">
-    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=14.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.2">
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
         .view-property-page { max-width: 900px; margin: 0 auto; padding: 24px; }
         .view-property-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }
@@ -93,7 +94,7 @@ $conn->close();
         .status-out_of_order { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
     </style>
 </head>
-<body class="dashboard-page">
+<body class="dashboard-page host-clean-page host-detail-page">
     <div class="host-layout">
         <aside class="host-sidebar">
             <div class="sidebar-header">
@@ -103,13 +104,13 @@ $conn->close();
                 </a>
             </div>
             <nav class="sidebar-nav">
-                <a href="dashboard.php" class="nav-item"><span class="nav-icon">📊</span><span>Dashboard</span></a>
-                <a href="properties.php" class="nav-item active"><span class="nav-icon">🏠</span><span>My Properties</span></a>
-                <a href="add-property.php" class="nav-item"><span class="nav-icon">➕</span><span>Add Property</span></a>
-                <a href="bookings.php" class="nav-item"><span class="nav-icon">📅</span><span>Bookings</span></a>
-                <a href="earnings.php" class="nav-item"><span class="nav-icon">💰</span><span>Earnings</span></a>
-                <a href="messages.php" class="nav-item"><span class="nav-icon">💬</span><span>Messages</span></a>
-                <a href="../home.php" class="nav-item"><span class="nav-icon">🌐</span><span>View Site</span></a>
+                <a href="dashboard.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span><span>Dashboard</span></a>
+                <a href="properties.php" class="nav-item active"><span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span><span>My Properties</span></a>
+                <a href="add-property.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-plus" aria-hidden="true"></i></span><span>Add Property</span></a>
+                <a href="bookings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></span><span>Bookings</span></a>
+                <a href="earnings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span><span>Earnings</span></a>
+                <a href="messages.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span><span>Messages</span></a>
+                <a href="../home.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span><span>View Site</span></a>
             </nav>
             <div class="sidebar-footer">
                 <div class="user-profile">
@@ -119,25 +120,26 @@ $conn->close();
                         <div class="user-role">Host</div>
                     </div>
                 </div>
+                <div class="theme-toggle">
+                    <span class="theme-toggle-icon">☀️</span>
+                    <span class="theme-toggle-text">Light</span>
+                </div>
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
         </aside>
 
         <main class="host-main">
             <div class="view-property-page">
-                <div class="view-property-header">
-                    <div>
+                <div class="view-property-header host-page-hero">
+                    <div class="host-page-hero-content">
+                        <span class="host-page-eyebrow">Property Overview</span>
                         <h1><?php echo htmlspecialchars($property['title']); ?></h1>
-                        <span class="status-badge status-<?php echo $property['status']; ?>"><?php echo ucfirst(str_replace('_', ' ', $property['status'])); ?></span>
-                        <p style="margin: 8px 0 0 0; color: #888; font-size: 14px;">📍 <?php echo htmlspecialchars($property['city'] . ', ' . $property['country']); ?></p>
+                        <p class="subtitle"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> <?php echo htmlspecialchars($property['city'] . ', ' . $property['country']); ?></p>
                     </div>
-                    <div class="actions" style="display: flex; align-items: center; gap: 12px;">
-                        <a href="properties.php" class="btn-view-back">← Back to list</a>
-                        <a href="edit-property.php?id=<?php echo (int)$property['id']; ?>" class="btn-edit-link">Edit</a>
-                        <div class="theme-toggle">
-                            <span class="theme-toggle-icon">☀️</span>
-                            <span class="theme-toggle-text">Light</span>
-                        </div>
+                    <div class="actions" style="display: flex; align-items: center; gap: 12px; flex-wrap:wrap; margin-left:auto;">
+                        <span class="status-badge status-<?php echo $property['status']; ?>"><?php echo ucfirst(str_replace('_', ' ', $property['status'])); ?></span>
+                        <a href="properties.php" class="host-action-btn is-info">Back to list</a>
+                        <a href="edit-property.php?id=<?php echo (int)$property['id']; ?>" class="host-action-btn is-primary">Edit</a>
                     </div>
                 </div>
 
@@ -173,30 +175,30 @@ $conn->close();
                     </div>
                 <?php endif; ?>
 
-                <div class="view-section">
+                <div class="view-section host-detail-shell">
                     <h2>Description</h2>
                     <p style="white-space: pre-wrap;"><?php echo nl2br(htmlspecialchars($property['description'])); ?></p>
                 </div>
 
-                <div class="view-section">
+                <div class="view-section host-detail-shell">
                     <h2>Details</h2>
-                    <div class="detail-grid">
-                        <span>🏠 <?php echo htmlspecialchars(ucfirst($property['property_type'])); ?></span>
-                        <span>🛏️ <?php echo (int)$property['bedrooms']; ?> beds</span>
-                        <span>🚿 <?php echo (int)$property['bathrooms']; ?> baths</span>
-                        <span>👥 <?php echo (int)$property['max_guests']; ?> guests</span>
-                        <span>₱<?php echo number_format($property['price_per_night'], 0); ?>/night</span>
+                    <div class="host-detail-grid">
+                        <div class="host-detail-card"><span class="host-detail-label">Property Type</span><span class="host-detail-value"><?php echo htmlspecialchars(ucfirst($property['property_type'])); ?></span></div>
+                        <div class="host-detail-card"><span class="host-detail-label">Bedrooms</span><span class="host-detail-value"><?php echo (int)$property['bedrooms']; ?> beds</span></div>
+                        <div class="host-detail-card"><span class="host-detail-label">Bathrooms</span><span class="host-detail-value"><?php echo (int)$property['bathrooms']; ?> baths</span></div>
+                        <div class="host-detail-card"><span class="host-detail-label">Guests</span><span class="host-detail-value"><?php echo (int)$property['max_guests']; ?> guests</span></div>
+                        <div class="host-detail-card"><span class="host-detail-label">Nightly Rate</span><span class="host-detail-value">₱<?php echo number_format($property['price_per_night'], 0); ?>/night</span></div>
                     </div>
                 </div>
 
-                <div class="view-section">
+                <div class="view-section host-detail-shell">
                     <h2>Address</h2>
                     <p><?php echo nl2br(htmlspecialchars($property['address'])); ?></p>
                     <p><?php echo htmlspecialchars($property['city'] . ', ' . $property['country']); ?></p>
                 </div>
 
                 <?php if (!empty($property['amenities'])): ?>
-                <div class="view-section">
+                <div class="view-section host-detail-shell">
                     <h2>Amenities</h2>
                     <div class="amenities-list">
                         <?php foreach ($property['amenities'] as $a): ?>
@@ -208,6 +210,7 @@ $conn->close();
             </div>
         </main>
     </div>
-    <script src="../assets/js/theme-toggle.js"></script>
+    <script src="../assets/js/theme-toggle.js?v=27.5"></script>
+    <script src="../assets/js/host-view-site-confirm.js?v=1.0"></script>
 </body>
 </html>

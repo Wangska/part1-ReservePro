@@ -60,42 +60,24 @@ $conn->close();
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>All Bookings - Admin - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=10.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.1">
-    <link rel="stylesheet" href="../assets/css/admin.css?v=10.0">
-    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.2">
+    <link rel="stylesheet" href="../assets/css/admin.css?v=10.5">
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
-        .bookings-header {
-            /* Trendy gray header instead of brown */
-            background: linear-gradient(135deg, #111827 0%, #1F2933 45%, #020617 100%);
-            padding: 40px;
-            border-radius: 16px;
-            margin-bottom: 32px;
-            color: white;
-        }
-
-        .bookings-header h1 {
-            font-size: 32px;
-            margin-bottom: 8px;
-            color: #FFFFFF !important;
-        }
-
         .booking-id {
             font-family: 'Courier New', monospace;
             color: #D4A574;
             font-weight: 600;
         }
-        .properties-table-container .table-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 16px;
-        }
+
         .properties-table-container .filter-tabs {
             flex-wrap: wrap;
             width: 100%;
         }
     </style>
 </head>
-<body class="dashboard-page">
+<body class="dashboard-page admin-page admin-clean-page admin-bookings-page">
     <div class="host-layout">
         <!-- Sidebar -->
         <aside class="host-sidebar">
@@ -108,35 +90,35 @@ $conn->close();
             
             <nav class="sidebar-nav">
                 <a href="dashboard.php" class="nav-item">
-                    <span class="nav-icon">📊</span>
+                    <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
                     <span>Dashboard</span>
                 </a>
                 <a href="host-verifications.php" class="nav-item">
-                    <span class="nav-icon">✅</span>
+                    <span class="nav-icon"><i class="fa-solid fa-user-check" aria-hidden="true"></i></span>
                     <span>Host Verifications</span>
                 </a>
                 <a href="properties.php" class="nav-item">
-                    <span class="nav-icon">🏠</span>
+                    <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
                     <span>All Properties</span>
                 </a>
                 <a href="users.php" class="nav-item">
-                    <span class="nav-icon">👥</span>
+                    <span class="nav-icon"><i class="fa-solid fa-users" aria-hidden="true"></i></span>
                     <span>Users</span>
                 </a>
                 <a href="bookings.php" class="nav-item active">
-                    <span class="nav-icon">📅</span>
+                    <span class="nav-icon"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i></span>
                     <span>All Bookings</span>
                 </a>
                 <a href="earnings.php" class="nav-item">
-                    <span class="nav-icon">💰</span>
+                    <span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span>
                     <span>Earnings</span>
                 </a>
                 <a href="commission.php" class="nav-item">
-                    <span class="nav-icon">💎</span>
+                    <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
                     <span>Commission</span>
                 </a>
                 <a href="../home.php" class="nav-item">
-                    <span class="nav-icon">🌐</span>
+                    <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
                     <span>View Site</span>
                 </a>
             </nav>
@@ -151,53 +133,72 @@ $conn->close();
                         <div class="user-role">Administrator</div>
                     </div>
                 </div>
+                <div class="theme-toggle" style="margin-bottom: 12px;">
+                    <span class="theme-toggle-icon" aria-hidden="true"></span>
+                    <span class="theme-toggle-text">Theme</span>
+                </div>
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
         </aside>
 
         <!-- Main Content -->
         <main class="host-main">
-            <div class="bookings-header">
-                <h1>📅 All Bookings</h1>
-                <p>View and manage all bookings across the platform</p>
+            <div class="bookings-header admin-page-hero">
+                <div class="admin-page-hero-content">
+                    <span class="admin-page-eyebrow">Reservation Activity</span>
+                    <h1>All Bookings</h1>
+                    <p>Track reservation volume, monitor booking status, and review platform revenue in one simple view.</p>
+                </div>
+                <div class="admin-page-summary">
+                    <span class="admin-page-summary-label">Confirmed Bookings</span>
+                    <strong><?php echo $stats['confirmed']; ?></strong>
+                    <span class="admin-page-summary-text">bookings currently marked confirmed</span>
+                </div>
             </div>
 
             <!-- Statistics -->
-            <div class="properties-stats">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #3B82F6, #2563EB);">📊</div>
-                    <div class="stat-content">
-                        <h3><?php echo $stats['total']; ?></h3>
+            <div class="properties-stats admin-metric-grid">
+                <div class="stat-card admin-metric-card">
+                    <div class="stat-icon admin-metric-icon is-sky"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></div>
+                    <div class="stat-content admin-metric-copy">
                         <p>Total Bookings</p>
+                        <h3><?php echo $stats['total']; ?></h3>
+                        <span class="admin-metric-note">Every reservation record across all statuses.</span>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #22C55E, #16A34A);">✅</div>
-                    <div class="stat-content">
-                        <h3><?php echo $stats['confirmed']; ?></h3>
+                <div class="stat-card admin-metric-card">
+                    <div class="stat-icon admin-metric-icon is-emerald"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></div>
+                    <div class="stat-content admin-metric-copy">
                         <p>Confirmed</p>
+                        <h3><?php echo $stats['confirmed']; ?></h3>
+                        <span class="admin-metric-note">Trips that are approved and ready to happen.</span>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #FBBF24, #F59E0B);">⏳</div>
-                    <div class="stat-content">
-                        <h3><?php echo $stats['pending']; ?></h3>
+                <div class="stat-card admin-metric-card">
+                    <div class="stat-icon admin-metric-icon is-amber"><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i></div>
+                    <div class="stat-content admin-metric-copy">
                         <p>Pending</p>
+                        <h3><?php echo $stats['pending']; ?></h3>
+                        <span class="admin-metric-note">Reservations still waiting for completion or approval.</span>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #D4A574, #B8935F);">💰</div>
-                    <div class="stat-content">
-                        <h3>₱<?php echo number_format($stats['total_revenue'], 0); ?></h3>
+                <div class="stat-card admin-metric-card">
+                    <div class="stat-icon admin-metric-icon is-gold"><i class="fa-solid fa-wallet" aria-hidden="true"></i></div>
+                    <div class="stat-content admin-metric-copy">
                         <p>Total Revenue</p>
+                        <h3>₱<?php echo number_format($stats['total_revenue'], 0); ?></h3>
+                        <span class="admin-metric-note">Gross booking value recorded on the platform.</span>
                     </div>
                 </div>
             </div>
 
             <!-- Bookings Table -->
-            <div class="properties-table-container">
-                <div class="table-header">
-                    <h2>Booking History</h2>
+            <div class="properties-table-container admin-surface">
+                <div class="table-header admin-surface-header">
+                    <div>
+                        <h2>Booking History</h2>
+                        <p>Filter by status to isolate the reservations that need follow-up.</p>
+                    </div>
                     <div class="filter-tabs">
                         <button type="button" class="filter-tab active" onclick="filterBookings('all', this)">All</button>
                         <button type="button" class="filter-tab" onclick="filterBookings('confirmed', this)">Confirmed</button>
@@ -207,8 +208,9 @@ $conn->close();
                 </div>
 
                 <?php if (empty($bookings)): ?>
-                    <div class="empty-state">
-                        <h3>📭 No Bookings Found</h3>
+                    <div class="empty-state admin-empty-state">
+                        <span class="admin-empty-icon"><i class="fa-solid fa-inbox" aria-hidden="true"></i></span>
+                        <h3>No Bookings Found</h3>
                         <p>There are no bookings in the system yet.</p>
                     </div>
                 <?php else: ?>
@@ -250,6 +252,7 @@ $conn->close();
     </div>
 
     <script src="../assets/js/theme-toggle.js?v=27.0"></script>
+    <script src="../assets/js/admin-view-site-confirm.js?v=1.0"></script>
     <script>
         function filterBookings(status, el) {
             const rows = document.querySelectorAll('.properties-table tbody tr');

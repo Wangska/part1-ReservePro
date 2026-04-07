@@ -53,7 +53,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function setFilterContentState(isOpen) {
         if (!filtersSidebar || !filtersContent) return;
+        const contentWrapper = filtersSidebar.closest('.content-wrapper');
         filtersSidebar.classList.toggle('is-collapsed', !isOpen);
+        if (contentWrapper) {
+            contentWrapper.classList.toggle('rp-filters-collapsed', !isOpen);
+        }
         filtersContent.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
         if (filterContentToggle) {
             filterContentToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');

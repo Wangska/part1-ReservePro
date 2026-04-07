@@ -51,11 +51,12 @@ if ($run) {
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>Update map coordinates - Admin - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=13.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.2">
     <link rel="stylesheet" href="../assets/css/admin.css?v=13.0">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=26.0">
 </head>
-<body class="dashboard-page">
+<body class="dashboard-page admin-page">
     <div class="host-layout">
         <aside class="host-sidebar">
             <div class="sidebar-header">
@@ -65,14 +66,14 @@ if ($run) {
                 </a>
             </div>
             <nav class="sidebar-nav">
-                <a href="dashboard.php" class="nav-item"><span class="nav-icon">👑</span><span>Admin Panel</span></a>
-                <a href="host-verifications.php" class="nav-item"><span class="nav-icon">✅</span><span>Host Verifications</span></a>
-                <a href="properties.php" class="nav-item"><span class="nav-icon">🏠</span><span>All Properties</span></a>
-                <a href="users.php" class="nav-item"><span class="nav-icon">👥</span><span>Users</span></a>
-                <a href="bookings.php" class="nav-item"><span class="nav-icon">📅</span><span>All Bookings</span></a>
-                <a href="earnings.php" class="nav-item"><span class="nav-icon">💰</span><span>Earnings</span></a>
-                <a href="commission.php" class="nav-item"><span class="nav-icon">💎</span><span>Commission</span></a>
-                <a href="../home.php" class="nav-item"><span class="nav-icon">🌐</span><span>View Site</span></a>
+                <a href="dashboard.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span><span>Admin Panel</span></a>
+                <a href="host-verifications.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user-check" aria-hidden="true"></i></span><span>Host Verifications</span></a>
+                <a href="properties.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span><span>All Properties</span></a>
+                <a href="users.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-users" aria-hidden="true"></i></span><span>Users</span></a>
+                <a href="bookings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i></span><span>All Bookings</span></a>
+                <a href="earnings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span><span>Earnings</span></a>
+                <a href="commission.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span><span>Commission</span></a>
+                <a href="../home.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span><span>View Site</span></a>
             </nav>
             <div class="sidebar-footer">
                 <div class="user-profile">
@@ -108,5 +109,6 @@ if ($run) {
         </main>
     </div>
     <script src="../assets/js/theme-toggle.js?v=26.0"></script>
+    <script src="../assets/js/admin-view-site-confirm.js?v=1.0"></script>
 </body>
 </html>

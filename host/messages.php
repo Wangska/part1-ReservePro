@@ -84,6 +84,9 @@ usort($messages, function ($a, $b) {
     return strcmp($bLast, $aLast);
 });
 
+$conversation_count = count($messages);
+$total_message_count = count($all_messages);
+
 $conn->close();
 ?>
 <!DOCTYPE html>
@@ -94,8 +97,9 @@ $conn->close();
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>Messages - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=11.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.1">
-    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=11.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.2">
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
         .messages-header {
             /* Trendy gray header instead of brown */
@@ -403,7 +407,7 @@ $conn->close();
         }
     </style>
 </head>
-<body class="dashboard-page">
+<body class="dashboard-page host-clean-page host-messages-page">
     <div class="host-layout">
         <!-- Sidebar -->
         <aside class="host-sidebar">
@@ -416,31 +420,31 @@ $conn->close();
             
             <nav class="sidebar-nav">
                 <a href="dashboard.php" class="nav-item">
-                    <span class="nav-icon">📊</span>
+                    <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
                     <span>Dashboard</span>
                 </a>
                 <a href="properties.php" class="nav-item">
-                    <span class="nav-icon">🏠</span>
+                    <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
                     <span>My Properties</span>
                 </a>
                 <a href="add-property.php" class="nav-item">
-                    <span class="nav-icon">➕</span>
+                    <span class="nav-icon"><i class="fa-solid fa-plus" aria-hidden="true"></i></span>
                     <span>Add Property</span>
                 </a>
                 <a href="bookings.php" class="nav-item">
-                    <span class="nav-icon">📅</span>
+                    <span class="nav-icon"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></span>
                     <span>Bookings</span>
                 </a>
                 <a href="earnings.php" class="nav-item">
-                    <span class="nav-icon">💰</span>
+                    <span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span>
                     <span>Earnings</span>
                 </a>
                 <a href="messages.php" class="nav-item active">
-                    <span class="nav-icon">💬</span>
+                    <span class="nav-icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span>
                     <span>Messages</span>
                 </a>
                 <a href="../home.php" class="nav-item">
-                    <span class="nav-icon">🌐</span>
+                    <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
                     <span>View Site</span>
                 </a>
             </nav>
@@ -455,6 +459,11 @@ $conn->close();
                         <div class="user-role">Host</div>
                     </div>
                 </div>
+
+                <div class="theme-toggle">
+                    <span class="theme-toggle-icon">☀️</span>
+                    <span class="theme-toggle-text">Light</span>
+                </div>
                 
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
@@ -462,28 +471,35 @@ $conn->close();
 
         <!-- Main Content -->
         <main class="host-main">
-            <div class="messages-header" style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <h1>💬 Messages</h1>
-                    <p>Communicate with your guests</p>
+            <div class="messages-header host-page-hero">
+                <div class="host-page-hero-content">
+                    <span class="host-page-eyebrow">Guest Conversations</span>
+                    <h1>Messages</h1>
+                    <p>Keep every guest thread in one place so you can respond quickly and stay aligned on bookings and property questions.</p>
                 </div>
-                <!-- Theme Toggle -->
-                <div class="theme-toggle">
-                    <span class="theme-toggle-icon">☀️</span>
-                    <span class="theme-toggle-text">Light</span>
+                <div style="display:flex; align-items:flex-start; gap:14px; margin-left:auto;">
+                    <div class="host-page-summary">
+                        <span class="host-page-summary-label">Active Threads</span>
+                        <strong><?php echo $conversation_count; ?></strong>
+                        <span class="host-page-summary-text"><?php echo $total_message_count; ?> total messages across your guest conversations</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="messages-layout">
+            <div class="host-messages-layout">
                 <!-- Conversations List -->
-                <div class="conversations-list">
-                    <div class="conversations-header">
+                <div class="host-conversations-list">
+                    <div class="host-surface-header" style="border-bottom: 1px solid rgba(148, 163, 184, 0.1); padding-bottom: 20px; align-items: stretch;">
+                        <div>
+                            <h2>Conversations</h2>
+                            <p>Search by guest name, property, or message snippet.</p>
+                        </div>
                         <input type="text" class="search-box" placeholder="Search messages..." id="messagesSearch">
                     </div>
 
                     <?php if (empty($messages)): ?>
-                    <div class="empty-messages">
-                        <div class="empty-messages-icon">📭</div>
+                    <div class="empty-messages host-empty-state">
+                        <div class="empty-messages-icon host-empty-icon"><i class="fa-solid fa-inbox" aria-hidden="true"></i></div>
                         <h3>No Messages Yet</h3>
                         <p>When guests contact you about your properties (via "Contact Host" on a listing), messages will appear here.</p>
                     </div>
@@ -494,7 +510,7 @@ $conn->close();
                             $preview = $last ? mb_substr($last['message'], 0, 80) . (mb_strlen($last['message']) > 80 ? '…' : '') : '';
                             $lastTime = $last ? $last['created_at'] : '';
                         ?>
-                        <div class="conversation-item" data-property-id="<?php echo (int)$conv['property_id']; ?>" data-guest-id="<?php echo (int)$conv['guest_id']; ?>" data-guest-name="<?php echo htmlspecialchars($conv['guest_name']); ?>" data-property-title="<?php echo htmlspecialchars($conv['property_title']); ?>" style="padding: 16px; border-bottom: 1px solid #3A3A3A; cursor: pointer; transition: background 0.2s;">
+                        <div class="host-conversation-item" data-property-id="<?php echo (int)$conv['property_id']; ?>" data-guest-id="<?php echo (int)$conv['guest_id']; ?>" data-guest-name="<?php echo htmlspecialchars($conv['guest_name']); ?>" data-property-title="<?php echo htmlspecialchars($conv['property_title']); ?>">
                             <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 6px;">
                                 <strong style="color: #FFFFFF;"><?php echo htmlspecialchars($conv['guest_name']); ?></strong>
                                 <span style="font-size: 12px; color: #888;"><?php echo $lastTime ? date('M j, g:i A', strtotime($lastTime)) : ''; ?></span>
@@ -508,16 +524,16 @@ $conn->close();
                 </div>
 
                 <!-- Chat Container - selected conversation with thread and reply -->
-                <div class="chat-container" id="chatContainer">
-                    <div class="empty-messages" id="chatPlaceholder">
-                        <div class="empty-messages-icon">💬</div>
+                <div class="host-chat-shell" id="chatContainer">
+                    <div class="empty-messages host-empty-state" id="chatPlaceholder">
+                        <div class="empty-messages-icon host-empty-icon"><i class="fa-solid fa-comments" aria-hidden="true"></i></div>
                         <h3>Select a conversation</h3>
                         <p>Click a conversation from the list to view the thread and reply.</p>
                     </div>
                     <div id="chatMessageDetail" style="display: none; flex: 1; flex-direction: column; min-height: 0;">
-                        <div id="chatMessageHeader" style="padding: 20px; border-bottom: 1px solid #3A3A3A;"></div>
+                        <div id="chatMessageHeader" class="host-chat-header" style="padding: 20px;"></div>
                         <div id="chatMessages" class="chat-messages" style="flex: 1; overflow-y: auto; padding: 24px;"></div>
-                        <div class="chat-input-area" id="chatReplyArea">
+                        <div class="chat-input-area host-chat-input" id="chatReplyArea">
                             <textarea class="chat-input" id="replyInput" placeholder="Type your reply..." rows="2"></textarea>
                             <button type="button" class="btn-send" id="replySendBtn">Send</button>
                         </div>
@@ -529,7 +545,7 @@ $conn->close();
             </script>
             <script>
             (function() {
-                var items = document.querySelectorAll('.conversation-item');
+                var items = document.querySelectorAll('.host-conversation-item');
                 var placeholder = document.getElementById('chatPlaceholder');
                 var detail = document.getElementById('chatMessageDetail');
                 var headerEl = document.getElementById('chatMessageHeader');
@@ -553,9 +569,9 @@ $conn->close();
                     messagesEl.innerHTML = '';
                     (conv.messages || []).forEach(function(msg) {
                         var div = document.createElement('div');
-                        div.className = 'message' + (msg.is_sent ? ' sent' : '');
+                        div.className = 'message host-message' + (msg.is_sent ? ' sent is-sent' : '');
                         var initial = msg.is_sent ? 'You' : (conv.guest_name || 'G').charAt(0);
-                        div.innerHTML = '<div class="message-avatar">' + initial + '</div><div class="message-content"><div class="message-bubble">' + escapeHtml(msg.message) + '</div><div class="message-time">' + formatTime(msg.created_at) + '</div></div>';
+                        div.innerHTML = '<div class="message-avatar">' + initial + '</div><div class="message-content"><div class="message-bubble host-message-bubble">' + escapeHtml(msg.message) + '</div><div class="message-time">' + formatTime(msg.created_at) + '</div></div>';
                         messagesEl.appendChild(div);
                     });
                     messagesEl.scrollTop = messagesEl.scrollHeight;
@@ -635,7 +651,7 @@ $conn->close();
                         var q = this.value.toLowerCase().trim();
                         var list = document.getElementById('conversationItems');
                         if (!list) return;
-                        list.querySelectorAll('.conversation-item').forEach(function(item) {
+                        list.querySelectorAll('.host-conversation-item').forEach(function(item) {
                             var text = (item.textContent || '').toLowerCase();
                             item.style.display = q === '' || text.indexOf(q) !== -1 ? 'block' : 'none';
                         });
@@ -646,6 +662,7 @@ $conn->close();
         </main>
     </div>
 
-    <script src="../assets/js/theme-toggle.js"></script>
+    <script src="../assets/js/theme-toggle.js?v=27.5"></script>
+    <script src="../assets/js/host-view-site-confirm.js?v=1.0"></script>
 </body>
 </html>

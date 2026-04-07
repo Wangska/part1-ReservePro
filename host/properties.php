@@ -94,6 +94,25 @@ $stmt->bind_param("i", $user['id']);
 $stmt->execute();
 $properties = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
+
+$property_stats = [
+    'total' => count($properties),
+    'approved' => 0,
+    'pending' => 0,
+    'out_of_order' => 0,
+    'auto_accept' => 0,
+];
+
+foreach ($properties as $property_item) {
+    $status_key = $property_item['status'] ?? '';
+    if (isset($property_stats[$status_key])) {
+        $property_stats[$status_key]++;
+    }
+    if (!empty($property_item['auto_accept_bookings'])) {
+        $property_stats['auto_accept']++;
+    }
+}
+
 $conn->close();
 ?>
 <!DOCTYPE html>
@@ -104,10 +123,11 @@ $conn->close();
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>My Properties - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=13.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.1">
-    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=13.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.2">
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
 </head>
-<body class="dashboard-page">
+<body class="dashboard-page host-clean-page host-properties-page">
     <div class="host-layout">
         <!-- Sidebar (same as dashboard) -->
         <aside class="host-sidebar">
@@ -120,31 +140,31 @@ $conn->close();
             
             <nav class="sidebar-nav">
                 <a href="dashboard.php" class="nav-item">
-                    <span class="nav-icon">📊</span>
+                    <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
                     <span>Dashboard</span>
                 </a>
                 <a href="properties.php" class="nav-item active">
-                    <span class="nav-icon">🏠</span>
+                    <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
                     <span>My Properties</span>
                 </a>
                 <a href="add-property.php" class="nav-item">
-                    <span class="nav-icon">➕</span>
+                    <span class="nav-icon"><i class="fa-solid fa-plus" aria-hidden="true"></i></span>
                     <span>Add Property</span>
                 </a>
                 <a href="bookings.php" class="nav-item">
-                    <span class="nav-icon">📅</span>
+                    <span class="nav-icon"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></span>
                     <span>Bookings</span>
                 </a>
                 <a href="earnings.php" class="nav-item">
-                    <span class="nav-icon">💰</span>
+                    <span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span>
                     <span>Earnings</span>
                 </a>
                 <a href="messages.php" class="nav-item">
-                    <span class="nav-icon">💬</span>
+                    <span class="nav-icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span>
                     <span>Messages</span>
                 </a>
                 <a href="../home.php" class="nav-item">
-                    <span class="nav-icon">🌐</span>
+                    <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
                     <span>View Site</span>
                 </a>
             </nav>
@@ -159,6 +179,11 @@ $conn->close();
                         <div class="user-role">Host</div>
                     </div>
                 </div>
+
+                <div class="theme-toggle">
+                    <span class="theme-toggle-icon">☀️</span>
+                    <span class="theme-toggle-text">Light</span>
+                </div>
                 
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
@@ -166,15 +191,18 @@ $conn->close();
 
         <!-- Main Content -->
         <main class="host-main">
-            <div class="host-header" style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <h1>My Properties 🏠</h1>
-                    <p class="subtitle">Manage all your listings</p>
+            <div class="host-header host-page-hero">
+                <div class="host-page-hero-content">
+                    <span class="host-page-eyebrow">Listing Management</span>
+                    <h1>My Properties</h1>
+                    <p class="subtitle">Review your live listings, check approval status, and update availability without leaving the host area.</p>
                 </div>
-                <!-- Theme Toggle -->
-                <div class="theme-toggle">
-                    <span class="theme-toggle-icon">☀️</span>
-                    <span class="theme-toggle-text">Light</span>
+                <div style="display:flex; align-items:flex-start; gap:14px; margin-left:auto;">
+                    <div class="host-page-summary">
+                        <span class="host-page-summary-label">Live Listings</span>
+                        <strong><?php echo $property_stats['approved']; ?></strong>
+                        <span class="host-page-summary-text">properties currently visible to guests</span>
+                    </div>
                 </div>
             </div>
 
@@ -192,9 +220,44 @@ $conn->close();
                 <div class="alert alert-error">Property not found or you do not have permission to view it.</div>
             <?php endif; ?>
 
+            <div class="host-metric-grid">
+                <div class="host-metric-card">
+                    <div class="host-metric-icon is-sky"><i class="fa-solid fa-building" aria-hidden="true"></i></div>
+                    <div class="host-metric-copy">
+                        <p>Total Listings</p>
+                        <h3><?php echo $property_stats['total']; ?></h3>
+                        <span class="host-metric-note">All properties attached to your host account.</span>
+                    </div>
+                </div>
+                <div class="host-metric-card">
+                    <div class="host-metric-icon is-emerald"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></div>
+                    <div class="host-metric-copy">
+                        <p>Approved</p>
+                        <h3><?php echo $property_stats['approved']; ?></h3>
+                        <span class="host-metric-note">Listings guests can already discover and book.</span>
+                    </div>
+                </div>
+                <div class="host-metric-card">
+                    <div class="host-metric-icon is-amber"><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i></div>
+                    <div class="host-metric-copy">
+                        <p>Pending Review</p>
+                        <h3><?php echo $property_stats['pending']; ?></h3>
+                        <span class="host-metric-note">Listings waiting for approval before going live.</span>
+                    </div>
+                </div>
+                <div class="host-metric-card">
+                    <div class="host-metric-icon is-gold"><i class="fa-solid fa-bolt" aria-hidden="true"></i></div>
+                    <div class="host-metric-copy">
+                        <p>Auto-Accept Enabled</p>
+                        <h3><?php echo $property_stats['auto_accept']; ?></h3>
+                        <span class="host-metric-note">Properties that instantly confirm new bookings.</span>
+                    </div>
+                </div>
+            </div>
+
             <?php if (empty($properties)): ?>
-                <div class="empty-state">
-                    <span class="empty-icon">🏠</span>
+                <div class="empty-state host-empty-state host-surface">
+                    <span class="empty-icon host-empty-icon"><i class="fa-solid fa-house-circle-xmark" aria-hidden="true"></i></span>
                     <h3>No properties yet</h3>
                     <p>Start hosting by adding your first property</p>
                     <a href="add-property.php" class="btn-primary">Add Property</a>
@@ -212,57 +275,66 @@ $conn->close();
                         <div class="property-card">
                             <div class="property-image">
                                 <img src="<?php echo $photo_url; ?>" alt="Property" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400'">
-                                <span class="status-badge status-<?php echo ucfirst($property['status']); ?>">
+                                <span class="status-badge status-<?php echo $property['status']; ?>">
                                     <?php echo ucfirst($property['status']); ?>
                                 </span>
                             </div>
                             <div class="property-info">
                                 <h3><?php echo htmlspecialchars($property['title']); ?></h3>
-                                <p class="property-location">📍 <?php echo htmlspecialchars($property['city'] . ', ' . $property['country']); ?></p>
+                                <p class="property-location"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><?php echo htmlspecialchars($property['city'] . ', ' . $property['country']); ?></p>
                                 <div class="property-details">
-                                    <span>🛏️ <?php echo $property['bedrooms']; ?> beds</span>
-                                    <span>🚿 <?php echo $property['bathrooms']; ?> baths</span>
-                                    <span>👥 <?php echo $property['max_guests']; ?> guests</span>
+                                    <div class="property-detail-item">
+                                        <span class="property-detail-label">Bedrooms</span>
+                                        <span class="property-detail-value"><?php echo $property['bedrooms']; ?> beds</span>
+                                    </div>
+                                    <div class="property-detail-item">
+                                        <span class="property-detail-label">Bathrooms</span>
+                                        <span class="property-detail-value"><?php echo $property['bathrooms']; ?> baths</span>
+                                    </div>
+                                    <div class="property-detail-item">
+                                        <span class="property-detail-label">Guest Capacity</span>
+                                        <span class="property-detail-value"><?php echo $property['max_guests']; ?> guests</span>
+                                    </div>
                                 </div>
-                                <div class="property-footer" style="display: flex; flex-direction: column; gap: 8px;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                                        <span class="price">₱<?php echo number_format($property['price_per_night'], 2); ?>/night</span>
-                                        <div style="display: flex; gap: 8px;">
-                                            <a href="view-property.php?id=<?php echo (int)$property['id']; ?>" class="btn-view-property" style="display: inline-block; padding: 8px 16px; background: #3B82F6; color: #fff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 13px;">View</a>
+                                <div class="property-footer" style="display:flex; flex-direction:column; gap:10px; align-items:stretch;">
+                                    <div class="host-meta-row">
+                                        <span class="price">₱<?php echo number_format($property['price_per_night'], 2); ?><small>/night</small></span>
+                                        <div class="host-stack-actions">
+                                            <a href="view-property.php?id=<?php echo (int)$property['id']; ?>" class="host-action-btn is-info">View</a>
                                             <form method="POST" action="properties.php" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this property? This cannot be undone.');">
                                                 <input type="hidden" name="property_id" value="<?php echo (int)$property['id']; ?>">
                                                 <input type="hidden" name="action" value="delete_property">
-                                                <button type="submit" class="btn-delete-property" style="padding: 8px 16px; background: #EF4444; color: #fff; border: none; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer;">Delete</button>
+                                                <button type="submit" class="host-action-btn is-danger">Delete</button>
                                             </form>
                                         </div>
                                     </div>
-                                    <div style="display: flex; align-items: center;">
+                                    <div>
                                         <a href="edit-property.php?id=<?php echo (int)$property['id']; ?>" class="btn-edit">Edit</a>
                                     </div>
 
                                     <?php if (in_array($property['status'], ['approved', 'out_of_order'])): ?>
-                                    <div class="property-meta-row">
+                                    <div class="host-meta-row">
                                         <form method="POST" action="properties.php" style="display: inline-flex; align-items: center; gap: 8px;">
                                             <input type="hidden" name="property_id" value="<?php echo (int)$property['id']; ?>">
                                             <input type="hidden" name="action" value="update_availability">
                                             <?php if ($property['status'] === 'out_of_order'): ?>
                                                 <input type="hidden" name="new_status" value="approved">
                                                 <span class="badge badge-warning">Out of Order (hidden from guests)</span>
-                                                <button type="submit" class="btn-small">Mark Available</button>
+                                                <button type="submit" class="host-pill-btn is-primary">Mark Available</button>
                                             <?php else: ?>
                                                 <input type="hidden" name="new_status" value="out_of_order">
                                                 <span class="badge badge-success">Available</span>
-                                                <button type="submit" class="btn-small btn-outline">Mark Out of Order</button>
+                                                <button type="submit" class="host-pill-btn">Mark Out of Order</button>
                                             <?php endif; ?>
                                         </form>
                                     </div>
                                     <?php else: ?>
-                                        <div class="property-meta-row">
+                                        <div class="host-meta-row">
                                             <span class="badge badge-neutral">Status: <?php echo ucfirst($property['status']); ?></span>
                                         </div>
                                     <?php endif; ?>
 
-                                    <div class="property-meta-row" style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                                    <div class="host-meta-row">
                                         <form method="POST" action="properties.php" style="display: inline-flex; align-items: center; gap: 8px;">
                                             <input type="hidden" name="property_id" value="<?php echo (int)$property['id']; ?>">
                                             <input type="hidden" name="action" value="toggle_auto_accept">
@@ -270,7 +342,7 @@ $conn->close();
                                             <span class="badge <?php echo $property['auto_accept_bookings'] ? 'badge-success' : 'badge-neutral'; ?>">
                                                 Auto-accept: <?php echo $property['auto_accept_bookings'] ? 'On' : 'Off'; ?>
                                             </span>
-                                            <button type="submit" class="btn-small btn-outline">
+                                            <button type="submit" class="host-pill-btn">
                                                 <?php echo $property['auto_accept_bookings'] ? 'Disable' : 'Enable'; ?>
                                             </button>
                                         </form>
@@ -284,6 +356,7 @@ $conn->close();
         </main>
     </div>
     
-    <script src="../assets/js/theme-toggle.js"></script>
+    <script src="../assets/js/theme-toggle.js?v=27.5"></script>
+    <script src="../assets/js/host-view-site-confirm.js?v=1.0"></script>
 </body>
 </html>

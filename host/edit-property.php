@@ -310,11 +310,12 @@ $conn->close();
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>Edit Property - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=14.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.2">
     <link rel="stylesheet" href="../assets/css/add-property.css?v=15.0">
-    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=14.0">
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
 </head>
-<body class="dashboard-page">
+<body class="dashboard-page host-clean-page host-form-page">
     <div class="host-layout">
         <aside class="host-sidebar">
             <div class="sidebar-header">
@@ -324,13 +325,13 @@ $conn->close();
                 </a>
             </div>
             <nav class="sidebar-nav">
-                <a href="dashboard.php" class="nav-item"><span class="nav-icon">📊</span><span>Dashboard</span></a>
-                <a href="properties.php" class="nav-item active"><span class="nav-icon">🏠</span><span>My Properties</span></a>
-                <a href="add-property.php" class="nav-item"><span class="nav-icon">➕</span><span>Add Property</span></a>
-                <a href="bookings.php" class="nav-item"><span class="nav-icon">📅</span><span>Bookings</span></a>
-                <a href="earnings.php" class="nav-item"><span class="nav-icon">💰</span><span>Earnings</span></a>
-                <a href="messages.php" class="nav-item"><span class="nav-icon">💬</span><span>Messages</span></a>
-                <a href="../home.php" class="nav-item"><span class="nav-icon">🌐</span><span>View Site</span></a>
+                <a href="dashboard.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span><span>Dashboard</span></a>
+                <a href="properties.php" class="nav-item active"><span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span><span>My Properties</span></a>
+                <a href="add-property.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-plus" aria-hidden="true"></i></span><span>Add Property</span></a>
+                <a href="bookings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></span><span>Bookings</span></a>
+                <a href="earnings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span><span>Earnings</span></a>
+                <a href="messages.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span><span>Messages</span></a>
+                <a href="../home.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span><span>View Site</span></a>
             </nav>
             <div class="sidebar-footer">
                 <div class="user-profile">
@@ -342,19 +343,28 @@ $conn->close();
                         <div class="user-role">Host</div>
                     </div>
                 </div>
+
+                <div class="theme-toggle">
+                    <span class="theme-toggle-icon">☀️</span>
+                    <span class="theme-toggle-text">Light</span>
+                </div>
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
         </aside>
 
         <main class="host-main">
-            <div class="host-header" style="display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                    <h1>Edit Property 🛠️</h1>
-                    <p class="subtitle">Update your listing details and photos</p>
+            <div class="host-header host-page-hero">
+                <div class="host-page-hero-content">
+                    <span class="host-page-eyebrow">Listing Update</span>
+                    <h1>Edit Property</h1>
+                    <p class="subtitle">Refine your property details, update photos, and keep the listing accurate before guests book it again.</p>
                 </div>
-                <div class="theme-toggle">
-                    <span class="theme-toggle-icon">☀️</span>
-                    <span class="theme-toggle-text">Light</span>
+                <div style="display:flex; align-items:flex-start; gap:14px; margin-left:auto;">
+                    <div class="host-page-summary">
+                        <span class="host-page-summary-label">Current Status</span>
+                        <strong><?php echo ucfirst(str_replace('_', ' ', $property['status'])); ?></strong>
+                        <span class="host-page-summary-text">make updates carefully so the listing stays guest-ready</span>
+                    </div>
                 </div>
             </div>
 
@@ -369,6 +379,7 @@ $conn->close();
             </div>
             <?php endif; ?>
 
+            <div class="host-form-shell">
             <form method="POST" action="edit-property.php?id=<?php echo (int)$property_id; ?>" class="property-form" enctype="multipart/form-data">
                 <input type="hidden" name="property_id" value="<?php echo (int)$property_id; ?>">
 
@@ -561,10 +572,12 @@ $conn->close();
                     <button type="submit" class="btn-primary">Save Changes</button>
                 </div>
             </form>
+            </div>
         </main>
     </div>
 
-    <script src="../assets/js/theme-toggle.js"></script>
+    <script src="../assets/js/theme-toggle.js?v=27.5"></script>
+    <script src="../assets/js/host-view-site-confirm.js?v=1.0"></script>
     <script src="../assets/js/host-property-pin-map.js?v=1"></script>
     <script>
         if (typeof window.initHostPropertyPinMap === 'function') {

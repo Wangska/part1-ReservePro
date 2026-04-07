@@ -73,147 +73,18 @@ $conn->close();
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>Platform Commission - Admin - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=25.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.1">
-    <link rel="stylesheet" href="../assets/css/admin.css?v=25.0">
-    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.2">
+    <link rel="stylesheet" href="../assets/css/admin.css?v=25.4">
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
-        .commission-header {
-            background: linear-gradient(135deg, #0c4a6e 0%, #111827 50%, #020617 100%);
-            padding: 40px;
-            border-radius: 16px;
-            margin-bottom: 32px;
-            color: #FFFFFF;
-        }
-        .host-main .commission-header h1 {
-            font-size: 32px;
-            margin-bottom: 8px;
-            color: #FFFFFF !important;
-        }
-        .host-main .commission-header p {
-            opacity: 0.95;
-            font-size: 15px;
-            color: #E8EEFF !important;
-            max-width: 720px;
-            line-height: 1.55;
-            margin: 0;
-        }
-        .host-main .commission-header strong {
-            color: #FEF9C3 !important;
-            font-weight: 600;
-        }
-        .host-main .commission-header a {
-            color: #7dd3fc !important;
-            text-decoration: underline;
-        }
-        .host-main .commission-header a:hover {
-            color: #BAE6FD !important;
-        }
-        .commission-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 28px;
-        }
-        .commission-stat-card {
-            background: #1F1F1F;
-            padding: 22px;
-            border-radius: 12px;
-            border: 1px solid #3A3A3A;
-        }
-        .commission-stat-card .stat-label {
-            font-size: 12px;
-            color: #9CA3AF;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-        }
-        .commission-stat-card .stat-value {
-            font-size: 28px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #38bdf8, #D4A574);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .commission-stat-card .stat-note { font-size: 12px; color: #6B7280; margin-top: 6px; }
-        .earnings-table-container {
-            background: #1F1F1F;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid #3A3A3A;
-        }
-        .earnings-table-container .table-header {
-            padding: 20px 24px;
-            border-bottom: 1px solid #3A3A3A;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 16px;
-        }
-        .earnings-table-container .table-header h2 {
-            font-size: 18px;
-            font-weight: 600;
-            color: #FFFFFF !important;
-            margin: 0;
-        }
         .filter-buttons { display: flex; gap: 8px; flex-wrap: wrap; width: 100%; }
-        .filter-btn {
-            padding: 8px 14px;
-            border: 1px solid #3A3A3A;
-            background: transparent;
-            color: #B8B8B8;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
-        }
-        .filter-btn:hover { background: #2C2C2C; color: #D4A574; border-color: #D4A574; }
-        .filter-btn.active {
-            background: linear-gradient(135deg, #0ea5e9, #0369a1);
-            color: #fff;
-            border-color: transparent;
-        }
-        .earnings-table { width: 100%; border-collapse: collapse; }
-        .earnings-table thead { background: #2C2C2C; }
-        .earnings-table th {
-            padding: 12px 14px;
-            text-align: left;
-            font-size: 11px;
-            color: #B8B8B8;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .earnings-table td {
-            padding: 14px;
-            color: #E5E7EB;
-            border-bottom: 1px solid #2C2C2C;
-            font-size: 13px;
-        }
-        .earnings-table tbody tr:hover { background: #2C2C2C; }
         .booking-id { font-family: monospace; color: #D4A574; font-weight: 600; }
         .col-commission { color: #38bdf8; font-weight: 700; }
         .col-host { color: #A7F3D0; }
-        .empty-earnings { text-align: center; padding: 56px 20px; color: #9CA3AF; }
-        .empty-earnings h3 { color: #fff !important; }
-        /* Self-contained light-mode hero (wins over cached old theme-toggle.css) */
-        body.light-mode .host-main .commission-header h1,
-        body.dashboard-page.light-mode .host-main .commission-header h1 {
-            color: #FFFFFF !important;
-        }
-        body.light-mode .host-main .commission-header p,
-        body.dashboard-page.light-mode .host-main .commission-header p {
-            color: #E8EEFF !important;
-        }
-        body.light-mode .host-main .commission-header strong,
-        body.dashboard-page.light-mode .host-main .commission-header strong {
-            color: #FEF9C3 !important;
-        }
-        body.light-mode .host-main .commission-header a,
-        body.dashboard-page.light-mode .host-main .commission-header a {
-            color: #7dd3fc !important;
-        }
     </style>
 </head>
-<body class="dashboard-page">
+<body class="dashboard-page admin-page admin-clean-page admin-commission-page">
     <div class="host-layout">
         <aside class="host-sidebar">
             <div class="sidebar-header">
@@ -224,35 +95,35 @@ $conn->close();
             </div>
             <nav class="sidebar-nav">
                 <a href="dashboard.php" class="nav-item">
-                    <span class="nav-icon">📊</span>
+                    <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
                     <span>Admin Panel</span>
                 </a>
                 <a href="host-verifications.php" class="nav-item">
-                    <span class="nav-icon">✅</span>
+                    <span class="nav-icon"><i class="fa-solid fa-user-check" aria-hidden="true"></i></span>
                     <span>Host Verifications</span>
                 </a>
                 <a href="properties.php" class="nav-item">
-                    <span class="nav-icon">🏠</span>
+                    <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
                     <span>All Properties</span>
                 </a>
                 <a href="users.php" class="nav-item">
-                    <span class="nav-icon">👥</span>
+                    <span class="nav-icon"><i class="fa-solid fa-users" aria-hidden="true"></i></span>
                     <span>Users</span>
                 </a>
                 <a href="bookings.php" class="nav-item">
-                    <span class="nav-icon">📅</span>
+                    <span class="nav-icon"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i></span>
                     <span>All Bookings</span>
                 </a>
                 <a href="earnings.php" class="nav-item">
-                    <span class="nav-icon">💰</span>
+                    <span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span>
                     <span>Earnings</span>
                 </a>
                 <a href="commission.php" class="nav-item active">
-                    <span class="nav-icon">💎</span>
+                    <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
                     <span>Commission</span>
                 </a>
                 <a href="../home.php" class="nav-item">
-                    <span class="nav-icon">🌐</span>
+                    <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
                     <span>View Site</span>
                 </a>
             </nav>
@@ -266,46 +137,72 @@ $conn->close();
                         <div class="user-role">Administrator</div>
                     </div>
                 </div>
+                <div class="theme-toggle" style="margin-bottom: 12px;">
+                    <span class="theme-toggle-icon" aria-hidden="true"></span>
+                    <span class="theme-toggle-text">Theme</span>
+                </div>
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
         </aside>
 
         <main class="host-main">
-            <div class="commission-header">
-                <h1>💎 Platform commission</h1>
-                <p>
-                    Guests pay <strong>nightly subtotal + 10% service fee</strong>. The fee is the app’s commission:
-                    <strong>commission = guest total ÷ 11</strong>, host share = total − commission.
-                    <a href="earnings.php">View gross guest payments (Earnings)</a>
-                </p>
-            </div>
-
-            <div class="commission-stats">
-                <div class="commission-stat-card">
-                    <div class="stat-label">Commission (earned)</div>
-                    <div class="stat-value">₱<?php echo number_format($commission_earned, 2); ?></div>
-                    <div class="stat-note">Confirmed + completed bookings</div>
+            <div class="commission-header admin-page-hero">
+                <div class="admin-page-hero-content">
+                    <span class="admin-page-eyebrow">Commission Tracking</span>
+                    <h1>Platform Commission</h1>
+                    <p>
+                        Guests pay <strong>nightly subtotal plus a 10% service fee</strong>. This page isolates the platform share from each booking.
+                        <a href="earnings.php">View gross guest payments in Earnings</a>
+                    </p>
                 </div>
-                <div class="commission-stat-card">
-                    <div class="stat-label">Commission (pending)</div>
-                    <div class="stat-value">₱<?php echo number_format($commission_pending, 2); ?></div>
-                    <div class="stat-note">If bookings complete</div>
-                </div>
-                <div class="commission-stat-card">
-                    <div class="stat-label">Gross paid (earned)</div>
-                    <div class="stat-value" style="font-size:22px;">₱<?php echo number_format($gross_earned, 2); ?></div>
-                    <div class="stat-note">Guest totals for reference</div>
-                </div>
-                <div class="commission-stat-card">
-                    <div class="stat-label">Commission (cancelled)</div>
-                    <div class="stat-value" style="font-size:22px;">₱<?php echo number_format($commission_cancelled, 2); ?></div>
-                    <div class="stat-note">Historical only</div>
+                <div class="admin-page-summary">
+                    <span class="admin-page-summary-label">Earned Commission</span>
+                    <strong>₱<?php echo number_format($commission_earned, 0); ?></strong>
+                    <span class="admin-page-summary-text">confirmed and completed platform share</span>
                 </div>
             </div>
 
-            <div class="earnings-table-container">
-                <div class="table-header">
-                    <h2>Per-booking breakdown</h2>
+            <div class="commission-stats admin-metric-grid">
+                <div class="commission-stat-card admin-metric-card">
+                    <div class="admin-metric-icon is-emerald"><i class="fa-solid fa-coins" aria-hidden="true"></i></div>
+                    <div class="admin-metric-copy">
+                        <div class="stat-label">Commission Earned</div>
+                        <div class="stat-value">₱<?php echo number_format($commission_earned, 2); ?></div>
+                        <div class="stat-note">Confirmed and completed bookings.</div>
+                    </div>
+                </div>
+                <div class="commission-stat-card admin-metric-card">
+                    <div class="admin-metric-icon is-amber"><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i></div>
+                    <div class="admin-metric-copy">
+                        <div class="stat-label">Commission Pending</div>
+                        <div class="stat-value">₱<?php echo number_format($commission_pending, 2); ?></div>
+                        <div class="stat-note">Projected value if current pending bookings complete.</div>
+                    </div>
+                </div>
+                <div class="commission-stat-card admin-metric-card">
+                    <div class="admin-metric-icon is-sky"><i class="fa-solid fa-receipt" aria-hidden="true"></i></div>
+                    <div class="admin-metric-copy">
+                        <div class="stat-label">Gross Paid</div>
+                        <div class="stat-value">₱<?php echo number_format($gross_earned, 2); ?></div>
+                        <div class="stat-note">Guest totals for earned bookings.</div>
+                    </div>
+                </div>
+                <div class="commission-stat-card admin-metric-card">
+                    <div class="admin-metric-icon is-red"><i class="fa-solid fa-ban" aria-hidden="true"></i></div>
+                    <div class="admin-metric-copy">
+                        <div class="stat-label">Cancelled Commission</div>
+                        <div class="stat-value">₱<?php echo number_format($commission_cancelled, 2); ?></div>
+                        <div class="stat-note">Historical commission from cancelled bookings.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="earnings-table-container admin-surface">
+                <div class="table-header admin-surface-header">
+                    <div>
+                        <h2>Per-Booking Breakdown</h2>
+                        <p>Compare guest totals, host share, and commission on each reservation.</p>
+                    </div>
                     <div class="filter-buttons">
                         <button type="button" class="filter-btn active" data-filter="all">All</button>
                         <button type="button" class="filter-btn" data-filter="earned">Earned</button>
@@ -315,12 +212,13 @@ $conn->close();
                 </div>
 
                 <?php if (empty($bookings)): ?>
-                    <div class="empty-earnings">
+                    <div class="empty-earnings admin-empty-state">
+                        <span class="admin-empty-icon"><i class="fa-solid fa-inbox" aria-hidden="true"></i></span>
                         <h3>No bookings</h3>
                         <p>Commission will appear when there are reservations.</p>
                     </div>
                 <?php else: ?>
-                    <div style="overflow-x:auto;">
+                    <div class="admin-scroll-x">
                         <table class="earnings-table">
                             <thead>
                                 <tr>
@@ -362,6 +260,7 @@ $conn->close();
     </div>
 
     <script src="../assets/js/theme-toggle.js?v=27.0"></script>
+    <script src="../assets/js/admin-view-site-confirm.js?v=1.0"></script>
     <script>
         (function () {
             var buttons = document.querySelectorAll('.earnings-table-container .filter-btn');

@@ -177,3 +177,959 @@
         text-align: center;
     }
 }
+
+/* Clean admin page layout */
+.admin-clean-page .host-main {
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.16) 0%, rgba(15, 15, 15, 0) 260px);
+}
+
+.admin-page-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 20px;
+    padding: 28px 30px;
+    margin-bottom: 28px;
+    border-radius: 24px;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    background: linear-gradient(135deg, rgba(17, 24, 39, 0.96), rgba(30, 41, 59, 0.88));
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.24);
+}
+
+.admin-page-hero-content h1 {
+    margin-bottom: 10px;
+}
+
+.admin-page-hero-content .subtitle,
+.admin-page-hero-content p {
+    max-width: 760px;
+    line-height: 1.65;
+    color: #CBD5E1 !important;
+}
+
+.admin-page-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    margin-bottom: 14px;
+    border-radius: 999px;
+    background: rgba(212, 165, 116, 0.14);
+    color: #F3D9B4;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.admin-page-summary {
+    min-width: 220px;
+    margin-left: auto;
+    padding: 22px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+}
+
+.admin-page-summary-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #94A3B8;
+    font-weight: 700;
+}
+
+.admin-page-summary strong {
+    font-size: 36px;
+    line-height: 1;
+    color: #FFFFFF;
+}
+
+.admin-page-summary-text {
+    font-size: 14px;
+    color: #CBD5E1;
+}
+
+.admin-metric-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+    margin-bottom: 28px;
+}
+
+.admin-metric-card {
+    padding: 22px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(17, 24, 39, 0.86);
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.18);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.admin-metric-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 24px 40px rgba(0, 0, 0, 0.2);
+    border-color: rgba(212, 165, 116, 0.3);
+}
+
+.admin-metric-icon {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #E2E8F0;
+    font-size: 22px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.admin-metric-icon i {
+    font-size: 20px;
+}
+
+.admin-metric-icon.is-indigo {
+    color: #C7D2FE;
+}
+
+.admin-metric-icon.is-sky {
+    color: #BAE6FD;
+}
+
+.admin-metric-icon.is-emerald {
+    color: #A7F3D0;
+}
+
+.admin-metric-icon.is-amber {
+    color: #FDE68A;
+}
+
+.admin-metric-icon.is-red {
+    color: #FCA5A5;
+}
+
+.admin-metric-icon.is-gold {
+    color: #F3D9B4;
+}
+
+.admin-metric-copy p,
+.admin-metric-copy .stat-label {
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #94A3B8 !important;
+}
+
+.admin-metric-copy h3,
+.admin-metric-copy .stat-value {
+    margin-bottom: 6px;
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.1;
+    color: #FFFFFF !important;
+    background: none !important;
+    -webkit-text-fill-color: currentColor !important;
+}
+
+.admin-metric-note,
+.admin-metric-copy .stat-change,
+.admin-metric-copy .stat-note {
+    display: block;
+    font-size: 13px;
+    line-height: 1.55;
+    color: #CBD5E1 !important;
+}
+
+.admin-surface {
+    background: rgba(17, 24, 39, 0.86);
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 20px 36px rgba(0, 0, 0, 0.18);
+}
+
+.admin-surface-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    padding: 24px 24px 18px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.admin-surface-header h2 {
+    margin: 0 0 6px;
+    color: #FFFFFF !important;
+}
+
+.admin-surface-header p {
+    margin: 0;
+    font-size: 14px;
+    color: #94A3B8 !important;
+}
+
+.admin-inline-note {
+    margin: -8px 0 20px;
+    font-size: 14px;
+    color: #94A3B8;
+}
+
+.admin-empty-state {
+    padding: 52px 36px;
+    text-align: center;
+}
+
+.admin-empty-icon {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 18px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: #FBBF24;
+    background: rgba(245, 158, 11, 0.12);
+}
+
+.admin-empty-state h3 {
+    margin-bottom: 8px;
+}
+
+.admin-empty-state p {
+    margin-bottom: 0;
+}
+
+.admin-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 16px 0 18px;
+}
+
+.admin-detail-card {
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.admin-detail-label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #94A3B8;
+}
+
+.admin-detail-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #FFFFFF;
+}
+
+.admin-clean-page .verification-card {
+    background: rgba(17, 24, 39, 0.86);
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    border-radius: 20px;
+    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.16);
+}
+
+.admin-clean-page .verification-card h3 {
+    font-size: 22px;
+}
+
+.admin-clean-page .verification-card .meta,
+.admin-clean-page .verification-card .details {
+    color: #CBD5E1;
+}
+
+.admin-clean-page .verification-actions {
+    gap: 10px;
+}
+
+.admin-verifications-page .verification-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.admin-verifications-page .verification-actions form {
+    display: flex !important;
+}
+
+.admin-clean-page .btn-approve,
+.admin-clean-page .btn-reject,
+.admin-clean-page .btn-view,
+.admin-clean-page .btn-action {
+    min-height: 42px;
+    border-radius: 12px;
+}
+
+.admin-verifications-page .btn-approve,
+.admin-verifications-page .btn-reject {
+    min-width: 112px;
+    padding: 10px 18px;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
+}
+
+.admin-verifications-page .btn-approve {
+    background: linear-gradient(135deg, #10B981, #0F9F6E);
+    border: 1px solid rgba(16, 185, 129, 0.34);
+}
+
+.admin-verifications-page .btn-approve:hover {
+    box-shadow: 0 14px 28px rgba(16, 185, 129, 0.24);
+}
+
+.admin-verifications-page .btn-reject {
+    background: linear-gradient(135deg, #EF4444, #DC2626);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.admin-verifications-page .btn-reject:hover {
+    box-shadow: 0 14px 28px rgba(239, 68, 68, 0.22);
+}
+
+.admin-scroll-x {
+    overflow-x: auto;
+}
+
+body.light-mode.admin-clean-page .host-main {
+    background: linear-gradient(180deg, rgba(248, 250, 252, 0.92) 0%, rgba(248, 250, 252, 0) 260px);
+}
+
+body.light-mode.admin-clean-page .admin-page-hero,
+body.light-mode.admin-clean-page .admin-metric-card,
+body.light-mode.admin-clean-page .admin-surface,
+body.light-mode.admin-clean-page .verification-card {
+    background: #FFFFFF !important;
+    border-color: rgba(15, 23, 42, 0.08) !important;
+    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.08) !important;
+}
+
+body.light-mode.admin-clean-page .admin-page-eyebrow {
+    background: rgba(184, 147, 95, 0.12);
+    color: #8B6F47;
+}
+
+body.light-mode.admin-clean-page .admin-page-summary {
+    background: #F8FAFC;
+    border-color: rgba(15, 23, 42, 0.08);
+}
+
+body.light-mode.admin-clean-page .admin-page-summary strong,
+body.light-mode.admin-clean-page .admin-surface-header h2,
+body.light-mode.admin-clean-page .admin-detail-value,
+body.light-mode.admin-clean-page .verification-card h3 {
+    color: #0F172A !important;
+}
+
+body.light-mode.admin-clean-page .admin-page-hero-content .subtitle,
+body.light-mode.admin-clean-page .admin-page-hero-content p,
+body.light-mode.admin-clean-page .admin-page-summary-text,
+body.light-mode.admin-clean-page .admin-metric-note,
+body.light-mode.admin-clean-page .admin-inline-note,
+body.light-mode.admin-clean-page .admin-surface-header p,
+body.light-mode.admin-clean-page .verification-card .meta,
+body.light-mode.admin-clean-page .verification-card .details {
+    color: #475569 !important;
+}
+
+body.light-mode.admin-clean-page .admin-page-summary-label,
+body.light-mode.admin-clean-page .admin-metric-copy p,
+body.light-mode.admin-clean-page .admin-metric-copy .stat-label,
+body.light-mode.admin-clean-page .admin-detail-label {
+    color: #64748B !important;
+}
+
+body.light-mode.admin-clean-page .admin-detail-card {
+    background: #F8FAFC;
+    border-color: rgba(15, 23, 42, 0.08);
+}
+
+body.light-mode.admin-clean-page .admin-metric-icon {
+    background: #F8FAFC;
+    border-color: rgba(15, 23, 42, 0.08);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+body.light-mode.admin-clean-page .admin-metric-icon.is-indigo {
+    color: #4F46E5;
+}
+
+body.light-mode.admin-clean-page .admin-metric-icon.is-sky {
+    color: #0369A1;
+}
+
+body.light-mode.admin-clean-page .admin-metric-icon.is-emerald {
+    color: #047857;
+}
+
+body.light-mode.admin-clean-page .admin-metric-icon.is-amber {
+    color: #B45309;
+}
+
+body.light-mode.admin-clean-page .admin-metric-icon.is-red {
+    color: #B91C1C;
+}
+
+body.light-mode.admin-clean-page .admin-metric-icon.is-gold {
+    color: #8B6F47;
+}
+
+@media (max-width: 1024px) {
+    .admin-page-hero {
+        flex-direction: column;
+    }
+
+    .admin-page-summary {
+        min-width: 0;
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-clean-page .host-main {
+        padding: 20px;
+    }
+
+    .admin-page-hero,
+    .admin-surface-header,
+    .admin-empty-state {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .admin-surface-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+/* Users and bookings refinements */
+.admin-users-page .properties-table-container,
+.admin-bookings-page .properties-table-container {
+    border-radius: 22px;
+}
+
+.admin-users-page .table-header,
+.admin-bookings-page .table-header {
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 16px;
+}
+
+.admin-users-page .filter-tabs,
+.admin-bookings-page .filter-tabs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.admin-users-page .filter-tab,
+.admin-bookings-page .filter-tab {
+    appearance: none;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    background: rgba(255, 255, 255, 0.04);
+    color: #CBD5E1;
+    min-height: 40px;
+    padding: 9px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-users-page .filter-tab:hover,
+.admin-bookings-page .filter-tab:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(212, 165, 116, 0.38);
+    color: #FFFFFF;
+    transform: translateY(-1px);
+}
+
+.admin-users-page .filter-tab:focus-visible,
+.admin-bookings-page .filter-tab:focus-visible {
+    outline: none;
+    border-color: rgba(212, 165, 116, 0.6);
+    box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.16);
+}
+
+.admin-users-page .filter-tab.active,
+.admin-bookings-page .filter-tab.active {
+    background: linear-gradient(135deg, #D4A574, #B8935F);
+    color: #0F0F0F;
+    border-color: transparent;
+    box-shadow: 0 10px 24px rgba(212, 165, 116, 0.22);
+}
+
+.admin-users-page .properties-table,
+.admin-bookings-page .properties-table {
+    width: 100%;
+}
+
+.admin-users-page .properties-table thead,
+.admin-bookings-page .properties-table thead {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.admin-users-page .properties-table th,
+.admin-bookings-page .properties-table th {
+    padding: 14px 18px;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    color: #94A3B8;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.admin-users-page .properties-table td,
+.admin-bookings-page .properties-table td {
+    padding: 16px 18px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    color: #E2E8F0;
+    vertical-align: middle;
+}
+
+.admin-users-page .properties-table tbody tr:hover,
+.admin-bookings-page .properties-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.admin-users-page .user-avatar-large {
+    width: 52px;
+    height: 52px;
+    border: 1px solid rgba(212, 165, 116, 0.28);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.admin-users-page .user-cell {
+    gap: 14px;
+}
+
+.admin-users-page .user-details h3 {
+    color: #FFFFFF;
+    margin-bottom: 4px;
+}
+
+.admin-users-page .user-details p,
+.admin-users-page .user-table-email {
+    color: #94A3B8;
+    font-size: 13px;
+}
+
+.admin-users-page .role-badge {
+    border-radius: 999px;
+    padding: 7px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+.admin-users-page .action-buttons {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.admin-users-page .btn-action.btn-view {
+    min-width: 76px;
+    border-radius: 10px;
+}
+
+.admin-properties-page .properties-table-container {
+    border-radius: 22px;
+}
+
+.admin-properties-page .table-header {
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 16px;
+}
+
+.admin-properties-page .filter-tabs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.admin-properties-page .filter-tab {
+    appearance: none;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    background: rgba(255, 255, 255, 0.04);
+    color: #CBD5E1;
+    min-height: 40px;
+    padding: 9px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-properties-page .filter-tab:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(212, 165, 116, 0.38);
+    color: #FFFFFF;
+    transform: translateY(-1px);
+}
+
+.admin-properties-page .filter-tab:focus-visible {
+    outline: none;
+    border-color: rgba(212, 165, 116, 0.6);
+    box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.16);
+}
+
+.admin-properties-page .filter-tab.active {
+    background: linear-gradient(135deg, #D4A574, #B8935F);
+    color: #0F0F0F;
+    border-color: transparent;
+    box-shadow: 0 10px 24px rgba(212, 165, 116, 0.22);
+}
+
+.admin-properties-page .properties-table thead {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.admin-properties-page .properties-table th {
+    padding: 14px 18px;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    color: #94A3B8;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.admin-properties-page .properties-table td {
+    padding: 16px 18px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    color: #E2E8F0;
+    vertical-align: middle;
+}
+
+.admin-properties-page .properties-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.admin-properties-page .btn-action {
+    min-height: 40px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.admin-bookings-page .table-header,
+.admin-earnings-page .table-header,
+.admin-commission-page .table-header {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.admin-bookings-page .filter-tabs,
+.admin-earnings-page .filter-buttons,
+.admin-commission-page .filter-buttons {
+    align-self: flex-end;
+    justify-content: flex-end;
+    width: auto;
+    margin-left: auto;
+}
+
+.admin-bookings-page .booking-id {
+    font-size: 13px;
+    letter-spacing: 0.04em;
+}
+
+.admin-bookings-page .amount {
+    font-weight: 700;
+    color: #F3D9B4;
+}
+
+.admin-bookings-page .status-badge {
+    border-radius: 999px;
+    padding: 7px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+body.light-mode.admin-users-page .properties-table thead,
+body.light-mode.admin-bookings-page .properties-table thead,
+body.light-mode.admin-properties-page .properties-table thead {
+    background: #F8FAFC;
+}
+
+body.light-mode.admin-properties-page .filter-tab {
+    background: #FFFFFF;
+    color: #334155;
+    border-color: rgba(15, 23, 42, 0.1);
+}
+
+body.light-mode.admin-properties-page .filter-tab:hover {
+    background: #F8FAFC;
+    color: #0F172A;
+    border-color: rgba(184, 147, 95, 0.38);
+}
+
+body.light-mode.admin-properties-page .filter-tab.active {
+    color: #FFFFFF;
+    background: linear-gradient(135deg, #B8935F, #8B6F47);
+    box-shadow: 0 10px 24px rgba(139, 111, 71, 0.2);
+}
+
+body.light-mode.admin-users-page .filter-tab,
+body.light-mode.admin-bookings-page .filter-tab {
+    background: #FFFFFF;
+    color: #334155;
+    border-color: rgba(15, 23, 42, 0.1);
+}
+
+body.light-mode.admin-users-page .filter-tab:hover,
+body.light-mode.admin-bookings-page .filter-tab:hover {
+    background: #F8FAFC;
+    color: #0F172A;
+    border-color: rgba(184, 147, 95, 0.38);
+}
+
+body.light-mode.admin-users-page .filter-tab.active,
+body.light-mode.admin-bookings-page .filter-tab.active {
+    color: #FFFFFF;
+    background: linear-gradient(135deg, #B8935F, #8B6F47);
+    box-shadow: 0 10px 24px rgba(139, 111, 71, 0.2);
+}
+
+body.light-mode.admin-users-page .properties-table th,
+body.light-mode.admin-bookings-page .properties-table th,
+body.light-mode.admin-properties-page .properties-table th {
+    color: #64748B;
+    border-bottom-color: rgba(15, 23, 42, 0.08);
+}
+
+body.light-mode.admin-users-page .properties-table td,
+body.light-mode.admin-bookings-page .properties-table td,
+body.light-mode.admin-properties-page .properties-table td {
+    color: #0F172A;
+    border-bottom-color: rgba(15, 23, 42, 0.08);
+}
+
+body.light-mode.admin-users-page .properties-table tbody tr:hover,
+body.light-mode.admin-bookings-page .properties-table tbody tr:hover,
+body.light-mode.admin-properties-page .properties-table tbody tr:hover {
+    background: #F8FAFC;
+}
+
+body.light-mode.admin-users-page .user-details p,
+body.light-mode.admin-users-page .user-table-email,
+body.light-mode.admin-bookings-page .booking-id {
+    color: #64748B !important;
+}
+
+@media (max-width: 768px) {
+    .admin-properties-page .table-header,
+    .admin-users-page .table-header,
+    .admin-bookings-page .table-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+/* Earnings and commission refinements */
+.admin-earnings-page .earnings-stats,
+.admin-commission-page .commission-stats {
+    margin-bottom: 28px;
+}
+
+.admin-earnings-page .earnings-header,
+.admin-commission-page .commission-header {
+    margin-bottom: 28px;
+}
+
+.admin-earnings-page .filter-buttons,
+.admin-commission-page .filter-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.admin-earnings-page .filter-btn,
+.admin-commission-page .filter-btn {
+    padding: 8px 14px;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    background: rgba(255, 255, 255, 0.03);
+    color: #CBD5E1;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.admin-earnings-page .filter-btn:hover,
+.admin-commission-page .filter-btn:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(212, 165, 116, 0.35);
+    color: #FFFFFF;
+}
+
+.admin-earnings-page .filter-btn.active,
+.admin-commission-page .filter-btn.active {
+    background: linear-gradient(135deg, #D4A574, #B8935F);
+    color: #0F0F0F;
+    border-color: transparent;
+}
+
+.admin-earnings-page .earnings-table-container,
+.admin-commission-page .earnings-table-container {
+    border-radius: 22px;
+}
+
+.admin-earnings-page .earnings-table,
+.admin-commission-page .earnings-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-earnings-page .earnings-table thead,
+.admin-commission-page .earnings-table thead {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.admin-earnings-page .earnings-table th,
+.admin-commission-page .earnings-table th {
+    padding: 14px 18px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 700;
+    color: #94A3B8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.admin-earnings-page .earnings-table td,
+.admin-commission-page .earnings-table td {
+    padding: 16px 18px;
+    color: #E2E8F0;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+.admin-earnings-page .earnings-table tbody tr:hover,
+.admin-commission-page .earnings-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.admin-earnings-page .booking-id,
+.admin-commission-page .booking-id {
+    font-size: 13px;
+    letter-spacing: 0.04em;
+}
+
+.admin-earnings-page .amount,
+.admin-commission-page .col-commission,
+.admin-commission-page .col-host {
+    font-weight: 700;
+}
+
+.admin-earnings-page .amount {
+    color: #F3D9B4;
+}
+
+.admin-commission-page .col-commission {
+    color: #7DD3FC;
+}
+
+.admin-commission-page .col-host {
+    color: #A7F3D0;
+}
+
+.admin-earnings-page .status-badge,
+.admin-commission-page .status-badge {
+    border-radius: 999px;
+    padding: 7px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+.admin-commission-page .admin-page-hero-content strong,
+.admin-commission-page .admin-page-hero-content a,
+.admin-earnings-page .admin-page-hero-content a {
+    color: #F3D9B4 !important;
+}
+
+.admin-commission-page .admin-page-hero-content a:hover,
+.admin-earnings-page .admin-page-hero-content a:hover {
+    color: #FFFFFF !important;
+}
+
+.admin-earnings-page .empty-earnings,
+.admin-commission-page .empty-earnings {
+    text-align: center;
+}
+
+body.light-mode.admin-earnings-page .filter-btn,
+body.light-mode.admin-commission-page .filter-btn {
+    background: #FFFFFF;
+    color: #334155;
+    border-color: rgba(15, 23, 42, 0.1);
+}
+
+body.light-mode.admin-earnings-page .filter-btn:hover,
+body.light-mode.admin-commission-page .filter-btn:hover {
+    background: #F8FAFC;
+    color: #0F172A;
+    border-color: rgba(184, 147, 95, 0.35);
+}
+
+body.light-mode.admin-earnings-page .earnings-table thead,
+body.light-mode.admin-commission-page .earnings-table thead {
+    background: #F8FAFC;
+}
+
+body.light-mode.admin-earnings-page .earnings-table th,
+body.light-mode.admin-commission-page .earnings-table th {
+    color: #64748B;
+    border-bottom-color: rgba(15, 23, 42, 0.08);
+}
+
+body.light-mode.admin-earnings-page .earnings-table td,
+body.light-mode.admin-commission-page .earnings-table td {
+    color: #0F172A;
+    border-bottom-color: rgba(15, 23, 42, 0.08);
+}
+
+body.light-mode.admin-earnings-page .earnings-table tbody tr:hover,
+body.light-mode.admin-commission-page .earnings-table tbody tr:hover {
+    background: #F8FAFC;
+}
+
+body.light-mode.admin-earnings-page .booking-id,
+body.light-mode.admin-commission-page .booking-id {
+    color: #64748B !important;
+}

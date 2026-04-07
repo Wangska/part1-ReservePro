@@ -82,8 +82,9 @@ $conn->close();
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>Earnings - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=11.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.1">
-    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=11.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.2">
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
         .earnings-header {
             /* Trendy gray header instead of brown */
@@ -351,7 +352,7 @@ $conn->close();
         }
     </style>
 </head>
-<body class="dashboard-page">
+<body class="dashboard-page host-clean-page host-earnings-page">
     <div class="host-layout">
         <!-- Sidebar -->
         <aside class="host-sidebar">
@@ -364,31 +365,31 @@ $conn->close();
             
             <nav class="sidebar-nav">
                 <a href="dashboard.php" class="nav-item">
-                    <span class="nav-icon">📊</span>
+                    <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
                     <span>Dashboard</span>
                 </a>
                 <a href="properties.php" class="nav-item">
-                    <span class="nav-icon">🏠</span>
+                    <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
                     <span>My Properties</span>
                 </a>
                 <a href="add-property.php" class="nav-item">
-                    <span class="nav-icon">➕</span>
+                    <span class="nav-icon"><i class="fa-solid fa-plus" aria-hidden="true"></i></span>
                     <span>Add Property</span>
                 </a>
                 <a href="bookings.php" class="nav-item">
-                    <span class="nav-icon">📅</span>
+                    <span class="nav-icon"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></span>
                     <span>Bookings</span>
                 </a>
                 <a href="earnings.php" class="nav-item active">
-                    <span class="nav-icon">💰</span>
+                    <span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span>
                     <span>Earnings</span>
                 </a>
                 <a href="messages.php" class="nav-item">
-                    <span class="nav-icon">💬</span>
+                    <span class="nav-icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span>
                     <span>Messages</span>
                 </a>
                 <a href="../home.php" class="nav-item">
-                    <span class="nav-icon">🌐</span>
+                    <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
                     <span>View Site</span>
                 </a>
             </nav>
@@ -403,6 +404,11 @@ $conn->close();
                         <div class="user-role">Host</div>
                     </div>
                 </div>
+
+                <div class="theme-toggle">
+                    <span class="theme-toggle-icon">☀️</span>
+                    <span class="theme-toggle-text">Light</span>
+                </div>
                 
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
@@ -410,62 +416,82 @@ $conn->close();
 
         <!-- Main Content -->
         <main class="host-main">
-            <div class="earnings-header" style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <h1>💰 Earnings</h1>
-                    <p>Track your revenue and booking history</p>
+            <div class="earnings-header host-page-hero">
+                <div class="host-page-hero-content">
+                    <span class="host-page-eyebrow">Revenue Overview</span>
+                    <h1>Earnings</h1>
+                    <p>See what you have already earned, what is still pending, and how each booking contributes to your host revenue.</p>
                 </div>
-                <!-- Theme Toggle -->
-                <div class="theme-toggle">
-                    <span class="theme-toggle-icon">☀️</span>
-                    <span class="theme-toggle-text">Light</span>
+                <div style="display:flex; align-items:flex-start; gap:14px; margin-left:auto;">
+                    <div class="host-page-summary">
+                        <span class="host-page-summary-label">Total Earnings</span>
+                        <strong>₱<?php echo number_format($total_earnings, 0); ?></strong>
+                        <span class="host-page-summary-text">confirmed and completed booking revenue</span>
+                    </div>
                 </div>
             </div>
 
             <!-- Earnings Statistics -->
-            <div class="earnings-stats">
-                <div class="earnings-stat-card">
-                    <div class="stat-label">Total Earnings</div>
-                    <div class="stat-value">₱<?php echo number_format($total_earnings, 2); ?></div>
-                    <div class="stat-change">All time revenue</div>
+            <div class="earnings-stats host-metric-grid">
+                <div class="earnings-stat-card host-metric-card">
+                    <div class="host-metric-icon is-emerald"><i class="fa-solid fa-wallet" aria-hidden="true"></i></div>
+                    <div class="host-metric-copy">
+                        <div class="stat-label">Total Earnings</div>
+                        <div class="stat-value">₱<?php echo number_format($total_earnings, 2); ?></div>
+                        <div class="stat-change">All time confirmed revenue.</div>
+                    </div>
                 </div>
-                <div class="earnings-stat-card">
-                    <div class="stat-label">Completed</div>
-                    <div class="stat-value">₱<?php echo number_format($completed_earnings, 2); ?></div>
-                    <div class="stat-change">Paid bookings</div>
+                <div class="earnings-stat-card host-metric-card">
+                    <div class="host-metric-icon is-sky"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></div>
+                    <div class="host-metric-copy">
+                        <div class="stat-label">Completed</div>
+                        <div class="stat-value">₱<?php echo number_format($completed_earnings, 2); ?></div>
+                        <div class="stat-change">Paid and completed bookings.</div>
+                    </div>
                 </div>
-                <div class="earnings-stat-card">
-                    <div class="stat-label">Pending</div>
-                    <div class="stat-value">₱<?php echo number_format($pending_earnings, 2); ?></div>
-                    <div class="stat-change">Awaiting payment</div>
+                <div class="earnings-stat-card host-metric-card">
+                    <div class="host-metric-icon is-amber"><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i></div>
+                    <div class="host-metric-copy">
+                        <div class="stat-label">Pending</div>
+                        <div class="stat-value">₱<?php echo number_format($pending_earnings, 2); ?></div>
+                        <div class="stat-change">Awaiting payment or final completion.</div>
+                    </div>
                 </div>
-                <div class="earnings-stat-card">
-                    <div class="stat-label">Total Bookings</div>
-                    <div class="stat-value"><?php echo $total_bookings; ?></div>
-                    <div class="stat-change">All reservations</div>
+                <div class="earnings-stat-card host-metric-card">
+                    <div class="host-metric-icon is-gold"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i></div>
+                    <div class="host-metric-copy">
+                        <div class="stat-label">Total Bookings</div>
+                        <div class="stat-value"><?php echo $total_bookings; ?></div>
+                        <div class="stat-change">Every reservation linked to your properties.</div>
+                    </div>
                 </div>
             </div>
 
             <!-- Earnings Table -->
-            <div class="earnings-table-container">
-                <div class="table-header">
-                    <h2>Booking History</h2>
-                    <div class="filter-buttons">
-                        <button class="filter-btn active" onclick="filterBookings('all')">All</button>
-                        <button class="filter-btn" onclick="filterBookings('confirmed')">Completed</button>
-                        <button class="filter-btn" onclick="filterBookings('pending')">Pending</button>
-                        <button class="filter-btn" onclick="filterBookings('cancelled')">Cancelled</button>
+            <div class="earnings-table-container host-surface">
+                <div class="table-header host-surface-header">
+                    <div>
+                        <h2>Booking History</h2>
+                        <p>Filter the table to focus on paid, pending, or cancelled reservations.</p>
+                    </div>
+                    <div class="filter-buttons host-filter-row">
+                        <button class="filter-btn host-filter-btn active" onclick="filterBookings('all', this)">All</button>
+                        <button class="filter-btn host-filter-btn" onclick="filterBookings('confirmed', this)">Completed</button>
+                        <button class="filter-btn host-filter-btn" onclick="filterBookings('pending', this)">Pending</button>
+                        <button class="filter-btn host-filter-btn" onclick="filterBookings('cancelled', this)">Cancelled</button>
                     </div>
                 </div>
 
                 <?php if (empty($bookings)): ?>
-                    <div class="empty-earnings">
-                        <h3>📊 No Earnings Yet</h3>
+                    <div class="empty-earnings host-empty-state">
+                        <span class="host-empty-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
+                        <h3>No earnings yet</h3>
                         <p>You haven't received any bookings yet. Start by adding properties!</p>
                         <a href="add-property.php" class="btn-primary"><?php echo $host_property_count === 0 ? 'Add Your First Property' : 'Add Your Property'; ?></a>
                     </div>
                 <?php else: ?>
-                    <table class="earnings-table">
+                    <div class="host-table-scroll">
+                    <table class="earnings-table host-table">
                         <thead>
                             <tr>
                                 <th>Booking ID</th>
@@ -495,6 +521,7 @@ $conn->close();
                             <?php endforeach; ?>
                         </tbody>
                     </table>
+                    </div>
                 <?php endif; ?>
             </div>
 
@@ -521,15 +548,16 @@ $conn->close();
         </main>
     </div>
 
-    <script src="../assets/js/theme-toggle.js"></script>
+    <script src="../assets/js/theme-toggle.js?v=27.5"></script>
+    <script src="../assets/js/host-view-site-confirm.js?v=1.0"></script>
     <script>
-        function filterBookings(status) {
+        function filterBookings(status, el) {
             const rows = document.querySelectorAll('.earnings-table tbody tr');
             const buttons = document.querySelectorAll('.filter-btn');
             
             // Update active button
             buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            if (el) el.classList.add('active');
             
             // Filter rows
             rows.forEach(row => {
