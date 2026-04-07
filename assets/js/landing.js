@@ -11,11 +11,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const filterToggle = document.getElementById('filterToggle');
     const filterClose = document.getElementById('filterClose');
     const filterBadge = document.getElementById('filterBadge');
+    const filterContentToggle = document.getElementById('filterContentToggle');
+    const filtersContent = document.getElementById('filtersContent');
 
     function openFilters() {
         if (!filtersSidebar) return;
         filtersSidebar.classList.add('is-open');
         document.body.classList.add('rp-filters-open');
+        if (filterToggle) {
+            filterToggle.setAttribute('aria-expanded', 'true');
+        }
         if (filterOverlay) {
             filterOverlay.setAttribute('aria-hidden', 'false');
         }
@@ -25,14 +30,43 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!filtersSidebar) return;
         filtersSidebar.classList.remove('is-open');
         document.body.classList.remove('rp-filters-open');
+        if (filterToggle) {
+            filterToggle.setAttribute('aria-expanded', 'false');
+        }
         if (filterOverlay) {
             filterOverlay.setAttribute('aria-hidden', 'true');
         }
     }
 
-    if (filterToggle) filterToggle.addEventListener('click', openFilters);
+    if (filterToggle) {
+        filterToggle.addEventListener('click', function() {
+            const isOpen = filtersSidebar && filtersSidebar.classList.contains('is-open');
+            if (isOpen) {
+                closeFilters();
+            } else {
+                openFilters();
+            }
+        });
+    }
     if (filterClose) filterClose.addEventListener('click', closeFilters);
     if (filterOverlay) filterOverlay.addEventListener('click', closeFilters);
+
+    function setFilterContentState(isOpen) {
+        if (!filtersSidebar || !filtersContent) return;
+        filtersSidebar.classList.toggle('is-collapsed', !isOpen);
+        filtersContent.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+        if (filterContentToggle) {
+            filterContentToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        }
+    }
+
+    if (filterContentToggle && filtersContent) {
+        filterContentToggle.addEventListener('click', function() {
+            const currentlyOpen = !filtersSidebar.classList.contains('is-collapsed');
+            setFilterContentState(!currentlyOpen);
+        });
+        setFilterContentState(false);
+    }
     
     // Favorite buttons
     const favoriteButtons = document.querySelectorAll('.card-favorite');
@@ -117,12 +151,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Price range slider
     const priceSlider = document.querySelector('.price-slider');
     const currentPrice = document.getElementById('currentPrice');
+    let isPriceFilterActive = false;
     
     if (priceSlider) {
         priceSlider.addEventListener('input', function() {
             const maxPrice = parseInt(this.value);
+            isPriceFilterActive = true;
             if (currentPrice) {
-                currentPrice.textContent = '₱' + maxPrice.toLocaleString() + '+';
+                currentPrice.textContent = '₱' + maxPrice.toLocaleString();
             }
             filterProperties();
         });
@@ -150,15 +186,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (f.value === 'all') f.checked = false;
                 });
             }
-            
-            // If no specific categories are checked, check "All Properties"
-            const anyChecked = Array.from(categoryFilters).some(f => f.checked && f.value !== 'all');
-            if (!anyChecked) {
-                categoryFilters.forEach(f => {
-                    if (f.value === 'all') f.checked = true;
-                });
-            }
-            
+
             filterProperties();
         });
     });
@@ -166,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Filter properties based on active filters
     function filterProperties() {
         const cards = document.querySelectorAll('.service-card');
-        const maxPrice = priceSlider ? parseInt(priceSlider.value) : Infinity;
+        const maxPrice = (priceSlider && isPriceFilterActive) ? parseInt(priceSlider.value) : Infinity;
         const selectedTypes = Array.from(categoryFilters)
             .filter(f => f.checked && f.value !== 'all')
             .map(f => f.value);
@@ -219,6 +247,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateAppliedFiltersUI({
             searchTerm,
             maxPrice,
+            priceFilterActive: isPriceFilterActive,
             showAll,
             selectedTypes,
             selectedAmenityIds
@@ -278,12 +307,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }});
         }
 
-        // Price chip (only when not at slider max)
-        if (priceSlider && String(state.maxPrice) !== String(priceSlider.max)) {
+        // Price chip (only when price filter is explicitly used)
+        if (priceSlider && state.priceFilterActive) {
             chips.push({ key: 'price', label: `Up to ₱${Number(state.maxPrice).toLocaleString()}`, onRemove: () => {
-                priceSlider.value = priceSlider.max;
+                isPriceFilterActive = false;
+                priceSlider.value = 0;
                 const currentPrice = document.getElementById('currentPrice');
-                if (currentPrice) currentPrice.textContent = '₱' + parseInt(priceSlider.max).toLocaleString() + '+';
+                if (currentPrice) currentPrice.textContent = '₱0';
                 filterProperties();
             }});
         }
@@ -347,8 +377,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const clearBtn = el.querySelector('#clearFiltersChips');
         if (clearBtn) {
             clearBtn.addEventListener('click', function() {
-                const clearFiltersBtn = document.getElementById('clearFilters');
-                if (clearFiltersBtn) clearFiltersBtn.click();
+                resetAllFilters();
             }, { once: true });
         }
 
@@ -402,40 +431,39 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Clear all filters button
     const clearFiltersBtn = document.getElementById('clearFilters');
-    if (clearFiltersBtn) {
-        clearFiltersBtn.addEventListener('click', function() {
-            // Reset search input
-            if (searchInput) {
-                searchInput.value = '';
-                searchTerm = '';
+    function resetAllFilters() {
+        // Reset search input
+        if (searchInput) {
+            searchInput.value = '';
+            searchTerm = '';
+        }
+        
+        // Reset price slider to max
+        if (priceSlider) {
+            priceSlider.value = 0;
+            isPriceFilterActive = false;
+            if (currentPrice) {
+                currentPrice.textContent = '₱0';
             }
-            
-            // Reset price slider to max
-            if (priceSlider) {
-                priceSlider.value = priceSlider.max;
-                if (currentPrice) {
-                    currentPrice.textContent = '₱' + parseInt(priceSlider.max).toLocaleString() + '+';
-                }
-            }
-            
-            // Check only "All Properties" category
-            categoryFilters.forEach(filter => {
-                if (filter.value === 'all') {
-                    filter.checked = true;
-                } else {
-                    filter.checked = false;
-                }
-            });
-            
-            // Uncheck all amenity filters
-            document.querySelectorAll('.amenity-filter').forEach(amenity => {
-                amenity.checked = false;
-            });
-            
-            // Re-filter to show all properties
-            filterProperties();
-            closeFilters();
+        }
+        
+        // Uncheck all categories (including "all")
+        categoryFilters.forEach(filter => {
+            filter.checked = false;
         });
+        
+        // Uncheck all amenity filters
+        document.querySelectorAll('.amenity-filter').forEach(amenity => {
+            amenity.checked = false;
+        });
+        
+        // Re-filter to show all properties
+        filterProperties();
+        closeFilters();
+    }
+
+    if (clearFiltersBtn) {
+        clearFiltersBtn.addEventListener('click', resetAllFilters);
     }
 
     // Initial UI sync
@@ -456,25 +484,58 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Navbar scroll effect
-    let lastScroll = 0;
-    const navbar = document.querySelector('.navbar');
-    
-    if (navbar) {
-        window.addEventListener('scroll', function() {
-            const currentScroll = window.pageYOffset;
-            
-            if (currentScroll > lastScroll && currentScroll > 100) {
-                navbar.style.transform = 'translateY(-100%)';
-            } else {
-                navbar.style.transform = 'translateY(0)';
-            }
-            
-            lastScroll = currentScroll;
+    // Navbar center search on scroll
+    const navCenter = document.getElementById('navCenter');
+    const navSearchInput = document.getElementById('navSearchInput');
+    const navSearchBtn = document.getElementById('navSearchBtn');
+
+    function syncSearchToMain(value) {
+        if (!searchInput) return;
+        searchInput.value = value;
+        searchTerm = value.toLowerCase().trim();
+        filterProperties();
+    }
+
+    if (navSearchInput) {
+        navSearchInput.addEventListener('input', function() {
+            syncSearchToMain(this.value);
         });
-        
-        // Add transition to navbar
-        navbar.style.transition = 'transform 0.3s ease';
+        navSearchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                syncSearchToMain(this.value);
+            }
+        });
+    }
+
+    if (navSearchBtn && navSearchInput) {
+        navSearchBtn.addEventListener('click', function() {
+            syncSearchToMain(navSearchInput.value);
+        });
+    }
+
+    if (searchInput && navSearchInput) {
+        // Keep navbar search in sync when typing in the hero search
+        searchInput.addEventListener('input', function() {
+            navSearchInput.value = this.value;
+        });
+    }
+
+    const navbar = document.querySelector('.navbar');
+    function updateNavCenterVisibility() {
+        const y = window.pageYOffset || 0;
+        const show = y > 220; // after hero area starts to scroll away
+        document.body.classList.toggle('rp-nav-search', show);
+        if (show && navSearchInput && searchInput) {
+            navSearchInput.value = searchInput.value || '';
+        }
+        if (!show && navCenter) {
+            // nothing else; CSS handles hiding
+        }
+    }
+
+    if (navbar) {
+        window.addEventListener('scroll', updateNavCenterVisibility, { passive: true });
+        updateNavCenterVisibility();
     }
 
     // Close filters on Escape (unless a modal is open)
@@ -484,4 +545,57 @@ document.addEventListener('DOMContentLoaded', function() {
             closeFilters();
         }
     });
+
+    // Logged-out burger menu
+    (function () {
+        const trigger = document.getElementById('navBurgerTrigger');
+        const panel = document.getElementById('navBurgerPanel');
+        const wrap = trigger && trigger.closest('.rp-burger-menu');
+        if (!trigger || !panel) return;
+
+        function open() {
+            panel.classList.add('rp-burger-panel-open');
+            trigger.classList.add('rp-burger-trigger-open');
+            trigger.setAttribute('aria-expanded', 'true');
+            panel.setAttribute('aria-hidden', 'false');
+        }
+
+        function close() {
+            panel.classList.remove('rp-burger-panel-open');
+            trigger.classList.remove('rp-burger-trigger-open');
+            trigger.setAttribute('aria-expanded', 'false');
+            panel.setAttribute('aria-hidden', 'true');
+        }
+
+        function toggle() {
+            const isOpen = panel.classList.contains('rp-burger-panel-open');
+            if (isOpen) close(); else open();
+        }
+
+        trigger.addEventListener('click', function (e) {
+            e.stopPropagation();
+            toggle();
+        });
+
+        // Open modal items
+        panel.addEventListener('click', function (e) {
+            const btn = e.target && e.target.closest ? e.target.closest('[data-open-modal]') : null;
+            if (!btn) return;
+            e.preventDefault();
+            const modalId = btn.getAttribute('data-open-modal');
+            if (typeof window.openModal === 'function' && modalId) {
+                window.openModal(modalId);
+            }
+            close();
+        });
+
+        document.addEventListener('click', function (e) {
+            if (wrap && wrap.contains(e.target)) return;
+            close();
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') close();
+        });
+    })();
 });

@@ -117,7 +117,20 @@ $conn->close();
                     <a href="contact.php">Contact</a>
                 </div>
             </div>
+
             <div class="nav-right">
+                <!-- Navbar search (appears on scroll) -->
+                <div class="nav-center rp-nav-center-right" id="navCenter">
+                    <div class="search-box rp-nav-search-box" aria-label="Search properties">
+                        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        <input type="text" placeholder="Search homes..." class="search-input rp-nav-search-input" id="navSearchInput">
+                        <button class="search-btn rp-nav-search-btn" id="navSearchBtn" type="button">Search</button>
+                    </div>
+                </div>
+
                 <?php if ($user): ?>
                     <div class="user-nav">
                         <?php if ($user): ?>
@@ -141,19 +154,45 @@ $conn->close();
                         <?php endif; ?>
                     </div>
                 <?php else: ?>
-                    <button onclick="window.location.href='become-host.php';" class="nav-btn" style="margin-right:8px;">
-                        Become a Host
-                    </button>
-                    <button onclick="openModal('loginModal')" class="nav-btn-outline">
-                        Sign in
-                    </button>
+                    <div class="rp-burger-menu">
+                        <button type="button" class="rp-burger-trigger" id="navBurgerTrigger" aria-expanded="false" aria-haspopup="true" aria-controls="navBurgerPanel" aria-label="Open menu">
+                            <span class="rp-burger-lines" aria-hidden="true">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </span>
+                        </button>
+                        <div class="rp-burger-panel" id="navBurgerPanel" role="menu" aria-hidden="true">
+                            <a href="become-host.php" role="menuitem" class="rp-burger-item">Become a Host</a>
+                            <button type="button" role="menuitem" class="rp-burger-item rp-burger-item-button" data-open-modal="loginModal">Sign in</button>
+                            <a href="contact.php" role="menuitem" class="rp-burger-item">Help</a>
+                            <a href="become-host.php" role="menuitem" class="rp-burger-item">Refer a Host</a>
+                            <a href="experiences.php" role="menuitem" class="rp-burger-item">Promo</a>
+                        </div>
+                    </div>
                 <?php endif; ?>
                 
                 <!-- Theme Toggle -->
-                <div class="theme-toggle">
-                    <span class="theme-toggle-icon">☀️</span>
-                    <span class="theme-toggle-text">Light</span>
-                </div>
+                <button type="button" class="theme-toggle" aria-label="Toggle theme">
+                    <span class="theme-toggle-icon" aria-hidden="true">
+                        <!-- Sun (outline) -->
+                        <svg class="theme-icon theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="4"></circle>
+                            <path d="M12 2v2"></path>
+                            <path d="M12 20v2"></path>
+                            <path d="M4.93 4.93l1.41 1.41"></path>
+                            <path d="M17.66 17.66l1.41 1.41"></path>
+                            <path d="M2 12h2"></path>
+                            <path d="M20 12h2"></path>
+                            <path d="M6.34 17.66l-1.41 1.41"></path>
+                            <path d="M19.07 4.93l-1.41 1.41"></path>
+                        </svg>
+                        <!-- Moon (outline) -->
+                        <svg class="theme-icon theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </span>
+                </button>
             </div>
         </div>
     </nav>
@@ -216,17 +255,20 @@ $conn->close();
     <section class="main-content">
         <div class="content-wrapper">
             <!-- Sidebar Filters -->
-            <aside class="filters-sidebar" id="filtersSidebar" aria-label="Filters">
+            <aside class="filters-sidebar is-collapsed" id="filtersSidebar" aria-label="Filters">
                 <div class="filter-header">
-                    <h3>Filters</h3>
+                    <button type="button" class="rp-sidebar-filter-toggle" id="filterContentToggle" aria-controls="filtersContent" aria-expanded="false">
+                        <span>Filters</span>
+                        <span class="rp-sidebar-filter-chevron" aria-hidden="true">▾</span>
+                    </button>
                     <button class="rp-filter-close" id="filterClose" type="button" aria-label="Close filters">×</button>
-                    <button class="filter-reset" id="clearFilters">Clear all</button>
                 </div>
 
+                <div class="filters-content" id="filtersContent" aria-hidden="true">
                 <div class="filter-section">
                     <h4>Property Types</h4>
                     <label class="filter-checkbox">
-                        <input type="checkbox" class="category-filter" value="all" checked>
+                        <input type="checkbox" class="category-filter" value="all">
                         <span>All Properties</span>
                         <span class="filter-count">(<?php echo count($properties); ?>)</span>
                     </label>
@@ -243,14 +285,14 @@ $conn->close();
                     <h4>Price Range</h4>
                     <div class="price-range">
                         <input type="range" 
-                               min="<?php echo $min_price; ?>" 
+                               min="0" 
                                max="<?php echo $max_price; ?>" 
-                               value="<?php echo $max_price; ?>" 
+                               value="0" 
                                class="price-slider" 
                                id="priceSlider">
                         <div class="price-labels">
-                            <span>₱<?php echo number_format($min_price, 0); ?></span>
-                            <span id="currentPrice">₱<?php echo number_format($max_price, 0); ?>+</span>
+                            <span>₱0</span>
+                            <span id="currentPrice">₱0</span>
                         </div>
                     </div>
                 </div>
@@ -265,6 +307,7 @@ $conn->close();
                     </label>
                     <?php endforeach; ?>
                 </div>
+                </div>
 
             </aside>
             <div class="rp-filter-overlay" id="filterOverlay" aria-hidden="true"></div>
@@ -277,7 +320,7 @@ $conn->close();
                         <p id="resultsCount" class="rp-results-count">Showing <?php echo count($properties); ?> properties</p>
                     </div>
                     <div class="sort-options">
-                        <button type="button" class="rp-filter-toggle" id="filterToggle">
+                        <button type="button" class="rp-filter-toggle" id="filterToggle" aria-controls="filtersSidebar" aria-expanded="false">
                             Filters <span class="rp-filter-badge" id="filterBadge" aria-hidden="true">0</span>
                         </button>
                         <label>Sort by:</label>

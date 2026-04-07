@@ -329,12 +329,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <?php endif; ?>
                     </div>
                 <?php else: ?>
-                    <button onclick="window.location.href='become-host.php';" class="nav-btn" style="margin-right:8px;">
-                        Become a Host
-                    </button>
-                    <button onclick="openModal('loginModal')" class="nav-btn-outline">
-                        Sign in
-                    </button>
+                    <div class="rp-burger-menu">
+                        <button type="button" class="rp-burger-trigger" id="navBurgerTrigger" aria-expanded="false" aria-haspopup="true" aria-controls="navBurgerPanel" aria-label="Open menu">
+                            <span class="rp-burger-lines" aria-hidden="true">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </span>
+                        </button>
+                        <div class="rp-burger-panel" id="navBurgerPanel" role="menu" aria-hidden="true">
+                            <a href="become-host.php" role="menuitem" class="rp-burger-item">Become a Host</a>
+                            <button type="button" role="menuitem" class="rp-burger-item rp-burger-item-button" data-open-modal="loginModal">Sign in</button>
+                            <a href="contact.php" role="menuitem" class="rp-burger-item">Help</a>
+                            <a href="become-host.php" role="menuitem" class="rp-burger-item">Refer a Host</a>
+                            <a href="experiences.php" role="menuitem" class="rp-burger-item">Promo</a>
+                        </div>
+                    </div>
                 <?php endif; ?>
                 
                 <!-- Theme Toggle -->
@@ -348,7 +358,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <!-- Hero Section -->
     <section class="contact-hero">
-        <div class="contact-icon">💬</div>
         <h1>Get in Touch</h1>
         <p>Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
     </section>
