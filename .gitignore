@@ -1,2 +1,5 @@
 # Windows reserved device name - cannot be indexed by Git
 nul
+
+# PayMongo API keys (copy paymongo.local.example.php → paymongo.local.php)
+config/paymongo.local.php

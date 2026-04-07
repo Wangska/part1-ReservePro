@@ -85,9 +85,9 @@ $conn->close();
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css?v=25.0">
     <link rel="stylesheet" href="assets/css/landing.css?v=25.1">
-    <link rel="stylesheet" href="assets/css/modal.css?v=25.0">
+    <link rel="stylesheet" href="assets/css/modal.css?v=25.2">
     <link rel="stylesheet" href="assets/css/role-select.css?v=25.0">
-    <link rel="stylesheet" href="assets/css/theme-toggle.css?v=25.1">
+    <link rel="stylesheet" href="assets/css/theme-toggle.css?v=25.2">
     <link rel="stylesheet" href="assets/css/animations.css?v=1.0">
     <link rel="stylesheet" href="assets/css/home-modern.css?v=4.1">
 </head>
@@ -600,7 +600,7 @@ $conn->close();
     <script src="assets/js/theme-toggle.js"></script>
     <script src="assets/js/landing.js"></script>
     <script src="assets/js/modal.js"></script>
-    <script src="assets/js/property-modal.js?v=6.0"></script>
+    <script src="assets/js/property-modal.js?v=6.4"></script>
     <script>
         // Fade out 3D loader when page finishes loading
         window.addEventListener('load', function () {

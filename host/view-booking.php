@@ -95,7 +95,7 @@ $canApprove = ($booking['status'] === 'pending');
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>Booking #<?php echo htmlspecialchars($booking['id']); ?> - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=14.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=14.0">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.1">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=14.0">
     <style>
         .view-booking-page {
@@ -116,10 +116,16 @@ $canApprove = ($booking['status'] === 'pending');
             margin: 0 0 8px 0;
             color: #fff !important;
         }
+        body.dashboard-page.light-mode .view-booking-page .view-booking-header h1 {
+            color: #0f172a !important;
+        }
         .view-booking-header .subtitle {
             margin: 0;
             font-size: 14px;
             color: #9CA3AF;
+        }
+        body.dashboard-page.light-mode .view-booking-page .view-booking-header .subtitle {
+            color: #475569 !important;
         }
         .view-booking-header .actions {
             display: flex;
@@ -151,11 +157,24 @@ $canApprove = ($booking['status'] === 'pending');
             margin: 0 0 12px 0;
             color: #D4A574 !important;
         }
-        .view-section p,
-        .view-section .detail-row {
+        body.dashboard-page.light-mode .view-booking-page .view-section h2 {
+            color: #b45309 !important;
+        }
+        body.dashboard-page:not(.light-mode) .view-section p,
+        body.dashboard-page:not(.light-mode) .view-section .detail-row {
             color: #E0E0E0 !important;
             margin: 0 0 8px 0;
             font-size: 14px;
+        }
+        body.dashboard-page.light-mode .view-booking-page .view-section p,
+        body.dashboard-page.light-mode .view-booking-page .view-section .detail-row {
+            color: #0f172a !important;
+            margin: 0 0 8px 0;
+            font-size: 14px;
+        }
+        body.dashboard-page.light-mode .view-booking-page .view-section p strong,
+        body.dashboard-page.light-mode .view-booking-page .view-section .detail-row strong {
+            color: #020617 !important;
         }
         .detail-grid {
             display: grid;
@@ -167,7 +186,13 @@ $canApprove = ($booking['status'] === 'pending');
             background: #111827;
             border-radius: 8px;
             font-size: 13px;
-            color: #E5E7EB;
+            color: #f8fafc !important;
+        }
+        /* Light mode: theme-toggle sets body.light-mode div { color: ... !important } — reassert pill text on dark chips */
+        body.dashboard-page.light-mode .view-booking-page .detail-pill {
+            color: #f8fafc !important;
+            background: #0f172a !important;
+            border: 1px solid #334155;
         }
         .status-badge {
             display: inline-block;
@@ -211,6 +236,35 @@ $canApprove = ($booking['status'] === 'pending');
         .badge-payment.cancelled {
             background: rgba(239, 68, 68, 0.18);
             color: #fca5a5;
+        }
+        body.dashboard-page.light-mode .view-booking-page .badge-payment.pending {
+            background: rgba(234, 179, 8, 0.25) !important;
+            color: #854d0e !important;
+        }
+        body.dashboard-page.light-mode .view-booking-page .badge-payment.paid {
+            background: rgba(34, 197, 94, 0.22) !important;
+            color: #166534 !important;
+        }
+        body.dashboard-page.light-mode .view-booking-page .badge-payment.failed,
+        body.dashboard-page.light-mode .view-booking-page .badge-payment.cancelled {
+            background: rgba(239, 68, 68, 0.18) !important;
+            color: #b91c1c !important;
+        }
+        body.dashboard-page.light-mode .view-booking-page .view-booking-header .status-badge.status-pending {
+            color: #854d0e !important;
+            background: rgba(234, 179, 8, 0.25) !important;
+        }
+        body.dashboard-page.light-mode .view-booking-page .view-booking-header .status-badge.status-confirmed {
+            color: #166534 !important;
+            background: rgba(34, 197, 94, 0.22) !important;
+        }
+        body.dashboard-page.light-mode .view-booking-page .view-booking-header .status-badge.status-completed {
+            color: #1d4ed8 !important;
+            background: rgba(59, 130, 246, 0.2) !important;
+        }
+        body.dashboard-page.light-mode .view-booking-page .view-booking-header .status-badge.status-cancelled {
+            color: #b91c1c !important;
+            background: rgba(239, 68, 68, 0.18) !important;
         }
     </style>
 </head>

@@ -215,6 +215,14 @@ body.light-mode .rp-burger-item:hover {
     }
 }
 
+/* Pill control was sized for the public navbar; reset offset in dashboard sidebars / headers */
+.host-sidebar .theme-toggle,
+.host-header .theme-toggle,
+.earnings-header .theme-toggle,
+.view-property-header .actions .theme-toggle {
+    margin-left: 0;
+}
+
 /* Light Mode Styles */
 body.light-mode {
     --primary-color: #B8935F;
@@ -322,6 +330,34 @@ body.light-mode .auth-box {
     background: #FFFFFF !important;
     border: 1px solid #E0E0E0 !important;
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Login / register: dark text in fields + light native UI (improves email suggestion readability) */
+body.auth-page.light-mode {
+    color-scheme: light;
+}
+body.auth-page.light-mode .auth-box {
+    color-scheme: light;
+}
+body.auth-page.light-mode .auth-form input,
+body.auth-page.light-mode .auth-form textarea {
+    color: #0f172a !important;
+    -webkit-text-fill-color: #0f172a !important;
+    caret-color: #0f172a;
+}
+body.auth-page.light-mode .auth-form input::placeholder,
+body.auth-page.light-mode .auth-form textarea::placeholder {
+    color: #64748b !important;
+    opacity: 1 !important;
+}
+body.auth-page.light-mode input:-webkit-autofill,
+body.auth-page.light-mode input:-webkit-autofill:hover,
+body.auth-page.light-mode input:-webkit-autofill:focus,
+body.auth-page.light-mode textarea:-webkit-autofill,
+body.auth-page.light-mode textarea:-webkit-autofill:hover,
+body.auth-page.light-mode textarea:-webkit-autofill:focus {
+    -webkit-text-fill-color: #0f172a !important;
+    caret-color: #0f172a;
 }
 
 body.light-mode .service-card:hover,
@@ -645,8 +681,17 @@ body.light-mode table th {
 
 body.light-mode .bookings-table td,
 body.light-mode table td {
-    color: #4A4A4A !important;
+    color: #0f172a !important;
     border-bottom: 1px solid #F0F0F0 !important;
+}
+
+/* Host bookings: .guest-info strong stayed white for dark theme — force dark text on light cards */
+body.light-mode .bookings-table .guest-info strong {
+    color: #020617 !important;
+}
+body.light-mode .bookings-table .guest-info small {
+    color: #475569 !important;
+    font-weight: 500;
 }
 
 body.light-mode .bookings-table tr:hover,
@@ -919,6 +964,53 @@ body.light-mode .host-main .earnings-header p {
     color: #4A4A4A !important;
 }
 
+/* Commission page: keep dark hero; global light-mode h1/p would make text illegible */
+body.light-mode .host-main .commission-header {
+    background: linear-gradient(135deg, #0c4a6e 0%, #111827 50%, #020617 100%) !important;
+    color: #FFFFFF !important;
+}
+
+body.light-mode .host-main .commission-header h1 {
+    color: #FFFFFF !important;
+}
+
+body.light-mode .host-main .commission-header p {
+    color: #E8EEFF !important;
+}
+
+body.light-mode .host-main .commission-header strong {
+    color: #FEF9C3 !important;
+}
+
+body.light-mode .host-main .commission-header a {
+    color: #7dd3fc !important;
+}
+
+body.light-mode .host-main .commission-header a:hover {
+    color: #BAE6FD !important;
+}
+
+body.light-mode .host-main .commission-stat-card {
+    background: #FFFFFF !important;
+    border: 1px solid #E0E0E0 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+}
+
+body.light-mode .host-main .commission-stat-card .stat-label {
+    color: #666666 !important;
+}
+
+body.light-mode .host-main .commission-stat-card .stat-value {
+    background: linear-gradient(135deg, #0284c7, #B8935F) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+
+body.light-mode .host-main .commission-stat-card .stat-note {
+    color: #666666 !important;
+}
+
 body.light-mode .host-main .earnings-stat-card {
     background: #FFFFFF !important;
     border: 1px solid #E0E0E0 !important;
@@ -983,8 +1075,12 @@ body.light-mode .host-main .earnings-table th {
 }
 
 body.light-mode .host-main .earnings-table td {
-    color: #4A4A4A !important;
+    color: #0f172a !important;
     border-bottom-color: #F0F0F0 !important;
+}
+
+body.light-mode .host-main .earnings-table td small {
+    color: #475569 !important;
 }
 
 body.light-mode .host-main .earnings-table tbody tr:hover {
@@ -1443,6 +1539,27 @@ body.light-mode #propertyModalContent::-webkit-scrollbar-thumb {
     background: #B8935F !important;
 }
 
+/* Amenity pills: dark chips + universal dark text = unreadable — use light chip + dark label */
+body.light-mode #propertyModalContent .amenity-pill {
+    background: linear-gradient(135deg, #f1f5f9, #e2e8f0) !important;
+    border: 1px solid rgba(180, 83, 9, 0.35) !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+body.light-mode #propertyModalContent .amenity-pill-label {
+    color: #0f172a !important;
+    font-weight: 600;
+}
+
+body.light-mode #propertyModalContent .amenity-pill-icon {
+    color: #0f172a !important;
+    box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.12) !important;
+}
+
+body.light-mode #propertyModalContent .amenity-pill-icon span {
+    color: #0f172a !important;
+}
+
 /* Calendar and amenity chips in property modal */
 body.light-mode #propertyModalContent .calendar-day {
     color: #1F1F1F !important;
@@ -1520,13 +1637,21 @@ body.light-mode .properties-table thead {
 }
 
 body.light-mode .properties-table th {
-    color: #4A4A4A !important;
+    color: #334155 !important;
     border-bottom-color: #E0E0E0 !important;
 }
 
 body.light-mode .properties-table td {
-    color: #4A4A4A !important;
+    color: #0f172a !important;
     border-bottom-color: #F0F0F0 !important;
+}
+
+body.light-mode .properties-table td .booking-id {
+    color: #b45309 !important;
+}
+
+body.light-mode .properties-table td a {
+    color: #1d4ed8 !important;
 }
 
 body.light-mode .properties-table tbody tr:hover {
@@ -1577,6 +1702,54 @@ body.light-mode .user-details h3 {
 
 body.light-mode .user-details p {
     color: #666666 !important;
+}
+
+/* Admin users table: email column — beats global body.light-mode span (#4A4A4A) if wrapped */
+body.light-mode .user-table-email {
+    color: #0f172a !important;
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Admin view-user.php: dark glass cards — global light-mode h2/div would use dark text */
+body.light-mode .user-summary-card .user-summary-name {
+    color: #FFFFFF !important;
+}
+body.light-mode .user-summary-card .user-summary-meta {
+    color: #D1D5DB !important;
+}
+body.light-mode .user-summary-card .user-meta-item-label {
+    color: #E5E7EB !important;
+}
+body.light-mode .user-summary-card .user-meta-item-value {
+    color: #FFFFFF !important;
+}
+body.light-mode .user-summary-card .user-meta-grid > div {
+    color: inherit !important;
+}
+
+body.light-mode .detail-section h2 {
+    color: #FFFFFF !important;
+}
+body.light-mode .detail-section small {
+    color: #E5E7EB !important;
+}
+/* White table from body.light-mode table {} — use dark text, not slate-on-slate */
+body.light-mode .detail-section .mini-table {
+    background: #FFFFFF !important;
+    color: #0f172a !important;
+}
+body.light-mode .detail-section .mini-table th {
+    color: #334155 !important;
+    background: #F8FAFC !important;
+    border-bottom-color: #E2E8F0 !important;
+}
+body.light-mode .detail-section .mini-table td {
+    color: #0f172a !important;
+    border-bottom-color: #F1F5F9 !important;
+}
+body.light-mode .detail-section .mini-table tbody tr:hover {
+    background: #F8FAFC !important;
 }
 
 body.light-mode .role-guest {
@@ -1751,6 +1924,7 @@ body.light-mode .messages-page .empty-state p {
    =================================== */
 body.light-mode .profile-page {
     background: #F8F8F8 !important;
+    color-scheme: light;
 }
 
 body.light-mode .profile-page .profile-header {
@@ -1793,7 +1967,19 @@ body.light-mode .profile-page .form-group label {
 body.light-mode .profile-page .form-group input {
     background: #F8F8F8 !important;
     border-color: #E0E0E0 !important;
-    color: #1F1F1F !important;
+    color: #0f172a !important;
+    -webkit-text-fill-color: #0f172a !important;
+    caret-color: #0f172a;
+}
+body.light-mode .profile-page .form-group input::placeholder {
+    color: #64748b !important;
+    opacity: 1 !important;
+}
+body.light-mode .profile-page .form-group input:-webkit-autofill,
+body.light-mode .profile-page .form-group input:-webkit-autofill:hover,
+body.light-mode .profile-page .form-group input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #0f172a !important;
+    caret-color: #0f172a;
 }
 
 body.light-mode .profile-page .form-group input:focus {

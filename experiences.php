@@ -48,9 +48,9 @@ $conn->close();
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css?v=25.0">
     <link rel="stylesheet" href="assets/css/landing.css?v=25.0">
-    <link rel="stylesheet" href="assets/css/modal.css?v=25.0">
+    <link rel="stylesheet" href="assets/css/modal.css?v=25.2">
     <link rel="stylesheet" href="assets/css/role-select.css?v=25.0">
-    <link rel="stylesheet" href="assets/css/theme-toggle.css?v=2.0">
+    <link rel="stylesheet" href="assets/css/theme-toggle.css?v=25.2">
     <link rel="stylesheet" href="assets/css/animations.css?v=1.0">
     <link rel="stylesheet" href="assets/css/home-modern.css?v=4.0">
     <style>
@@ -612,7 +612,7 @@ $conn->close();
     <script src="assets/js/theme-toggle.js"></script>
     <script src="assets/js/landing.js"></script>
     <script src="assets/js/modal.js"></script>
-    <script src="assets/js/property-modal.js?v=6.0"></script>
+    <script src="assets/js/property-modal.js?v=6.4"></script>
     <script>
         (function(){var t=document.getElementById('guestMenuTrigger'),p=document.getElementById('guestMenuPanel'),m=t&&t.closest('.guest-menu');if(!t||!p)return;function o(){var x=p.classList.toggle('guest-menu-panel-open');t.setAttribute('aria-expanded',x);p.setAttribute('aria-hidden',!x);if(m)m.classList.toggle('guest-menu-open',x);}function c(){p.classList.remove('guest-menu-panel-open');t.setAttribute('aria-expanded','false');p.setAttribute('aria-hidden','true');if(m)m.classList.remove('guest-menu-open');}t.addEventListener('click',function(e){e.stopPropagation();o();});document.addEventListener('click',c);p.addEventListener('click',function(e){e.stopPropagation();});})();
     </script>

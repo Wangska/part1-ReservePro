@@ -118,9 +118,9 @@ function bool_label($value) {
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>User Details - Admin - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=25.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=25.0">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.1">
     <link rel="stylesheet" href="../assets/css/admin.css?v=25.0">
-    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=25.0">
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.4">
     <style>
         .user-details-layout {
             display: grid;
@@ -178,12 +178,17 @@ function bool_label($value) {
             font-size: 13px;
         }
         .user-meta-item-label {
-            color: #9CA3AF;
-            margin-bottom: 2px;
+            color: #E5E7EB !important;
+            margin-bottom: 4px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
         .user-meta-item-value {
-            color: #F9FAFB;
-            font-weight: 500;
+            color: #FFFFFF !important;
+            font-weight: 600;
+            font-size: 14px;
         }
         .detail-section {
             background: rgba(15, 15, 15, 0.9);
@@ -195,12 +200,14 @@ function bool_label($value) {
         }
         .detail-section h2 {
             font-size: 18px;
-            font-weight: 600;
-            color: #FFFFFF;
+            font-weight: 700;
+            color: #FFFFFF !important;
             margin-bottom: 10px;
         }
         .detail-section small {
-            color: #9CA3AF;
+            color: #E5E7EB !important;
+            font-size: 14px;
+            line-height: 1.5;
         }
         .mini-table {
             width: 100%;
@@ -215,8 +222,11 @@ function bool_label($value) {
         }
         .mini-table th {
             text-align: left;
-            color: #9CA3AF;
+            color: #CBD5E1 !important;
             font-weight: 600;
+        }
+        .mini-table td {
+            color: #F1F5F9 !important;
         }
         .mini-badge {
             display: inline-block;
@@ -271,6 +281,14 @@ function bool_label($value) {
                 <a href="bookings.php" class="nav-item">
                     <span class="nav-icon">📅</span>
                     <span>All Bookings</span>
+                </a>
+                <a href="earnings.php" class="nav-item">
+                    <span class="nav-icon">💰</span>
+                    <span>Earnings</span>
+                </a>
+                <a href="commission.php" class="nav-item">
+                    <span class="nav-icon">💎</span>
+                    <span>Commission</span>
                 </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon">🌐</span>
@@ -475,7 +493,7 @@ function bool_label($value) {
         </main>
     </div>
 
-    <script src="../assets/js/theme-toggle.js"></script>
+    <script src="../assets/js/theme-toggle.js?v=26.0"></script>
 </body>
 </html>
 

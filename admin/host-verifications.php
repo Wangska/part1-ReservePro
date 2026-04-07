@@ -36,9 +36,9 @@ $conn->close();
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>Host Verifications - Admin - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=14.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=14.0">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.1">
     <link rel="stylesheet" href="../assets/css/admin.css?v=14.0">
-    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=14.0">
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=26.0">
     <style>
         .verification-card {
             background: var(--bg-secondary, #1A1A1A);
@@ -88,6 +88,14 @@ $conn->close();
                     <span class="nav-icon">📅</span>
                     <span>All Bookings</span>
                 </a>
+                <a href="earnings.php" class="nav-item">
+                    <span class="nav-icon">💰</span>
+                    <span>Earnings</span>
+                </a>
+                <a href="commission.php" class="nav-item">
+                    <span class="nav-icon">💎</span>
+                    <span>Commission</span>
+                </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon">🌐</span>
                     <span>View Site</span>
@@ -116,10 +124,6 @@ $conn->close();
                 <div>
                     <h1>Host verifications</h1>
                     <p class="subtitle">Approve or reject host verification requests</p>
-                </div>
-                <div class="theme-toggle">
-                    <span class="theme-toggle-icon">☀️</span>
-                    <span class="theme-toggle-text">Light</span>
                 </div>
             </div>
 
@@ -167,6 +171,6 @@ $conn->close();
             <?php endif; ?>
         </main>
     </div>
-    <script src="../assets/js/theme-toggle.js"></script>
+    <script src="../assets/js/theme-toggle.js?v=26.0"></script>
 </body>
 </html>

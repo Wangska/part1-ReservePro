@@ -415,29 +415,139 @@ body.light-mode .review-star.review-star-active {
     border-radius: 4px;
 }
 
-/* Single hero image - fills entire left column, no grid */
+/* Gallery: do not stretch to match booking column height (avoids huge empty area) */
 .property-modal-gallery {
-    height: 100%;
-    min-height: 320px;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    align-self: start;
     border-radius: 12px;
     overflow: hidden;
     background: #2C2C2C;
 }
 
 .property-modal-hero-image {
+    position: relative;
     width: 100%;
-    height: 100%;
-    min-height: 320px;
+    aspect-ratio: 16 / 10;
+    max-height: min(42vh, 380px);
+    min-height: 180px;
     background: #0B1220;
 }
 
 .property-modal-hero-image img {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
-    min-height: 320px;
     object-fit: cover;
     object-position: center;
     display: block;
+}
+
+/* Guest property modal — photo slideshow */
+.property-modal-slideshow {
+    position: relative;
+    width: 100%;
+}
+
+.property-slideshow-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: rgba(15, 23, 42, 0.55);
+    color: #f8fafc;
+    font-size: 26px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    padding: 0;
+}
+
+.property-slideshow-btn:hover {
+    background: rgba(212, 165, 116, 0.92);
+    border-color: rgba(212, 165, 116, 0.95);
+    color: #0f172a;
+}
+
+.property-slideshow-btn:focus-visible {
+    outline: 2px solid #D4A574;
+    outline-offset: 2px;
+}
+
+.property-slideshow-prev {
+    left: 10px;
+}
+
+.property-slideshow-next {
+    right: 10px;
+}
+
+.property-slideshow-meta {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 3;
+    padding: 10px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.82), transparent);
+    pointer-events: none;
+}
+
+.property-slideshow-meta .property-slideshow-dots,
+.property-slideshow-meta .property-slideshow-counter {
+    pointer-events: auto;
+}
+
+.property-slideshow-dots {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+}
+
+.property-slideshow-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.45);
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.property-slideshow-dot:hover {
+    background: rgba(255, 255, 255, 0.75);
+}
+
+.property-slideshow-dot.is-active {
+    background: #D4A574;
+    transform: scale(1.25);
+}
+
+.property-slideshow-counter {
+    font-size: 12px;
+    font-weight: 600;
+    color: #f8fafc !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.65);
+}
+
+#propertyModal .property-slideshow-counter,
+#propertyModal .property-slideshow-counter span {
+    color: #f8fafc !important;
 }
 
 .gallery-item {
@@ -472,6 +582,11 @@ body.light-mode .review-star.review-star-active {
     /* Top row (gallery + price) stacks on small screens */
     #propertyModalContent .property-modal-top-row {
         grid-template-columns: 1fr !important;
+        align-items: start !important;
+    }
+
+    #propertyModalContent .property-modal-hero-image {
+        max-height: min(48vh, 320px);
     }
 }
 

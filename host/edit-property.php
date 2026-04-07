@@ -310,8 +310,8 @@ $conn->close();
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>Edit Property - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=14.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=14.0">
-    <link rel="stylesheet" href="../assets/css/add-property.css?v=14.0">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.1">
+    <link rel="stylesheet" href="../assets/css/add-property.css?v=15.0">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=14.0">
 </head>
 <body class="dashboard-page">
@@ -424,15 +424,24 @@ $conn->close();
                                 value="<?php echo htmlspecialchars($_POST['country'] ?? $property['country']); ?>">
                         </div>
                     </div>
+                    <div class="host-property-pin-map-wrap">
+                        <p class="section-description" style="margin-bottom:12px;">Drag the pin so it matches your entrance exactly. You can also tap the map or use your address as a starting point.</p>
+                        <div class="host-property-pin-map-actions">
+                            <button type="button" class="btn-map-geocode" id="hostPropertyPinGeocodeBtn">Place from address</button>
+                            <p class="host-property-pin-map-hint">Fine-tune after lookup by dragging the marker.</p>
+                        </div>
+                        <div id="hostPropertyPinMap" role="application" aria-label="Map to position property pin"></div>
+                    </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label for="latitude">Latitude (optional)</label>
-                            <input type="text" id="latitude" name="latitude"
+                            <input type="text" id="latitude" name="latitude" inputmode="decimal" autocomplete="off"
                                 value="<?php echo htmlspecialchars($_POST['latitude'] ?? ($property['latitude'] ?: '')); ?>">
+                            <small class="helper-text">Updates when you move the pin.</small>
                         </div>
                         <div class="form-group">
                             <label for="longitude">Longitude (optional)</label>
-                            <input type="text" id="longitude" name="longitude"
+                            <input type="text" id="longitude" name="longitude" inputmode="decimal" autocomplete="off"
                                 value="<?php echo htmlspecialchars($_POST['longitude'] ?? ($property['longitude'] ?: '')); ?>">
                         </div>
                     </div>
@@ -556,7 +565,11 @@ $conn->close();
     </div>
 
     <script src="../assets/js/theme-toggle.js"></script>
+    <script src="../assets/js/host-property-pin-map.js?v=1"></script>
     <script>
+        if (typeof window.initHostPropertyPinMap === 'function') {
+            window.initHostPropertyPinMap({});
+        }
         const photoUploadArea = document.getElementById('photoUploadArea');
         const photoInput = document.getElementById('propertyPhotos');
         const photoPreviewGrid = document.getElementById('photoPreviewGrid');

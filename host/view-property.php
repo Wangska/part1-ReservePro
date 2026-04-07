@@ -66,7 +66,7 @@ $conn->close();
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>View Property - <?php echo htmlspecialchars($property['title']); ?> - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=14.0">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=14.0">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.1">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=14.0">
     <style>
         .view-property-page { max-width: 900px; margin: 0 auto; padding: 24px; }

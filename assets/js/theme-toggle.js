@@ -21,8 +21,9 @@ function setTheme(theme) {
     localStorage.setItem('theme', theme);
 }
 
-// Update toggle button appearance
+// Update every theme toggle on the page (sidebar + header, etc.)
 function updateToggleButton(theme) {
+<<<<<<< HEAD
     const showMoon = theme === 'light';
     const toggles = document.querySelectorAll('.theme-toggle');
     toggles.forEach(toggle => {
@@ -80,6 +81,19 @@ function ensureToggleIcons() {
         `;
         const staleText = toggle.querySelector('.theme-toggle-text');
         if (staleText) staleText.remove();
+=======
+    document.querySelectorAll('.theme-toggle').forEach(function (toggle) {
+        var icon = toggle.querySelector('.theme-toggle-icon');
+        var text = toggle.querySelector('.theme-toggle-text');
+        if (!icon || !text) return;
+        if (theme === 'light') {
+            icon.textContent = '🌙';
+            text.textContent = 'Dark';
+        } else {
+            icon.textContent = '☀️';
+            text.textContent = 'Light';
+        }
+>>>>>>> 0373a6bf3ef99e5d13df91f810144365a730d6bf
     });
 }
 
@@ -97,6 +111,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const theme = getTheme();
     setTheme(theme);
     
+<<<<<<< HEAD
     // Add click event to all toggle buttons
     document.querySelectorAll('.theme-toggle').forEach(toggleButton => {
         toggleButton.addEventListener('click', toggleTheme);
@@ -106,6 +121,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 toggleTheme();
             }
         });
+=======
+    document.querySelectorAll('.theme-toggle').forEach(function (toggleButton) {
+        toggleButton.addEventListener('click', toggleTheme);
+>>>>>>> 0373a6bf3ef99e5d13df91f810144365a730d6bf
     });
 });
 
