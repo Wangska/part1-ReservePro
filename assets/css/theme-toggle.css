@@ -4,7 +4,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 16px;
+    padding: 8px 10px;
     background: var(--bg-secondary);
     border: 2px solid var(--border-color);
     border-radius: 50px;
@@ -19,7 +19,11 @@
 }
 
 .theme-toggle-icon {
-    font-size: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
     transition: transform 0.3s ease;
 }
 
@@ -27,11 +31,188 @@
     transform: rotate(20deg);
 }
 
+.theme-icon {
+    display: block;
+}
+
+.theme-icon-moon {
+    display: none;
+}
+
 .theme-toggle-text {
-    font-size: 13px;
+    display: none !important;
+}
+
+/* Shared logged-out burger menu styles */
+.rp-burger-menu {
+    position: relative;
+}
+
+.rp-burger-trigger {
+    width: 42px;
+    height: 42px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(249, 250, 251, 0.92);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.rp-burger-trigger:hover {
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(212, 165, 116, 0.35);
+}
+
+.rp-burger-lines {
+    width: 18px;
+    height: 12px;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.rp-burger-lines span {
+    height: 2px;
+    border-radius: 999px;
+    background: currentColor;
+    opacity: 0.85;
+    transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s ease;
+}
+
+.rp-burger-trigger-open .rp-burger-lines span:nth-child(1) {
+    transform: translateY(5px) rotate(45deg);
+}
+
+.rp-burger-trigger-open .rp-burger-lines span:nth-child(2) {
+    opacity: 0;
+}
+
+.rp-burger-trigger-open .rp-burger-lines span:nth-child(3) {
+    transform: translateY(-5px) rotate(-45deg);
+}
+
+.rp-burger-panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    min-width: 210px;
+    background: linear-gradient(160deg, rgba(30, 41, 59, 0.97), rgba(15, 23, 39, 0.98));
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px) scale(0.98);
+    transform-origin: top right;
+    transition: opacity 0.18s ease, transform 0.18s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.18s;
+    z-index: 1400;
+}
+
+.rp-burger-panel-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+.rp-burger-item {
+    width: 100%;
+    display: block;
+    padding: 12px 16px;
+    text-align: left;
+    text-decoration: none;
+    background: transparent;
+    border: 0;
+    color: rgba(229, 231, 235, 0.92);
+    font-size: 14px;
     font-weight: 600;
-    color: var(--text-dark) !important;
-    user-select: none;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, padding-left 0.15s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.rp-burger-item:last-child {
+    border-bottom: none;
+}
+
+.rp-burger-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(212, 165, 116, 0.95);
+    padding-left: 20px;
+}
+
+body.light-mode .rp-burger-trigger {
+    background: rgba(255, 255, 255, 0.85);
+    border-color: rgba(15, 23, 42, 0.10);
+    color: rgba(15, 23, 42, 0.90);
+}
+
+body.light-mode .rp-burger-panel {
+    background: linear-gradient(160deg, #FFFFFF, #F8FAFC);
+    border-color: rgba(15, 23, 42, 0.08);
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(15, 23, 42, 0.04);
+}
+
+body.light-mode .rp-burger-item {
+    color: rgba(15, 23, 42, 0.90);
+    border-bottom-color: rgba(15, 23, 42, 0.06);
+}
+
+body.light-mode .rp-burger-item:hover {
+    background: rgba(15, 23, 42, 0.04);
+    color: rgba(139, 111, 71, 0.95);
+}
+
+/* Simple, eye-pleasing hero/banner (global safe override) */
+.hero,
+.about-hero,
+.contact-hero,
+.experiences-hero {
+    background: linear-gradient(180deg, #1f2937 0%, #111827 100%) !important;
+}
+
+.about-hero,
+.contact-hero,
+.experiences-hero {
+    height: 380px !important;
+}
+
+.hero::before,
+.about-hero::before,
+.contact-hero::before,
+.experiences-hero::before {
+    opacity: 0.08 !important;
+}
+
+.hero h1,
+.about-hero h1,
+.contact-hero h1,
+.experiences-hero h1,
+.hero-title {
+    font-weight: 700 !important;
+    letter-spacing: -0.02em !important;
+    text-shadow: none !important;
+}
+
+.hero p,
+.about-hero p,
+.contact-hero p,
+.experiences-hero p,
+.hero-subtitle {
+    color: rgba(229, 231, 235, 0.88) !important;
+}
+
+@media (max-width: 768px) {
+    .about-hero,
+    .contact-hero,
+    .experiences-hero {
+        height: 320px !important;
+    }
 }
 
 /* Light Mode Styles */
@@ -1634,4 +1815,29 @@ body.light-mode .profile-page .alert-success {
     background: rgba(34, 197, 94, 0.1) !important;
     border-color: rgba(34, 197, 94, 0.3) !important;
     color: #15803D !important;
+}
+
+/* Final hero simplification in light mode (keep banners clean) */
+body.light-mode .hero,
+body.light-mode .about-hero,
+body.light-mode .contact-hero,
+body.light-mode .experiences-hero {
+    background: linear-gradient(180deg, #f3f4f6 0%, #e5e7eb 100%) !important;
+}
+
+body.light-mode .hero h1,
+body.light-mode .about-hero h1,
+body.light-mode .contact-hero h1,
+body.light-mode .experiences-hero h1,
+body.light-mode .hero-title {
+    color: #111827 !important;
+    text-shadow: none !important;
+}
+
+body.light-mode .hero p,
+body.light-mode .about-hero p,
+body.light-mode .contact-hero p,
+body.light-mode .experiences-hero p,
+body.light-mode .hero-subtitle {
+    color: rgba(15, 23, 42, 0.75) !important;
 }
