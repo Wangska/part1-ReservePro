@@ -311,8 +311,8 @@ $conn->close();
     <title>Edit Property - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=14.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.2">
-    <link rel="stylesheet" href="../assets/css/add-property.css?v=15.0">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.3">
+    <link rel="stylesheet" href="../assets/css/add-property.css?v=16.0">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
 </head>
 <body class="dashboard-page host-clean-page host-form-page">
@@ -345,7 +345,7 @@ $conn->close();
                 </div>
 
                 <div class="theme-toggle">
-                    <span class="theme-toggle-icon">☀️</span>
+                    <span class="theme-toggle-icon">??</span>
                     <span class="theme-toggle-text">Light</span>
                 </div>
                 <a href="../logout.php" class="btn-logout">Logout</a>
@@ -385,7 +385,7 @@ $conn->close();
 
                 <!-- Basic Information -->
                 <div class="form-section">
-                    <h2 class="section-title">📝 Basic Information</h2>
+                    <h2 class="section-title">?? Basic Information</h2>
                     <div class="form-group">
                         <label for="title">Property Title *</label>
                         <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($_POST['title'] ?? $property['title']); ?>" required>
@@ -408,7 +408,7 @@ $conn->close();
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="price_per_night">Price per Night (₱) *</label>
+                            <label for="price_per_night">Price per Night (?) *</label>
                             <input type="number" id="price_per_night" name="price_per_night" min="0" step="0.01" required
                                 value="<?php echo htmlspecialchars($_POST['price_per_night'] ?? $property['price_per_night']); ?>">
                         </div>
@@ -417,7 +417,7 @@ $conn->close();
 
                 <!-- Location -->
                 <div class="form-section">
-                    <h2 class="section-title">📍 Location</h2>
+                    <h2 class="section-title">?? Location</h2>
                     <div class="form-group">
                         <label for="address">Full Address *</label>
                         <input type="text" id="address" name="address" required
@@ -460,7 +460,7 @@ $conn->close();
 
                 <!-- Property Details -->
                 <div class="form-section">
-                    <h2 class="section-title">🛏️ Property Details</h2>
+                    <h2 class="section-title">??? Property Details</h2>
                     <div class="form-row">
                         <div class="form-group">
                             <label for="max_guests">Maximum Guests *</label>
@@ -482,7 +482,7 @@ $conn->close();
 
                 <!-- Amenities -->
                 <div class="form-section">
-                    <h2 class="section-title">✨ Amenities</h2>
+                    <h2 class="section-title">? Amenities</h2>
                     <p class="section-description">Update which amenities are available at your property</p>
                     <?php
                     $checkedIds = array_map('intval', $_POST['amenities'] ?? $currentAmenityIds);
@@ -509,7 +509,7 @@ $conn->close();
 
                 <!-- Existing Photos -->
                 <div class="form-section">
-                    <h2 class="section-title">📸 Existing Photos</h2>
+                    <h2 class="section-title">?? Existing Photos</h2>
                     <?php if (empty($photos)): ?>
                         <p style="color:#B8B8B8;">No photos yet. Upload some below.</p>
                     <?php else: ?>
@@ -541,12 +541,12 @@ $conn->close();
 
                 <!-- New Photos -->
                 <div class="form-section">
-                    <h2 class="section-title">➕ Add More Photos</h2>
+                    <h2 class="section-title">? Add More Photos</h2>
                     <p class="section-description">Upload additional high-quality photos (maximum 5 per update, JPG/PNG/WebP up to 5MB each).</p>
 
                     <div class="photo-upload-container">
                         <div class="photo-upload-area" id="photoUploadArea">
-                            <div class="upload-icon">📷</div>
+                            <div class="upload-icon">??</div>
                             <h3>Click to Upload Photos</h3>
                             <p>Or drag and drop images here</p>
                             <p class="upload-hint">Supported: JPG, PNG, WEBP (Max 5MB each)</p>
@@ -554,7 +554,7 @@ $conn->close();
                         <input type="file" id="propertyPhotos" name="property_photos[]" multiple accept="image/*" style="display:none;">
                         <div style="text-align:center; margin-top:16px;">
                             <label for="propertyPhotos" style="display:inline-block; padding:12px 24px; background:linear-gradient(135deg,#D4A574,#B8935F); color:#0F0F0F; border-radius:8px; cursor:pointer; font-weight:600;">
-                                📁 Choose Files
+                                ?? Choose Files
                             </label>
                         </div>
                         <div class="photo-preview-grid" id="photoPreviewGrid"></div>

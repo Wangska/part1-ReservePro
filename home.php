@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/config/session.php';
 require_once __DIR__ . '/config/database.php';
 $user = isLoggedIn() ? getCurrentUser() : null;
@@ -11,7 +11,7 @@ $query = "
     FROM properties p
     JOIN users u ON p.host_id = u.id
     WHERE p.status = 'approved'
-    ORDER BY p.created_at DESC
+    ORDER BY p.property_type ASC, p.created_at DESC
     LIMIT 50
 ";
 $result = $conn->query($query);
@@ -83,13 +83,14 @@ $conn->close();
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css?v=25.0">
     <link rel="stylesheet" href="assets/css/landing.css?v=25.1">
-    <link rel="stylesheet" href="assets/css/modal.css?v=25.2">
+    <link rel="stylesheet" href="assets/css/modal.css?v=26.2">
     <link rel="stylesheet" href="assets/css/role-select.css?v=25.0">
     <link rel="stylesheet" href="assets/css/theme-toggle.css?v=25.2">
     <link rel="stylesheet" href="assets/css/animations.css?v=1.0">
-    <link rel="stylesheet" href="assets/css/home-modern.css?v=4.1">
+    <link rel="stylesheet" href="assets/css/home-modern.css?v=4.5">
     <style>
         .theme-toggle.theme-toggle-home-static {
             width: 42px;
@@ -135,7 +136,7 @@ $conn->close();
         }
     </style>
 </head>
-<body class="dashboard-page">
+<body>
     <!-- 3D ReservePro loading overlay -->
     <div id="rp-loader">
         <div class="rp-loader-inner">
@@ -146,100 +147,7 @@ $conn->close();
             <div class="rp-loader-subtext">Loading your next stay</div>
         </div>
     </div>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-left">
-                <a href="home.php" class="brand">
-                    <?php require __DIR__ . '/includes/brand-icon-svg.php'; ?>
-                    <span class="brand-name">ReservePro</span>
-                </a>
-                <div class="nav-links">
-                    <a href="home.php">Home</a>
-                    <a href="experiences.php">Browse</a>
-                    <a href="about.php">About</a>
-                    <a href="contact.php">Contact</a>
-                </div>
-            </div>
-
-            <div class="nav-right">
-                <!-- Navbar search (appears on scroll) -->
-                <div class="nav-center rp-nav-center-right" id="navCenter">
-                    <div class="search-box rp-nav-search-box" aria-label="Search properties">
-                        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <path d="m21 21-4.35-4.35"></path>
-                        </svg>
-                        <input type="text" placeholder="Search homes..." class="search-input rp-nav-search-input" id="navSearchInput">
-                        <button class="search-btn rp-nav-search-btn" id="navSearchBtn" type="button">Search</button>
-                    </div>
-                </div>
-
-                <?php if ($user): ?>
-                    <div class="user-nav">
-                        <?php if ($user): ?>
-                        <div class="guest-menu">
-                            <button type="button" class="guest-menu-trigger" id="guestMenuTrigger" aria-expanded="false" aria-haspopup="true">
-                                <span class="guest-menu-name">Hi, <?php echo htmlspecialchars($user['first_name']); ?></span>
-                                <svg class="guest-menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-                            </button>
-                            <div class="guest-menu-panel" id="guestMenuPanel" role="menu" aria-hidden="true">
-                                <a href="messages.php" role="menuitem" class="guest-menu-item">Messages</a>
-                                <?php if (isset($user['role']) && $user['role'] === 'guest'): ?>
-                                <a href="profile.php" role="menuitem" class="guest-menu-item">Profile</a>
-                                <?php elseif (isset($user['role']) && $user['role'] === 'host'): ?>
-                                <a href="host/dashboard.php" role="menuitem" class="guest-menu-item">Dashboard</a>
-                                <?php elseif (isset($user['role']) && $user['role'] === 'admin'): ?>
-                                <a href="admin/dashboard.php" role="menuitem" class="guest-menu-item">Admin</a>
-                                <?php endif; ?>
-                                <a href="logout.php" role="menuitem" class="guest-menu-item guest-menu-item-logout">Logout</a>
-                            </div>
-                        </div>
-                        <?php endif; ?>
-                    </div>
-                <?php else: ?>
-                    <div class="rp-burger-menu">
-                        <button type="button" class="rp-burger-trigger" id="navBurgerTrigger" aria-expanded="false" aria-haspopup="true" aria-controls="navBurgerPanel" aria-label="Open menu">
-                            <span class="rp-burger-lines" aria-hidden="true">
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                            </span>
-                        </button>
-                        <div class="rp-burger-panel" id="navBurgerPanel" role="menu" aria-hidden="true">
-                            <a href="become-host.php" role="menuitem" class="rp-burger-item">Become a Host</a>
-                            <button type="button" role="menuitem" class="rp-burger-item rp-burger-item-button" data-open-modal="loginModal">Sign in</button>
-                            <a href="contact.php" role="menuitem" class="rp-burger-item">Help</a>
-                            <a href="become-host.php" role="menuitem" class="rp-burger-item">Refer a Host</a>
-                            <a href="experiences.php" role="menuitem" class="rp-burger-item">Promo</a>
-                        </div>
-                    </div>
-                <?php endif; ?>
-                
-                <!-- Theme Toggle -->
-                <button type="button" class="theme-toggle theme-toggle-home-static" aria-label="Toggle theme">
-                    <span class="theme-toggle-icon" aria-hidden="true">
-                        <!-- Sun (outline) -->
-                        <svg class="theme-icon theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="4"></circle>
-                            <path d="M12 2v2"></path>
-                            <path d="M12 20v2"></path>
-                            <path d="M4.93 4.93l1.41 1.41"></path>
-                            <path d="M17.66 17.66l1.41 1.41"></path>
-                            <path d="M2 12h2"></path>
-                            <path d="M20 12h2"></path>
-                            <path d="M6.34 17.66l-1.41 1.41"></path>
-                            <path d="M19.07 4.93l-1.41 1.41"></path>
-                        </svg>
-                        <!-- Moon (outline) -->
-                        <svg class="theme-icon theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                        </svg>
-                    </span>
-                </button>
-            </div>
-        </div>
-    </nav>
+    <!-- No navbar: brand bar lives inside the hero -->
 
     <!-- Expose current user info to JS (used for things like reviews) -->
     <script>
@@ -260,39 +168,95 @@ $conn->close();
 
     <!-- Hero Section -->
     <section class="hero">
-        <div class="hero-overlay"></div>
         <div class="hero-content">
-            <h1 class="hero-title">Discover Your Next Adventure</h1>
-            <p class="hero-subtitle">Premium services and unforgettable experiences</p>
-            
-            <!-- Search Bar -->
-            <div class="search-container">
-                <div class="search-box">
-                    <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <path d="m21 21-4.35-4.35"></path>
-                    </svg>
-                    <input type="text" placeholder="Where do you want to go?" class="search-input" id="searchInput">
-                    <button class="search-btn" id="searchBtn">Search</button>
+            <!-- Search row: logo + bar + filter + burger/user-menu -->
+            <div class="rp-hero-searchrow">
+            <a href="home.php" class="rp-hero-brand">
+                <?php require __DIR__ . '/includes/brand-icon-svg.php'; ?>
+                <span class="rp-hero-brandname">ReservePro</span>
+            </a>
+            <div class="rp-wwwsearch">
+                <div class="rp-wwwfield">
+                    <span class="rp-wwwlabel">Where</span>
+                    <div class="rp-wwwinput-wrap">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                        <input type="text" id="searchInput" class="rp-wwwinput" placeholder="City or destination">
+                    </div>
+                </div>
+                <div class="rp-wwwsep"></div>
+                <div class="rp-wwwfield">
+                    <span class="rp-wwwlabel">When</span>
+                    <div class="rp-wwwinput-wrap">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                        <input type="date" id="searchDate" class="rp-wwwinput" placeholder="Add date">
+                    </div>
+                </div>
+                <div class="rp-wwwsep"></div>
+                <div class="rp-wwwfield">
+                    <span class="rp-wwwlabel">Who</span>
+                    <div class="rp-wwwinput-wrap">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        <div class="rp-guest-counter">
+                            <button type="button" class="rp-guest-btn" id="guestMinus" aria-label="Remove guest">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/></svg>
+                            </button>
+                            <span class="rp-guest-count" id="guestCount">1</span>
+                            <input type="hidden" id="searchGuests" name="guests" value="1">
+                            <button type="button" class="rp-guest-btn" id="guestPlus" aria-label="Add guest">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+                            </button>
+                        </div>
+                        <span class="rp-guest-label" id="guestLabel">Guest</span>
+                    </div>
+                </div>
+                <button class="rp-wwwbtn" id="searchBtn">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    Search
+                </button>
+            </div><!-- /.rp-wwwsearch -->
+
+            <!-- Hero filter button -->
+            <button type="button" class="rp-hero-filter-btn" id="filterToggleHero" aria-label="Open filters">
+                <i class="fa-solid fa-sliders"></i>
+                Filter
+            </button>
+
+            <?php if ($user): ?>
+            <div class="guest-menu">
+                <button type="button" class="guest-menu-trigger" id="guestMenuTrigger" aria-expanded="false" aria-haspopup="true">
+                    <span class="guest-menu-name">Hi, <?php echo htmlspecialchars($user['first_name']); ?></span>
+                    <svg class="guest-menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+                <div class="guest-menu-panel" id="guestMenuPanel" role="menu" aria-hidden="true">
+                    <a href="messages.php" role="menuitem" class="guest-menu-item">Messages</a>
+                    <?php if (isset($user['role']) && $user['role'] === 'guest'): ?>
+                    <a href="profile.php" role="menuitem" class="guest-menu-item">Profile</a>
+                    <?php elseif (isset($user['role']) && $user['role'] === 'host'): ?>
+                    <a href="host/dashboard.php" role="menuitem" class="guest-menu-item">Dashboard</a>
+                    <?php elseif (isset($user['role']) && $user['role'] === 'admin'): ?>
+                    <a href="admin/dashboard.php" role="menuitem" class="guest-menu-item">Admin</a>
+                    <?php endif; ?>
+                    <a href="logout.php" role="menuitem" class="guest-menu-item guest-menu-item-logout">Logout</a>
                 </div>
             </div>
-
-            <div class="rp-hero-chips" aria-label="Quick searches">
-                <button type="button" class="rp-quick-chip" data-search="cebu">Cebu</button>
-                <button type="button" class="rp-quick-chip" data-search="beach">Beach</button>
-                <button type="button" class="rp-quick-chip" data-search="mountain">Mountain</button>
-                <button type="button" class="rp-quick-chip" data-search="city">City</button>
-                <button type="button" class="rp-quick-chip" data-search="budget">Budget</button>
+            <?php else: ?>
+            <div class="rp-burger-menu">
+                <button type="button" class="rp-burger-trigger" id="navBurgerTrigger" aria-expanded="false" aria-haspopup="true" aria-controls="navBurgerPanel" aria-label="Open menu">
+                    <span class="rp-burger-lines" aria-hidden="true">
+                        <span></span><span></span><span></span>
+                    </span>
+                </button>
+                <div class="rp-burger-panel" id="navBurgerPanel" role="menu" aria-hidden="true">
+                    <a href="become-host.php" role="menuitem" class="rp-burger-item">Become a Host</a>
+                    <a href="login.php" role="menuitem" class="rp-burger-item">Sign in</a>
+                    <a href="contact.php" role="menuitem" class="rp-burger-item">Help</a>
+                    <a href="about.php" role="menuitem" class="rp-burger-item">About</a>
+                </div>
             </div>
+            <?php endif; ?>
 
-            <div class="rp-hero-trust" aria-label="Platform highlights">
-                <div class="rp-trust-item">Verified hosts</div>
-                <div class="rp-trust-dot" aria-hidden="true"></div>
-                <div class="rp-trust-item">Secure booking</div>
-                <div class="rp-trust-dot" aria-hidden="true"></div>
-                <div class="rp-trust-item">Fast support</div>
-            </div>
-        </div>
+            </div><!-- /.rp-hero-searchrow -->
+        </div><!-- /.hero-content -->
     </section>
 
     <!-- Filter and Content Section -->
@@ -330,7 +294,7 @@ $conn->close();
                     <div class="price-range">
                         <input type="range" 
                                min="0" 
-                               max="<?php echo $max_price; ?>" 
+                               max="250000" 
                                value="0" 
                                class="price-slider" 
                                id="priceSlider">
@@ -367,20 +331,12 @@ $conn->close();
                         <button type="button" class="rp-filter-toggle" id="filterToggle" aria-controls="filtersSidebar" aria-expanded="false">
                             Filters <span class="rp-filter-badge" id="filterBadge" aria-hidden="true">0</span>
                         </button>
-                        <label>Sort by:</label>
-                        <select class="sort-select" id="sortSelect">
-                            <option value="popular">Popular</option>
-                            <option value="price-low">Price: Low to High</option>
-                            <option value="price-high">Price: High to Low</option>
-                            <option value="rating-high">Rating: High to Low</option>
-                            <option value="newest">Newest First</option>
-                        </select>
                     </div>
                 </div>
 
                 <div class="rp-applied-filters" id="appliedFilters" aria-live="polite"></div>
 
-                <div class="cards-grid">
+                <div class="cards-grid" id="cardsGrid">
                     <?php if (empty($properties)): ?>
                         <!-- No Properties Available -->
                         <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
@@ -389,15 +345,24 @@ $conn->close();
                             <p style="color: #E0E0E0 !important; font-size: 16px;">Check back soon for amazing properties!</p>
                         </div>
                     <?php else: ?>
+                        <?php $current_type = null; ?>
                         <?php foreach ($properties as $property): 
-                            // Use placeholder image if no photo
                             if (!empty($property['primary_photo'])) {
-                                // Remove leading slash if present to make it relative
                                 $photo_path = ltrim($property['primary_photo'], '/');
                                 $image_url = $photo_path;
                             } else {
                                 $image_url = 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&auto=format&fit=crop&q=80';
                             }
+
+                            // Inject group heading when type changes
+                            if ($property['property_type'] !== $current_type):
+                                $current_type = $property['property_type'];
+                        ?>
+                        <div class="rp-type-heading" style="grid-column: 1 / -1; margin: 28px 0 8px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                            <h3 style="font-size: 18px; font-weight: 700; color: #F1F5F9; letter-spacing: -0.01em; text-transform: capitalize;"><?php echo htmlspecialchars($current_type); ?>s</h3>
+                        </div>
+                        <?php
+                            endif;
 
                             // Demo-friendly titles/locations (Home page only; does not change DB)
                             $demo_titles = [
@@ -440,12 +405,18 @@ $conn->close();
                             <div class="card-image">
                                 <img src="<?php echo htmlspecialchars($image_url); ?>" alt="<?php echo htmlspecialchars($demo_title); ?>" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&auto=format&fit=crop&q=80'">
                                 <span class="card-badge"><?php echo ucfirst($property['property_type']); ?></span>
-                                <button class="card-favorite">♡</button>
+                                <button class="card-favorite">&#9825;</button>
                             </div>
                             <div class="card-content">
                                 <h3 class="card-title"><?php echo htmlspecialchars($demo_title); ?></h3>
                                 <div class="card-location">
-                                    📍 <?php echo htmlspecialchars($demo_city . ', ' . $demo_country); ?>
+                                    <span class="card-location-icon" aria-hidden="true">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M12 21s-6-4.35-6-10a6 6 0 1 1 12 0c0 5.65-6 10-6 10Z"></path>
+                                            <circle cx="12" cy="11" r="2.5"></circle>
+                                        </svg>
+                                    </span>
+                                    <span><?php echo htmlspecialchars($demo_city . ', ' . $demo_country); ?></span>
                                 </div>
                                 <?php if ($avg_rating !== null && $review_count > 0): ?>
                                     <div class="card-rating">
@@ -453,28 +424,47 @@ $conn->close();
                                         <span class="card-rating-score"><?php echo number_format($avg_rating, 1); ?></span>
                                         <span class="card-rating-count">(<?php echo $review_count; ?>)</span>
                                     </div>
-                                <?php else: ?>
-                                    <div class="card-rating card-rating--empty">No reviews yet</div>
                                 <?php endif; ?>
                                 <div class="card-details">
-                                    <span>🛏️ <?php echo $property['bedrooms']; ?> bed<?php echo $property['bedrooms'] > 1 ? 's' : ''; ?></span>
-                                    <span>🚿 <?php echo $property['bathrooms']; ?> bath<?php echo $property['bathrooms'] > 1 ? 's' : ''; ?></span>
-                                    <span>👥 <?php echo $property['max_guests']; ?> guest<?php echo $property['max_guests'] > 1 ? 's' : ''; ?></span>
+                                    <span class="card-meta-item">
+                                        <span class="card-meta-icon" aria-hidden="true">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M3 11V7.5A2.5 2.5 0 0 1 5.5 5h13A2.5 2.5 0 0 1 21 7.5V11"></path>
+                                                <path d="M3 13h18"></path>
+                                                <path d="M5 19v-6"></path>
+                                                <path d="M19 19v-6"></path>
+                                            </svg>
+                                        </span>
+                                        <span><?php echo $property['bedrooms']; ?> bed<?php echo $property['bedrooms'] > 1 ? 's' : ''; ?></span>
+                                    </span>
+                                    <span class="card-meta-item">
+                                        <span class="card-meta-icon" aria-hidden="true">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M7 21h10"></path>
+                                                <path d="M9 17h6"></path>
+                                                <path d="M8 3h8l1 9a5 5 0 0 1-10 0l1-9Z"></path>
+                                            </svg>
+                                        </span>
+                                        <span><?php echo $property['bathrooms']; ?> bath<?php echo $property['bathrooms'] > 1 ? 's' : ''; ?></span>
+                                    </span>
+                                    <span class="card-meta-item">
+                                        <span class="card-meta-icon" aria-hidden="true">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"></path>
+                                                <circle cx="9.5" cy="7" r="4"></circle>
+                                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                            </svg>
+                                        </span>
+                                        <span><?php echo $property['max_guests']; ?> guest<?php echo $property['max_guests'] > 1 ? 's' : ''; ?></span>
+                                    </span>
                                 </div>
-                                <?php if ($amenity_count > 0): ?>
-                                <div class="card-features">
-                                    <span class="feature-tag">✨ <?php echo $amenity_count; ?> amenities</span>
-                                </div>
-                                <?php endif; ?>
                                 <div class="card-footer">
                                     <div class="card-price">
                                         <div class="price-wrapper">
                                             <span class="price-current price-amount">₱<?php echo number_format($property['price_per_night'], 2); ?></span>
                                             <span class="price-label">/night</span>
                                         </div>
-                                    </div>
-                                    <div class="host-info">
-                                        <small>by <?php echo htmlspecialchars($property['first_name']); ?></small>
                                     </div>
                                 </div>
                             </div>
@@ -497,47 +487,50 @@ $conn->close();
     </section>
 
     <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h4>About ReservePro</h4>
-                <ul>
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Careers</a></li>
-                    <li><a href="#">Press</a></li>
-                    <li><a href="#">Blog</a></li>
-                </ul>
+    <footer class="lp-footer">
+        <div class="lp-footer-inner">
+            <div class="lp-footer-top">
+                <div>
+                    <a href="index.php" style="display:inline-flex;align-items:center;gap:10px;">
+                        <img style="width:32px;height:32px;border-radius:10px;border:2px solid rgba(212,165,116,0.5);object-fit:contain;"
+                             src="/part1-ReservePro/background%20image/asd.webp" alt="ReservePro">
+                        <span style="font-size:20px;font-weight:800;background:linear-gradient(135deg,#D4A574,#FAD798);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.5px;">ReservePro</span>
+                    </a>
+                    <p class="lp-footer-brand-desc">Find, compare, and book curated stays across the Philippines. Built for travelers, designed for hosts.</p>
+                </div>
+                <div class="lp-footer-col">
+                    <h5>Explore</h5>
+                    <ul>
+                        <li><a href="home.php">Browse Stays</a></li>
+                        <li><a href="experiences.php">Experiences</a></li>
+                        <li><a href="become-host.php">Become a Host</a></li>
+                    </ul>
+                </div>
+                <div class="lp-footer-col">
+                    <h5>Company</h5>
+                    <ul>
+                        <li><a href="about.php">About</a></li>
+                        <li><a href="contact.php">Contact</a></li>
+                        <li><a href="#">Careers</a></li>
+                    </ul>
+                </div>
+                <div class="lp-footer-col">
+                    <h5>Support</h5>
+                    <ul>
+                        <li><a href="contact.php">Help Center</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
             </div>
-            <div class="footer-section">
-                <h4>Support</h4>
-                <ul>
-                    <li><a href="#">Help Center</a></li>
-                    <li><a href="#">Contact Us</a></li>
-                    <li><a href="#">FAQs</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                </ul>
+            <div class="lp-footer-bottom">
+                <p>&copy; 2026 ReservePro. All rights reserved.</p>
+                <div class="lp-footer-bottom-links">
+                    <a href="#">Privacy</a>
+                    <a href="#">Terms</a>
+                    <a href="contact.php">Contact</a>
+                </div>
             </div>
-            <div class="footer-section">
-                <h4>Services</h4>
-                <ul>
-                    <li><a href="#">Tours</a></li>
-                    <li><a href="#">Experiences</a></li>
-                    <li><a href="#">Transportation</a></li>
-                    <li><a href="#">Attractions</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h4>Connect</h4>
-                <ul>
-                    <li><a href="#">Facebook</a></li>
-                    <li><a href="#">Instagram</a></li>
-                    <li><a href="#">Twitter</a></li>
-                    <li><a href="#">LinkedIn</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 ReservePro. All rights reserved.</p>
         </div>
     </footer>
 
@@ -642,9 +635,9 @@ $conn->close();
     </div>
 
     <script src="assets/js/theme-toggle.js"></script>
-    <script src="assets/js/landing.js"></script>
+    <script src="assets/js/landing.js?v=1.1"></script>
     <script src="assets/js/modal.js"></script>
-    <script src="assets/js/property-modal.js?v=6.4"></script>
+    <script src="assets/js/property-modal.js?v=7.2"></script>
     <script>
         // Fade out 3D loader when page finishes loading
         window.addEventListener('load', function () {
@@ -682,5 +675,34 @@ $conn->close();
             panel.addEventListener('click', function (e) { e.stopPropagation(); });
         })();
     </script>
+
+    <script>
+        // Guest counter for Where/When/Who search bar
+        (function () {
+            var minusBtn  = document.getElementById('guestMinus');
+            var plusBtn   = document.getElementById('guestPlus');
+            var countEl   = document.getElementById('guestCount');
+            var labelEl   = document.getElementById('guestLabel');
+            var hiddenInput = document.getElementById('searchGuests');
+            var count = 1;
+            var MAX = 20;
+
+            function update() {
+                countEl.textContent = count;
+                hiddenInput.value   = count;
+                labelEl.textContent = count === 1 ? 'Guest' : 'Guests';
+                minusBtn.disabled   = count <= 1;
+                plusBtn.disabled    = count >= MAX;
+            }
+
+            minusBtn.addEventListener('click', function () { if (count > 1)   { count--; update(); } });
+            plusBtn.addEventListener('click',  function () { if (count < MAX) { count++; update(); } });
+
+            update();
+        })();
+    </script>
+
 </body>
 </html>
+
+

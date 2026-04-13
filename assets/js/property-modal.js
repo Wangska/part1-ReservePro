@@ -1,4 +1,4 @@
-// Property Details Modal
+﻿// Property Details Modal
 let currentPropertyId = null;
 let bookedDatesSet = new Set();
 
@@ -19,10 +19,11 @@ function openPropertyModal(propertyId) {
     
     // Show loading state
     modalContent.innerHTML = `
-        <div style="text-align: center; padding: 40px; color: #B8B8B8;">
-            <div style="font-size: 48px; margin-bottom: 16px;">⏳</div>
-            <p>Loading property details...</p>
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:64px 40px;gap:18px;">
+            <div style="width:36px;height:36px;border:3px solid #252525;border-top-color:#D4A574;border-radius:50%;animation:modal-spin 0.8s linear infinite;"></div>
+            <p style="margin:0;color:#6B7280;font-size:14px;letter-spacing:0.03em;">Loading property details...</p>
         </div>
+        <style>@keyframes modal-spin{to{transform:rotate(360deg);}}</style>
     `;
     
     // Fetch property details
@@ -38,9 +39,11 @@ function openPropertyModal(propertyId) {
             console.log('Property data:', data);
             if (data.error) {
                 modalContent.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #FF4444;">
-                        <div style="font-size: 48px; margin-bottom: 16px;">❌</div>
-                        <p>${data.error}</p>
+                    <div style="text-align:center;padding:56px 40px;">
+                        <div style="width:52px;height:52px;margin:0 auto 18px;background:rgba(239,68,68,0.08);border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(239,68,68,0.18);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                        </div>
+                        <p style="color:#EF4444;font-size:15px;margin:0;">${data.error}</p>
                     </div>
                 `;
                 return;
@@ -52,11 +55,12 @@ function openPropertyModal(propertyId) {
         .catch(error => {
             console.error('Fetch error:', error);
             modalContent.innerHTML = `
-                <div style="text-align: center; padding: 40px; color: #FF4444;">
-                    <div style="font-size: 48px; margin-bottom: 16px;">❌</div>
-                    <p>Failed to load property details</p>
-                    <p style="font-size: 12px; color: #999; margin-top: 10px;">Error: ${error.message}</p>
-                    <p style="font-size: 12px; color: #999;">Check browser console for details</p>
+                <div style="text-align:center;padding:56px 40px;">
+                    <div style="width:52px;height:52px;margin:0 auto 18px;background:rgba(239,68,68,0.08);border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(239,68,68,0.18);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                    </div>
+                    <p style="color:#EF4444;font-size:15px;margin:0 0 8px;">Failed to load property details</p>
+                    <p style="font-size:12px;color:#6B7280;margin:0;">Error: ${error.message}</p>
                 </div>
             `;
         });
@@ -359,17 +363,51 @@ function renderPropertyDetails(property, bookedDates) {
         </div>
     `;
     
+    // Amenity icon lookup — maps amenity name to a clean Lucide-style SVG path
+    const amenityIcon = (name) => {
+        const n = (name || '').toLowerCase();
+        const icons = {
+            wifi:        '<path d="M5 12.5C7.5 10 10.5 8.5 12 8.5s4.5 1.5 7 4"/><path d="M2 9c3.5-3 7.5-4.5 10-4.5s6.5 1.5 10 4.5"/><circle cx="12" cy="17" r="1"/>',
+            'air conditioning':'<path d="M8 2v6"/><path d="M16 2v6"/><path d="M12 2v6"/><path d="M3 11h18"/><path d="M5 15l-2 4"/><path d="M19 15l2 4"/><path d="M12 15v6"/>',
+            heating:     '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10"/><path d="M12 8v4l3 3"/>',
+            kitchen:     '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 .55.45 1 1 1h3c.55 0 1-.45 1-1Z"/><path d="M21 15v7"/>',
+            tv:          '<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>',
+            'washing machine': '<rect x="2" y="2" width="20" height="20" rx="3"/><circle cx="12" cy="13" r="5"/><path d="M7 7h0M11 7h2"/>',
+            'free parking':    '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/>',
+            'swimming pool':   '<path d="M2 20c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/><path d="M2 15c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/><path d="M8 8a4 4 0 1 0 8 0"/><path d="M12 4v4"/>',
+            'hot tub':         '<path d="M9 6 6.5 3.5a1.5 1.5 0 0 1 0-2.1"/><path d="M14 6 11.5 3.5a1.5 1.5 0 0 1 0-2.1"/><path d="M5 14v2a7 7 0 0 0 14 0v-2"/><path d="M5 14H2"/><path d="M22 14h-3"/>',
+            gym:         '<path d="M6 7v10"/><path d="M18 7v10"/><path d="M8 7H4"/><path d="M20 7h-4"/><path d="M8 17H4"/><path d="M20 17h-4"/><path d="M9 11h6"/>',
+            'bbq grill':       '<path d="M8 22H5a1 1 0 0 1-.978-1.208l1.255-6.278A2 2 0 0 1 7.243 13h9.514a2 2 0 0 1 1.966 1.514L19.978 20.792A1 1 0 0 1 19 22h-3"/><path d="M10 22v-2a2 2 0 1 1 4 0v2"/><path d="M6 13V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8"/><circle cx="12" cy="7" r="1"/>',
+            'pet friendly':    '<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>',
+            'smoke detector':  '<circle cx="12" cy="11" r="7"/><path d="M12 4v1M12 18v1M4 11H3M21 11h-1M6.34 5.34l.71.71M16.95 16.95l.71.71M6.34 16.66l.71-.71M16.95 6.05l.71-.71"/><circle cx="12" cy="11" r="3"/>',
+            'first aid kit':   '<rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M12 12v4"/><path d="M10 14h4"/>',
+            'fire extinguisher':'<path d="M15 6.5A3.5 3.5 0 0 1 8 6.5C8 5 9 3 10 2h4c1 1 2 3 1 4.5Z"/><path d="M8 6.5C6 7 5 9 5 11v8a2 2 0 0 0 4 0v-5"/><path d="M14 10h3"/><path d="M17 8v4"/>',
+            cctv:        '<path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2"/>',
+            balcony:     '<path d="M3 21h18"/><path d="M3 10h18"/><path d="M5 10v11"/><path d="M19 10v11"/><path d="M9 10V7"/><path d="M15 10V7"/><rect x="9" y="4" width="6" height="3" rx="1"/>',
+            garden:      '<path d="M12 22V11"/><path d="M5 11a7 7 0 0 1 14 0"/><path d="M5 11a7 7 0 0 0 3.5 6.06"/><path d="M19 11a7 7 0 0 1-3.5 6.06"/>',
+            workspace:   '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8"/><path d="M12 16v4"/>',
+            'coffee maker':    '<path d="M10 2v2"/><path d="M14 2v2"/><path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14"/><path d="M6 2v2"/>',
+        };
+        // Try exact match, then partial match
+        if (icons[n]) return icons[n];
+        for (const [key, val] of Object.entries(icons)) {
+            if (n.includes(key) || key.includes(n)) return val;
+        }
+        // fallback — small circle checkmark
+        return '<circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/>';
+    };
+
     // Build amenities HTML
     let amenitiesHTML = '';
     if (property.amenities && property.amenities.length > 0) {
         amenitiesHTML = `
-            <div class="info-section" style="padding: 24px 0; border-bottom: 1px solid #3A3A3A;">
-                <h2 style="font-size: 20px; font-weight: 700; color: #FFFFFF; margin-bottom: 16px;">Amenities</h2>
+            <div class="pm-section">
+                <h2 class="pm-section-title">Amenities</h2>
                 <div class="amenities-pill-grid">
                     ${property.amenities.map(amenity => `
                         <div class="amenity-pill">
                             <div class="amenity-pill-icon">
-                                <span>${(amenity.icon || '✓').trim().charAt(0) || '✓'}</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">${amenityIcon(amenity.name)}</svg>
                             </div>
                             <div class="amenity-pill-label">${amenity.name}</div>
                         </div>
@@ -384,18 +422,14 @@ function renderPropertyDetails(property, bookedDates) {
             const rounded = averageRating.toFixed(1);
             const label = reviewCount === 1 ? 'review' : 'reviews';
             return `
-                <div style="display:flex; align-items:center; gap:8px; margin-top:4px; font-size:14px;">
-                    <span style="color:#FBBF24;">★</span>
-                    <span style="color:#FBBF24; font-weight:600;">${rounded}</span>
-                    <span style="color:#9CA3AF;">(${reviewCount} ${label})</span>
+                <div style="display:flex;align-items:center;gap:6px;margin-top:8px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#D4A574" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <span style="color:#D4A574;font-weight:700;font-size:14px;">${rounded}</span>
+                    <span style="color:#4B5563;font-size:13px;">&bull; ${reviewCount} ${label}</span>
                 </div>
             `;
         }
-        return `
-            <div style="margin-top:4px; font-size:14px; color:#6B7280;">
-                No reviews yet
-            </div>
-        `;
+        return '';
     })();
 
     const paymongoOn = !!property.paymongo_available;
@@ -414,131 +448,185 @@ function renderPropertyDetails(property, bookedDates) {
                             </div>`;
 
     const html = `
-        <div class="property-modal-inner" style="padding: 24px;">
-            <!-- Header -->
-            <div style="margin-bottom: 24px;">
-                <h1 style="font-size: 28px; font-weight: 700; color: #FFFFFF; margin-bottom: 12px;">${property.title}</h1>
-                ${ratingSummaryHTML}
-                <div class="property-location-click" style="font-size: 16px; color: #B8B8B8; display: flex; align-items: center; gap: 8px; cursor: pointer; text-decoration: underline; text-underline-offset: 4px;" title="Click to show on map">
-                    📍 ${property.city}, ${property.country}
+        <div class="property-modal-inner">
+
+            <!-- ═══ HERO GALLERY ═══ -->
+            <div class="pm-gallery">
+                ${photosHTML}
+            </div>
+
+            <!-- ═══ TITLE / META HEADER ═══ -->
+            <div class="pm-header">
+                <span class="pm-type-badge">${property.property_type.charAt(0).toUpperCase() + property.property_type.slice(1)}</span>
+                <h1 class="pm-title">${property.title}</h1>
+                <div class="pm-meta-row">
+                    ${ratingSummaryHTML}
+                    ${ratingSummaryHTML ? '<span class="pm-meta-sep">&middot;</span>' : ''}
+                    <div class="pm-location-tag" id="pmLocationTag" title="View on map below">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                        <span>${property.city}, ${property.country}</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Top row: Gallery + Price/Booking (same level) -->
-            <div class="property-modal-top-row" style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; align-items: start; margin-bottom: 32px;">
-                <!-- Single hero image - fills entire left column, no grid -->
-                <div class="property-modal-gallery">
-                    ${photosHTML}
-                </div>
-                <!-- Price / Booking Card -->
-                <div>
-                    <div style="background: #1F1F1F; padding: 20px; border-radius: 12px; border: 2px solid #3A3A3A; position: sticky; top: 20px;">
-                        <div style="font-size: 28px; font-weight: 700; color: #D4A574; margin-bottom: 4px;">₱${parseFloat(property.price_per_night).toLocaleString('en-PH', {minimumFractionDigits: 2})}</div>
-                        <div style="color: #B8B8B8; font-size: 13px; margin-bottom: 20px;">per night</div>
-                        
-                        <form id="bookingForm" style="display: flex; flex-direction: column; gap: 14px;">
-                            <div id="bookingCalendarSection" style="margin-bottom: 8px;">
-                                <label style="display: block; color: #E0E0E0; font-size: 13px; font-weight: 600; margin-bottom: 8px;">Availability — booked dates in red are not available</label>
-                                <div id="bookingCalendar" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; font-size: 12px;"></div>
-                            </div>
-                            <div>
-                                <label style="display: block; color: #E0E0E0; font-size: 13px; font-weight: 600; margin-bottom: 6px;">Check-in</label>
-                                <input type="date" id="modal_check_in" required min="${new Date().toISOString().split('T')[0]}" style="width: 100%; padding: 10px; background: #2C2C2C; border: 2px solid #3A3A3A; border-radius: 8px; color: #FFFFFF; font-size: 13px;">
-                            </div>
-                            <div>
-                                <label style="display: block; color: #E0E0E0; font-size: 13px; font-weight: 600; margin-bottom: 6px;">Check-out</label>
-                                <input type="date" id="modal_check_out" required style="width: 100%; padding: 10px; background: #2C2C2C; border: 2px solid #3A3A3A; border-radius: 8px; color: #FFFFFF; font-size: 13px;">
-                            </div>
-                            <div>
-                                <label style="display: block; color: #E0E0E0; font-size: 13px; font-weight: 600; margin-bottom: 6px;">Guests</label>
-                                <input type="number" id="modal_guests" value="1" min="1" max="${property.max_guests}" required style="width: 100%; padding: 10px; background: #2C2C2C; border: 2px solid #3A3A3A; border-radius: 8px; color: #FFFFFF; font-size: 13px;">
-                            </div>
-                            
-                            <div id="bookingSummary" style="padding: 14px; background: #2C2C2C; border-radius: 8px; margin: 10px 0; display: none;">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; color: #E0E0E0; font-size: 14px;">
-                                    <span>₱${parseFloat(property.price_per_night).toLocaleString('en-PH', {minimumFractionDigits: 2})} × <span id="modal_nights">0</span> night<span id="modal_nightsPlural"></span></span>
-                                    <span id="modal_subtotal">₱0.00</span>
+            <!-- ═══ TWO-COLUMN LAYOUT ═══ -->
+            <div class="pm-layout">
+
+                <!-- LEFT: MAIN CONTENT -->
+                <div class="pm-main">
+
+                    <!-- THE SPACE -->
+                    <div class="pm-section">
+                        <h2 class="pm-section-title">The Space</h2>
+                        <div class="pm-stats-row">
+                            <div class="pm-stat-card">
+                                <div class="pm-stat-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D4A574" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4v16"/><path d="M22 4v16"/><path d="M2 18h20"/><path d="M2 10h20"/><rect x="6" y="4" width="12" height="6" rx="1"/></svg>
                                 </div>
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; color: #E0E0E0; font-size: 14px;">
+                                <span class="pm-stat-num">${property.bedrooms}</span>
+                                <span class="pm-stat-label">Bedroom${property.bedrooms > 1 ? 's' : ''}</span>
+                            </div>
+                            <div class="pm-stat-card">
+                                <div class="pm-stat-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D4A574" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20"/><path d="M2 14v-2a10 10 0 0 1 20 0v2"/><path d="M22 17v1a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-1"/></svg>
+                                </div>
+                                <span class="pm-stat-num">${property.bathrooms}</span>
+                                <span class="pm-stat-label">Bathroom${property.bathrooms > 1 ? 's' : ''}</span>
+                            </div>
+                            <div class="pm-stat-card">
+                                <div class="pm-stat-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D4A574" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                </div>
+                                <span class="pm-stat-num">${property.max_guests}</span>
+                                <span class="pm-stat-label">Guest${property.max_guests > 1 ? 's' : ''}</span>
+                            </div>
+                            <div class="pm-stat-card">
+                                <div class="pm-stat-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D4A574" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                                </div>
+                                <span class="pm-stat-num pm-stat-type">${property.property_type.charAt(0).toUpperCase() + property.property_type.slice(1)}</span>
+                                <span class="pm-stat-label">Type</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ABOUT THIS PLACE -->
+                    <div class="pm-section">
+                        <h2 class="pm-section-title">About this place</h2>
+                        <p class="pm-desc">${property.description.replace(/\n/g, '<br>')}</p>
+                    </div>
+
+                    <!-- WHERE YOU'LL BE (map auto-loaded) -->
+                    <div class="pm-section" id="pmLocationSection">
+                        <h2 class="pm-section-title">Where you'll be</h2>
+                        <p class="pm-address-line">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#D4A574" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                            ${[property.address, property.city, property.country].filter(Boolean).join(', ')}
+                        </p>
+                        <div id="propertyMapContainer" style="display:none;"></div>
+                    </div>
+
+                    <!-- AMENITIES -->
+                    ${amenitiesHTML}
+
+                    <!-- HOST -->
+                    <div class="pm-section pm-section-last">
+                        <h2 class="pm-section-title">Your host</h2>
+                        <div class="pm-host-card">
+                            <div class="pm-host-card-top">
+                                <div class="pm-host-avatar">${property.first_name.charAt(0)}${property.last_name.charAt(0)}</div>
+                                <div class="pm-host-info">
+                                    <div class="pm-host-name">${property.first_name} ${property.last_name}</div>
+                                    <div class="pm-host-role">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                        Verified Host
+                                    </div>
+                                </div>
+                                <button type="button" class="pm-host-msg-toggle" id="pmHostMsgToggle">Message</button>
+                            </div>
+                            <div class="pm-host-msg-panel" id="pmHostMsgPanel">
+                                <form id="contactHostForm" class="contact-host-form" data-property-id="${property.id}">
+                                    <textarea name="message" id="contactHostMessage" placeholder="Ask ${property.first_name} a question about this place…" rows="3" required class="pm-message-area"></textarea>
+                                    <div id="contactHostStatus" style="font-size:12px;min-height:16px;margin:4px 0;"></div>
+                                    <button type="submit" id="contactHostSubmit" class="pm-send-btn">Send</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!-- /pm-main -->
+
+                <!-- RIGHT: STICKY BOOKING CARD -->
+                <div class="pm-sidebar">
+                    <div class="pm-booking-card">
+
+                        <!-- Price row -->
+                        <div class="pm-price-header">
+                            <div class="pm-price-row">
+                                <span class="pm-price">&#8369;${parseFloat(property.price_per_night).toLocaleString('en-PH', {minimumFractionDigits: 2})}</span>
+                                <span class="pm-price-unit">/ night</span>
+                            </div>
+                            <div class="pm-card-rating">
+                                ${ratingSummaryHTML || '<span class="pm-no-reviews">No reviews yet</span>'}
+                            </div>
+                        </div>
+
+                        <form id="bookingForm">
+
+                            <!-- Availability calendar -->
+                            <div id="bookingCalendarSection" class="pm-calendar-wrap">
+                                <div class="pm-field-label">Availability <span class="pm-calendar-hint">— red = booked</span></div>
+                                <div id="bookingCalendar" class="pm-calendar-grid"></div>
+                            </div>
+
+                            <!-- Date group -->
+                            <div class="pm-dates-group">
+                                <div class="pm-date-cell">
+                                    <label class="pm-date-label">CHECK-IN</label>
+                                    <input type="date" id="modal_check_in" required min="${new Date().toISOString().split('T')[0]}" class="pm-date-input">
+                                </div>
+                                <div class="pm-date-divider"></div>
+                                <div class="pm-date-cell">
+                                    <label class="pm-date-label">CHECK-OUT</label>
+                                    <input type="date" id="modal_check_out" required class="pm-date-input">
+                                </div>
+                            </div>
+
+                            <!-- Guests -->
+                            <div class="pm-guests-box">
+                                <label class="pm-field-label">Guests</label>
+                                <input type="number" id="modal_guests" value="1" min="1" max="${property.max_guests}" required class="pm-guests-input">
+                            </div>
+
+                            <!-- Booking summary -->
+                            <div id="bookingSummary" class="pm-summary" style="display:none;">
+                                <div class="pm-summary-row">
+                                    <span>&#8369;${parseFloat(property.price_per_night).toLocaleString('en-PH', {minimumFractionDigits: 2})} &times; <span id="modal_nights">0</span> night<span id="modal_nightsPlural"></span></span>
+                                    <span id="modal_subtotal">&#8369;0.00</span>
+                                </div>
+                                <div class="pm-summary-row">
                                     <span>Service fee (10%)</span>
-                                    <span id="modal_serviceFee">₱0.00</span>
+                                    <span id="modal_serviceFee">&#8369;0.00</span>
                                 </div>
-                                <div style="display: flex; justify-content: space-between; padding-top: 10px; border-top: 1px solid #3A3A3A; font-size: 16px; font-weight: 700; color: #D4A574;">
+                                <div class="pm-summary-total">
                                     <span>Total</span>
-                                    <span id="modal_total">₱0.00</span>
+                                    <span id="modal_total">&#8369;0.00</span>
                                 </div>
                             </div>
 
                             ${paymentMethodsHTML}
-                            
-                            <button type="submit" class="modal-btn modal-reserve-submit" ${paymongoOn ? '' : 'disabled'} style="width: 100%; padding: 14px; background: linear-gradient(135deg, #D4A574, #B8935E); color: #FFFFFF; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: ${paymongoOn ? 'pointer' : 'not-allowed'}; opacity: ${paymongoOn ? '1' : '0.5'};">${paymongoOn ? 'Continue to PayMongo checkout' : 'Booking unavailable'}</button>
+
+                            <button type="submit" class="pm-cta-btn modal-btn modal-reserve-submit" ${paymongoOn ? '' : 'disabled'} style="opacity:${paymongoOn ? '1' : '0.45'};cursor:${paymongoOn ? 'pointer' : 'not-allowed'};">${paymongoOn ? 'Reserve &rarr;' : 'Booking unavailable'}</button>
+
                         </form>
                     </div>
-                </div>
-            </div>
+                </div><!-- /pm-sidebar -->
 
-            <!-- Content below: Features, Description, Amenities, Host -->
-            <div>
-                <!-- Features -->
-                    <div style="padding: 24px 0; border-bottom: 1px solid #3A3A3A;">
-                        <h2 style="font-size: 20px; font-weight: 700; color: #FFFFFF; margin-bottom: 16px;">Property Features</h2>
-                        <div style="display: flex; gap: 24px; flex-wrap: wrap;">
-                            <div style="display: flex; align-items: center; gap: 10px; color: #E0E0E0; font-size: 16px;">
-                                <span style="font-size: 22px;">🛏️</span>
-                                <span>${property.bedrooms} Bedroom${property.bedrooms > 1 ? 's' : ''}</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 10px; color: #E0E0E0; font-size: 16px;">
-                                <span style="font-size: 22px;">🚿</span>
-                                <span>${property.bathrooms} Bathroom${property.bathrooms > 1 ? 's' : ''}</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 10px; color: #E0E0E0; font-size: 16px;">
-                                <span style="font-size: 22px;">👥</span>
-                                <span>${property.max_guests} Guest${property.max_guests > 1 ? 's' : ''}</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 10px; color: #E0E0E0; font-size: 16px;">
-                                <span style="font-size: 22px;">🏠</span>
-                                <span>${property.property_type.charAt(0).toUpperCase() + property.property_type.slice(1)}</span>
-                            </div>
-                        </div>
-                    </div>
+            </div><!-- /pm-layout -->
 
-                    <!-- Description -->
-                    <div style="padding: 24px 0; border-bottom: 1px solid #3A3A3A;">
-                        <h2 style="font-size: 20px; font-weight: 700; color: #FFFFFF; margin-bottom: 16px;">About this place</h2>
-                        <p style="color: #E0E0E0; line-height: 1.7; font-size: 15px;">${property.description.replace(/\n/g, '<br>')}</p>
-                    </div>
-
-                    <!-- Amenities -->
-                    ${amenitiesHTML}
-
-                    <!-- Reviews -->
-                    ${renderReviewsSection(property)}
-
-                    <!-- Host Info -->
-                    <div style="padding: 24px 0;">
-                        <h2 style="font-size: 20px; font-weight: 700; color: #FFFFFF; margin-bottom: 16px;">Hosted by</h2>
-                        <div style="background: linear-gradient(135deg, #2C1810 0%, #3E2723 50%, #0F0F0F 100%); padding: 20px; border-radius: 12px; border: 2px solid #D4A574;">
-                            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
-                                <div style="width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #D4A574, #B8935E); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: #FFFFFF;">
-                                    ${property.first_name.charAt(0)}${property.last_name.charAt(0)}
-                                </div>
-                                <div>
-                                    <h3 style="font-size: 16px; font-weight: 600; color: #FFFFFF; margin-bottom: 4px;">${property.first_name} ${property.last_name}</h3>
-                                    <p style="color: #B8B8B8; font-size: 13px;">Property Host</p>
-                                </div>
-                            </div>
-                            <form id="contactHostForm" class="contact-host-form" data-property-id="${property.id}" style="margin-top: 12px;">
-                                <textarea name="message" id="contactHostMessage" placeholder="Ask ${property.first_name} about this property..." rows="3" required style="width: 100%; padding: 10px; background: #1a1a1a; border: 2px solid #3A3A3A; border-radius: 8px; color: #E0E0E0; font-size: 14px; resize: vertical; margin-bottom: 10px;"></textarea>
-                                <div id="contactHostStatus" style="font-size: 13px; margin-bottom: 8px; min-height: 18px;"></div>
-                                <button type="submit" id="contactHostSubmit" style="width: 100%; padding: 10px; background: #D4A574; color: #0F0F0F; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">Send message</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </div><!-- /property-modal-inner -->
     `;
-    
+
     modalContent.innerHTML = html;
 
     setupPropertyGallerySlideshow(galleryUrls);
@@ -599,13 +687,20 @@ function renderPropertyDetails(property, bookedDates) {
     
     // Build availability calendar (booked dates in different color, non-clickable)
     renderBookingCalendar(bookedDates);
-    
-    // Make location clickable to show map
-    const locationEl = modalContent.querySelector('.property-location-click');
-    if (locationEl) {
-        locationEl.addEventListener('click', function(e) {
-            e.preventDefault();
-            showPropertyMap(property);
+
+    // Reset Leaflet map instances so re-opening always re-initializes cleanly
+    window.propertyMap = null;
+    window.propertyMapMarker = null;
+
+    // Auto-initialize the location map (container is pre-created with display:none)
+    showPropertyMap(property);
+
+    // Location tag scrolls to the map section
+    const locationTag = modalContent.querySelector('#pmLocationTag');
+    if (locationTag) {
+        locationTag.addEventListener('click', function () {
+            const sec = document.getElementById('pmLocationSection');
+            if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
     }
     
@@ -614,8 +709,15 @@ function renderPropertyDetails(property, bookedDates) {
         setupBookingCalculator(property, bookedDates);
     }, 100);
 
-    // Setup review stars & form after DOM is in place
-    setupReviewFormHandler();
+    // Host message panel toggle
+    const msgToggle = document.getElementById('pmHostMsgToggle');
+    const msgPanel  = document.getElementById('pmHostMsgPanel');
+    if (msgToggle && msgPanel) {
+        msgToggle.addEventListener('click', function () {
+            const open = msgPanel.classList.toggle('is-open');
+            msgToggle.textContent = open ? 'Cancel' : 'Message';
+        });
+    }
 }
 
 function renderReviewsSection(property) {
@@ -623,60 +725,58 @@ function renderReviewsSection(property) {
     const user = window.currentUser || null;
     const isGuest = user && user.role === 'guest';
 
+    const starsHTML = (rating) => {
+        const filled = Math.max(0, Math.min(5, rating));
+        return Array.from({length: 5}, (_, i) =>
+            `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="${i < filled ? '#D4A574' : 'none'}" stroke="#D4A574" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`
+        ).join('');
+    };
+
     const reviewsListHTML = reviews.length > 0
         ? reviews.map(r => {
             const name = ((r.first_name || '') + ' ' + (r.last_name || '')).trim() || 'Guest';
-            const createdAt = r.created_at ? new Date(r.created_at).toLocaleDateString() : '';
+            const initial = name.charAt(0).toUpperCase();
+            const createdAt = r.created_at ? new Date(r.created_at).toLocaleDateString('en-US', {month:'short', year:'numeric'}) : '';
             const rating = parseInt(r.rating, 10) || 0;
-            const stars = '★'.repeat(Math.max(0, Math.min(5, rating))) + '☆'.repeat(Math.max(0, 5 - rating));
             const safeComment = (r.comment || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
             return `
-                <div style="padding:14px 0; border-bottom:1px solid #3A3A3A;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                        <div style="font-weight:600; color:#FFFFFF;">${name}</div>
-                        <div style="font-size:12px; color:#9CA3AF;">${createdAt}</div>
+                <div class="pm-review-card">
+                    <div class="pm-review-header">
+                        <div class="pm-review-avatar">${initial}</div>
+                        <div>
+                            <div class="pm-review-name">${name}</div>
+                            <div class="pm-review-date">${createdAt}</div>
+                        </div>
+                        <div class="pm-review-stars" style="margin-left:auto;">${starsHTML(rating)}</div>
                     </div>
-                    <div style="font-size:14px; color:#FBBF24; margin-bottom:6px;">${stars}</div>
-                    <div style="font-size:14px; color:#E5E7EB; line-height:1.5;">${safeComment}</div>
+                    <p class="pm-review-text">${safeComment}</p>
                 </div>
             `;
         }).join('')
-        : `
-            <p style="color:#9CA3AF; font-size:14px; margin-bottom:0;">
-                No reviews yet. ${isGuest ? 'Be the first to share your experience!' : 'Sign in as a guest to leave a review.'}
-            </p>
-        `;
+        : `<p class="pm-no-reviews-msg">${isGuest ? 'Be the first to share your experience.' : 'Sign in as a guest to leave a review.'}</p>`;
 
     const formHTML = isGuest ? `
-        <form id="reviewForm" style="margin-top:18px; display:flex; flex-direction:column; gap:10px;">
-            <div>
-                <label style="display:block; font-size:14px; color:#E5E7EB; font-weight:600; margin-bottom:6px;">Your rating</label>
-                <div id="reviewStars" style="display:flex; gap:4px; font-size:22px; cursor:pointer;">
-                    ${[1,2,3,4,5].map(i => `<span class="review-star" data-value="${i}">★</span>`).join('')}
+        <form id="reviewForm" class="pm-review-form">
+            <div class="pm-review-rating-row">
+                <label class="pm-field-label">Your rating</label>
+                <div id="reviewStars" style="display:flex;gap:6px;cursor:pointer;">
+                    ${[1,2,3,4,5].map(i => `<span class="review-star" data-value="${i}" style="font-size:20px;">★</span>`).join('')}
                 </div>
                 <input type="hidden" id="reviewRating" name="rating" value="0">
             </div>
             <div>
-                <label for="reviewComment" style="display:block; font-size:14px; color:#E5E7EB; font-weight:600; margin-bottom:6px;">Your review</label>
-                <textarea id="reviewComment" name="comment" rows="3" style="width:100%; padding:10px; background:#111827; border:1px solid #374151; border-radius:8px; color:#F9FAFB; font-size:14px; resize:vertical;"></textarea>
+                <label for="reviewComment" class="pm-field-label">Your review</label>
+                <textarea id="reviewComment" name="comment" rows="3" class="pm-message-area" style="margin-top:8px;"></textarea>
             </div>
-            <div id="reviewError" style="font-size:13px; color:#FCA5A5; display:none;"></div>
-            <button type="submit" style="align-self:flex-start; padding:10px 18px; border-radius:999px; border:none; background:linear-gradient(135deg,#D4A574,#B8935E); color:#FFFFFF; font-weight:600; cursor:pointer; font-size:14px;">
-                Submit review
-            </button>
+            <div id="reviewError" style="font-size:13px;color:#FCA5A5;display:none;"></div>
+            <button type="submit" class="pm-send-btn" style="align-self:flex-start;">Submit review</button>
         </form>
-    ` : `
-        <p style="color:#9CA3AF; font-size:14px; margin-top:14px;">
-            Sign in as a guest to leave a review.
-        </p>
-    `;
+    ` : `<p class="pm-no-reviews-msg" style="margin-top:14px;">Sign in as a guest to leave a review.</p>`;
 
     return `
-        <div style="padding:24px 0; border-top:1px solid #3A3A3A; border-bottom:1px solid #3A3A3A; margin-top:8px;">
-            <h2 style="font-size:20px; font-weight:700; color:#FFFFFF; margin-bottom:12px;">Guest reviews</h2>
-            <div>
-                ${reviewsListHTML}
-            </div>
+        <div class="pm-section">
+            <h2 class="pm-section-title">Guest reviews</h2>
+            <div class="pm-reviews-list">${reviewsListHTML}</div>
             ${formHTML}
         </div>
     `;

@@ -48,6 +48,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    const filterToggleHero = document.getElementById('filterToggleHero');
+    if (filterToggleHero) {
+        filterToggleHero.addEventListener('click', function() {
+            const isOpen = filtersSidebar && filtersSidebar.classList.contains('is-open');
+            if (isOpen) { closeFilters(); } else { openFilters(); }
+        });
+    }
+
     if (filterClose) filterClose.addEventListener('click', closeFilters);
     if (filterOverlay) filterOverlay.addEventListener('click', closeFilters);
 
@@ -82,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.style.color = '#FF385C';
             } else {
                 this.textContent = '♡';
-                this.style.color = '#000';
+                this.style.color = '';
             }
         });
     });
@@ -248,6 +257,26 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
+        // Keep type headings visible only when they still have visible cards
+        const cardsGrid = document.querySelector('.cards-grid');
+        if (cardsGrid) {
+            const typeHeadings = cardsGrid.querySelectorAll('.rp-type-heading');
+            typeHeadings.forEach(heading => {
+                let hasVisibleCard = false;
+                let sibling = heading.nextElementSibling;
+
+                while (sibling && !sibling.classList.contains('rp-type-heading')) {
+                    if (sibling.classList.contains('service-card') && sibling.style.display !== 'none') {
+                        hasVisibleCard = true;
+                        break;
+                    }
+                    sibling = sibling.nextElementSibling;
+                }
+
+                heading.style.display = hasVisibleCard ? 'block' : 'none';
+            });
+        }
+
         updateAppliedFiltersUI({
             searchTerm,
             maxPrice,
@@ -258,7 +287,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         // Show/hide empty state
-        const cardsGrid = document.querySelector('.cards-grid');
         let emptyState = cardsGrid ? cardsGrid.querySelector('.no-results-message') : null;
         
         if (visibleCount === 0 && cardsGrid) {

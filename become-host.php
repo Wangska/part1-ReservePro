@@ -38,35 +38,221 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Become a Host - ReservePro</title>
     <link rel="icon" href="background%20image/newicon.png" type="image/png">
-    <link rel="stylesheet" href="assets/css/style.css?v=25.0">
-    <link rel="stylesheet" href="assets/css/landing.css?v=25.0">
-    <link rel="stylesheet" href="assets/css/theme-toggle.css?v=25.0">
-    <link rel="stylesheet" href="assets/css/theme-toggle-home-static.css?v=1.0">
-    <link rel="stylesheet" href="assets/css/animations.css?v=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --gold: #D4A574;
+            --gold-dark: #B8935F;
+            --navy: #06090F;
+            --surface: rgba(255,255,255,0.05);
+            --border: rgba(255,255,255,0.08);
+            --muted: rgba(203,213,225,0.68);
+            --font: Inter, ui-sans-serif, system-ui, sans-serif;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font);
+            background: var(--navy);
+            color: #F1F5F9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 50% -10%, rgba(212,165,116,0.07), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 100%, rgba(99,102,241,0.06), transparent);
+            pointer-events: none;
+        }
+
+        .rp-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+            margin-bottom: 24px;
+        }
+        .rp-brand-icon {
+            width: 34px; height: 34px;
+            border-radius: 10px;
+            border: 2px solid rgba(212,165,116,0.55);
+            box-sizing: border-box;
+        }
+        .rp-brand-name {
+            font-size: 21px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #D4A574, #FAD798);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .rp-page {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .rp-card {
+            width: 100%;
+            max-width: 520px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 26px;
+            padding: 40px 44px;
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+        }
+
+        .rp-card-head { margin-bottom: 32px; }
+        .rp-card-title {
+            font-size: clamp(22px, 4vw, 28px);
+            font-weight: 900;
+            color: #FFFFFF;
+            letter-spacing: -0.04em;
+            margin-bottom: 10px;
+        }
+        .rp-card-sub {
+            font-size: 15px;
+            line-height: 1.65;
+            color: rgba(226,232,240,0.80);
+        }
+
+        .rp-alert {
+            display: flex;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            background: rgba(239,68,68,0.08);
+            border: 1px solid rgba(239,68,68,0.22);
+            margin-bottom: 22px;
+        }
+        .rp-alert i { color: #F87171; font-size: 15px; margin-top: 1px; flex-shrink: 0; }
+        .rp-alert ul { list-style: none; padding: 0; margin: 0; }
+        .rp-alert li { font-size: 13.5px; color: #FCA5A5; margin-bottom: 3px; }
+        .rp-alert li:last-child { margin-bottom: 0; }
+
+        .rp-form { display: flex; flex-direction: column; gap: 14px; }
+        .rp-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .rp-field { display: flex; flex-direction: column; gap: 6px; }
+        .rp-field label {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #94A3B8;
+            letter-spacing: 0.02em;
+        }
+        .rp-input-wrap { position: relative; }
+        .rp-input-wrap i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 13px;
+            color: #475569;
+            pointer-events: none;
+            transition: color 0.2s;
+        }
+        .rp-field input {
+            width: 100%;
+            padding: 11px 14px 11px 38px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            font-size: 14px;
+            color: #F1F5F9;
+            font-family: var(--font);
+            outline: none;
+            transition: all 0.22s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+        }
+        .rp-field input::placeholder { color: #475569; }
+        .rp-field input:focus {
+            border-color: rgba(212,165,116,0.55);
+            background: rgba(212,165,116,0.03);
+            box-shadow: 0 0 0 3px rgba(212,165,116,0.1), inset 0 1px 0 rgba(255,255,255,0.05);
+            transform: translateY(-1px);
+        }
+        .rp-input-wrap:focus-within i { color: #D4A574; }
+
+        .rp-btn {
+            width: 100%;
+            margin-top: 8px;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #D4A574, #B8935F);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: var(--font);
+            cursor: pointer;
+            letter-spacing: 0.01em;
+            box-shadow: 0 14px 38px rgba(212,165,116,0.4);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+        }
+        .rp-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 52px rgba(212,165,116,0.55);
+        }
+        .rp-btn:active { transform: translateY(0); }
+
+        .rp-card-footer {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.07);
+            text-align: center;
+            font-size: 13.5px;
+            color: var(--muted);
+        }
+        .rp-card-footer a {
+            color: var(--gold);
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.18s;
+        }
+        .rp-card-footer a:hover { color: #FAD798; }
+
+        @media (max-width: 540px) {
+            .rp-card { padding: 32px 22px; border-radius: 20px; }
+            .rp-row { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
-<body class="auth-page">
-    <a href="home.php" style="position: fixed; top: 20px; left: 20px; z-index: 1000; display: block; line-height: 0;" title="Home" aria-label="Go to Home">
-        <img src="background%20image/asd.webp" alt="ReservePro" style="width: 48px; height: 48px; object-fit: contain; border-radius: 12px; border: 2px solid rgba(212, 165, 116, 0.6); box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
-    </a>
-    <!-- Theme Toggle -->
-    <div class="theme-toggle theme-toggle-home-static" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
-        <span class="theme-toggle-icon">☀️</span>
-        <span class="theme-toggle-text">Light</span>
-    </div>
-    
-    <div class="auth-container">
-        <div class="auth-box">
-            <div class="auth-header">
-                <div class="logo">
-                    <?php $brand_icon_class = 'logo-icon'; require __DIR__ . '/includes/brand-icon-svg.php'; ?>
-                    <span class="logo-text">ReservePro</span>
-                </div>
-                <h1>Become a Host</h1>
-                <p>Create a host account to list your properties</p>
+<body>
+    <div class="rp-page">
+        <div class="rp-card">
+
+            <div class="rp-card-head">
+                <a href="index.php" class="rp-brand">
+                    <?php $brand_icon_class = 'rp-brand-icon'; require __DIR__ . '/includes/brand-icon-svg.php'; ?>
+                    <span class="rp-brand-name">ReservePro</span>
+                </a>
+                <h1 class="rp-card-title">Become a Host</h1>
+                <p class="rp-card-sub">List your property and start earning today.</p>
             </div>
 
             <?php if (!empty($errors)): ?>
-            <div class="error-messages">
+            <div class="rp-alert">
+                <i class="fa-solid fa-circle-exclamation"></i>
                 <ul>
                     <?php foreach ($errors as $error): ?>
                         <li><?php echo htmlspecialchars($error); ?></li>
@@ -75,79 +261,75 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <?php endif; ?>
 
-            <form class="auth-form" method="POST" action="become-host.php" id="hostRegisterForm">
-                <div class="form-row">
-                    <div class="form-group">
+            <form class="rp-form" method="POST" action="become-host.php" id="hostRegisterForm">
+
+                <div class="rp-row">
+                    <div class="rp-field">
                         <label for="first_name">First Name</label>
-                        <input 
-                            type="text" 
-                            id="first_name" 
-                            name="first_name" 
-                            placeholder="John"
-                            value="<?php echo htmlspecialchars($_POST['first_name'] ?? ''); ?>"
-                            required
-                        >
+                        <div class="rp-input-wrap">
+                            <input type="text" id="first_name" name="first_name"
+                                placeholder="Juan"
+                                value="<?php echo htmlspecialchars($_POST['first_name'] ?? ''); ?>"
+                                required>
+                            <i class="fa-solid fa-user"></i>
+                        </div>
                     </div>
-                    <div class="form-group">
+                    <div class="rp-field">
                         <label for="last_name">Last Name</label>
-                        <input 
-                            type="text" 
-                            id="last_name" 
-                            name="last_name" 
-                            placeholder="Doe"
-                            value="<?php echo htmlspecialchars($_POST['last_name'] ?? ''); ?>"
-                            required
-                        >
+                        <div class="rp-input-wrap">
+                            <input type="text" id="last_name" name="last_name"
+                                placeholder="dela Cruz"
+                                value="<?php echo htmlspecialchars($_POST['last_name'] ?? ''); ?>"
+                                required>
+                            <i class="fa-solid fa-user"></i>
+                        </div>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        name="email" 
-                        placeholder="host@example.com"
-                        value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>"
-                        required
-                    >
+                <div class="rp-field">
+                    <label for="email">Email Address</label>
+                    <div class="rp-input-wrap">
+                        <input type="email" id="email" name="email"
+                            placeholder="host@example.com"
+                            value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>"
+                            required>
+                        <i class="fa-solid fa-envelope"></i>
+                    </div>
                 </div>
 
-                <div class="form-group">
+                <div class="rp-field">
                     <label for="password">Password</label>
-                    <input 
-                        type="password" 
-                        id="password" 
-                        name="password" 
-                        placeholder="Must be at least 8 characters"
-                        required
-                    >
+                    <div class="rp-input-wrap">
+                        <input type="password" id="password" name="password"
+                            placeholder="At least 8 characters"
+                            required>
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
                 </div>
 
-                <div class="form-group">
+                <div class="rp-field">
                     <label for="confirm_password">Confirm Password</label>
-                    <input 
-                        type="password" 
-                        id="confirm_password" 
-                        name="confirm_password" 
-                        placeholder="Re-enter your password"
-                        required
-                    >
+                    <div class="rp-input-wrap">
+                        <input type="password" id="confirm_password" name="confirm_password"
+                            placeholder="Re-enter your password"
+                            required>
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
                 </div>
 
-                <button type="submit" class="btn-primary">
+                <button type="submit" class="rp-btn" id="submitBtn">
+                    <i class="fa-solid fa-house-chimney"></i>
                     Sign up as Host
                 </button>
+
             </form>
 
-            <div class="auth-footer">
-                <p>Want to book stays instead? <a href="register.php">Sign up as Guest</a></p>
+            <div class="rp-card-footer">
+                Want to book stays instead? <a href="register.php">Sign up as Guest</a>
             </div>
+
         </div>
     </div>
-
-    <script src="assets/js/theme-toggle.js"></script>
-    <script src="assets/js/validation.js"></script>
 </body>
 </html>
 

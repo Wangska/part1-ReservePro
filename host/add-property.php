@@ -163,8 +163,8 @@ $conn->close();
     <title>Add Property - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=14.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.2">
-    <link rel="stylesheet" href="../assets/css/add-property.css?v=15.0">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.3">
+    <link rel="stylesheet" href="../assets/css/add-property.css?v=17.4">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
 </head>
 <body class="dashboard-page host-clean-page host-form-page">
@@ -221,7 +221,7 @@ $conn->close();
                 </div>
 
                 <div class="theme-toggle">
-                    <span class="theme-toggle-icon">☀️</span>
+                    <span class="theme-toggle-icon"><i class="fa-solid fa-sun"></i></span>
                     <span class="theme-toggle-text">Light</span>
                 </div>
                 
@@ -247,7 +247,7 @@ $conn->close();
             </div>
 
             <?php if (!empty($errors)): ?>
-            <div class="alert alert-error">
+            <div class="ap-alert-error">
                 <h4>Please fix the following errors:</h4>
                 <ul>
                     <?php foreach ($errors as $error): ?>
@@ -257,187 +257,232 @@ $conn->close();
             </div>
             <?php endif; ?>
 
-            <!-- Multi-step wizard wrapper -->
             <div class="host-form-shell">
             <form method="POST" action="add-property.php" class="property-form" enctype="multipart/form-data" id="addPropertyForm">
-                <div class="wizard-steps-indicator">
-                    <span class="wizard-step-dot wizard-step-dot-active" data-step="1">1</span>
-                    <span class="wizard-step-label">Basics</span>
-                    <span class="wizard-step-dot" data-step="2">2</span>
-                    <span class="wizard-step-label">Details</span>
-                    <span class="wizard-step-dot" data-step="3">3</span>
-                    <span class="wizard-step-label">Photos</span>
-                </div>
 
-                <!-- Basic Information -->
-                <div class="form-section wizard-step step-1">
-                    <h2 class="section-title">📝 Basic Information</h2>
-                    
-                    <div class="form-group">
-                        <label for="title">Property Title *</label>
-                        <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($_POST['title'] ?? ''); ?>" placeholder="Beautiful 2BR Apartment in the City" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="description">Description *</label>
-                        <textarea id="description" name="description" rows="5" placeholder="Describe your property..." required><?php echo htmlspecialchars($_POST['description'] ?? ''); ?></textarea>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="property_type">Property Type *</label>
-                            <select id="property_type" name="property_type" required>
-                                <option value="">Select type</option>
-                                <option value="house" <?php echo ($_POST['property_type'] ?? '') === 'house' ? 'selected' : ''; ?>>House</option>
-                                <option value="apartment" <?php echo ($_POST['property_type'] ?? '') === 'apartment' ? 'selected' : ''; ?>>Apartment</option>
-                                <option value="condo" <?php echo ($_POST['property_type'] ?? '') === 'condo' ? 'selected' : ''; ?>>Condo</option>
-                                <option value="villa" <?php echo ($_POST['property_type'] ?? '') === 'villa' ? 'selected' : ''; ?>>Villa</option>
-                                <option value="hotel" <?php echo ($_POST['property_type'] ?? '') === 'hotel' ? 'selected' : ''; ?>>Hotel</option>
-                            </select>
+                <!-- Stepper -->
+                <div class="ap-stepper">
+                    <div class="ap-stepper-step is-active" data-step="1">
+                        <div class="ap-step-circle">
+                            <span class="ap-step-num">1</span>
+                            <svg class="ap-step-check" width="14" height="14" viewBox="0 0 14 14" fill="none"><polyline points="2 7 5.5 10.5 12 3.5" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </div>
-                        
-                        <div class="form-group">
-                            <label for="price_per_night">Price per Night (₱) *</label>
-                            <input type="number" id="price_per_night" name="price_per_night" value="<?php echo htmlspecialchars($_POST['price_per_night'] ?? ''); ?>" min="0" step="0.01" placeholder="1500.00" required>
+                        <span class="ap-step-label">Basics</span>
+                    </div>
+                    <div class="ap-stepper-line" id="apLine1"></div>
+                    <div class="ap-stepper-step" data-step="2">
+                        <div class="ap-step-circle">
+                            <span class="ap-step-num">2</span>
+                            <svg class="ap-step-check" width="14" height="14" viewBox="0 0 14 14" fill="none"><polyline points="2 7 5.5 10.5 12 3.5" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </div>
+                        <span class="ap-step-label">Details</span>
+                    </div>
+                    <div class="ap-stepper-line" id="apLine2"></div>
+                    <div class="ap-stepper-step" data-step="3">
+                        <div class="ap-step-circle">
+                            <span class="ap-step-num">3</span>
+                            <svg class="ap-step-check" width="14" height="14" viewBox="0 0 14 14" fill="none"><polyline points="2 7 5.5 10.5 12 3.5" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                        <span class="ap-step-label">Photos</span>
                     </div>
                 </div>
 
-                <!-- Location -->
-                <div class="form-section wizard-step step-1">
-                    <h2 class="section-title">📍 Location</h2>
-                    
-                    <div class="form-group">
-                        <label for="address">Full Address *</label>
-                        <input type="text" id="address" name="address" value="<?php echo htmlspecialchars($_POST['address'] ?? ''); ?>" placeholder="123 Main Street" required>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="city">City *</label>
-                            <input type="text" id="city" name="city" value="<?php echo htmlspecialchars($_POST['city'] ?? ''); ?>" placeholder="Manila" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="country">Country *</label>
-                            <input type="text" id="country" name="country" value="<?php echo htmlspecialchars($_POST['country'] ?? ''); ?>" placeholder="Philippines" required>
-                        </div>
-                    </div>
+                <!-- Slide viewport -->
+                <div class="ap-wizard-viewport">
+                    <div class="ap-wizard-track" id="apWizardTrack">
 
-                    <div class="host-property-pin-map-wrap">
-                        <p class="section-description" style="margin-bottom:12px;">Place the pin exactly where guests should arrive. Drag the marker, tap the map, or start from your address.</p>
-                        <div class="host-property-pin-map-actions">
-                            <button type="button" class="btn-map-geocode" id="hostPropertyPinGeocodeBtn">Place from address</button>
-                            <p class="host-property-pin-map-hint">Uses your address fields above, then fine-tune by dragging the pin.</p>
-                        </div>
-                        <div id="hostPropertyPinMap" role="application" aria-label="Map to position property pin"></div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="latitude">Latitude (optional)</label>
-                            <input type="text" id="latitude" name="latitude" value="<?php echo htmlspecialchars($_POST['latitude'] ?? ''); ?>" placeholder="14.599512" inputmode="decimal" autocomplete="off">
-                            <small class="helper-text">Updates when you move the pin; you can paste coordinates too.</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="longitude">Longitude (optional)</label>
-                            <input type="text" id="longitude" name="longitude" value="<?php echo htmlspecialchars($_POST['longitude'] ?? ''); ?>" placeholder="120.984219" inputmode="decimal" autocomplete="off">
-                        </div>
-                    </div>
+                        <!-- PANEL 1 : BASICS -->
+                        <div class="ap-wizard-panel">
+
+                            <div class="ap-section">
+                                <h2 class="ap-section-title"><i class="fa-solid fa-pen-to-square"></i> Basic Information</h2>
+                                <p class="ap-section-desc">Give your listing a title that stands out and describe what makes it special.</p>
+
+                                <div class="ap-field">
+                                    <label for="title">Property Title <span style="color:#EF4444">*</span></label>
+                                    <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($_POST['title'] ?? ''); ?>" placeholder="Cozy 2BR Beachfront Villa in Palawan" required>
+                                </div>
+
+                                <div class="ap-field">
+                                    <label for="description">Description <span style="color:#EF4444">*</span></label>
+                                    <textarea id="description" name="description" rows="5" placeholder="Describe the space, neighbourhood, and what guests will love..." required><?php echo htmlspecialchars($_POST['description'] ?? ''); ?></textarea>
+                                </div>
+
+                                <div class="ap-row">
+                                    <div class="ap-field">
+                                        <label for="property_type">Property Type <span style="color:#EF4444">*</span></label>
+                                        <select id="property_type" name="property_type" required>
+                                            <option value="">Select type</option>
+                                            <option value="house" <?php echo ($_POST['property_type'] ?? '') === 'house' ? 'selected' : ''; ?>>House</option>
+                                            <option value="apartment" <?php echo ($_POST['property_type'] ?? '') === 'apartment' ? 'selected' : ''; ?>>Apartment</option>
+                                            <option value="condo" <?php echo ($_POST['property_type'] ?? '') === 'condo' ? 'selected' : ''; ?>>Condo</option>
+                                            <option value="villa" <?php echo ($_POST['property_type'] ?? '') === 'villa' ? 'selected' : ''; ?>>Villa</option>
+                                            <option value="hotel" <?php echo ($_POST['property_type'] ?? '') === 'hotel' ? 'selected' : ''; ?>>Hotel</option>
+                                        </select>
+                                    </div>
+                                    <div class="ap-field">
+                                        <label for="price_per_night">Price per Night (&#8369;) <span style="color:#EF4444">*</span></label>
+                                        <input type="number" id="price_per_night" name="price_per_night" value="<?php echo htmlspecialchars($_POST['price_per_night'] ?? ''); ?>" min="0" step="0.01" placeholder="1500.00" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ap-section">
+                                <h2 class="ap-section-title"><i class="fa-solid fa-location-dot"></i> Location</h2>
+                                <p class="ap-section-desc">Enter your address then fine-tune the map pin so guests can find you easily.</p>
+
+                                <div class="ap-field">
+                                    <label for="address">Full Address <span style="color:#EF4444">*</span></label>
+                                    <input type="text" id="address" name="address" value="<?php echo htmlspecialchars($_POST['address'] ?? ''); ?>" placeholder="123 Rizal Street, Poblacion" required>
+                                </div>
+
+                                <div class="ap-row">
+                                    <div class="ap-field">
+                                        <label for="city">City <span style="color:#EF4444">*</span></label>
+                                        <input type="text" id="city" name="city" value="<?php echo htmlspecialchars($_POST['city'] ?? ''); ?>" placeholder="Manila" required>
+                                    </div>
+                                    <div class="ap-field">
+                                        <label for="country">Country <span style="color:#EF4444">*</span></label>
+                                        <input type="text" id="country" name="country" value="<?php echo htmlspecialchars($_POST['country'] ?? ''); ?>" placeholder="Philippines" required>
+                                    </div>
+                                </div>
+
+                                <div style="margin-top:16px;">
+                                    <div class="ap-row">
+                                        <div class="ap-field">
+                                            <label for="latitude">Latitude</label>
+                                            <input type="number" id="latitude" name="latitude" step="any" value="<?php echo htmlspecialchars($_POST['latitude'] ?? ''); ?>" placeholder="14.5995">
+                                        </div>
+                                        <div class="ap-field">
+                                            <label for="longitude">Longitude</label>
+                                            <input type="number" id="longitude" name="longitude" step="any" value="<?php echo htmlspecialchars($_POST['longitude'] ?? ''); ?>" placeholder="120.9842">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="host-property-pin-map-wrap">
+                                    <div class="host-property-pin-map-actions">
+                                        <button type="button" class="btn-map-geocode" id="hostPropertyPinGeocodeBtn">
+                                            <i class="fa-solid fa-map-pin" style="margin-right:6px;font-size:12px;"></i>Place from address
+                                        </button>
+                                        <p class="host-property-pin-map-hint">Uses your address fields above � drag the pin to fine-tune.</p>
+                                    </div>
+                                    <div id="hostPropertyPinMap" role="application" aria-label="Map to position property pin"></div>
+                                </div>
+
+
+                            </div>
+
+                        </div><!-- /panel 1 -->
+
+                        <!-- PANEL 2 : DETAILS -->
+                        <div class="ap-wizard-panel">
+
+                            <div class="ap-section">
+                                <h2 class="ap-section-title"><i class="fa-solid fa-bed"></i> Property Details</h2>
+                                <p class="ap-section-desc">Set the guest capacity and room counts for your listing.</p>
+
+                                <div class="ap-row">
+                                    <div class="ap-field">
+                                        <label for="max_guests">Max Guests <span style="color:#EF4444">*</span></label>
+                                        <input type="number" id="max_guests" name="max_guests" value="<?php echo htmlspecialchars($_POST['max_guests'] ?? ''); ?>" min="1" placeholder="4" required>
+                                    </div>
+                                    <div class="ap-field">
+                                        <label for="bedrooms">Bedrooms <span style="color:#EF4444">*</span></label>
+                                        <input type="number" id="bedrooms" name="bedrooms" value="<?php echo htmlspecialchars($_POST['bedrooms'] ?? ''); ?>" min="1" placeholder="2" required>
+                                    </div>
+                                    <div class="ap-field">
+                                        <label for="bathrooms">Bathrooms <span style="color:#EF4444">*</span></label>
+                                        <input type="number" id="bathrooms" name="bathrooms" value="<?php echo htmlspecialchars($_POST['bathrooms'] ?? ''); ?>" min="1" placeholder="1" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ap-section">
+                                <h2 class="ap-section-title"><i class="fa-solid fa-sliders"></i> Amenities</h2>
+                                <p class="ap-section-desc">Select everything available at your property.</p>
+
+                                <?php foreach ($amenities as $category => $category_amenities): ?>
+                                <div class="ap-amenity-category">
+                                    <h3 class="ap-category-title"><?php echo ucfirst($category); ?></h3>
+                                    <div class="ap-amenity-grid">
+                                        <?php foreach ($category_amenities as $amenity): ?>
+                                        <div class="ap-amenity-item">
+                                            <input type="checkbox" name="amenities[]"
+                                                   id="amenity_<?php echo $amenity['id']; ?>"
+                                                   value="<?php echo $amenity['id']; ?>"
+                                                   <?php echo in_array($amenity['id'], $_POST['amenities'] ?? []) ? 'checked' : ''; ?>>
+                                            <label class="ap-amenity-tile" for="amenity_<?php echo $amenity['id']; ?>">
+                                                <span class="ap-amenity-check">
+                                                    <svg class="ap-amenity-check-icon" width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5 5 4 7.5 8.5 2.5" stroke="#0F0F0F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                                </span>
+                                                <span class="ap-amenity-name"><?php echo htmlspecialchars($amenity['name']); ?></span>
+                                            </label>
+                                        </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+
+                        </div><!-- /panel 2 -->
+
+                        <!-- PANEL 3 : PHOTOS -->
+                        <div class="ap-wizard-panel">
+
+                            <div class="ap-section">
+                                <h2 class="ap-section-title"><i class="fa-solid fa-images"></i> Property Photos</h2>
+                                <p class="ap-section-desc">Upload up to 5 high-quality photos. The first photo becomes your primary listing image.</p>
+
+                                <div class="ap-photo-drop" id="photoUploadArea">
+                                    <div class="ap-photo-drop-icon">
+                                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                                            <path d="M32 32L24 24L16 32" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M24 24V42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                            <path d="M40.7 36.7A10 10 0 0 0 34 18h-2.5A16 16 0 1 0 8 32.3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </div>
+                                    <h3>Drag &amp; drop photos here</h3>
+                                    <p>or click to browse from your computer</p>
+                                    <p class="ap-photo-hint">JPG, PNG, WEBP &mdash; max 5 MB each</p>
+                                    <label for="propertyPhotos" class="ap-upload-btn-label">
+                                        <i class="fa-solid fa-folder-open"></i> Choose Files
+                                    </label>
+                                </div>
+
+                                <input type="file" id="propertyPhotos" name="property_photos[]" multiple accept="image/*" style="display:none;">
+
+                                <div class="ap-photo-count-badge" id="uploadStatus">
+                                    <i class="fa-solid fa-circle-check" style="color:#22c55e"></i>
+                                    <span id="fileCount">0</span> photo(s) selected
+                                </div>
+
+                                <div class="ap-photo-grid" id="photoPreviewGrid"></div>
+
+                                <p class="ap-photo-tip"><strong>Tip:</strong> The first photo will be your primary listing image shown in search results.</p>
+                            </div>
+
+                        </div><!-- /panel 3 -->
+
+                    </div><!-- /ap-wizard-track -->
+                </div><!-- /ap-wizard-viewport -->
+
+                <!-- Action buttons -->
+                <div class="ap-form-actions">
+                    <a href="dashboard.php" class="ap-btn-cancel">Cancel</a>
+                    <button type="button" class="ap-btn-back" id="wizardBackBtn" style="display:none;">
+                        <i class="fa-solid fa-arrow-left"></i> Back
+                    </button>
+                    <button type="button" class="ap-btn-next" id="wizardNextBtn">
+                        Next <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                    <button type="submit" class="ap-btn-submit" id="wizardSubmitBtn" style="display:none;">
+                        <i class="fa-solid fa-paper-plane"></i> Submit for Review
+                    </button>
                 </div>
 
-                <!-- Property Details -->
-                <div class="form-section wizard-step step-2">
-                    <h2 class="section-title">🛏️ Property Details</h2>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="max_guests">Maximum Guests *</label>
-                            <input type="number" id="max_guests" name="max_guests" value="<?php echo htmlspecialchars($_POST['max_guests'] ?? ''); ?>" min="1" placeholder="4" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="bedrooms">Bedrooms *</label>
-                            <input type="number" id="bedrooms" name="bedrooms" value="<?php echo htmlspecialchars($_POST['bedrooms'] ?? ''); ?>" min="1" placeholder="2" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="bathrooms">Bathrooms *</label>
-                            <input type="number" id="bathrooms" name="bathrooms" value="<?php echo htmlspecialchars($_POST['bathrooms'] ?? ''); ?>" min="1" placeholder="1" required>
-                        </div>
-                    </div>
-                </div>
+                <p class="ap-form-note"><strong>Note:</strong> Your property will be reviewed by our admin team before it goes live. You will be notified once it is approved.</p>
 
-                <!-- Amenities -->
-                <div class="form-section wizard-step step-2">
-                    <h2 class="section-title">✨ Amenities</h2>
-                    <p class="section-description">Select all amenities available at your property</p>
-                    
-                    <?php foreach ($amenities as $category => $category_amenities): ?>
-                    <div class="amenities-category">
-                        <h3 class="category-title"><?php echo ucfirst($category); ?></h3>
-                        <div class="amenities-grid">
-                            <?php foreach ($category_amenities as $amenity): ?>
-                            <label class="amenity-checkbox">
-                                <input type="checkbox" name="amenities[]" value="<?php echo $amenity['id']; ?>" 
-                                    <?php echo in_array($amenity['id'], $_POST['amenities'] ?? []) ? 'checked' : ''; ?>>
-                                <span class="amenity-label">
-                                    <span class="amenity-icon"><?php echo $amenity['icon']; ?></span>
-                                    <span class="amenity-name"><?php echo htmlspecialchars($amenity['name']); ?></span>
-                                </span>
-                            </label>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-                    <?php endforeach; ?>
-                </div>
-
-                <!-- Photos Section -->
-                <div class="form-section wizard-step step-3">
-                    <h2 class="section-title">📸 Property Photos</h2>
-                    <p class="section-description">Upload high-quality photos of your property (Maximum 5 photos)</p>
-                    
-                    <div class="photo-upload-container">
-                        <div class="photo-upload-area" id="photoUploadArea">
-                            <div class="upload-icon">📷</div>
-                            <h3>Click to Upload Photos</h3>
-                            <p>Or drag and drop images here</p>
-                            <p class="upload-hint">Supported: JPG, PNG (Max 5MB each)</p>
-                        </div>
-                        
-                        <input type="file" id="propertyPhotos" name="property_photos[]" multiple accept="image/*" style="display: none;">
-                        
-                        <!-- Backup visible button -->
-                        <div style="text-align: center; margin-top: 16px;">
-                            <label for="propertyPhotos" style="display: inline-block; padding: 12px 24px; background: linear-gradient(135deg, #D4A574, #B8935F); color: #0F0F0F; border-radius: 8px; cursor: pointer; font-weight: 600;">
-                                📁 Choose Files
-                            </label>
-                        </div>
-                        
-                        <div class="photo-preview-grid" id="photoPreviewGrid"></div>
-                    </div>
-                    
-                    <div class="primary-photo-note">
-                        <p>💡 <strong>Tip:</strong> The first photo will be set as the primary photo displayed in listings.</p>
-                    </div>
-                    
-                    <div id="uploadStatus" style="margin-top: 16px; padding: 12px; background: rgba(59, 130, 246, 0.1); border-left: 4px solid #3B82F6; border-radius: 8px; display: none;">
-                        <p style="color: #3B82F6 !important; margin: 0; font-size: 14px;">
-                            <strong>Ready to upload:</strong> <span id="fileCount">0</span> photo(s) selected
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Submit -->
-                <div class="form-actions">
-                    <a href="dashboard.php" class="btn-secondary">Cancel</a>
-                    <button type="button" class="btn-secondary" id="wizardBackBtn" style="display:none;">Back</button>
-                    <button type="button" class="btn-primary" id="wizardNextBtn">Next</button>
-                    <button type="submit" class="btn-primary" id="wizardSubmitBtn" style="display:none;">Submit for Review</button>
-                </div>
-                
-                <div class="form-note">
-                    <p><strong>Note:</strong> Your property will be reviewed by our admin team before it goes live. You'll receive a notification once it's approved.</p>
-                </div>
             </form>
             </div>
         </main>
@@ -447,187 +492,119 @@ $conn->close();
     <script src="../assets/js/host-view-site-confirm.js?v=1.0"></script>
     <script src="../assets/js/host-property-pin-map.js?v=1"></script>
     <script>
-        console.log('🎬 Photo upload script loading...');
-        
-        // Photo Upload Functionality
+        // Photo upload
         const photoUploadArea = document.getElementById('photoUploadArea');
-        const photoInput = document.getElementById('propertyPhotos');
-        const photoPreviewGrid = document.getElementById('photoPreviewGrid');
-        let selectedFiles = [];
+        const photoInput      = document.getElementById('propertyPhotos');
+        const photoGrid       = document.getElementById('photoPreviewGrid');
+        let selectedFiles     = [];
 
-        console.log('Elements:', {
-            photoUploadArea: !!photoUploadArea,
-            photoInput: !!photoInput,
-            photoPreviewGrid: !!photoPreviewGrid
-        });
-
-        // Make sure elements exist
-        if (photoUploadArea && photoInput && photoPreviewGrid) {
-            console.log('✅ All elements found, setting up listeners...');
-            
-            // Click to upload
+        if (photoUploadArea && photoInput && photoGrid) {
             photoUploadArea.addEventListener('click', function(e) {
-                console.log('📸 Upload area clicked!');
+                if (e.target.closest('label[for="propertyPhotos"]')) return;
                 e.preventDefault();
-                e.stopPropagation();
                 photoInput.click();
             });
-
-            // File input change
-            photoInput.addEventListener('change', function(e) {
-                console.log('📁 Files selected:', e.target.files.length);
-                handleFiles(e.target.files);
+            photoInput.addEventListener('change', function(e) { handleFiles(e.target.files); });
+            photoUploadArea.addEventListener('dragover',  (e) => { e.preventDefault(); photoUploadArea.classList.add('dragover'); });
+            photoUploadArea.addEventListener('dragleave', ()  => { photoUploadArea.classList.remove('dragover'); });
+            photoUploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                photoUploadArea.classList.remove('dragover');
+                handleFiles(e.dataTransfer.files);
             });
-
-        // Drag and drop
-        photoUploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            photoUploadArea.classList.add('dragover');
-        });
-
-        photoUploadArea.addEventListener('dragleave', () => {
-            photoUploadArea.classList.remove('dragover');
-        });
-
-        photoUploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            photoUploadArea.classList.remove('dragover');
-            handleFiles(e.dataTransfer.files);
-        });
+        }
 
         function handleFiles(files) {
-            const maxFiles = 5;
-            const maxSize = 5 * 1024 * 1024; // 5MB
-            
-            // Convert FileList to Array and filter
-            const newFiles = Array.from(files).filter(file => {
-                // Check file type
-                if (!file.type.startsWith('image/')) {
-                    alert('Please upload only image files.');
-                    return false;
-                }
-                
-                // Check file size
-                if (file.size > maxSize) {
-                    alert(`${file.name} is too large. Maximum size is 5MB.`);
-                    return false;
-                }
-                
+            const maxFiles = 5, maxSize = 5 * 1024 * 1024;
+            const newFiles = Array.from(files).filter(f => {
+                if (!f.type.startsWith('image/')) { alert('Please upload image files only.'); return false; }
+                if (f.size > maxSize)              { alert(f.name + ' exceeds 5 MB.');        return false; }
                 return true;
             });
-
-            // Check total files limit
-            if (selectedFiles.length + newFiles.length > maxFiles) {
-                alert(`You can only upload a maximum of ${maxFiles} photos.`);
-                return;
-            }
-
-            // Add new files to selected files
+            if (selectedFiles.length + newFiles.length > maxFiles) { alert('Maximum 5 photos allowed.'); return; }
             selectedFiles = [...selectedFiles, ...newFiles];
-            updatePhotoPreview();
+            renderPreviews();
         }
 
-        function updatePhotoPreview() {
-            photoPreviewGrid.innerHTML = '';
-            
-            // Update status
-            const uploadStatus = document.getElementById('uploadStatus');
-            const fileCount = document.getElementById('fileCount');
-            if (selectedFiles.length > 0) {
-                uploadStatus.style.display = 'block';
-                fileCount.textContent = selectedFiles.length;
-            } else {
-                uploadStatus.style.display = 'none';
-            }
-            
-            selectedFiles.forEach((file, index) => {
+        function renderPreviews() {
+            photoGrid.innerHTML = '';
+            const badge   = document.getElementById('uploadStatus');
+            const countEl = document.getElementById('fileCount');
+            if (badge)   badge.classList.toggle('visible', selectedFiles.length > 0);
+            if (countEl) countEl.textContent = selectedFiles.length;
+            selectedFiles.forEach((file, i) => {
                 const reader = new FileReader();
-                
-                reader.onload = (e) => {
-                    const previewItem = document.createElement('div');
-                    previewItem.className = 'photo-preview-item';
-                    previewItem.innerHTML = `
-                        <img src="${e.target.result}" alt="Property photo ${index + 1}">
-                        ${index === 0 ? '<span class="photo-preview-badge">Primary</span>' : ''}
-                        <button type="button" class="photo-remove-btn" onclick="removePhoto(${index})">&times;</button>
-                    `;
-                    photoPreviewGrid.appendChild(previewItem);
+                reader.onload = (ev) => {
+                    const thumb = document.createElement('div');
+                    thumb.className = 'ap-photo-thumb';
+                    thumb.innerHTML = `<img src="${ev.target.result}" alt="Photo ${i + 1}">`
+                        + (i === 0 ? '<span class="ap-photo-primary-badge">Primary</span>' : '')
+                        + `<button type="button" class="ap-photo-remove" onclick="removePhoto(${i})">&times;</button>`;
+                    photoGrid.appendChild(thumb);
                 };
-                
                 reader.readAsDataURL(file);
             });
-
-            // Update file input
-            const dataTransfer = new DataTransfer();
-            selectedFiles.forEach(file => {
-                dataTransfer.items.add(file);
-            });
-            photoInput.files = dataTransfer.files;
+            const dt = new DataTransfer();
+            selectedFiles.forEach(f => dt.items.add(f));
+            photoInput.files = dt.files;
         }
 
-        function removePhoto(index) {
-            selectedFiles.splice(index, 1);
-            updatePhotoPreview();
-        }
-        
-        } else {
-            console.error('❌ Elements not found!', {
-                photoUploadArea: !!photoUploadArea,
-                photoInput: !!photoInput,
-                photoPreviewGrid: !!photoPreviewGrid
-            });
-        }
+        function removePhoto(i) { selectedFiles.splice(i, 1); renderPreviews(); }
 
-        // Simple multi-step wizard logic
-        (function() {
-            const steps = Array.from(document.querySelectorAll('.wizard-step'));
-            if (!steps.length) return;
-            let currentStep = 1;
-            const maxStep = 3;
-            const backBtn = document.getElementById('wizardBackBtn');
-            const nextBtn = document.getElementById('wizardNextBtn');
+        // Multi-step wizard � smooth slide animation
+        (function () {
+            const track     = document.getElementById('apWizardTrack');
+            const backBtn   = document.getElementById('wizardBackBtn');
+            const nextBtn   = document.getElementById('wizardNextBtn');
             const submitBtn = document.getElementById('wizardSubmitBtn');
-            const dots = Array.from(document.querySelectorAll('.wizard-step-dot'));
+            const stepEls   = Array.from(document.querySelectorAll('.ap-stepper-step'));
+            const lineEls   = [document.getElementById('apLine1'), document.getElementById('apLine2')];
+            const total     = 3;
+            let current     = 1;
 
-            function updateUI() {
-                steps.forEach(s => {
-                    s.classList.remove('wizard-step-active');
-                    if (s.classList.contains('step-' + currentStep)) {
-                        s.classList.add('wizard-step-active');
-                    }
+            function goTo(n) {
+                current = n;
+                if (track) track.style.transform = `translateX(-${(current - 1) * 100}%)`;
+                // Resize viewport to exactly the active panel's height
+                const viewport = track ? track.parentElement : null;
+                const panels   = track ? Array.from(track.querySelectorAll('.ap-wizard-panel')) : [];
+                if (viewport && panels[current - 1]) {
+                    requestAnimationFrame(() => {
+                        const panel = panels[current - 1];
+                        const sections = panel.querySelectorAll('.ap-section');
+                        let totalHeight = 0;
+                        sections.forEach(section => {
+                            totalHeight += section.offsetHeight;
+                            const style = window.getComputedStyle(section);
+                            totalHeight += parseFloat(style.marginTop) + parseFloat(style.marginBottom);
+                        });
+                        // Add a small buffer
+                        totalHeight += 10;
+                        console.log('Setting viewport height to', totalHeight, 'for step', current);
+                        viewport.style.height = totalHeight + 'px';
+                    });
+                }
+                stepEls.forEach((el, idx) => {
+                    el.classList.remove('is-active', 'is-done');
+                    if (idx + 1 === current)    el.classList.add('is-active');
+                    else if (idx + 1 < current) el.classList.add('is-done');
                 });
-                dots.forEach(d => {
-                    const step = parseInt(d.getAttribute('data-step') || '0', 10);
-                    d.classList.toggle('wizard-step-dot-active', step === currentStep);
+                lineEls.forEach((line, idx) => {
+                    if (line) line.classList.toggle('is-done', current > idx + 1);
                 });
-                if (backBtn) backBtn.style.display = currentStep > 1 ? 'inline-block' : 'none';
-                if (nextBtn) nextBtn.style.display = currentStep < maxStep ? 'inline-block' : 'none';
-                if (submitBtn) submitBtn.style.display = currentStep === maxStep ? 'inline-block' : 'none';
-                if (currentStep === 1 && typeof window.hostPropertyPinMapRefresh === 'function') {
+                if (backBtn)   backBtn.style.display   = current > 1     ? 'inline-flex' : 'none';
+                if (nextBtn)   nextBtn.style.display   = current < total ? 'inline-flex' : 'none';
+                if (submitBtn) submitBtn.style.display = current === total ? 'inline-flex' : 'none';
+                if (current === 1 && typeof window.hostPropertyPinMapRefresh === 'function') {
                     window.hostPropertyPinMapRefresh();
                 }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
 
-            if (nextBtn) {
-                nextBtn.addEventListener('click', function() {
-                    if (currentStep < maxStep) {
-                        currentStep++;
-                        updateUI();
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }
-                });
-            }
-            if (backBtn) {
-                backBtn.addEventListener('click', function() {
-                    if (currentStep > 1) {
-                        currentStep--;
-                        updateUI();
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }
-                });
-            }
+            if (nextBtn)  nextBtn.addEventListener('click',  () => { if (current < total) goTo(current + 1); });
+            if (backBtn)  backBtn.addEventListener('click',  () => { if (current > 1)     goTo(current - 1); });
 
-            updateUI();
+            goTo(1);
             if (typeof window.initHostPropertyPinMap === 'function') {
                 window.initHostPropertyPinMap({});
             }
