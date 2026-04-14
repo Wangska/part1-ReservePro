@@ -333,6 +333,7 @@ $conn->close();
                             <div class="guest-menu-panel" id="guestMenuPanel" role="menu" aria-hidden="true">
                                 <a href="messages.php" role="menuitem" class="guest-menu-item">Messages</a>
                                 <?php if (isset($user['role']) && $user['role'] === 'guest'): ?>
+                                <a href="my-bookings.php" role="menuitem" class="guest-menu-item">My bookings</a>
                                 <a href="profile.php" role="menuitem" class="guest-menu-item">Profile</a>
                                 <?php elseif (isset($user['role']) && $user['role'] === 'host'): ?>
                                 <a href="host/dashboard.php" role="menuitem" class="guest-menu-item">Dashboard</a>

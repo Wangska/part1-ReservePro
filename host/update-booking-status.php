@@ -51,6 +51,8 @@ $target = 'view-booking.php?id=' . $booking_id;
 if ($affected === 0) {
     // nothing changed (maybe already confirmed/cancelled or not this host's booking)
     $target .= '&error=update_failed';
+} else {
+    $target .= '&confirmed=1';
 }
 header('Location: ' . $target);
 exit();

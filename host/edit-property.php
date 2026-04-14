@@ -441,6 +441,7 @@ $conn->close();
                             <button type="button" class="btn-map-geocode" id="hostPropertyPinGeocodeBtn">Place from address</button>
                             <p class="host-property-pin-map-hint">Fine-tune after lookup by dragging the marker.</p>
                         </div>
+                        <p id="hostPropertyPinReverseStatus" class="host-property-pin-map-hint" style="margin: -2px 0 10px 0; opacity: 0; transition: opacity 0.2s ease;"></p>
                         <div id="hostPropertyPinMap" role="application" aria-label="Map to position property pin"></div>
                     </div>
                     <div class="form-row">
@@ -578,7 +579,7 @@ $conn->close();
 
     <script src="../assets/js/theme-toggle.js?v=27.5"></script>
     <script src="../assets/js/host-view-site-confirm.js?v=1.0"></script>
-    <script src="../assets/js/host-property-pin-map.js?v=1"></script>
+    <script src="../assets/js/host-property-pin-map.js?v=3"></script>
     <script>
         if (typeof window.initHostPropertyPinMap === 'function') {
             window.initHostPropertyPinMap({});

@@ -93,6 +93,14 @@ $conn->close();
                     <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
                     <span>Dashboard</span>
                 </a>
+                <a href="analytics.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-simple" aria-hidden="true"></i></span>
+                    <span>Analytics</span>
+                </a>
+                <a href="refunds.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></span>
+                    <span>Refunds</span>
+                </a>
                 <a href="host-verifications.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-user-check" aria-hidden="true"></i></span>
                     <span>Host Verifications</span>

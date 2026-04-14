@@ -20,7 +20,7 @@ if (!empty($user['host_verified'])) {
 // Check if host has already submitted (pending or rejected)
 $conn = getDBConnection();
 initializeHostTables(); // ensures verification_status column exists
-$stmt = $conn->prepare("SELECT id, verification_status, created_at FROM host_documents WHERE user_id = ? ORDER BY id DESC LIMIT 1");
+$stmt = $conn->prepare("SELECT id, verification_status, created_at, id_full_name, gov_id_photo_path, ownership_doc_photo_path, gov_id_number, ownership_reference FROM host_documents WHERE user_id = ? ORDER BY id DESC LIMIT 1");
 $stmt->bind_param("i", $user['id']);
 $stmt->execute();
 $existing = $stmt->get_result()->fetch_assoc();
@@ -35,6 +35,7 @@ $just_submitted = isset($_GET['submitted']) && $_GET['submitted'] == '1';
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $id_full_name = trim($_POST['id_full_name'] ?? '');
     $gov_id_type = trim($_POST['gov_id_type'] ?? '');
     $gov_id_number = trim($_POST['gov_id_number'] ?? '');
     $ownership_proof_type = trim($_POST['ownership_proof_type'] ?? '');
@@ -46,11 +47,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $bank_account_name = trim($_POST['bank_account_name'] ?? '');
     $bank_account_number = trim($_POST['bank_account_number'] ?? '');
 
+    if ($id_full_name === '') $errors[] = 'Full name (as shown on your ID) is required';
     if ($gov_id_type === '') $errors[] = 'Government ID type is required';
     if ($ownership_proof_type === '') $errors[] = 'Property ownership/permission type is required';
     if ($bank_name === '') $errors[] = 'Bank name is required';
     if ($bank_account_name === '') $errors[] = 'Bank account name is required';
     if ($bank_account_number === '') $errors[] = 'Bank account number is required';
+    if ($gov_id_number === '') $errors[] = 'Government ID number is required';
+    if ($ownership_reference === '') $errors[] = 'Supporting document number/reference is required';
 
     // Number-only validation: digits, spaces and hyphens allowed for formatting
     function is_valid_number_field($value) {
@@ -63,6 +67,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!is_valid_number_field($tourism_license)) $errors[] = 'Local Tourism License must contain only numbers (spaces or hyphens allowed).';
     if ($bank_account_number !== '' && !is_valid_number_field($bank_account_number)) $errors[] = 'Account number must contain only numbers (spaces or hyphens allowed).';
 
+    function save_verification_upload($file, $userId, $prefix, &$errors) {
+        if (!isset($file) || !isset($file['error'])) {
+            $errors[] = 'Upload is missing for ' . $prefix . '.';
+            return null;
+        }
+        if ($file['error'] === UPLOAD_ERR_NO_FILE) {
+            return null; // caller decides if required
+        }
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            $errors[] = 'Failed to upload ' . $prefix . '. Please try again.';
+            return null;
+        }
+        $maxSize = 6 * 1024 * 1024; // 6MB
+        $minSize = 60 * 1024;       // 60KB (helps reject ultra-blurry tiny images)
+        if (($file['size'] ?? 0) > $maxSize) {
+            $errors[] = ucfirst($prefix) . ' file is too large (max 6MB).';
+            return null;
+        }
+        if (($file['size'] ?? 0) < $minSize) {
+            $errors[] = ucfirst($prefix) . ' image looks too small. Please upload a clearer photo.';
+            return null;
+        }
+        $ext = strtolower(pathinfo($file['name'] ?? '', PATHINFO_EXTENSION));
+        $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+        if (!in_array($ext, $allowed, true)) {
+            $errors[] = ucfirst($prefix) . ' must be an image (JPG, PNG, or WEBP).';
+            return null;
+        }
+        $tmp = $file['tmp_name'] ?? '';
+        $img = @getimagesize($tmp);
+        if (!$img || empty($img[0]) || empty($img[1])) {
+            $errors[] = ucfirst($prefix) . ' must be a valid image file.';
+            return null;
+        }
+        $w = (int)$img[0];
+        $h = (int)$img[1];
+        if ($w < 900 || $h < 600) {
+            $errors[] = ucfirst($prefix) . ' image resolution is too low. Please upload a clearer photo (at least 900×600).';
+            return null;
+        }
+
+        $baseDir = dirname(__DIR__) . '/uploads/host-documents/' . (int)$userId . '/';
+        if (!file_exists($baseDir)) {
+            @mkdir($baseDir, 0777, true);
+            @chmod($baseDir, 0777);
+        }
+        if (!is_dir($baseDir) || !is_writable($baseDir)) {
+            $errors[] = 'Upload directory is not writable. Please contact support.';
+            return null;
+        }
+        $filename = $prefix . '_' . (int)$userId . '_' . time() . '.' . $ext;
+        $dest = $baseDir . $filename;
+        if (!move_uploaded_file($tmp, $dest)) {
+            $errors[] = 'Failed to save ' . $prefix . ' image. Please try again.';
+            return null;
+        }
+        return 'uploads/host-documents/' . (int)$userId . '/' . $filename;
+    }
+
     if (empty($errors)) {
         $conn = getDBConnection();
         initializeHostTables();
@@ -73,18 +136,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $row = $stmt->get_result()->fetch_assoc();
         $stmt->close();
 
+        // Existing file paths (if re-submitting without re-upload)
+        $existingGovPath = $existing['gov_id_photo_path'] ?? null;
+        $existingOwnPath = $existing['ownership_doc_photo_path'] ?? null;
+
+        $govPath = save_verification_upload($_FILES['gov_id_photo'] ?? null, $user['id'], 'gov_id', $errors);
+        $ownPath = save_verification_upload($_FILES['supporting_doc_photo'] ?? null, $user['id'], 'supporting_doc', $errors);
+
+        if ($govPath === null && $existingGovPath) $govPath = $existingGovPath;
+        if ($ownPath === null && $existingOwnPath) $ownPath = $existingOwnPath;
+
+        if (!$govPath) $errors[] = 'Government ID photo is required (must be clear, not blurry/cropped).';
+        if (!$ownPath) $errors[] = 'Supporting document photo is required (must be clear, not blurry/cropped).';
+
+        if (!empty($errors)) {
+            $conn->close();
+        } else {
         $status = 'pending';
         if ($row) {
             $stmt = $conn->prepare("
                 UPDATE host_documents SET
-                  gov_id_type = ?, gov_id_number = ?, ownership_proof_type = ?, ownership_reference = ?,
+                  id_full_name = ?, gov_id_type = ?, gov_id_number = ?, gov_id_photo_path = ?,
+                  ownership_proof_type = ?, ownership_reference = ?, ownership_doc_photo_path = ?,
                   business_registration = ?, tax_id = ?, tourism_license = ?,
                   bank_name = ?, bank_account_name = ?, bank_account_number = ?,
                   verification_status = ?
                 WHERE user_id = ?
             ");
-            $stmt->bind_param("ssssssssssi",
-                $gov_id_type, $gov_id_number, $ownership_proof_type, $ownership_reference,
+            $stmt->bind_param("sssssssssssssssi",
+                $id_full_name, $gov_id_type, $gov_id_number, $govPath,
+                $ownership_proof_type, $ownership_reference, $ownPath,
                 $business_registration, $tax_id, $tourism_license,
                 $bank_name, $bank_account_name, $bank_account_number,
                 $status, $user['id']
@@ -94,12 +175,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $stmt = $conn->prepare("
                 INSERT INTO host_documents
-                (user_id, gov_id_type, gov_id_number, ownership_proof_type, ownership_reference, business_registration, tax_id, tourism_license, bank_name, bank_account_name, bank_account_number, verification_status)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                (user_id, id_full_name, gov_id_type, gov_id_number, gov_id_photo_path, ownership_proof_type, ownership_reference, ownership_doc_photo_path, business_registration, tax_id, tourism_license, bank_name, bank_account_name, bank_account_number, verification_status)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ");
-            $stmt->bind_param("isssssssssss",
+            $stmt->bind_param("isssssssssssssss",
                 $user['id'],
-                $gov_id_type, $gov_id_number, $ownership_proof_type, $ownership_reference,
+                $id_full_name,
+                $gov_id_type, $gov_id_number, $govPath,
+                $ownership_proof_type, $ownership_reference, $ownPath,
                 $business_registration, $tax_id, $tourism_license,
                 $bank_name, $bank_account_name, $bank_account_number,
                 $status
@@ -119,6 +202,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $conn->close();
         header('Location: verify-account.php?submitted=1');
         exit();
+        }
     }
 }
 ?>
@@ -268,6 +352,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border-radius: inherit;
             background: linear-gradient(90deg, #d4a574, #f0cf9d 55%, #7dd3fc);
             box-shadow: 0 0 18px rgba(212, 165, 116, 0.28);
+        }
+
+        /* Upload preview */
+        .verify-upload-preview {
+            margin-top: 10px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            background: rgba(255, 255, 255, 0.04);
+            padding: 12px;
+        }
+        .verify-upload-preview.hidden { display: none; }
+        .verify-upload-preview img {
+            width: 100%;
+            max-height: 220px;
+            object-fit: contain;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .verify-upload-meta {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 13px;
+            color: #D1D5DB;
+        }
+        .verify-upload-meta strong { color: #FFFFFF; font-weight: 700; }
+        .verify-upload-warning {
+            margin-top: 10px;
+            border-radius: 12px;
+            padding: 10px 12px;
+            font-size: 13px;
+            line-height: 1.5;
+            background: rgba(239, 68, 68, 0.14);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            color: #FCA5A5;
+        }
+        .verify-upload-warning.hidden { display: none; }
+
+        body.light-mode .verify-upload-preview {
+            background: #FFFFFF !important;
+            border-color: #E0E0E0 !important;
+        }
+        body.light-mode .verify-upload-preview img {
+            background: #F8FAFC !important;
+            border-color: #E0E0E0 !important;
+        }
+        body.light-mode .verify-upload-meta { color: #334155 !important; }
+        body.light-mode .verify-upload-meta strong { color: #0f172a !important; }
+        body.light-mode .verify-upload-warning {
+            background: rgba(239, 68, 68, 0.08) !important;
+            border-color: rgba(239, 68, 68, 0.22) !important;
+            color: #B91C1C !important;
         }
 
         .verify-progress-caption {
@@ -1088,13 +1226,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <?php if (!$verification_pending): ?>
             <div class="verify-layout">
-                <form method="POST" action="verify-account.php" class="property-form verify-form verify-panel">
+                <form method="POST" action="verify-account.php" class="property-form verify-form verify-panel" enctype="multipart/form-data">
                     <div class="form-section">
                         <div class="verify-section-heading">
                             <span class="section-step">01</span>
                             <div>
                                 <h2 class="section-title">Personal identification</h2>
-                                <p class="section-copy">Tell us which government ID you are using so we can confirm the host identity attached to this account.</p>
+                                <p class="section-copy">Upload clear photos of your valid ID and supporting documents. All details—full name, photo, and document numbers—must be readable, not blurry, not cropped.</p>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="id_full_name">Full name (as shown on your ID) *</label>
+                                <input type="text" id="id_full_name" name="id_full_name" required placeholder="Complete name on your ID"
+                                       value="<?php echo htmlspecialchars($_POST['id_full_name'] ?? ($existing['id_full_name'] ?? '')); ?>">
                             </div>
                         </div>
                         <div class="form-row">
@@ -1102,19 +1247,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <label for="gov_id_type">Government-issued ID *</label>
                                 <select id="gov_id_type" name="gov_id_type" required>
                                     <option value="">Select ID type</option>
-                                    <option value="Passport">Passport</option>
-                                    <option value="National ID">National ID</option>
-                                    <option value="Driver's License">Driver's License</option>
-                                    <option value="Other">Other</option>
+                                    <?php $gid = $_POST['gov_id_type'] ?? ''; ?>
+                                    <option value="Passport" <?php echo $gid === 'Passport' ? 'selected' : ''; ?>>Passport</option>
+                                    <option value="National ID" <?php echo $gid === 'National ID' ? 'selected' : ''; ?>>National ID</option>
+                                    <option value="Driver's License" <?php echo $gid === "Driver's License" ? 'selected' : ''; ?>>Driver's License</option>
+                                    <option value="Other" <?php echo $gid === 'Other' ? 'selected' : ''; ?>>Other</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="gov_id_number">ID number</label>
-                                <input type="text" id="gov_id_number" name="gov_id_number" placeholder="ID reference number" data-number-field>
+                                <label for="gov_id_number">ID number *</label>
+                                <input type="text" id="gov_id_number" name="gov_id_number" placeholder="ID reference number" data-number-field required
+                                       value="<?php echo htmlspecialchars($_POST['gov_id_number'] ?? ($existing['gov_id_number'] ?? '')); ?>">
                                 <span class="field-error" id="gov_id_number_error" role="alert"></span>
                             </div>
                         </div>
-                        <p class="helper-text">Image uploads can be added later. For now, the ID type and reference number are enough for review.</p>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="gov_id_photo">Government ID photo *</label>
+                                <input type="file" id="gov_id_photo" name="gov_id_photo" accept="image/*" <?php echo empty($existing['gov_id_photo_path']) ? 'required' : ''; ?>>
+                                <p class="helper-text">Use good lighting. Avoid glare. Upload a clear image (recommended at least 900×600).</p>
+                                <?php if (!empty($existing['gov_id_photo_path'])): ?>
+                                    <p class="helper-text">Current: <a href="../<?php echo htmlspecialchars($existing['gov_id_photo_path']); ?>" target="_blank" rel="noopener">View uploaded ID</a></p>
+                                <?php endif; ?>
+                                <div class="verify-upload-preview hidden" id="govPreview">
+                                    <img id="govPreviewImg" alt="Government ID preview" />
+                                    <div class="verify-upload-meta" id="govPreviewMeta"></div>
+                                    <div class="verify-upload-warning hidden" id="govPreviewWarn"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-section">
@@ -1130,14 +1291,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <label for="ownership_proof_type">Ownership or permission proof *</label>
                                 <select id="ownership_proof_type" name="ownership_proof_type" required>
                                     <option value="">Select proof type</option>
-                                    <option value="Land title / Ownership certificate">Land title / Ownership certificate</option>
-                                    <option value="Lease agreement">Lease agreement</option>
-                                    <option value="Written landlord permission">Written landlord permission</option>
+                                    <?php $opt = $_POST['ownership_proof_type'] ?? ''; ?>
+                                    <option value="Land title / Ownership certificate" <?php echo $opt === 'Land title / Ownership certificate' ? 'selected' : ''; ?>>Land title / Ownership certificate</option>
+                                    <option value="Lease agreement" <?php echo $opt === 'Lease agreement' ? 'selected' : ''; ?>>Lease agreement</option>
+                                    <option value="Written landlord permission" <?php echo $opt === 'Written landlord permission' ? 'selected' : ''; ?>>Written landlord permission</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="ownership_reference">Reference or notes</label>
-                                <input type="text" id="ownership_reference" name="ownership_reference" placeholder="Document reference or notes">
+                                <label for="ownership_reference">Document number / reference *</label>
+                                <input type="text" id="ownership_reference" name="ownership_reference" placeholder="Permit / title / registration number" data-number-field required
+                                       value="<?php echo htmlspecialchars($_POST['ownership_reference'] ?? ($existing['ownership_reference'] ?? '')); ?>">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="supporting_doc_photo">Supporting document photo *</label>
+                                <input type="file" id="supporting_doc_photo" name="supporting_doc_photo" accept="image/*" <?php echo empty($existing['ownership_doc_photo_path']) ? 'required' : ''; ?>>
+                                <p class="helper-text">Examples: permits, registration papers, proof of ownership/permission. Must be clear and fully visible.</p>
+                                <?php if (!empty($existing['ownership_doc_photo_path'])): ?>
+                                    <p class="helper-text">Current: <a href="../<?php echo htmlspecialchars($existing['ownership_doc_photo_path']); ?>" target="_blank" rel="noopener">View uploaded document</a></p>
+                                <?php endif; ?>
+                                <div class="verify-upload-preview hidden" id="supportPreview">
+                                    <img id="supportPreviewImg" alt="Supporting document preview" />
+                                    <div class="verify-upload-meta" id="supportPreviewMeta"></div>
+                                    <div class="verify-upload-warning hidden" id="supportPreviewWarn"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1279,6 +1457,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             });
             if (!allValid) e.preventDefault();
         });
+
+        // Live image preview + basic clarity checks
+        function formatBytes(bytes) {
+            var b = Number(bytes) || 0;
+            if (b < 1024) return b + ' B';
+            var kb = b / 1024;
+            if (kb < 1024) return kb.toFixed(1) + ' KB';
+            return (kb / 1024).toFixed(1) + ' MB';
+        }
+
+        function setupPreview(inputId, previewId, imgId, metaId, warnId) {
+            var input = document.getElementById(inputId);
+            var box = document.getElementById(previewId);
+            var img = document.getElementById(imgId);
+            var meta = document.getElementById(metaId);
+            var warn = document.getElementById(warnId);
+            if (!input || !box || !img || !meta || !warn) return;
+
+            function clear() {
+                box.classList.add('hidden');
+                warn.classList.add('hidden');
+                warn.textContent = '';
+                img.removeAttribute('src');
+                meta.textContent = '';
+            }
+
+            input.addEventListener('change', function() {
+                var file = input.files && input.files[0] ? input.files[0] : null;
+                if (!file) { clear(); return; }
+                if (!file.type || file.type.indexOf('image/') !== 0) { clear(); return; }
+
+                var url = URL.createObjectURL(file);
+                img.onload = function() {
+                    var w = img.naturalWidth || 0;
+                    var h = img.naturalHeight || 0;
+
+                    meta.innerHTML =
+                        '<strong>' + (file.name || 'Selected image') + '</strong>' +
+                        '<div>Size: ' + formatBytes(file.size) + '</div>' +
+                        '<div>Resolution: ' + w + ' × ' + h + '</div>' +
+                        '<div>Tip: Make sure the full document is visible and readable.</div>';
+
+                    var warnings = [];
+                    if (file.size < 60 * 1024) warnings.push('Image file size is very small; it may be blurry.');
+                    if (file.size > 6 * 1024 * 1024) warnings.push('Image is larger than 6MB (it may be rejected).');
+                    if (w && h && (w < 900 || h < 600)) warnings.push('Resolution is low. Upload a clearer photo (recommended at least 900×600).');
+
+                    if (warnings.length) {
+                        warn.textContent = warnings.join(' ');
+                        warn.classList.remove('hidden');
+                    } else {
+                        warn.classList.add('hidden');
+                        warn.textContent = '';
+                    }
+
+                    box.classList.remove('hidden');
+                };
+                img.onerror = function() { clear(); };
+                img.src = url;
+            });
+        }
+
+        setupPreview('gov_id_photo', 'govPreview', 'govPreviewImg', 'govPreviewMeta', 'govPreviewWarn');
+        setupPreview('supporting_doc_photo', 'supportPreview', 'supportPreviewImg', 'supportPreviewMeta', 'supportPreviewWarn');
     })();
     </script>
 </body>

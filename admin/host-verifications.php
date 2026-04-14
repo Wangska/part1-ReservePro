@@ -15,7 +15,9 @@ initializeHostTables();
 
 $pending = [];
 $result = $conn->query("
-    SELECT h.id AS doc_id, h.user_id, h.gov_id_type, h.gov_id_number, h.ownership_proof_type,
+    SELECT h.id AS doc_id, h.user_id, h.id_full_name,
+           h.gov_id_type, h.gov_id_number, h.gov_id_photo_path,
+           h.ownership_proof_type, h.ownership_reference, h.ownership_doc_photo_path,
            h.bank_name, h.bank_account_name, h.verification_status, h.created_at,
            u.first_name, u.last_name, u.email
     FROM host_documents h
@@ -71,9 +73,21 @@ $conn->close();
                     <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
                     <span>Admin Panel</span>
                 </a>
+                <a href="analytics.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-simple" aria-hidden="true"></i></span>
+                    <span>Analytics</span>
+                </a>
+                <a href="refunds.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></span>
+                    <span>Refunds</span>
+                </a>
                 <a href="host-verifications.php" class="nav-item active">
                     <span class="nav-icon"><i class="fa-solid fa-user-check" aria-hidden="true"></i></span>
                     <span>Host Verifications</span>
+                </a>
+                <a href="submissions.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-file-lines" aria-hidden="true"></i></span>
+                    <span>Submissions</span>
                 </a>
                 <a href="properties.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
@@ -155,12 +169,20 @@ $conn->close();
                     <div class="meta"><?php echo htmlspecialchars($doc['email']); ?> · Submitted <?php echo date('M j, Y \a\t g:i A', strtotime($doc['created_at'])); ?></div>
                     <div class="details admin-detail-grid">
                         <div class="admin-detail-card">
+                            <span class="admin-detail-label">Name on ID</span>
+                            <span class="admin-detail-value"><?php echo htmlspecialchars($doc['id_full_name'] ?? ''); ?></span>
+                        </div>
+                        <div class="admin-detail-card">
                             <span class="admin-detail-label">Government ID</span>
                             <span class="admin-detail-value"><?php echo htmlspecialchars($doc['gov_id_type']); ?></span>
                         </div>
                         <div class="admin-detail-card">
                             <span class="admin-detail-label">Ownership Proof</span>
                             <span class="admin-detail-value"><?php echo htmlspecialchars($doc['ownership_proof_type']); ?></span>
+                        </div>
+                        <div class="admin-detail-card">
+                            <span class="admin-detail-label">Supporting Doc #</span>
+                            <span class="admin-detail-value"><?php echo htmlspecialchars($doc['ownership_reference'] ?? ''); ?></span>
                         </div>
                         <div class="admin-detail-card">
                             <span class="admin-detail-label">Bank</span>
@@ -170,6 +192,14 @@ $conn->close();
                             <span class="admin-detail-label">Account Name</span>
                             <span class="admin-detail-value"><?php echo htmlspecialchars($doc['bank_account_name']); ?></span>
                         </div>
+                    </div>
+                    <div class="details" style="margin-top: 14px;">
+                        <?php if (!empty($doc['gov_id_photo_path'])): ?>
+                            <a class="btn-action btn-view" style="display:inline-flex; align-items:center; gap:8px;" href="../<?php echo htmlspecialchars($doc['gov_id_photo_path']); ?>" target="_blank" rel="noopener">View Government ID Photo</a>
+                        <?php endif; ?>
+                        <?php if (!empty($doc['ownership_doc_photo_path'])): ?>
+                            <a class="btn-action btn-view" style="display:inline-flex; align-items:center; gap:8px; margin-left:8px;" href="../<?php echo htmlspecialchars($doc['ownership_doc_photo_path']); ?>" target="_blank" rel="noopener">View Supporting Document</a>
+                        <?php endif; ?>
                     </div>
                     <div class="verification-actions">
                         <form method="POST" action="approve-host.php" style="display: inline;">

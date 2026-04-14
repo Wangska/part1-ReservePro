@@ -16,7 +16,15 @@ $conn = getDBConnection();
 // Get all users
 $query = "
     SELECT 
-        u.*,
+        u.id,
+        u.first_name,
+        u.last_name,
+        u.email,
+        u.role,
+        u.email_verified,
+        u.host_verified,
+        u.host_verification_status,
+        u.created_at,
         (SELECT COUNT(*) FROM properties WHERE host_id = u.id) as total_properties,
         (SELECT COUNT(*) FROM bookings WHERE guest_id = u.id) as total_bookings
     FROM users u
@@ -127,9 +135,21 @@ $conn->close();
                     <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
                     <span>Dashboard</span>
                 </a>
+                <a href="analytics.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-simple" aria-hidden="true"></i></span>
+                    <span>Analytics</span>
+                </a>
+                <a href="refunds.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></span>
+                    <span>Refunds</span>
+                </a>
                 <a href="host-verifications.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-user-check" aria-hidden="true"></i></span>
                     <span>Host Verifications</span>
+                </a>
+                <a href="submissions.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-file-lines" aria-hidden="true"></i></span>
+                    <span>Submissions</span>
                 </a>
                 <a href="properties.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>

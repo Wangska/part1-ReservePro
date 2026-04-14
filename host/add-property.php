@@ -258,7 +258,7 @@ $conn->close();
             <?php endif; ?>
 
             <div class="host-form-shell">
-            <form method="POST" action="add-property.php" class="property-form" enctype="multipart/form-data" id="addPropertyForm">
+            <form method="POST" action="add-property.php" class="property-form" enctype="multipart/form-data" id="addPropertyForm" novalidate>
 
                 <!-- Stepper -->
                 <div class="ap-stepper">
@@ -367,6 +367,7 @@ $conn->close();
                                         </button>
                                         <p class="host-property-pin-map-hint">Uses your address fields above � drag the pin to fine-tune.</p>
                                     </div>
+                                    <p id="hostPropertyPinReverseStatus" class="host-property-pin-map-hint" style="margin: -2px 0 10px 0; opacity: 0; transition: opacity 0.2s ease;"></p>
                                     <div id="hostPropertyPinMap" role="application" aria-label="Map to position property pin"></div>
                                 </div>
 
@@ -490,7 +491,7 @@ $conn->close();
     
     <script src="../assets/js/theme-toggle.js?v=27.5"></script>
     <script src="../assets/js/host-view-site-confirm.js?v=1.0"></script>
-    <script src="../assets/js/host-property-pin-map.js?v=1"></script>
+    <script src="../assets/js/host-property-pin-map.js?v=3"></script>
     <script>
         // Photo upload
         const photoUploadArea = document.getElementById('photoUploadArea');
@@ -554,6 +555,7 @@ $conn->close();
         // Multi-step wizard � smooth slide animation
         (function () {
             const track     = document.getElementById('apWizardTrack');
+            const formEl    = document.getElementById('addPropertyForm');
             const backBtn   = document.getElementById('wizardBackBtn');
             const nextBtn   = document.getElementById('wizardNextBtn');
             const submitBtn = document.getElementById('wizardSubmitBtn');
@@ -562,12 +564,24 @@ $conn->close();
             const total     = 3;
             let current     = 1;
 
+            function getPanels() {
+                return track ? Array.from(track.querySelectorAll('.ap-wizard-panel')) : [];
+            }
+
+            function getStepForElement(el) {
+                const panels = getPanels();
+                if (!el || !panels.length) return 1;
+                const panel = el.closest('.ap-wizard-panel');
+                const idx = panel ? panels.indexOf(panel) : -1;
+                return idx >= 0 ? (idx + 1) : 1;
+            }
+
             function goTo(n) {
                 current = n;
                 if (track) track.style.transform = `translateX(-${(current - 1) * 100}%)`;
                 // Resize viewport to exactly the active panel's height
                 const viewport = track ? track.parentElement : null;
-                const panels   = track ? Array.from(track.querySelectorAll('.ap-wizard-panel')) : [];
+                const panels   = getPanels();
                 if (viewport && panels[current - 1]) {
                     requestAnimationFrame(() => {
                         const panel = panels[current - 1];
@@ -603,6 +617,81 @@ $conn->close();
 
             if (nextBtn)  nextBtn.addEventListener('click',  () => { if (current < total) goTo(current + 1); });
             if (backBtn)  backBtn.addEventListener('click',  () => { if (current > 1)     goTo(current - 1); });
+
+            // Validation: ensure all required fields are filled even across steps.
+            // We use novalidate so our popup runs (native constraint validation can block submit before JS runs).
+            let allowProgrammaticSubmit = false;
+            function validateAllFields() {
+                const requiredFields = Array.from(formEl.querySelectorAll('input[required], select[required], textarea[required]'));
+                const missing = [];
+                let firstMissingEl = null;
+
+                requiredFields.forEach(function (el) {
+                    if (el.disabled) return;
+                    const tag = (el.tagName || '').toLowerCase();
+                    const type = (el.getAttribute('type') || '').toLowerCase();
+                    let ok = true;
+                    if (tag === 'select') {
+                        ok = !!(el.value && String(el.value).trim() !== '');
+                    } else if (type === 'checkbox' || type === 'radio') {
+                        ok = el.checked;
+                    } else {
+                        ok = !!(el.value && String(el.value).trim() !== '');
+                    }
+                    if (!ok) {
+                        const label = formEl.querySelector('label[for="' + el.id + '"]');
+                        const name = label ? label.textContent.replace('*', '').trim() : (el.name || el.id || 'a field');
+                        missing.push(name);
+                        if (!firstMissingEl) firstMissingEl = el;
+                    }
+                });
+
+                const photos = document.getElementById('propertyPhotos');
+                if (photos && (!photos.files || photos.files.length === 0)) {
+                    missing.push('Property Photos (at least 1)');
+                    if (!firstMissingEl) firstMissingEl = photos;
+                }
+
+                return { missing, firstMissingEl };
+            }
+
+            function showMissingPopup(missing, firstMissingEl) {
+                const step = getStepForElement(firstMissingEl);
+                goTo(step);
+                window.setTimeout(function () {
+                    if (firstMissingEl && typeof firstMissingEl.focus === 'function') {
+                        try { firstMissingEl.focus({ preventScroll: true }); } catch (_) { firstMissingEl.focus(); }
+                    }
+                }, 120);
+                alert('Please fill up all required fields before submitting:\\n\\n- ' + missing.slice(0, 10).join('\\n- ') + (missing.length > 10 ? '\\n- ...' : ''));
+            }
+
+            if (formEl) {
+                formEl.addEventListener('submit', function (e) {
+                    if (allowProgrammaticSubmit) return;
+                    e.preventDefault();
+                    const res = validateAllFields();
+                    if (res.missing.length) {
+                        showMissingPopup(res.missing, res.firstMissingEl);
+                        return;
+                    }
+                    allowProgrammaticSubmit = true;
+                    formEl.submit();
+                });
+            }
+
+            if (submitBtn && formEl) {
+                submitBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const res = validateAllFields();
+                    if (res.missing.length) {
+                        showMissingPopup(res.missing, res.firstMissingEl);
+                        return;
+                    }
+                    allowProgrammaticSubmit = true;
+                    formEl.submit();
+                });
+            }
 
             goTo(1);
             if (typeof window.initHostPropertyPinMap === 'function') {

@@ -380,6 +380,10 @@ $conn->close();
                     <span class="nav-icon"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></span>
                     <span>Bookings</span>
                 </a>
+                <a href="refund-requests.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></span>
+                    <span>Refund Requests</span>
+                </a>
                 <a href="earnings.php" class="nav-item active">
                     <span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span>
                     <span>Earnings</span>

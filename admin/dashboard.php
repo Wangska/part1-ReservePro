@@ -30,6 +30,7 @@ $stats['pending'] = $conn->query("SELECT COUNT(*) as count FROM properties WHERE
 $stats['approved'] = $conn->query("SELECT COUNT(*) as count FROM properties WHERE status='approved'")->fetch_assoc()['count'];
 $stats['total_users'] = $conn->query("SELECT COUNT(*) as count FROM users")->fetch_assoc()['count'];
 $stats['total_bookings'] = $conn->query("SELECT COUNT(*) as count FROM bookings")->fetch_assoc()['count'];
+$stats['pending_host_verifications'] = $conn->query("SELECT COUNT(*) as count FROM host_documents WHERE verification_status='pending'")->fetch_assoc()['count'];
 
 $conn->close();
 ?>
@@ -452,9 +453,21 @@ $conn->close();
                     <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
                     <span>Admin Panel</span>
                 </a>
+                <a href="analytics.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-simple" aria-hidden="true"></i></span>
+                    <span>Analytics</span>
+                </a>
+                <a href="refunds.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></span>
+                    <span>Refunds</span>
+                </a>
                 <a href="host-verifications.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-user-check" aria-hidden="true"></i></span>
                     <span>Host Verifications</span>
+                </a>
+                <a href="submissions.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-file-lines" aria-hidden="true"></i></span>
+                    <span>Submissions</span>
                 </a>
                 <a href="properties.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
@@ -538,6 +551,15 @@ $conn->close();
                     </div>
                 </div>
                 
+                <a href="submissions.php" class="stat-card stat-card-link" title="Review user submissions">
+                    <div class="stat-icon stat-icon-sky"><i class="fa-solid fa-file-lines" aria-hidden="true"></i></div>
+                    <div class="stat-content">
+                        <p>User Submissions</p>
+                        <h3><?php echo $stats['total_users']; ?></h3>
+                        <span class="stat-meta"><?php echo (int)$stats['pending_host_verifications']; ?> host verification(s) pending.</span>
+                    </div>
+                </a>
+
                 <div class="stat-card">
                     <div class="stat-icon stat-icon-sky"><i class="fa-solid fa-users" aria-hidden="true"></i></div>
                     <div class="stat-content">

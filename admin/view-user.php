@@ -22,7 +22,15 @@ $conn = getDBConnection();
 // Load main user record with some aggregate stats
 $stmt = $conn->prepare("
     SELECT 
-        u.*,
+        u.id,
+        u.first_name,
+        u.last_name,
+        u.email,
+        u.role,
+        u.email_verified,
+        u.host_verified,
+        u.host_verification_status,
+        u.created_at,
         (SELECT COUNT(*) FROM properties WHERE host_id = u.id)               AS total_properties,
         (SELECT COUNT(*) FROM bookings  WHERE guest_id = u.id)              AS total_bookings_as_guest,
         (SELECT COUNT(*) 
@@ -270,6 +278,10 @@ function bool_label($value) {
                 <a href="host-verifications.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-user-check" aria-hidden="true"></i></span>
                     <span>Host Verifications</span>
+                </a>
+                <a href="submissions.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-file-lines" aria-hidden="true"></i></span>
+                    <span>Submissions</span>
                 </a>
                 <a href="properties.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>

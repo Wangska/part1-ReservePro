@@ -23,6 +23,7 @@ function initializeHostTables() {
         latitude DECIMAL(10, 8) NULL,
         longitude DECIMAL(11, 8) NULL,
         auto_accept_bookings TINYINT(1) NOT NULL DEFAULT 0,
+        cancellation_policy ENUM('flexible','moderate','strict') NOT NULL DEFAULT 'moderate',
         status ENUM('pending', 'approved', 'rejected', 'suspended', 'out_of_order') DEFAULT 'pending',
         admin_notes TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -116,6 +117,12 @@ function initializeHostTables() {
     if ($result && $result->num_rows == 0) {
         $conn->query("ALTER TABLE properties ADD COLUMN auto_accept_bookings TINYINT(1) NOT NULL DEFAULT 0 AFTER longitude");
     }
+
+    // Cancellation policy for refunds (flexible/moderate/strict)
+    $result = $conn->query("SHOW COLUMNS FROM properties LIKE 'cancellation_policy'");
+    if ($result && $result->num_rows == 0) {
+        $conn->query("ALTER TABLE properties ADD COLUMN cancellation_policy ENUM('flexible','moderate','strict') NOT NULL DEFAULT 'moderate' AFTER auto_accept_bookings");
+    }
     
     // Property reviews table (guests reviewing properties)
     $sql = "CREATE TABLE IF NOT EXISTS property_reviews (
@@ -191,10 +198,13 @@ function initializeHostTables() {
     $sql = "CREATE TABLE IF NOT EXISTS host_documents (
         id INT(11) AUTO_INCREMENT PRIMARY KEY,
         user_id INT(11) NOT NULL,
+        id_full_name VARCHAR(255) DEFAULT NULL,
         gov_id_type VARCHAR(100) NOT NULL,
         gov_id_number VARCHAR(100) DEFAULT NULL,
+        gov_id_photo_path VARCHAR(255) DEFAULT NULL,
         ownership_proof_type VARCHAR(100) NOT NULL,
         ownership_reference VARCHAR(255) DEFAULT NULL,
+        ownership_doc_photo_path VARCHAR(255) DEFAULT NULL,
         business_registration VARCHAR(255) DEFAULT NULL,
         tax_id VARCHAR(100) DEFAULT NULL,
         tourism_license VARCHAR(255) DEFAULT NULL,
@@ -205,6 +215,19 @@ function initializeHostTables() {
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     )";
     $conn->query($sql);
+
+    // Add missing host_documents columns for ID/photos (safe migrations)
+    $cols = [
+        ['id_full_name', "ALTER TABLE host_documents ADD COLUMN id_full_name VARCHAR(255) DEFAULT NULL AFTER user_id"],
+        ['gov_id_photo_path', "ALTER TABLE host_documents ADD COLUMN gov_id_photo_path VARCHAR(255) DEFAULT NULL AFTER gov_id_number"],
+        ['ownership_doc_photo_path', "ALTER TABLE host_documents ADD COLUMN ownership_doc_photo_path VARCHAR(255) DEFAULT NULL AFTER ownership_reference"],
+    ];
+    foreach ($cols as $c) {
+        $result = $conn->query("SHOW COLUMNS FROM host_documents LIKE '" . $conn->real_escape_string($c[0]) . "'");
+        if ($result && $result->num_rows == 0) {
+            $conn->query($c[1]);
+        }
+    }
 
     // Host verification status: pending (awaiting admin), approved, rejected
     $result = $conn->query("SHOW COLUMNS FROM host_documents LIKE 'verification_status'");
@@ -224,6 +247,66 @@ function initializeHostTables() {
         FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE,
         FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
         FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
+    )";
+    $conn->query($sql);
+
+    // Refund requests (cancellation + issue-based)
+    $sql = "CREATE TABLE IF NOT EXISTS refund_requests (
+        id INT(11) AUTO_INCREMENT PRIMARY KEY,
+        booking_id INT(11) NOT NULL,
+        requester_user_id INT(11) NOT NULL,
+        property_id INT(11) NOT NULL,
+        request_type ENUM('cancellation','issue') NOT NULL,
+        issue_type VARCHAR(60) DEFAULT NULL,
+        description TEXT DEFAULT NULL,
+        evidence_json TEXT DEFAULT NULL,
+        policy ENUM('flexible','moderate','strict') DEFAULT NULL,
+        refund_percent INT NOT NULL DEFAULT 0,
+        refund_amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+        currency VARCHAR(10) NOT NULL DEFAULT 'PHP',
+        status ENUM('pending_review','pending','approved','rejected','processing','completed') NOT NULL DEFAULT 'pending',
+        host_decision ENUM('none','approve_full','approve_partial','reject') NOT NULL DEFAULT 'none',
+        host_decision_percent INT DEFAULT NULL,
+        host_decision_note TEXT DEFAULT NULL,
+        admin_override_percent INT DEFAULT NULL,
+        admin_override_note TEXT DEFAULT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE,
+        FOREIGN KEY (requester_user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE
+    )";
+    $conn->query($sql);
+
+    // Booking cancellations (audit trail)
+    $sql = "CREATE TABLE IF NOT EXISTS booking_cancellations (
+        id INT(11) AUTO_INCREMENT PRIMARY KEY,
+        booking_id INT(11) NOT NULL,
+        user_id INT(11) NOT NULL,
+        policy ENUM('flexible','moderate','strict') NOT NULL,
+        refund_percent_preview INT NOT NULL DEFAULT 0,
+        refund_amount_preview DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+        reason VARCHAR(255) DEFAULT NULL,
+        cancelled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    )";
+    $conn->query($sql);
+
+    // Refund logs (every action is logged)
+    $sql = "CREATE TABLE IF NOT EXISTS refund_logs (
+        id INT(11) AUTO_INCREMENT PRIMARY KEY,
+        refund_request_id INT(11) NOT NULL,
+        actor_user_id INT(11) NOT NULL,
+        actor_role VARCHAR(20) NOT NULL,
+        action VARCHAR(60) NOT NULL,
+        from_status VARCHAR(30) DEFAULT NULL,
+        to_status VARCHAR(30) DEFAULT NULL,
+        note TEXT DEFAULT NULL,
+        meta_json TEXT DEFAULT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (refund_request_id) REFERENCES refund_requests(id) ON DELETE CASCADE,
+        FOREIGN KEY (actor_user_id) REFERENCES users(id) ON DELETE CASCADE
     )";
     $conn->query($sql);
     

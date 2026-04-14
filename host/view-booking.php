@@ -86,6 +86,8 @@ switch ($booking['status']) {
 
 // Hosts may approve a booking only while it's pending
 $canApprove = ($booking['status'] === 'pending');
+
+$justConfirmed = isset($_GET['confirmed']) && $_GET['confirmed'] === '1';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -267,9 +269,66 @@ $canApprove = ($booking['status'] === 'pending');
             color: #b91c1c !important;
             background: rgba(239, 68, 68, 0.18) !important;
         }
+
+        .rp-toast {
+            position: fixed;
+            right: 18px;
+            top: 18px;
+            z-index: 9999;
+            display: none;
+            max-width: 420px;
+            border-radius: 16px;
+            padding: 14px 14px;
+            border: 1px solid rgba(34, 197, 94, 0.26);
+            background: rgba(17, 24, 39, 0.92);
+            box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+            color: #E2E8F0;
+        }
+        .rp-toast strong { color: #86efac; }
+        .rp-toast .row { display:flex; gap: 10px; align-items:flex-start; }
+        .rp-toast .icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background: rgba(34,197,94,0.14);
+            color:#86efac;
+            flex: 0 0 auto;
+        }
+        .rp-toast .msg { font-weight: 800; line-height: 1.4; }
+        .rp-toast .sub { margin-top: 4px; font-size: 13px; color:#CBD5E1; font-weight: 700; }
+        .rp-toast .x {
+            margin-left: auto;
+            background: transparent;
+            border: 0;
+            color: #CBD5E1;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0 6px;
+        }
+
+        body.dashboard-page.light-mode .rp-toast {
+            background: #ffffff;
+            color: #0f172a;
+            border-color: rgba(34, 197, 94, 0.25);
+            box-shadow: 0 18px 50px rgba(0,0,0,0.12);
+        }
+        body.dashboard-page.light-mode .rp-toast .sub { color:#475569; }
     </style>
 </head>
 <body class="dashboard-page host-clean-page host-detail-page">
+    <div class="rp-toast" id="rpToast">
+        <div class="row">
+            <div class="icon"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></div>
+            <div>
+                <div class="msg"><strong>Congrats!</strong> You just approved this booking.</div>
+                <div class="sub">The guest will see it as confirmed.</div>
+            </div>
+            <button class="x" type="button" id="rpToastClose" aria-label="Close">&times;</button>
+        </div>
+    </div>
     <div class="host-layout">
         <aside class="host-sidebar">
             <div class="sidebar-header">
@@ -283,6 +342,7 @@ $canApprove = ($booking['status'] === 'pending');
                 <a href="properties.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span><span>My Properties</span></a>
                 <a href="add-property.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-plus" aria-hidden="true"></i></span><span>Add Property</span></a>
                 <a href="bookings.php" class="nav-item active"><span class="nav-icon"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></span><span>Bookings</span></a>
+                <a href="refund-requests.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></span><span>Refund Requests</span></a>
                 <a href="earnings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span><span>Earnings</span></a>
                 <a href="messages.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span><span>Messages</span></a>
                 <a href="../home.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span><span>View Site</span></a>
@@ -382,6 +442,26 @@ $canApprove = ($booking['status'] === 'pending');
 
     <script src="../assets/js/theme-toggle.js?v=27.5"></script>
     <script src="../assets/js/host-view-site-confirm.js?v=1.0"></script>
+    <script>
+        (function() {
+            const show = <?php echo $justConfirmed ? 'true' : 'false'; ?>;
+            if (!show) return;
+            const toast = document.getElementById('rpToast');
+            const close = document.getElementById('rpToastClose');
+            if (!toast) return;
+            toast.style.display = 'block';
+            function hide() { toast.style.display = 'none'; }
+            if (close) close.addEventListener('click', hide);
+            setTimeout(hide, 5200);
+
+            // Remove flag from URL so refresh doesn't re-toast
+            try {
+                const u = new URL(window.location.href);
+                u.searchParams.delete('confirmed');
+                window.history.replaceState({}, document.title, u.toString());
+            } catch (e) {}
+        })();
+    </script>
 </body>
 </html>
 
