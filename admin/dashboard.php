@@ -47,8 +47,15 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/admin.css?v=25.0">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
+        body.admin-dashboard-page {
+            background: #06090F !important;
+        }
+        body.admin-dashboard-page::before,
+        body.admin-dashboard-page::after {
+            display: none !important;
+        }
         .admin-dashboard-page .host-main {
-            background: linear-gradient(180deg, rgba(15, 23, 42, 0.18) 0%, rgba(15, 15, 15, 0) 260px);
+            background: transparent;
         }
 
         .admin-dashboard-page .dashboard-hero {
@@ -320,13 +327,9 @@ $conn->close();
         .admin-dashboard-page .btn-approve,
         .admin-dashboard-page .btn-reject,
         .admin-dashboard-page .btn-view {
-            min-height: 42px;
-            padding: 10px 18px;
-            border-radius: 12px;
-        }
-
-        .admin-dashboard-page .btn-view {
-            border-width: 1px;
+            min-height: 38px;
+            padding: 8px 14px;
+            border-radius: 10px;
         }
 
         body.light-mode.admin-dashboard-page .host-main {
@@ -451,7 +454,7 @@ $conn->close();
             <nav class="sidebar-nav">
                 <a href="dashboard.php" class="nav-item active">
                     <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
-                    <span>Admin Panel</span>
+                    <span>Dashboard</span>
                 </a>
                 <a href="analytics.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-chart-simple" aria-hidden="true"></i></span>
@@ -489,6 +492,10 @@ $conn->close();
                     <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
                     <span>Commission</span>
                 </a>
+                <a href="geocode-all-properties.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i></span>
+                    <span>Geocode Properties</span>
+                </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
                     <span>View Site</span>
@@ -522,12 +529,12 @@ $conn->close();
                 <div>
                     <span class="dashboard-eyebrow">Admin Overview</span>
                     <h1>Admin Dashboard</h1>
-                    <p class="subtitle">Review new listings, track key activity, and keep approvals moving without digging through clutter.</p>
+                    <p class="subtitle"></p>
                 </div>
                 <div class="dashboard-summary-card">
                     <span class="summary-label">Needs Attention</span>
                     <strong><?php echo $stats['pending']; ?></strong>
-                    <span class="summary-text">properties currently waiting for review</span>
+                    <span class="summary-text"></span>
                 </div>
             </div>
 
@@ -538,7 +545,7 @@ $conn->close();
                     <div class="stat-content">
                         <p>Total Properties</p>
                         <h3><?php echo $stats['total_properties']; ?></h3>
-                        <span class="stat-meta">All approved and pending listings across the platform.</span>
+                        <span class="stat-meta"></span>
                     </div>
                 </div>
                 
@@ -547,7 +554,7 @@ $conn->close();
                     <div class="stat-content">
                         <p>Pending Review</p>
                         <h3><?php echo $stats['pending']; ?></h3>
-                        <span class="stat-meta">Submissions that still need an approval decision.</span>
+                        <span class="stat-meta"></span>
                     </div>
                 </div>
                 
@@ -556,7 +563,7 @@ $conn->close();
                     <div class="stat-content">
                         <p>User Submissions</p>
                         <h3><?php echo $stats['total_users']; ?></h3>
-                        <span class="stat-meta"><?php echo (int)$stats['pending_host_verifications']; ?> host verification(s) pending.</span>
+                        <span class="stat-meta"></span>
                     </div>
                 </a>
 
@@ -565,7 +572,7 @@ $conn->close();
                     <div class="stat-content">
                         <p>Total Users</p>
                         <h3><?php echo $stats['total_users']; ?></h3>
-                        <span class="stat-meta">Guest, host, and admin accounts in the system.</span>
+                        <span class="stat-meta"></span>
                     </div>
                 </div>
                 
@@ -574,7 +581,7 @@ $conn->close();
                     <div class="stat-content">
                         <p>Total Bookings</p>
                         <h3><?php echo $stats['total_bookings']; ?></h3>
-                        <span class="stat-meta">Confirmed and completed reservation activity.</span>
+                        <span class="stat-meta"></span>
                     </div>
                 </div>
             </div>
@@ -583,7 +590,6 @@ $conn->close();
             <div class="section-header dashboard-section-header">
                 <div>
                     <h2>Pending Property Reviews</h2>
-                    <p>Start with the most recent submissions so hosts get a faster response.</p>
                 </div>
                 <span class="badge badge-pending"><?php echo count($pending_properties); ?> pending</span>
             </div>

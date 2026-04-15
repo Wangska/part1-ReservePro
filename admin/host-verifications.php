@@ -43,6 +43,13 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/admin.css?v=14.3">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
+        body.admin-page:not(.light-mode) {
+            background: #06090F !important;
+        }
+        body.admin-page::before,
+        body.admin-page::after {
+            display: none !important;
+        }
         .verification-card {
             background: var(--bg-secondary, #1A1A1A);
             border: 1px solid var(--border-color, #3A3A3A);
@@ -71,7 +78,7 @@ $conn->close();
             <nav class="sidebar-nav">
                 <a href="dashboard.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
-                    <span>Admin Panel</span>
+                    <span>Dashboard</span>
                 </a>
                 <a href="analytics.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-chart-simple" aria-hidden="true"></i></span>
@@ -109,6 +116,10 @@ $conn->close();
                     <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
                     <span>Commission</span>
                 </a>
+                <a href="geocode-all-properties.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i></span>
+                    <span>Geocode Properties</span>
+                </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
                     <span>View Site</span>
@@ -137,12 +148,12 @@ $conn->close();
                 <div class="admin-page-hero-content">
                     <span class="admin-page-eyebrow">Host Review Queue</span>
                     <h1>Host Verifications</h1>
-                    <p class="subtitle">Review identity, ownership, and payout details before giving hosts access to the publishing tools.</p>
+                    <p class="subtitle"></p>
                 </div>
                 <div class="admin-page-summary">
                     <span class="admin-page-summary-label">Pending Requests</span>
                     <strong><?php echo count($pending); ?></strong>
-                    <span class="admin-page-summary-text">accounts awaiting a decision</span>
+                    <span class="admin-page-summary-text"></span>
                 </div>
             </div>
 
@@ -159,7 +170,6 @@ $conn->close();
                 <div class="empty-state admin-empty-state admin-surface">
                     <span class="empty-icon admin-empty-icon"><i class="fa-solid fa-folder-open" aria-hidden="true"></i></span>
                     <h3>No pending verifications</h3>
-                    <p>All host verification requests have been reviewed.</p>
                 </div>
             <?php else: ?>
                 <p class="admin-inline-note"><?php echo count($pending); ?> request(s) are ready for review. Start with the newest submissions to keep host onboarding moving.</p>
@@ -195,22 +205,22 @@ $conn->close();
                     </div>
                     <div class="details" style="margin-top: 14px;">
                         <?php if (!empty($doc['gov_id_photo_path'])): ?>
-                            <a class="btn-action btn-view" style="display:inline-flex; align-items:center; gap:8px;" href="../<?php echo htmlspecialchars($doc['gov_id_photo_path']); ?>" target="_blank" rel="noopener">View Government ID Photo</a>
+                            <a class="btn-action btn-view" style="display:inline-flex; align-items:center; gap:8px;" href="../<?php echo htmlspecialchars($doc['gov_id_photo_path']); ?>" target="_blank" rel="noopener"><i class="fa-solid fa-id-card"></i> View Government ID</a>
                         <?php endif; ?>
                         <?php if (!empty($doc['ownership_doc_photo_path'])): ?>
-                            <a class="btn-action btn-view" style="display:inline-flex; align-items:center; gap:8px; margin-left:8px;" href="../<?php echo htmlspecialchars($doc['ownership_doc_photo_path']); ?>" target="_blank" rel="noopener">View Supporting Document</a>
+                            <a class="btn-action btn-view" style="display:inline-flex; align-items:center; gap:8px;" href="../<?php echo htmlspecialchars($doc['ownership_doc_photo_path']); ?>" target="_blank" rel="noopener"><i class="fa-solid fa-file-image"></i> View Supporting Doc</a>
                         <?php endif; ?>
                     </div>
                     <div class="verification-actions">
                         <form method="POST" action="approve-host.php" style="display: inline;">
                             <input type="hidden" name="doc_id" value="<?php echo (int)$doc['doc_id']; ?>">
                             <input type="hidden" name="action" value="approve">
-                            <button type="submit" class="btn-approve">Approve</button>
+                            <button type="submit" class="btn-approve"><i class="fa-solid fa-circle-check"></i> Approve</button>
                         </form>
                         <form method="POST" action="approve-host.php" style="display: inline;">
                             <input type="hidden" name="doc_id" value="<?php echo (int)$doc['doc_id']; ?>">
                             <input type="hidden" name="action" value="reject">
-                            <button type="submit" class="btn-reject">Reject</button>
+                            <button type="submit" class="btn-reject"><i class="fa-solid fa-circle-xmark"></i> Reject</button>
                         </form>
                     </div>
                 </div>

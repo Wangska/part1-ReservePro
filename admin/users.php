@@ -60,6 +60,13 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/admin.css?v=10.4">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
+        body.admin-page:not(.light-mode) {
+            background: #06090F !important;
+        }
+        body.admin-page::before,
+        body.admin-page::after {
+            display: none !important;
+        }
         .user-avatar-large {
             width: 48px;
             height: 48px;
@@ -117,6 +124,23 @@ $conn->close();
             color: #EF4444;
             border: 1px solid rgba(239, 68, 68, 0.3);
         }
+
+        .admin-users-page .btn-action.btn-view {
+            background: transparent !important;
+            color: #D4A574 !important;
+            border: 1px solid rgba(212,165,116,0.32) !important;
+            border-radius: 10px !important;
+            min-height: unset !important;
+            font-weight: 600;
+            font-size: 13px;
+            transition: background 0.18s, border-color 0.18s, color 0.18s, box-shadow 0.18s;
+        }
+        .admin-users-page .btn-action.btn-view:hover {
+            background: linear-gradient(135deg, #D4A574, #B8935F) !important;
+            color: #0F0F0F !important;
+            border-color: transparent !important;
+            box-shadow: 0 8px 20px rgba(212,165,116,0.22) !important;
+        }
     </style>
 </head>
 <body class="dashboard-page admin-page admin-clean-page admin-users-page">
@@ -171,6 +195,10 @@ $conn->close();
                     <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
                     <span>Commission</span>
                 </a>
+                <a href="geocode-all-properties.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i></span>
+                    <span>Geocode Properties</span>
+                </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
                     <span>View Site</span>
@@ -204,12 +232,12 @@ $conn->close();
                 <div class="admin-page-hero-content">
                     <span class="admin-page-eyebrow">Account Directory</span>
                     <h1>Users</h1>
-                    <p>Monitor account growth, filter by role, and quickly open user details when you need context.</p>
+                    <p></p>
                 </div>
                 <div class="admin-page-summary">
                     <span class="admin-page-summary-label">Active Hosts</span>
                     <strong><?php echo $stats['hosts']; ?></strong>
-                    <span class="admin-page-summary-text">host accounts currently in the platform</span>
+                    <span class="admin-page-summary-text"></span>
                 </div>
             </div>
 
@@ -220,7 +248,6 @@ $conn->close();
                     <div class="stat-content admin-metric-copy">
                         <p>Total Users</p>
                         <h3><?php echo $stats['total']; ?></h3>
-                        <span class="admin-metric-note">Every registered account across all roles.</span>
                     </div>
                 </div>
                 <div class="stat-card admin-metric-card">
@@ -228,7 +255,6 @@ $conn->close();
                     <div class="stat-content admin-metric-copy">
                         <p>Guests</p>
                         <h3><?php echo $stats['guests']; ?></h3>
-                        <span class="admin-metric-note">Users who browse and make bookings.</span>
                     </div>
                 </div>
                 <div class="stat-card admin-metric-card">
@@ -236,7 +262,6 @@ $conn->close();
                     <div class="stat-content admin-metric-copy">
                         <p>Hosts</p>
                         <h3><?php echo $stats['hosts']; ?></h3>
-                        <span class="admin-metric-note">Accounts allowed to manage property listings.</span>
                     </div>
                 </div>
                 <div class="stat-card admin-metric-card">
@@ -244,7 +269,6 @@ $conn->close();
                     <div class="stat-content admin-metric-copy">
                         <p>Administrators</p>
                         <h3><?php echo $stats['admins']; ?></h3>
-                        <span class="admin-metric-note">Accounts with platform-wide control.</span>
                     </div>
                 </div>
             </div>
@@ -254,7 +278,7 @@ $conn->close();
                 <div class="table-header admin-surface-header">
                     <div>
                         <h2>All Users</h2>
-                        <p>Use the role filters to focus on guests, hosts, or administrators.</p>
+                        <p></p>
                     </div>
                     <div class="filter-tabs">
                         <button type="button" class="filter-tab active" onclick="filterUsers('all', this)">All</button>

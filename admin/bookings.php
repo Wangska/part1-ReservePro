@@ -65,6 +65,13 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/admin.css?v=10.5">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
+        body.admin-page:not(.light-mode) {
+            background: #06090F !important;
+        }
+        body.admin-page::before,
+        body.admin-page::after {
+            display: none !important;
+        }
         .booking-id {
             font-family: 'Courier New', monospace;
             color: #D4A574;
@@ -105,6 +112,10 @@ $conn->close();
                     <span class="nav-icon"><i class="fa-solid fa-user-check" aria-hidden="true"></i></span>
                     <span>Host Verifications</span>
                 </a>
+                <a href="submissions.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-file-lines" aria-hidden="true"></i></span>
+                    <span>Submissions</span>
+                </a>
                 <a href="properties.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
                     <span>All Properties</span>
@@ -124,6 +135,10 @@ $conn->close();
                 <a href="commission.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
                     <span>Commission</span>
+                </a>
+                <a href="geocode-all-properties.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i></span>
+                    <span>Geocode Properties</span>
                 </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
@@ -155,12 +170,12 @@ $conn->close();
                 <div class="admin-page-hero-content">
                     <span class="admin-page-eyebrow">Reservation Activity</span>
                     <h1>All Bookings</h1>
-                    <p>Track reservation volume, monitor booking status, and review platform revenue in one simple view.</p>
+                    <p></p>
                 </div>
                 <div class="admin-page-summary">
                     <span class="admin-page-summary-label">Confirmed Bookings</span>
                     <strong><?php echo $stats['confirmed']; ?></strong>
-                    <span class="admin-page-summary-text">bookings currently marked confirmed</span>
+                    <span class="admin-page-summary-text"></span>
                 </div>
             </div>
 
@@ -171,7 +186,6 @@ $conn->close();
                     <div class="stat-content admin-metric-copy">
                         <p>Total Bookings</p>
                         <h3><?php echo $stats['total']; ?></h3>
-                        <span class="admin-metric-note">Every reservation record across all statuses.</span>
                     </div>
                 </div>
                 <div class="stat-card admin-metric-card">
@@ -179,7 +193,6 @@ $conn->close();
                     <div class="stat-content admin-metric-copy">
                         <p>Confirmed</p>
                         <h3><?php echo $stats['confirmed']; ?></h3>
-                        <span class="admin-metric-note">Trips that are approved and ready to happen.</span>
                     </div>
                 </div>
                 <div class="stat-card admin-metric-card">
@@ -187,7 +200,6 @@ $conn->close();
                     <div class="stat-content admin-metric-copy">
                         <p>Pending</p>
                         <h3><?php echo $stats['pending']; ?></h3>
-                        <span class="admin-metric-note">Reservations still waiting for completion or approval.</span>
                     </div>
                 </div>
                 <div class="stat-card admin-metric-card">
@@ -195,7 +207,6 @@ $conn->close();
                     <div class="stat-content admin-metric-copy">
                         <p>Total Revenue</p>
                         <h3>₱<?php echo number_format($stats['total_revenue'], 0); ?></h3>
-                        <span class="admin-metric-note">Gross booking value recorded on the platform.</span>
                     </div>
                 </div>
             </div>
@@ -205,7 +216,7 @@ $conn->close();
                 <div class="table-header admin-surface-header">
                     <div>
                         <h2>Booking History</h2>
-                        <p>Filter by status to isolate the reservations that need follow-up.</p>
+                        <p></p>
                     </div>
                     <div class="filter-tabs">
                         <button type="button" class="filter-tab active" onclick="filterBookings('all', this)">All</button>

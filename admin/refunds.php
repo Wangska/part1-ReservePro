@@ -71,61 +71,328 @@ function badge($s) {
     <link rel="stylesheet" href="../assets/css/admin.css?v=25.0">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
-        .rf-hero {
-            background: linear-gradient(135deg, rgba(17, 24, 39, 0.96), rgba(30, 41, 59, 0.88));
-            border: 1px solid rgba(212, 165, 116, 0.22);
-            border-radius: 22px;
-            padding: 22px 24px;
-            margin-bottom: 16px;
-            box-shadow: 0 22px 50px rgba(0,0,0,0.22);
-            display:flex; justify-content: space-between; align-items:flex-start; flex-wrap:wrap; gap: 12px;
+        body.admin-page:not(.light-mode) {
+            background: #06090F !important;
         }
-        .rf-hero h1 { margin:0 0 6px; color:#fff !important; font-size: 24px; }
-        .rf-hero p { margin:0; color:#CBD5E1 !important; }
-        .rf-pills { display:flex; gap:8px; flex-wrap:wrap; }
-        .rf-pill {
-            display:inline-flex; gap:8px; align-items:center;
-            padding: 10px 12px;
+        body.admin-page::before,
+        body.admin-page::after {
+            display: none !important;
+        }
+        /* === Refunds Page – Modern Admin === */
+        .admin-refunds-page .host-main {
+            background: linear-gradient(180deg, rgba(15,23,42,0.18) 0%, rgba(15,15,15,0) 260px);
+        }
+
+        /* Hero */
+        .refunds-hero {
+            display: flex;
+            align-items: stretch;
+            gap: 20px;
+            background: linear-gradient(135deg, rgba(17,24,39,0.96), rgba(30,41,59,0.88));
+            border: 1px solid rgba(212,165,116,0.22);
+            border-radius: 24px;
+            padding: 28px 30px;
+            margin-bottom: 22px;
+            box-shadow: 0 24px 48px rgba(0,0,0,0.28);
+        }
+        .refunds-hero-content { flex: 1; }
+        .refunds-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 6px 13px;
+            margin-bottom: 14px;
             border-radius: 999px;
-            border: 1px solid rgba(255,255,255,0.12);
-            background: rgba(255,255,255,0.06);
-            color:#E2E8F0;
-            text-decoration:none;
-            font-weight: 900;
+            background: rgba(212,165,116,0.14);
+            color: #F3D9B4;
             font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
         }
-        .rf-pill.active { border-color: rgba(212,165,116,0.5); color:#FDE68A; }
-        .rf-table { width:100%; border-collapse: collapse; }
-        .rf-table th, .rf-table td { padding: 12px 12px; border-bottom: 1px solid rgba(148,163,184,0.12); font-size: 13px; vertical-align: top; }
-        .rf-table th { text-align:left; color:#CBD5E1 !important; font-weight: 900; text-transform: uppercase; font-size: 11px; letter-spacing: 0.04em; }
-        .rf-table td { color:#F1F5F9 !important; font-weight: 700; }
-        .badge { display:inline-flex; align-items:center; gap:6px; padding: 6px 10px; border-radius:999px; font-weight: 900; font-size: 12px; border:1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.06); }
-        .badge-pending { color:#FDE68A; border-color: rgba(234,179,8,0.28); }
-        .badge-approved { color:#86efac; border-color: rgba(34,197,94,0.28); }
-        .badge-rejected { color:#fecaca; border-color: rgba(239,68,68,0.28); }
-        .badge-processing { color:#93c5fd; border-color: rgba(59,130,246,0.28); }
-        .badge-completed { color:#c7d2fe; border-color: rgba(99,102,241,0.28); }
-        .rf-btn {
-            display:inline-flex; align-items:center; gap:8px;
-            padding: 9px 10px; border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.14);
+        .refunds-hero h1 { margin: 0 0 10px; color: #fff !important; font-size: 26px; }
+        .refunds-hero .subtitle { color: #CBD5E1; font-size: 14px; line-height: 1.6; margin: 0; max-width: 580px; }
+        .refunds-summary-card {
+            min-width: 196px;
+            padding: 22px;
+            border-radius: 20px;
             background: rgba(255,255,255,0.06);
-            color:#E2E8F0; text-decoration:none; font-weight: 900; font-size: 12px;
+            border: 1px solid rgba(255,255,255,0.12);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 6px;
         }
-        .rf-btn:hover { background: rgba(255,255,255,0.09); }
-        .rf-card { background: rgba(17,24,39,0.78); border: 1px solid rgba(148,163,184,0.16); border-radius: 18px; overflow:hidden; }
-        .rf-head { padding: 14px 16px; border-bottom: 1px solid rgba(148,163,184,0.12); display:flex; justify-content: space-between; align-items:center; gap:12px; flex-wrap:wrap; }
-        .rf-head h2 { margin:0; color:#fff !important; font-size: 15px; }
-        .rf-note { color:#94A3B8 !important; font-size: 13px; margin:0; }
-        body.light-mode .rf-card { background:#fff !important; border-color:#E2E8F0 !important; }
-        body.light-mode .rf-table th { color:#334155 !important; }
-        body.light-mode .rf-table td { color:#0f172a !important; }
-        body.light-mode .rf-head h2 { color:#0f172a !important; }
-        body.light-mode .rf-note { color:#475569 !important; }
-        body.light-mode .rf-btn { background:#fff !important; border-color:#E2E8F0 !important; color:#0f172a !important; }
+        .refunds-summary-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: #94A3B8; font-weight: 700; }
+        .refunds-summary-card strong { font-size: 38px; line-height: 1; color: #FFFFFF; }
+        .refunds-summary-desc { font-size: 13px; color: #CBD5E1; }
+
+        /* Status stat cards */
+        .refunds-stats {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+        .refund-stat-card {
+            padding: 18px 20px;
+            border-radius: 18px;
+            background: rgba(17,24,39,0.86);
+            border: 1px solid rgba(148,163,184,0.16);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.14);
+            transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s;
+            text-decoration: none;
+            display: block;
+        }
+        .refund-stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 18px 32px rgba(0,0,0,0.2);
+            border-color: rgba(212,165,116,0.32);
+        }
+        .refund-stat-card.active-stat {
+            border-color: rgba(212,165,116,0.45);
+            background: rgba(212,165,116,0.07);
+        }
+        .refund-stat-icon {
+            width: 44px; height: 44px;
+            border-radius: 13px;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 17px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(148,163,184,0.14);
+            margin-bottom: 13px;
+        }
+        .refund-stat-label { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #94A3B8; margin-bottom: 4px; }
+        .refund-stat-value { font-size: 28px; font-weight: 800; color: #fff; line-height: 1; }
+
+        /* Table card */
+        .refunds-table-card {
+            background: rgba(17,24,39,0.86);
+            border: 1px solid rgba(148,163,184,0.16);
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 18px 36px rgba(0,0,0,0.18);
+        }
+        .refunds-table-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid rgba(148,163,184,0.12);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .refunds-table-header h2 { margin: 0; color: #fff !important; font-size: 16px; }
+        .refunds-count-badge {
+            display: inline-flex; align-items: center;
+            padding: 4px 11px; border-radius: 999px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(148,163,184,0.16);
+            color: #CBD5E1; font-size: 12px; font-weight: 700;
+        }
+
+        /* Filter tabs */
+        .refunds-filter-tabs {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .refunds-filter-tab {
+            display: inline-flex; align-items: center; gap: 7px;
+            appearance: none;
+            border: 1px solid rgba(148,163,184,0.16);
+            background: rgba(255,255,255,0.04);
+            color: #CBD5E1;
+            min-height: 38px;
+            padding: 8px 16px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s;
+        }
+        .refunds-filter-tab:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(212,165,116,0.38);
+            color: #FFFFFF;
+            transform: translateY(-1px);
+        }
+        .refunds-filter-tab.active {
+            background: linear-gradient(135deg, #D4A574, #B8935F);
+            color: #0F0F0F;
+            border-color: transparent;
+            box-shadow: 0 10px 24px rgba(212,165,116,0.22);
+        }
+        /* Table */
+        .rf-table-wrap { overflow-x: auto; }
+        .rf-new-table { width: 100%; border-collapse: collapse; }
+        .rf-new-table th {
+            padding: 11px 16px;
+            text-align: left;
+            color: #475569 !important;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            border-bottom: 1px solid rgba(148,163,184,0.12);
+            background: rgba(0,0,0,0.12);
+            white-space: nowrap;
+        }
+        .rf-new-table td {
+            padding: 13px 16px;
+            border-bottom: 1px solid rgba(148,163,184,0.07);
+            vertical-align: middle;
+        }
+        .rf-new-table tbody tr { transition: background 0.14s; }
+        .rf-new-table tbody tr:hover { background: rgba(255,255,255,0.025); }
+        .rf-new-table tbody tr:last-child td { border-bottom: none; }
+
+        /* User cell */
+        .rf-user-cell { display: flex; align-items: center; gap: 10px; }
+        .rf-user-avatar {
+            width: 34px; height: 34px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 800;
+            color: #fff; flex-shrink: 0;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .rf-user-name { color: #F1F5F9 !important; font-weight: 700; font-size: 13px; }
+        .rf-user-email { color: #475569 !important; font-size: 12px; font-weight: 600; }
+
+        /* Type badge */
+        .rf-type-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 10px; border-radius: 8px;
+            font-size: 11px; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 0.04em;
+            white-space: nowrap;
+        }
+        .rf-type-cancellation { background: rgba(99,102,241,0.12); color: #A5B4FC; border: 1px solid rgba(99,102,241,0.2); }
+        .rf-type-issue { background: rgba(245,158,11,0.12); color: #FCD34D; border: 1px solid rgba(245,158,11,0.2); }
+
+        /* Property cell */
+        .rf-prop-title { color: #F1F5F9 !important; font-weight: 700; font-size: 13px; }
+        .rf-prop-loc { color: #475569 !important; font-size: 12px; font-weight: 600; margin-top: 2px; }
+
+        /* Amount */
+        .rf-amount-pct { color: #F1F5F9 !important; font-weight: 800; font-size: 14px; }
+        .rf-amount-val { color: #4ADE80 !important; font-size: 12px; font-weight: 700; margin-top: 2px; }
+
+        /* Status badge */
+        .rf-status {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 5px 10px; border-radius: 999px;
+            font-weight: 800; font-size: 12px;
+            border: 1px solid; white-space: nowrap;
+        }
+        .rf-status-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+        .rf-status-pending      { color:#FDE68A; border-color:rgba(234,179,8,0.3);    background:rgba(234,179,8,0.08);    }
+        .rf-status-pending      .rf-status-dot { background:#FDE68A; }
+        .rf-status-pending_review { color:#FCD34D; border-color:rgba(245,158,11,0.3);  background:rgba(245,158,11,0.08);  }
+        .rf-status-pending_review .rf-status-dot { background:#FCD34D; }
+        .rf-status-approved     { color:#86EFAC; border-color:rgba(34,197,94,0.3);    background:rgba(34,197,94,0.08);    }
+        .rf-status-approved     .rf-status-dot { background:#86EFAC; }
+        .rf-status-rejected     { color:#FCA5A5; border-color:rgba(239,68,68,0.3);    background:rgba(239,68,68,0.08);    }
+        .rf-status-rejected     .rf-status-dot { background:#FCA5A5; }
+        .rf-status-processing   { color:#93C5FD; border-color:rgba(59,130,246,0.3);   background:rgba(59,130,246,0.08);   }
+        .rf-status-processing   .rf-status-dot { background:#93C5FD; }
+        .rf-status-completed    { color:#C4B5FD; border-color:rgba(139,92,246,0.3);   background:rgba(139,92,246,0.08);   }
+        .rf-status-completed    .rf-status-dot { background:#C4B5FD; }
+
+        /* Action button */
+        .rf-manage-btn {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 8px 14px; border-radius: 10px;
+            background: rgba(212,165,116,0.1);
+            border: 1px solid rgba(212,165,116,0.24);
+            color: #F3D9B4 !important;
+            text-decoration: none;
+            font-weight: 700; font-size: 12px;
+            transition: background 0.15s, border-color 0.15s;
+            white-space: nowrap;
+        }
+        .rf-manage-btn:hover { background: rgba(212,165,116,0.2); border-color: rgba(212,165,116,0.4); }
+
+        /* ID chip */
+        .rf-id {
+            color: #475569 !important; font-size: 12px; font-weight: 700;
+            font-family: monospace;
+            background: rgba(255,255,255,0.04);
+            padding: 3px 8px; border-radius: 6px;
+            border: 1px solid rgba(148,163,184,0.1);
+        }
+
+        /* Host decision */
+        .rf-decision-val { color: #F1F5F9 !important; font-weight: 700; font-size: 13px; text-transform: capitalize; }
+        .rf-decision-pct { color: #475569 !important; font-size: 12px; font-weight: 600; margin-top: 2px; }
+
+        /* Empty state */
+        .rf-empty { padding: 64px 36px; text-align: center; }
+        .rf-empty-icon {
+            width: 72px; height: 72px;
+            margin: 0 auto 18px;
+            border-radius: 20px;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 28px; color: #FDE68A;
+            background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.2);
+        }
+        .rf-empty h3 { color: #F1F5F9 !important; margin: 0 0 8px; font-size: 18px; }
+        .rf-empty p  { color: #475569 !important; font-size: 14px; margin: 0; }
+
+        /* Light mode */
+        body.light-mode.admin-refunds-page .host-main { background: linear-gradient(180deg,rgba(248,250,252,.9) 0%,rgba(248,250,252,0) 260px); }
+        body.light-mode .refunds-hero { background:#fff; border-color:rgba(15,23,42,.08); box-shadow:0 16px 32px rgba(15,23,42,.08); }
+        body.light-mode .refunds-hero h1 { color:#0F172A !important; }
+        body.light-mode .refunds-hero .subtitle { color:#475569; }
+        body.light-mode .refunds-eyebrow { background:rgba(184,147,95,.12); color:#8B6F47; }
+        body.light-mode .refunds-summary-card { background:#F8FAFC; border-color:rgba(15,23,42,.08); }
+        body.light-mode .refunds-summary-label { color:#64748B; }
+        body.light-mode .refunds-summary-card strong { color:#0F172A; }
+        body.light-mode .refunds-summary-desc { color:#475569; }
+        body.light-mode .refund-stat-card { background:#fff; border-color:rgba(15,23,42,.08); box-shadow:0 8px 16px rgba(15,23,42,.06); }
+        body.light-mode .refund-stat-icon { background:#F8FAFC; border-color:rgba(15,23,42,.08); }
+        body.light-mode .refund-stat-label { color:#64748B; }
+        body.light-mode .refund-stat-value { color:#0F172A; }
+        body.light-mode .refunds-table-card { background:#fff; border-color:rgba(15,23,42,.08); box-shadow:0 16px 32px rgba(15,23,42,.08); }
+        body.light-mode .refunds-table-header h2 { color:#0F172A !important; }
+        body.light-mode .refunds-count-badge { background:#F8FAFC; border-color:rgba(15,23,42,.08); color:#475569; }
+        body.light-mode .refunds-filter-tabs { gap: 8px; }
+        body.light-mode .refunds-filter-tab { background:rgba(15,23,42,.04); border-color:rgba(15,23,42,.12); color:#475569; }
+        body.light-mode .refunds-filter-tab:hover { background:rgba(15,23,42,.08); border-color:rgba(184,147,95,.4); color:#334155; transform:translateY(-1px); }
+        body.light-mode .refunds-filter-tab.active { background:linear-gradient(135deg,#D4A574,#B8935F); color:#0F0F0F; border-color:transparent; box-shadow:0 10px 24px rgba(212,165,116,.22); }
+
+        body.light-mode .rf-new-table th { color:#64748B !important; background:rgba(15,23,42,.02); border-bottom-color:rgba(15,23,42,.08); }
+        body.light-mode .rf-new-table td { border-bottom-color:rgba(15,23,42,.06); }
+        body.light-mode .rf-new-table tbody tr:hover { background:rgba(15,23,42,.02); }
+        body.light-mode .rf-user-name { color:#0F172A !important; }
+        body.light-mode .rf-user-email { color:#64748B !important; }
+        body.light-mode .rf-prop-title { color:#0F172A !important; }
+        body.light-mode .rf-prop-loc { color:#64748B !important; }
+        body.light-mode .rf-amount-pct { color:#0F172A !important; }
+        body.light-mode .rf-id { color:#64748B !important; background:#F8FAFC; border-color:rgba(15,23,42,.08); }
+        body.light-mode .rf-decision-val { color:#0F172A !important; }
+        body.light-mode .rf-decision-pct { color:#64748B !important; }
+        body.light-mode .rf-manage-btn { background:rgba(184,147,95,.1); border-color:rgba(184,147,95,.22); color:#8B6F47 !important; }
+        body.light-mode .rf-manage-btn:hover { background:rgba(184,147,95,.18); }
+        body.light-mode .rf-empty h3 { color:#0F172A !important; }
+        body.light-mode .rf-empty p { color:#64748B !important; }
+
+        @media (max-width: 1100px) {
+            .refunds-stats { grid-template-columns: repeat(3,1fr); }
+            .refunds-hero { flex-direction: column; }
+            .refunds-summary-card { min-width: 0; }
+        }
+        @media (max-width: 768px) {
+            .refunds-stats { grid-template-columns: repeat(2,1fr); }
+            .refunds-hero { padding: 22px; }
+            .refunds-table-header { flex-direction: column; align-items: flex-start; }
+        }
     </style>
 </head>
-<body class="dashboard-page admin-page admin-clean-page">
+<body class="dashboard-page admin-page admin-refunds-page">
 <div class="host-layout">
     <aside class="host-sidebar">
         <div class="sidebar-header">
@@ -135,17 +402,54 @@ function badge($s) {
             </a>
         </div>
         <nav class="sidebar-nav">
-            <a href="dashboard.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span><span>Admin Panel</span></a>
-            <a href="analytics.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-chart-simple" aria-hidden="true"></i></span><span>Analytics</span></a>
-            <a href="refunds.php" class="nav-item active"><span class="nav-icon"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></span><span>Refunds</span></a>
-            <a href="host-verifications.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user-check" aria-hidden="true"></i></span><span>Host Verifications</span></a>
-            <a href="submissions.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-file-lines" aria-hidden="true"></i></span><span>Submissions</span></a>
-            <a href="properties.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span><span>All Properties</span></a>
-            <a href="users.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-users" aria-hidden="true"></i></span><span>Users</span></a>
-            <a href="bookings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i></span><span>All Bookings</span></a>
-            <a href="earnings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span><span>Earnings</span></a>
-            <a href="commission.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span><span>Commission</span></a>
-            <a href="../home.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span><span>View Site</span></a>
+            <a href="dashboard.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
+                <span>Dashboard</span>
+            </a>
+            <a href="analytics.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-chart-simple" aria-hidden="true"></i></span>
+                <span>Analytics</span>
+            </a>
+            <a href="refunds.php" class="nav-item active">
+                <span class="nav-icon"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></span>
+                <span>Refunds</span>
+            </a>
+            <a href="host-verifications.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-user-check" aria-hidden="true"></i></span>
+                <span>Host Verifications</span>
+            </a>
+            <a href="submissions.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-file-lines" aria-hidden="true"></i></span>
+                <span>Submissions</span>
+            </a>
+            <a href="properties.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
+                <span>All Properties</span>
+            </a>
+            <a href="users.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-users" aria-hidden="true"></i></span>
+                <span>Users</span>
+            </a>
+            <a href="bookings.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i></span>
+                <span>All Bookings</span>
+            </a>
+            <a href="earnings.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span>
+                <span>Earnings</span>
+            </a>
+            <a href="commission.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
+                <span>Commission</span>
+            </a>
+            <a href="geocode-all-properties.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i></span>
+                <span>Geocode Properties</span>
+            </a>
+            <a href="../home.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
+                <span>View Site</span>
+            </a>
         </nav>
         <div class="sidebar-footer">
             <div class="user-profile">
@@ -166,70 +470,166 @@ function badge($s) {
     </aside>
 
     <main class="host-main">
-        <div style="max-width: 1200px; margin: 0 auto; padding: 24px;">
-            <div class="rf-hero">
-                <div>
+
+            <!-- Hero -->
+            <div class="refunds-hero">
+                <div class="refunds-hero-content">
+                    <div class="refunds-eyebrow">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        Refund Management
+                    </div>
                     <h1>Refunds</h1>
-                    <p>Support dashboard for cancellations + issue-based refunds. All actions are logged. Processing time is shown as 5–15 business days (simulation).</p>
+                    <p class="subtitle"></p>
                 </div>
-                <div class="rf-pills">
-                    <?php
-                        $pills = ['pending' => 'Pending', 'pending_review' => 'Review', 'approved' => 'Approved', 'rejected' => 'Rejected', 'processing' => 'Processing', 'completed' => 'Completed', 'all' => 'All'];
-                        foreach ($pills as $k => $label):
-                            $c = $k === 'all' ? array_sum($counts) : (int)($counts[$k] ?? 0);
-                    ?>
-                        <a class="rf-pill <?php echo $filter === $k ? 'active' : ''; ?>" href="refunds.php?status=<?php echo h($k); ?>">
-                            <?php echo h($label); ?> <span style="opacity:0.85;">(<?php echo (int)$c; ?>)</span>
-                        </a>
-                    <?php endforeach; ?>
+                <div class="refunds-summary-card">
+                    <span class="refunds-summary-label">Total Requests</span>
+                    <strong><?php echo array_sum($counts); ?></strong>
+                    <span class="refunds-summary-desc"></span>
                 </div>
             </div>
 
-            <div class="rf-card">
-                <div class="rf-head">
-                    <h2>Requests</h2>
-                    <p class="rf-note"><?php echo count($rows); ?> shown</p>
-                </div>
-                <?php if (empty($rows)): ?>
-                    <div style="padding: 16px; color:#CBD5E1;">No refund requests.</div>
-                <?php else: ?>
-                    <div style="overflow-x:auto;">
-                        <table class="rf-table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Type</th>
-                                    <th>Guest</th>
-                                    <th>Host</th>
-                                    <th>Property</th>
-                                    <th>Suggested</th>
-                                    <th>Host decision</th>
-                                    <th>Status</th>
-                                    <th>Manage</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($rows as $r): ?>
-                                <tr>
-                                    <td>#<?php echo (int)$r['id']; ?></td>
-                                    <td><?php echo h($r['request_type']); ?></td>
-                                    <td><?php echo h(trim(($r['guest_first_name'] ?? '') . ' ' . ($r['guest_last_name'] ?? ''))); ?><br><span style="color:#94A3B8; font-weight:800;"><?php echo h($r['guest_email']); ?></span></td>
-                                    <td><?php echo h(trim(($r['host_first_name'] ?? '') . ' ' . ($r['host_last_name'] ?? ''))); ?><br><span style="color:#94A3B8; font-weight:800;"><?php echo h($r['host_email']); ?></span></td>
-                                    <td><?php echo h($r['property_title']); ?><br><span style="color:#94A3B8; font-weight:800;"><?php echo h(($r['city'] ?? '') . ', ' . ($r['country'] ?? '')); ?></span></td>
-                                    <td><?php echo (int)$r['refund_percent']; ?>%<br><span style="color:#94A3B8; font-weight:800;">₱<?php echo number_format((float)$r['refund_amount'], 2); ?></span></td>
-                                    <td><?php echo h($r['host_decision']); ?><br><span style="color:#94A3B8; font-weight:800;"><?php echo $r['host_decision_percent'] !== null ? ((int)$r['host_decision_percent'] . '%') : '—'; ?></span></td>
-                                    <td><span class="badge <?php echo badge($r['status']); ?>"><?php echo h($r['status']); ?></span></td>
-                                    <td>
-                                        <a class="rf-btn" href="refund.php?id=<?php echo (int)$r['id']; ?>"><i class="fa-solid fa-screwdriver-wrench"></i>Open</a>
-                                    </td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
+            <!-- Status overview cards -->
+            <div class="refunds-stats">
+                <?php
+                $statItems = [
+                    ['key' => 'pending',        'label' => 'Pending',       'icon' => 'fa-clock',           'color' => '#FDE68A'],
+                    ['key' => 'pending_review', 'label' => 'Under Review',  'icon' => 'fa-magnifying-glass','color' => '#FCD34D'],
+                    ['key' => 'processing',     'label' => 'Processing',    'icon' => 'fa-spinner',         'color' => '#93C5FD'],
+                    ['key' => 'approved',       'label' => 'Approved',      'icon' => 'fa-circle-check',    'color' => '#86EFAC'],
+                    ['key' => 'completed',      'label' => 'Completed',     'icon' => 'fa-flag-checkered',  'color' => '#C4B5FD'],
+                ];
+                foreach ($statItems as $si):
+                    $cnt = (int)($counts[$si['key']] ?? 0);
+                    $isActive = $filter === $si['key'];
+                ?>
+                <a href="refunds.php?status=<?php echo h($si['key']); ?>" class="refund-stat-card<?php echo $isActive ? ' active-stat' : ''; ?>">
+                    <div class="refund-stat-icon" style="color:<?php echo $si['color']; ?>;">
+                        <i class="fa-solid <?php echo $si['icon']; ?>"></i>
                     </div>
+                    <div class="refund-stat-label"><?php echo $si['label']; ?></div>
+                    <div class="refund-stat-value"><?php echo $cnt; ?></div>
+                </a>
+                <?php endforeach; ?>
+            </div>
+
+            <!-- Table card -->
+            <div class="refunds-table-card">
+                <div class="refunds-table-header">
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <h2>Refund Requests</h2>
+                        <span class="refunds-count-badge"><?php echo count($rows); ?> shown</span>
+                    </div>
+                    <div class="refunds-filter-tabs">
+                        <?php
+                        $tabs = [
+                            'all'            => 'All',
+                            'pending'        => 'Pending',
+                            'pending_review' => 'Review',
+                            'processing'     => 'Processing',
+                            'approved'       => 'Approved',
+                            'rejected'       => 'Rejected',
+                            'completed'      => 'Completed',
+                        ];
+                        foreach ($tabs as $k => $label):
+                        ?>
+                        <a class="refunds-filter-tab <?php echo $filter === $k ? 'active' : ''; ?>" href="refunds.php?status=<?php echo h($k); ?>">
+                            <?php echo h($label); ?>
+                        </a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+                <?php if (empty($rows)): ?>
+                <div class="rf-empty">
+                    <div class="rf-empty-icon"><i class="fa-solid fa-rotate-left"></i></div>
+                    <h3>No refund requests</h3>
+                    <p>There are no requests matching the selected filter.</p>
+                </div>
+                <?php else: ?>
+                <div class="rf-table-wrap">
+                    <table class="rf-new-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Type</th>
+                                <th>Guest</th>
+                                <th>Host</th>
+                                <th>Property</th>
+                                <th>Suggested</th>
+                                <th>Host Decision</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($rows as $r):
+                                $guestInitials = strtoupper(substr($r['guest_first_name'] ?? '', 0, 1) . substr($r['guest_last_name'] ?? '', 0, 1));
+                                $hostInitials  = strtoupper(substr($r['host_first_name']  ?? '', 0, 1) . substr($r['host_last_name']  ?? '', 0, 1));
+                                $type = strtolower((string)$r['request_type']);
+                                $typeClass = (str_contains($type, 'issue')) ? 'rf-type-issue' : 'rf-type-cancellation';
+                                $typeIcon  = (str_contains($type, 'issue')) ? 'fa-triangle-exclamation' : 'fa-rotate-left';
+                                $statusKey   = strtolower(str_replace(' ', '_', (string)$r['status']));
+                                $statusLabel = ucfirst(str_replace('_', ' ', $r['status']));
+                                $hostDec    = !empty($r['host_decision']) ? h($r['host_decision']) : '—';
+                                $hostDecPct = $r['host_decision_percent'] !== null ? ((int)$r['host_decision_percent'] . '%') : '';
+                            ?>
+                            <tr>
+                                <td><span class="rf-id">#<?php echo (int)$r['id']; ?></span></td>
+                                <td>
+                                    <span class="rf-type-badge <?php echo $typeClass; ?>">
+                                        <i class="fa-solid <?php echo $typeIcon; ?>"></i>
+                                        <?php echo h($r['request_type']); ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="rf-user-cell">
+                                        <div class="rf-user-avatar" style="background:linear-gradient(135deg,#6366F1,#4F46E5);"><?php echo $guestInitials; ?></div>
+                                        <div>
+                                            <div class="rf-user-name"><?php echo h(trim(($r['guest_first_name'] ?? '') . ' ' . ($r['guest_last_name'] ?? ''))); ?></div>
+                                            <div class="rf-user-email"><?php echo h($r['guest_email']); ?></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="rf-user-cell">
+                                        <div class="rf-user-avatar" style="background:linear-gradient(135deg,#F59E0B,#D97706);"><?php echo $hostInitials; ?></div>
+                                        <div>
+                                            <div class="rf-user-name"><?php echo h(trim(($r['host_first_name'] ?? '') . ' ' . ($r['host_last_name'] ?? ''))); ?></div>
+                                            <div class="rf-user-email"><?php echo h($r['host_email']); ?></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="rf-prop-title"><?php echo h($r['property_title']); ?></div>
+                                    <div class="rf-prop-loc"><i class="fa-solid fa-location-dot" style="font-size:10px;margin-right:3px;"></i><?php echo h(($r['city'] ?? '') . ', ' . ($r['country'] ?? '')); ?></div>
+                                </td>
+                                <td>
+                                    <div class="rf-amount-pct"><?php echo (int)$r['refund_percent']; ?>%</div>
+                                    <div class="rf-amount-val">₱<?php echo number_format((float)$r['refund_amount'], 2); ?></div>
+                                </td>
+                                <td>
+                                    <div class="rf-decision-val"><?php echo $hostDec; ?></div>
+                                    <?php if ($hostDecPct): ?><div class="rf-decision-pct"><?php echo $hostDecPct; ?></div><?php endif; ?>
+                                </td>
+                                <td>
+                                    <span class="rf-status rf-status-<?php echo h($statusKey); ?>">
+                                        <span class="rf-status-dot"></span>
+                                        <?php echo h($statusLabel); ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <a class="rf-manage-btn" href="refund.php?id=<?php echo (int)$r['id']; ?>">
+                                        <i class="fa-solid fa-screwdriver-wrench"></i> Manage
+                                    </a>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
                 <?php endif; ?>
             </div>
-        </div>
+
     </main>
 </div>
 

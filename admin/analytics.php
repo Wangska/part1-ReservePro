@@ -121,6 +121,13 @@ function toChart(array $rows, string $xKey, string $yKey): array {
     <link rel="stylesheet" href="../assets/css/admin.css?v=25.0">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
+        body.admin-page:not(.light-mode) {
+            background: #06090F !important;
+        }
+        body.admin-page::before,
+        body.admin-page::after {
+            display: none !important;
+        }
         .analytics-hero {
             background: linear-gradient(135deg, rgba(17, 24, 39, 0.96), rgba(30, 41, 59, 0.88));
             border: 1px solid rgba(212, 165, 116, 0.22);
@@ -136,21 +143,35 @@ function toChart(array $rows, string $xKey, string $yKey): array {
         }
         .analytics-hero h1 { margin: 0 0 6px; color:#fff !important; }
         .analytics-hero p { margin: 0; color:#CBD5E1 !important; line-height:1.6; }
-        .range-pills { display:flex; gap:8px; flex-wrap:wrap; }
+        .range-pills { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
         .range-pill {
-            display:inline-flex;
-            align-items:center;
-            gap:8px;
-            padding: 10px 14px;
+            display: inline-flex;
+            align-items: center;
+            padding: 9px 14px;
+            min-height: 40px;
             border-radius: 999px;
-            border: 1px solid rgba(255,255,255,0.12);
-            background: rgba(255,255,255,0.06);
-            color: #E2E8F0;
-            text-decoration:none;
-            font-weight: 800;
+            border: 1px solid rgba(148,163,184,0.16);
+            background: rgba(255,255,255,0.04);
+            color: #CBD5E1;
+            text-decoration: none;
+            font-weight: 700;
             font-size: 13px;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
         }
-        .range-pill.active { border-color: rgba(212,165,116,0.5); color:#FDE68A; }
+        .range-pill:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(212,165,116,0.38);
+            color: #FFFFFF;
+            transform: translateY(-1px);
+        }
+        .range-pill.active {
+            background: linear-gradient(135deg, #D4A574, #B8935F);
+            color: #0F0F0F;
+            border-color: transparent;
+            box-shadow: 0 10px 24px rgba(212,165,116,0.22);
+        }
         .charts-grid {
             display:grid;
             grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
@@ -221,16 +242,54 @@ function toChart(array $rows, string $xKey, string $yKey): array {
             </a>
         </div>
         <nav class="sidebar-nav">
-            <a href="dashboard.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span><span>Admin Panel</span></a>
-            <a href="analytics.php" class="nav-item active"><span class="nav-icon"><i class="fa-solid fa-chart-simple"></i></span><span>Analytics</span></a>
-            <a href="host-verifications.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user-check"></i></span><span>Host Verifications</span></a>
-            <a href="submissions.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-file-lines"></i></span><span>Submissions</span></a>
-            <a href="properties.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-house"></i></span><span>All Properties</span></a>
-            <a href="users.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-users"></i></span><span>Users</span></a>
-            <a href="bookings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-calendar-days"></i></span><span>All Bookings</span></a>
-            <a href="earnings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-wallet"></i></span><span>Earnings</span></a>
-            <a href="commission.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-coins"></i></span><span>Commission</span></a>
-            <a href="../home.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-globe"></i></span><span>View Site</span></a>
+            <a href="dashboard.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
+                <span>Dashboard</span>
+            </a>
+            <a href="analytics.php" class="nav-item active">
+                <span class="nav-icon"><i class="fa-solid fa-chart-simple" aria-hidden="true"></i></span>
+                <span>Analytics</span>
+            </a>
+            <a href="refunds.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></span>
+                <span>Refunds</span>
+            </a>
+            <a href="host-verifications.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-user-check" aria-hidden="true"></i></span>
+                <span>Host Verifications</span>
+            </a>
+            <a href="submissions.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-file-lines" aria-hidden="true"></i></span>
+                <span>Submissions</span>
+            </a>
+            <a href="properties.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
+                <span>All Properties</span>
+            </a>
+            <a href="users.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-users" aria-hidden="true"></i></span>
+                <span>Users</span>
+            </a>
+            <a href="bookings.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i></span>
+                <span>All Bookings</span>
+            </a>
+            <a href="earnings.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span>
+                <span>Earnings</span>
+            </a>
+            <a href="commission.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
+                <span>Commission</span>
+            </a>
+            <a href="geocode-all-properties.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i></span>
+                <span>Geocode Properties</span>
+            </a>
+            <a href="../home.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
+                <span>View Site</span>
+            </a>
         </nav>
         <div class="sidebar-footer">
             <div class="user-profile">
@@ -254,7 +313,6 @@ function toChart(array $rows, string $xKey, string $yKey): array {
         <div class="analytics-hero">
             <div>
                 <h1><i class="fa-solid fa-chart-simple" style="margin-right:10px;"></i>Booking analytics</h1>
-                <p>Counts are based on booking creation time (<code>booking_date</code>), excluding cancelled bookings. Occupancy is stay-based from <code>check_in</code>/<code>check_out</code>.</p>
             </div>
             <div class="range-pills">
                 <?php foreach ([30, 90, 180, 365] as $opt): ?>
@@ -288,7 +346,6 @@ function toChart(array $rows, string $xKey, string $yKey): array {
             <div class="table-header">
                 <div>
                     <h2>Raw daily counts</h2>
-                    <p>Useful for quick auditing of the chart numbers.</p>
                 </div>
                 <p><?php echo count($dailyLabels); ?> day(s) in range</p>
             </div>

@@ -91,17 +91,50 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/admin.css?v=10.5">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
+        body.admin-page:not(.light-mode) {
+            background: #06090F !important;
+        }
+        body.admin-page::before,
+        body.admin-page::after {
+            display: none !important;
+        }
+        .admin-properties-page .properties-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+        .admin-properties-page .properties-table-container {
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .admin-properties-page .properties-table th:nth-child(1),
+        .admin-properties-page .properties-table td:nth-child(1) { width: 260px; }
+        .admin-properties-page .properties-table th:nth-child(2),
+        .admin-properties-page .properties-table td:nth-child(2) { width: 140px; }
+        .admin-properties-page .properties-table th:nth-child(3),
+        .admin-properties-page .properties-table td:nth-child(3) { width: 160px; }
+        .admin-properties-page .properties-table th:nth-child(4),
+        .admin-properties-page .properties-table td:nth-child(4) { width: 120px; }
+        .admin-properties-page .properties-table th:nth-child(5),
+        .admin-properties-page .properties-table td:nth-child(5) { width: 90px; }
+        .admin-properties-page .properties-table th:nth-child(6),
+        .admin-properties-page .properties-table td:nth-child(6) { width: 110px; }
+        .admin-properties-page .properties-table th:nth-child(7),
+        .admin-properties-page .properties-table td:nth-child(7) { width: 120px; }
         .property-cell {
             display: flex;
             gap: 16px;
             align-items: center;
         }
-
         .property-image {
+            flex-shrink: 0;
             width: 80px;
             height: 60px;
+            min-width: 80px;
+            max-width: 80px;
             border-radius: 8px;
             object-fit: cover;
+            object-position: center;
             background: #2C2C2C;
         }
 
@@ -117,31 +150,77 @@ $conn->close();
             color: #B8B8B8;
         }
 
+        .admin-properties-page .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid transparent;
+        }
+        .admin-properties-page .status-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+        .admin-properties-page .status-approved {
+            background: rgba(34,197,94,0.1);
+            color: #86EFAC !important;
+            border-color: rgba(34,197,94,0.22);
+        }
+        .admin-properties-page .status-approved::before { background: #22C55E; }
+        .admin-properties-page .status-pending {
+            background: rgba(234,179,8,0.1);
+            color: #FDE047 !important;
+            border-color: rgba(234,179,8,0.22);
+        }
+        .admin-properties-page .status-pending::before { background: #EAB308; }
+        .admin-properties-page .status-rejected {
+            background: rgba(244,63,94,0.1);
+            color: #FDA4AF !important;
+            border-color: rgba(244,63,94,0.22);
+        }
+        .admin-properties-page .status-rejected::before { background: #F43F5E; }
+        .admin-properties-page .status-out_of_order {
+            background: rgba(148,163,184,0.1);
+            color: #94A3B8 !important;
+            border-color: rgba(148,163,184,0.22);
+        }
+        .admin-properties-page .status-out_of_order::before { background: #94A3B8; }
         .action-buttons {
             display: flex;
             gap: 8px;
         }
 
         .btn-view {
-            background: rgba(59, 130, 246, 0.2);
-            color: #3B82F6;
-            border: 1px solid rgba(59, 130, 246, 0.3);
+            background: transparent;
+            color: #D4A574;
+            border: 1px solid rgba(212,165,116,0.32);
         }
 
         .btn-view:hover {
-            background: #3B82F6;
-            color: #FFFFFF;
+            background: linear-gradient(135deg, #D4A574, #B8935F);
+            color: #0F0F0F;
+            border-color: transparent;
+            box-shadow: 0 8px 20px rgba(212,165,116,0.22);
         }
 
         .btn-delete {
-            background: rgba(239, 68, 68, 0.2);
-            color: #EF4444;
-            border: 1px solid rgba(239, 68, 68, 0.3);
+            background: transparent;
+            color: #FDA4AF;
+            border: 1px solid rgba(244,63,94,0.28);
         }
 
         .btn-delete:hover {
-            background: #EF4444;
+            background: linear-gradient(135deg, #F43F5E, #E11D48);
             color: #FFFFFF;
+            border-color: transparent;
+            box-shadow: 0 8px 20px rgba(244,63,94,0.22);
         }
     </style>
 </head>
@@ -161,9 +240,21 @@ $conn->close();
                     <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
                     <span>Dashboard</span>
                 </a>
+                <a href="analytics.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-simple" aria-hidden="true"></i></span>
+                    <span>Analytics</span>
+                </a>
+                <a href="refunds.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></span>
+                    <span>Refunds</span>
+                </a>
                 <a href="host-verifications.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-user-check" aria-hidden="true"></i></span>
                     <span>Host Verifications</span>
+                </a>
+                <a href="submissions.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-file-lines" aria-hidden="true"></i></span>
+                    <span>Submissions</span>
                 </a>
                 <a href="properties.php" class="nav-item active">
                     <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
@@ -184,6 +275,10 @@ $conn->close();
                 <a href="commission.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
                     <span>Commission</span>
+                </a>
+                <a href="geocode-all-properties.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i></span>
+                    <span>Geocode Properties</span>
                 </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
@@ -218,12 +313,12 @@ $conn->close();
                 <div class="admin-page-hero-content">
                     <span class="admin-page-eyebrow">Listing Management</span>
                     <h1>All Properties</h1>
-                    <p>Review inventory, track approval status, and manage listing quality across the platform from one place.</p>
+                    <p></p>
                 </div>
                 <div class="admin-page-summary">
                     <span class="admin-page-summary-label">Live Inventory</span>
                     <strong><?php echo $stats['approved']; ?></strong>
-                    <span class="admin-page-summary-text">approved listings currently available</span>
+                    <span class="admin-page-summary-text"></span>
                 </div>
             </div>
 
@@ -247,7 +342,7 @@ $conn->close();
                     <div class="stat-content admin-metric-copy">
                         <p>Total Properties</p>
                         <h3><?php echo $stats['total']; ?></h3>
-                        <span class="admin-metric-note">Every listing in the catalog, regardless of status.</span>
+                        <span class="admin-metric-note"></span>
                     </div>
                 </div>
                 <div class="stat-card admin-metric-card">
@@ -255,7 +350,7 @@ $conn->close();
                     <div class="stat-content admin-metric-copy">
                         <p>Approved</p>
                         <h3><?php echo $stats['approved']; ?></h3>
-                        <span class="admin-metric-note">Listings that are visible and bookable.</span>
+                        <span class="admin-metric-note"></span>
                     </div>
                 </div>
                 <div class="stat-card admin-metric-card">
@@ -263,7 +358,7 @@ $conn->close();
                     <div class="stat-content admin-metric-copy">
                         <p>Pending Review</p>
                         <h3><?php echo $stats['pending']; ?></h3>
-                        <span class="admin-metric-note">Submissions still waiting for moderation.</span>
+                        <span class="admin-metric-note"></span>
                     </div>
                 </div>
                 <div class="stat-card admin-metric-card">
@@ -271,7 +366,7 @@ $conn->close();
                     <div class="stat-content admin-metric-copy">
                         <p>Rejected</p>
                         <h3><?php echo $stats['rejected']; ?></h3>
-                        <span class="admin-metric-note">Listings that need changes before resubmission.</span>
+                        <span class="admin-metric-note"></span>
                     </div>
                 </div>
             </div>
@@ -281,7 +376,7 @@ $conn->close();
                 <div class="table-header admin-surface-header">
                     <div>
                         <h2>Property Listings</h2>
-                        <p>Filter by approval status to focus on the listings that need action.</p>
+                        <p></p>
                     </div>
                     <div class="filter-tabs">
                         <button type="button" class="filter-tab active" onclick="filterProperties('all', this)">All</button>
@@ -298,6 +393,7 @@ $conn->close();
                         <p>There are no properties in the system yet.</p>
                     </div>
                 <?php else: ?>
+                    <div style="overflow-x: auto; width: 100%;">
                     <table class="properties-table">
                         <thead>
                             <tr>
@@ -353,6 +449,7 @@ $conn->close();
                             <?php endforeach; ?>
                         </tbody>
                     </table>
+                    </div>
                 <?php endif; ?>
             </div>
         </main>
