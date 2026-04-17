@@ -99,6 +99,7 @@ $justConfirmed = isset($_GET['confirmed']) && $_GET['confirmed'] === '1';
     <link rel="stylesheet" href="../assets/css/style.css?v=14.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.3">
+    <link rel="stylesheet" href="../assets/css/admin.css?v=25.4">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
         .view-booking-page {
@@ -318,7 +319,7 @@ $justConfirmed = isset($_GET['confirmed']) && $_GET['confirmed'] === '1';
         body.dashboard-page.light-mode .rp-toast .sub { color:#475569; }
     </style>
 </head>
-<body class="dashboard-page host-clean-page host-detail-page">
+<body class="dashboard-page admin-page admin-clean-page host-clean-page host-detail-page">
     <div class="rp-toast" id="rpToast">
         <div class="row">
             <div class="icon"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></div>

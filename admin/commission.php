@@ -86,9 +86,17 @@ $conn->close();
             display: none !important;
         }
         .filter-buttons { display: flex; gap: 8px; flex-wrap: wrap; width: 100%; }
-        .booking-id { font-family: monospace; color: #D4A574; font-weight: 600; }
+        .booking-id { font-family: 'Courier New', monospace; color: #D4A574; font-weight: 600; }
         .col-commission { color: #38bdf8; font-weight: 700; }
         .col-host { color: #A7F3D0; }
+
+        .admin-commission-page .earnings-table th,
+        .admin-commission-page .earnings-table td {
+            text-align: center;
+            vertical-align: middle;
+            border-left: none !important;
+            border-right: none !important;
+        }
     </style>
 </head>
 <body class="dashboard-page admin-page admin-clean-page admin-commission-page">
@@ -160,10 +168,7 @@ $conn->close();
                         <div class="user-role">Administrator</div>
                     </div>
                 </div>
-                <div class="theme-toggle" style="margin-bottom: 12px;">
-                    <span class="theme-toggle-icon" aria-hidden="true"></span>
-                    <span class="theme-toggle-text">Theme</span>
-                </div>
+
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
         </aside>

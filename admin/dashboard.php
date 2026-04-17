@@ -514,10 +514,7 @@ $conn->close();
                 </div>
                 
                 <!-- Theme Toggle -->
-                <div class="theme-toggle" style="margin-bottom: 12px;">
-                    <span class="theme-toggle-icon" aria-hidden="true"></span>
-                    <span class="theme-toggle-text">Theme</span>
-                </div>
+
                 
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>

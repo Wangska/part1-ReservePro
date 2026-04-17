@@ -84,10 +84,10 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/style.css?v=11.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.3">
+    <link rel="stylesheet" href="../assets/css/admin.css?v=25.4">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
         .earnings-header {
-            /* Trendy gray header instead of brown */
             background: linear-gradient(135deg, #111827 0%, #1F2933 45%, #020617 100%);
             padding: 40px;
             border-radius: 16px;
@@ -114,18 +114,49 @@ $conn->close();
             margin-bottom: 32px;
         }
 
+        /* Match host-metric-card from host-dashboard.css */
         .earnings-stat-card {
-            background: #1F1F1F;
-            padding: 24px;
-            border-radius: 12px;
-            border: 1px solid #3A3A3A;
-            transition: all 0.3s ease;
+            padding: 22px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(17, 24, 39, 0.86);
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            box-shadow: 0 18px 36px rgba(0, 0, 0, 0.18);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+        .earnings-stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 24px 40px rgba(0, 0, 0, 0.2);
+            border-color: rgba(212, 165, 116, 0.3);
         }
 
-        .earnings-stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(212, 165, 116, 0.2);
-            border-color: #D4A574;
+        /* Match host-surface-header from host-dashboard.css */
+        .table-header.host-surface-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 16px;
+            padding: 24px 24px 18px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+            background: rgba(17, 24, 39, 0.86);
+        }
+        .table-header.host-surface-header h2 {
+            margin: 0 0 6px;
+            color: #FFFFFF !important;
+        }
+
+        /* Match host-empty-state from host-dashboard.css */
+        .empty-earnings {
+            padding: 52px 36px;
+            text-align: center;
+        }
+        .empty-earnings h3 {
+            margin-bottom: 8px;
+        }
+        .empty-earnings p {
+            margin-bottom: 0;
         }
 
         .stat-label {
@@ -150,53 +181,17 @@ $conn->close();
             color: #22C55E;
         }
 
-        .earnings-table-container {
-            background: #1F1F1F;
-            border-radius: 12px;
+        .earnings-table-container.host-surface {
+            background: rgba(17, 24, 39, 0.86);
+            border-radius: 22px;
             overflow: hidden;
-            border: 1px solid #3A3A3A;
-        }
-
-        .table-header {
-            padding: 24px;
-            border-bottom: 1px solid #3A3A3A;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .table-header h2 {
-            font-size: 20px;
-            font-weight: 600;
-            color: #FFFFFF !important;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            box-shadow: 0 20px 36px rgba(0, 0, 0, 0.18);
         }
 
         .filter-buttons {
             display: flex;
             gap: 8px;
-        }
-
-        .filter-btn {
-            padding: 8px 16px;
-            border: 1px solid #3A3A3A;
-            background: transparent;
-            color: #B8B8B8;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s ease;
-        }
-
-        .filter-btn:hover {
-            background: #2C2C2C;
-            color: #D4A574;
-            border-color: #D4A574;
-        }
-
-        .filter-btn.active {
-            background: linear-gradient(135deg, #D4A574, #B8935F);
-            color: #0F0F0F;
-            border-color: transparent;
         }
 
         .earnings-table {
@@ -205,24 +200,25 @@ $conn->close();
         }
 
         .earnings-table thead {
-            background: #2C2C2C;
+            background: rgba(255, 255, 255, 0.04);
         }
 
         .earnings-table th {
-            padding: 16px 20px;
+            padding: 14px 18px;
             text-align: left;
-            font-weight: 600;
-            font-size: 13px;
-            color: #B8B8B8;
+            font-weight: 700;
+            font-size: 12px;
+            color: #94A3B8;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid #3A3A3A;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.12);
         }
 
         .earnings-table td {
-            padding: 20px;
-            color: #E0E0E0;
-            border-bottom: 1px solid #2C2C2C;
+            padding: 16px 18px;
+            color: #E2E8F0;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            vertical-align: middle;
         }
 
         .earnings-table tbody tr {
@@ -230,7 +226,7 @@ $conn->close();
         }
 
         .earnings-table tbody tr:hover {
-            background: #2C2C2C;
+            background: rgba(255, 255, 255, 0.04);
         }
 
         .booking-id {
@@ -352,7 +348,7 @@ $conn->close();
         }
     </style>
 </head>
-<body class="dashboard-page host-clean-page host-earnings-page">
+<body class="dashboard-page admin-page admin-clean-page host-clean-page host-earnings-page">
     <div class="host-layout">
         <!-- Sidebar -->
         <aside class="host-sidebar">
@@ -408,12 +404,6 @@ $conn->close();
                         <div class="user-role">Host</div>
                     </div>
                 </div>
-
-                <div class="theme-toggle">
-                    <span class="theme-toggle-icon">☀️</span>
-                    <span class="theme-toggle-text">Light</span>
-                </div>
-                
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
         </aside>
@@ -424,13 +414,11 @@ $conn->close();
                 <div class="host-page-hero-content">
                     <span class="host-page-eyebrow">Revenue Overview</span>
                     <h1>Earnings</h1>
-                    <p>See what you have already earned, what is still pending, and how each booking contributes to your host revenue.</p>
                 </div>
                 <div style="display:flex; align-items:flex-start; gap:14px; margin-left:auto;">
                     <div class="host-page-summary">
                         <span class="host-page-summary-label">Total Earnings</span>
                         <strong>₱<?php echo number_format($total_earnings, 0); ?></strong>
-                        <span class="host-page-summary-text">confirmed and completed booking revenue</span>
                     </div>
                 </div>
             </div>
@@ -442,7 +430,6 @@ $conn->close();
                     <div class="host-metric-copy">
                         <div class="stat-label">Total Earnings</div>
                         <div class="stat-value">₱<?php echo number_format($total_earnings, 2); ?></div>
-                        <div class="stat-change">All time confirmed revenue.</div>
                     </div>
                 </div>
                 <div class="earnings-stat-card host-metric-card">
@@ -450,7 +437,6 @@ $conn->close();
                     <div class="host-metric-copy">
                         <div class="stat-label">Completed</div>
                         <div class="stat-value">₱<?php echo number_format($completed_earnings, 2); ?></div>
-                        <div class="stat-change">Paid and completed bookings.</div>
                     </div>
                 </div>
                 <div class="earnings-stat-card host-metric-card">
@@ -458,7 +444,6 @@ $conn->close();
                     <div class="host-metric-copy">
                         <div class="stat-label">Pending</div>
                         <div class="stat-value">₱<?php echo number_format($pending_earnings, 2); ?></div>
-                        <div class="stat-change">Awaiting payment or final completion.</div>
                     </div>
                 </div>
                 <div class="earnings-stat-card host-metric-card">
@@ -466,7 +451,6 @@ $conn->close();
                     <div class="host-metric-copy">
                         <div class="stat-label">Total Bookings</div>
                         <div class="stat-value"><?php echo $total_bookings; ?></div>
-                        <div class="stat-change">Every reservation linked to your properties.</div>
                     </div>
                 </div>
             </div>
@@ -476,7 +460,6 @@ $conn->close();
                 <div class="table-header host-surface-header">
                     <div>
                         <h2>Booking History</h2>
-                        <p>Filter the table to focus on paid, pending, or cancelled reservations.</p>
                     </div>
                     <div class="filter-buttons host-filter-row">
                         <button class="filter-btn host-filter-btn active" onclick="filterBookings('all', this)">All</button>
@@ -487,7 +470,7 @@ $conn->close();
                 </div>
 
                 <?php if (empty($bookings)): ?>
-                    <div class="empty-earnings host-empty-state">
+                    <div class="empty-earnings host-empty-state host-surface">
                         <span class="host-empty-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
                         <h3>No earnings yet</h3>
                         <p>You haven't received any bookings yet. Start by adding properties!</p>

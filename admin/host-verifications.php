@@ -135,10 +135,7 @@ $conn->close();
                         <div class="user-role">Administrator</div>
                     </div>
                 </div>
-                <div class="theme-toggle" style="margin-bottom: 12px;">
-                    <span class="theme-toggle-icon" aria-hidden="true"></span>
-                    <span class="theme-toggle-text">Theme</span>
-                </div>
+
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
         </aside>

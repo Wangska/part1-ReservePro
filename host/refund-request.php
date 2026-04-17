@@ -69,6 +69,7 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
     <link rel="stylesheet" href="../assets/css/style.css?v=25.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.3">
+    <link rel="stylesheet" href="../assets/css/admin.css?v=25.4">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
         .one { max-width: 980px; margin: 0 auto; padding: 24px; }
@@ -119,7 +120,7 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
         body.light-mode .btn-danger { color:#b91c1c !important; border-color: rgba(185,28,28,0.25) !important; }
     </style>
 </head>
-<body class="dashboard-page host-dashboard-page">
+<body class="dashboard-page admin-page admin-clean-page host-dashboard-page">
 <div class="host-layout">
     <aside class="host-sidebar">
         <div class="sidebar-header">

@@ -149,36 +149,45 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
         .sub-table-card {
             background: rgba(17,24,39,0.86);
             border: 1px solid rgba(148,163,184,0.16);
-            border-radius: 22px; overflow: hidden;
-            box-shadow: 0 18px 36px rgba(0,0,0,0.18);
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 20px 36px rgba(0,0,0,0.18);
         }
         .sub-table-header {
-            padding: 18px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 16px;
+            padding: 24px 24px 18px;
             border-bottom: 1px solid rgba(148,163,184,0.12);
-            display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap;
         }
-        .sub-table-header h2 { margin: 0; color: #fff !important; font-size: 16px; }
-        .sub-count-badge {
-            display: inline-flex; align-items: center;
-            padding: 4px 11px; border-radius: 999px;
-            background: rgba(255,255,255,0.06); border: 1px solid rgba(148,163,184,0.16);
-            color: #CBD5E1; font-size: 12px; font-weight: 700;
-        }
+        .sub-table-header h2 { margin: 0 0 6px; color: #FFFFFF !important; }
+
 
         /* Table */
-        .sub-table-wrap { overflow-x: auto; }
+        .sub-table-wrap { overflow-x: auto; width: 100%; }
         .sub-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        .sub-table thead {
+            background: rgba(255, 255, 255, 0.04);
+        }
         .sub-table th {
-            padding: 11px 18px; text-align: left;
-            color: #475569 !important; font-weight: 700; font-size: 11px;
-            text-transform: uppercase; letter-spacing: 0.06em;
+            padding: 14px 18px;
+            text-align: left;
+            color: #94A3B8;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 0.05em;
             border-bottom: 1px solid rgba(148,163,184,0.12);
-            background: rgba(0,0,0,0.12); white-space: nowrap;
         }
         .sub-table td {
-            padding: 14px 18px;
-            border-bottom: 1px solid rgba(148,163,184,0.07);
+            padding: 16px 18px;
+            border-bottom: 1px solid rgba(148,163,184,0.1);
             vertical-align: middle;
+            color: #E2E8F0;
+            text-align: center;
+        }
+        .sub-table td:first-child {
+            text-align: left;
         }
         .sub-col-user    { width: 26%; }
         .sub-col-role    { width: 9%; }
@@ -187,8 +196,8 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
         .sub-col-doc     { width: 14%; }
         .sub-col-joined  { width: 12%; }
         .sub-col-actions { width: 16%; }
-        .sub-table tbody tr { transition: background 0.14s; }
-        .sub-table tbody tr:hover { background: rgba(255,255,255,0.025); }
+        .sub-table tbody tr { transition: background 0.15s; }
+        .sub-table tbody tr:hover { background: rgba(255,255,255,0.04); }
         .sub-table tbody tr:last-child td { border-bottom: none; }
 
         /* User cell */
@@ -200,7 +209,7 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
             background: linear-gradient(135deg, #D4A574, #B8935F);
         }
         .sub-user-name { color: #F1F5F9 !important; font-weight: 700; font-size: 14px; }
-        .sub-user-email { color: #475569 !important; font-size: 12px; font-weight: 600; margin-top: 2px; }
+        .sub-user-email { color: #B8B8B8 !important; font-size: 13px; font-weight: 600; margin-top: 2px; }
 
         /* Role badge */
         .sub-role {
@@ -245,19 +254,23 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
 
         /* Action btn */
         .sub-action-btn {
-            display: inline-flex; align-items: center;
-            padding: 8px 14px; border-radius: 10px;
-            min-height: 40px;
-            background: transparent; border: 1px solid rgba(212,165,116,0.32);
-            color: #D4A574 !important; text-decoration: none;
-            font-weight: 600; font-size: 13px;
-            transition: background 0.18s, border-color 0.18s, color 0.18s, box-shadow 0.18s;
+            padding: 8px 14px;
+            background: transparent;
+            color: #D4A574;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 13px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
             white-space: nowrap;
         }
         .sub-action-btn:hover {
-            background: linear-gradient(135deg, #D4A574, #B8935F) !important;
-            color: #0F0F0F !important;
-            border-color: transparent !important;
+            background: linear-gradient(135deg, #D4A574, #B8935F);
+            color: #0F0F0F;
             box-shadow: 0 8px 20px rgba(212,165,116,0.22);
         }
 
@@ -330,7 +343,7 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
         body.light-mode .sub-summary-desc { color:#475569; }
         body.light-mode .sub-table-card { background:#fff; border-color:rgba(15,23,42,.08); box-shadow:0 16px 32px rgba(15,23,42,.08); }
         body.light-mode .sub-table-header h2 { color:#0F172A !important; }
-        body.light-mode .sub-count-badge { background:#F8FAFC; border-color:rgba(15,23,42,.08); color:#475569; }
+
         body.light-mode .sub-table th { color:#64748B !important; background:rgba(15,23,42,.02); border-bottom-color:rgba(15,23,42,.08); }
         body.light-mode .sub-table td { border-bottom-color:rgba(15,23,42,.06); }
         body.light-mode .sub-table tbody tr:hover { background:rgba(15,23,42,.02); }
@@ -424,10 +437,7 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
                     <div class="user-role">Administrator</div>
                 </div>
             </div>
-            <div class="theme-toggle" style="margin-bottom: 12px;">
-                <span class="theme-toggle-icon" aria-hidden="true"></span>
-                <span class="theme-toggle-text">Theme</span>
-            </div>
+
             <a href="../logout.php" class="btn-logout">Logout</a>
         </div>
     </aside>
@@ -484,10 +494,7 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
             <!-- Table card -->
             <div class="sub-table-card">
                 <div class="sub-table-header">
-                    <div style="display:flex;align-items:center;gap:12px;">
-                        <h2>User Records</h2>
-                        <span class="sub-count-badge"><?php echo count($rows); ?> total</span>
-                    </div>
+                    <h2>User Records</h2>
                 </div>
 
                 <?php if (empty($rows)): ?>
@@ -501,13 +508,13 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
                     <table class="sub-table">
                         <thead>
                             <tr>
-                                <th class="sub-col-user">User</th>
-                                <th class="sub-col-role">Role</th>
-                                <th class="sub-col-email">Email Verified</th>
-                                <th class="sub-col-host">Host Verified</th>
-                                <th class="sub-col-doc">Host Doc Status</th>
-                                <th class="sub-col-joined">Joined</th>
-                                <th class="sub-col-actions">Actions</th>
+                                <th class="sub-col-user" style="text-align:center;">User</th>
+                                <th class="sub-col-role" style="text-align:center;">Role</th>
+                                <th class="sub-col-email" style="text-align:center;">Email Verified</th>
+                                <th class="sub-col-host" style="text-align:center;">Host Verified</th>
+                                <th class="sub-col-doc" style="text-align:center;">Host Doc Status</th>
+                                <th class="sub-col-joined" style="text-align:center;">Joined</th>
+                                <th class="sub-col-actions" style="text-align:center;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -524,7 +531,7 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
                                     <div class="sub-avatar"><?php echo h($initials); ?></div>
                                     <div>
                                         <div class="sub-user-name"><?php echo h(trim(($r['first_name'] ?? '') . ' ' . ($r['last_name'] ?? ''))); ?></div>
-                                        <div class="sub-user-email"><?php echo h($r['email'] ?? ''); ?></div>
+                                        <div class="sub-user-email">ID: <?php echo (int)$r['id']; ?></div>
                                     </div>
                                 </div>
                             </td>
@@ -565,7 +572,7 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
                                 <span class="sub-date"><?php echo !empty($r['created_at']) ? date('M j, Y', strtotime($r['created_at'])) : '—'; ?></span>
                             </td>
                             <td>
-                                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                                <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
                                     <a class="sub-action-btn" href="view-user.php?id=<?php echo (int)$r['id']; ?>">View</a>
                                     <?php if ($govImg): ?>
                                     <button type="button" class="sub-proof-btn" data-img="<?php echo h($govImg); ?>" data-title="Government ID — <?php echo h(trim(($r['first_name'] ?? '') . ' ' . ($r['last_name'] ?? ''))); ?>">

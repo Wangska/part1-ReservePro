@@ -99,6 +99,7 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/style.css?v=11.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.3">
+    <link rel="stylesheet" href="../assets/css/admin.css?v=25.4">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
         .messages-header {
@@ -407,7 +408,7 @@ $conn->close();
         }
     </style>
 </head>
-<body class="dashboard-page host-clean-page host-messages-page">
+<body class="dashboard-page admin-page admin-clean-page host-clean-page host-messages-page">
     <div class="host-layout">
         <!-- Sidebar -->
         <aside class="host-sidebar">
@@ -463,12 +464,6 @@ $conn->close();
                         <div class="user-role">Host</div>
                     </div>
                 </div>
-
-                <div class="theme-toggle">
-                    <span class="theme-toggle-icon">☀️</span>
-                    <span class="theme-toggle-text">Light</span>
-                </div>
-                
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
         </aside>
@@ -479,13 +474,11 @@ $conn->close();
                 <div class="host-page-hero-content">
                     <span class="host-page-eyebrow">Guest Conversations</span>
                     <h1>Messages</h1>
-                    <p>Keep every guest thread in one place so you can respond quickly and stay aligned on bookings and property questions.</p>
                 </div>
                 <div style="display:flex; align-items:flex-start; gap:14px; margin-left:auto;">
                     <div class="host-page-summary">
                         <span class="host-page-summary-label">Active Threads</span>
                         <strong><?php echo $conversation_count; ?></strong>
-                        <span class="host-page-summary-text"><?php echo $total_message_count; ?> total messages across your guest conversations</span>
                     </div>
                 </div>
             </div>
@@ -496,7 +489,6 @@ $conn->close();
                     <div class="host-surface-header" style="border-bottom: 1px solid rgba(148, 163, 184, 0.1); padding-bottom: 20px; align-items: stretch;">
                         <div>
                             <h2>Conversations</h2>
-                            <p>Search by guest name, property, or message snippet.</p>
                         </div>
                         <input type="text" class="search-box" placeholder="Search messages..." id="messagesSearch">
                     </div>
@@ -505,7 +497,6 @@ $conn->close();
                     <div class="empty-messages host-empty-state">
                         <div class="empty-messages-icon host-empty-icon"><i class="fa-solid fa-inbox" aria-hidden="true"></i></div>
                         <h3>No Messages Yet</h3>
-                        <p>When guests contact you about your properties (via "Contact Host" on a listing), messages will appear here.</p>
                     </div>
                     <?php else: ?>
                     <div class="conversation-items" id="conversationItems">

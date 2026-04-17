@@ -86,6 +86,10 @@ $conn->close();
             align-items: center;
         }
 
+        .user-details {
+            text-align: left;
+        }
+
         .user-details h3 {
             font-size: 16px;
             font-weight: 600;
@@ -128,11 +132,17 @@ $conn->close();
         .admin-users-page .btn-action.btn-view {
             background: transparent !important;
             color: #D4A574 !important;
-            border: 1px solid rgba(212,165,116,0.32) !important;
+            border: none !important;
             border-radius: 10px !important;
-            min-height: unset !important;
+            min-height: 32px !important;
+            min-width: 70px !important;
+            padding: 0 18px !important;
             font-weight: 600;
             font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
             transition: background 0.18s, border-color 0.18s, color 0.18s, box-shadow 0.18s;
         }
         .admin-users-page .btn-action.btn-view:hover {
@@ -140,6 +150,22 @@ $conn->close();
             color: #0F0F0F !important;
             border-color: transparent !important;
             box-shadow: 0 8px 20px rgba(212,165,116,0.22) !important;
+        }
+
+        .admin-users-page .properties-table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .admin-users-page .properties-table {
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+
+        .admin-users-page .properties-table th,
+        .admin-users-page .properties-table td {
+            border-left: none !important;
+            border-right: none !important;
         }
     </style>
 </head>
@@ -217,10 +243,7 @@ $conn->close();
                 </div>
                 
                 <!-- Theme Toggle -->
-                <div class="theme-toggle" style="margin-bottom: 12px;">
-                    <span class="theme-toggle-icon" aria-hidden="true"></span>
-                    <span class="theme-toggle-text">Theme</span>
-                </div>
+
                 
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
@@ -291,13 +314,13 @@ $conn->close();
                 <table class="properties-table">
                     <thead>
                         <tr>
-                            <th>User</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Properties</th>
-                            <th>Bookings</th>
-                            <th>Joined</th>
-                            <th>Actions</th>
+                            <th style="text-align:center;">User</th>
+                            <th style="text-align:center;">Email</th>
+                            <th style="text-align:center;">Role</th>
+                            <th style="text-align:center;">Properties</th>
+                            <th style="text-align:center;">Bookings</th>
+                            <th style="text-align:center;">Joined</th>
+                            <th style="text-align:center;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -324,7 +347,7 @@ $conn->close();
                                 <td><?php echo $u['total_bookings']; ?></td>
                                 <td><?php echo date('M j, Y', strtotime($u['created_at'])); ?></td>
                                 <td>
-                                    <div class="action-buttons">
+                                    <div class="action-buttons" style="justify-content:center;">
                                         <button class="btn-action btn-view" onclick="viewUser(<?php echo $u['id']; ?>)">View</button>
                                     </div>
                                 </td>

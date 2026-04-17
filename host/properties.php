@@ -125,9 +125,10 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/style.css?v=13.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.3">
+    <link rel="stylesheet" href="../assets/css/admin.css?v=25.4">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
 </head>
-<body class="dashboard-page host-clean-page host-properties-page">
+<body class="dashboard-page admin-page admin-clean-page host-clean-page host-properties-page">
     <div class="host-layout">
         <!-- Sidebar (same as dashboard) -->
         <aside class="host-sidebar">
@@ -183,12 +184,6 @@ $conn->close();
                         <div class="user-role">Host</div>
                     </div>
                 </div>
-
-                <div class="theme-toggle">
-                    <span class="theme-toggle-icon">☀️</span>
-                    <span class="theme-toggle-text">Light</span>
-                </div>
-                
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
         </aside>
@@ -199,13 +194,13 @@ $conn->close();
                 <div class="host-page-hero-content">
                     <span class="host-page-eyebrow">Listing Management</span>
                     <h1>My Properties</h1>
-                    <p class="subtitle">Review your live listings, check approval status, and update availability without leaving the host area.</p>
+                    <!-- subtitle removed -->
                 </div>
                 <div style="display:flex; align-items:flex-start; gap:14px; margin-left:auto;">
                     <div class="host-page-summary">
                         <span class="host-page-summary-label">Live Listings</span>
                         <strong><?php echo $property_stats['approved']; ?></strong>
-                        <span class="host-page-summary-text">properties currently visible to guests</span>
+                        <!-- host-page-summary-text removed -->
                     </div>
                 </div>
             </div>
@@ -230,7 +225,7 @@ $conn->close();
                     <div class="host-metric-copy">
                         <p>Total Listings</p>
                         <h3><?php echo $property_stats['total']; ?></h3>
-                        <span class="host-metric-note">All properties attached to your host account.</span>
+                        <!-- host-metric-note removed -->
                     </div>
                 </div>
                 <div class="host-metric-card">
@@ -238,7 +233,7 @@ $conn->close();
                     <div class="host-metric-copy">
                         <p>Approved</p>
                         <h3><?php echo $property_stats['approved']; ?></h3>
-                        <span class="host-metric-note">Listings guests can already discover and book.</span>
+                        <!-- host-metric-note removed -->
                     </div>
                 </div>
                 <div class="host-metric-card">
@@ -246,7 +241,7 @@ $conn->close();
                     <div class="host-metric-copy">
                         <p>Pending Review</p>
                         <h3><?php echo $property_stats['pending']; ?></h3>
-                        <span class="host-metric-note">Listings waiting for approval before going live.</span>
+                        <!-- host-metric-note removed -->
                     </div>
                 </div>
                 <div class="host-metric-card">
@@ -254,7 +249,7 @@ $conn->close();
                     <div class="host-metric-copy">
                         <p>Auto-Accept Enabled</p>
                         <h3><?php echo $property_stats['auto_accept']; ?></h3>
-                        <span class="host-metric-note">Properties that instantly confirm new bookings.</span>
+                        <!-- host-metric-note removed -->
                     </div>
                 </div>
             </div>

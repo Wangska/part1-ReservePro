@@ -216,8 +216,8 @@ function toChart(array $rows, string $xKey, string $yKey): array {
             border-bottom: 1px solid rgba(148,163,184,0.12);
             font-size: 13px;
         }
-        .mini th { text-align:left; color:#CBD5E1 !important; font-weight:800; letter-spacing:0.04em; text-transform:uppercase; font-size:11px; }
-        .mini td { color:#F1F5F9 !important; font-weight:600; }
+        .mini th { text-align:center; color:#CBD5E1 !important; font-weight:800; letter-spacing:0.04em; text-transform:uppercase; font-size:11px; }
+        .mini td { color:#F1F5F9 !important; font-weight:600; text-align:center; }
 
         body.light-mode .chart-card,
         body.light-mode .table-card {
@@ -228,8 +228,8 @@ function toChart(array $rows, string $xKey, string $yKey): array {
         body.light-mode .chart-card h2,
         body.light-mode .table-card .table-header h2 { color:#0f172a !important; }
         body.light-mode .table-card .table-header p { color:#475569 !important; }
-        body.light-mode .mini th { color:#334155 !important; border-bottom-color:#E2E8F0 !important; }
-        body.light-mode .mini td { color:#0f172a !important; border-bottom-color:#F1F5F9 !important; }
+        body.light-mode .mini th { color:#334155 !important; border-bottom-color:#E2E8F0 !important; text-align:center; }
+        body.light-mode .mini td { color:#0f172a !important; border-bottom-color:#F1F5F9 !important; text-align:center; }
     </style>
 </head>
 <body class="dashboard-page admin-page">
@@ -301,10 +301,7 @@ function toChart(array $rows, string $xKey, string $yKey): array {
                     <div class="user-role">Administrator</div>
                 </div>
             </div>
-            <div class="theme-toggle" style="margin-bottom: 12px;">
-                <span class="theme-toggle-icon" aria-hidden="true"></span>
-                <span class="theme-toggle-text">Theme</span>
-            </div>
+
             <a href="../logout.php" class="btn-logout">Logout</a>
         </div>
     </aside>

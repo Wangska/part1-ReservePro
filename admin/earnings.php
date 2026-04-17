@@ -95,6 +95,14 @@ $conn->close();
             font-weight: 700;
             color: #D4A574;
         }
+
+        .admin-earnings-page .earnings-table th,
+        .admin-earnings-page .earnings-table td {
+            text-align: center;
+            vertical-align: middle;
+            border-left: none !important;
+            border-right: none !important;
+        }
     </style>
 </head>
 <body class="dashboard-page admin-page admin-clean-page admin-earnings-page">
@@ -166,10 +174,7 @@ $conn->close();
                         <div class="user-role">Administrator</div>
                     </div>
                 </div>
-                <div class="theme-toggle" style="margin-bottom: 12px;">
-                    <span class="theme-toggle-icon" aria-hidden="true"></span>
-                    <span class="theme-toggle-text">Theme</span>
-                </div>
+
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
         </aside>

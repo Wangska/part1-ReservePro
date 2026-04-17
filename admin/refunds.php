@@ -150,8 +150,6 @@ function badge($s) {
             border-color: rgba(212,165,116,0.32);
         }
         .refund-stat-card.active-stat {
-            border-color: rgba(212,165,116,0.45);
-            background: rgba(212,165,116,0.07);
         }
         .refund-stat-icon {
             width: 44px; height: 44px;
@@ -353,6 +351,7 @@ function badge($s) {
         body.light-mode .refunds-summary-card strong { color:#0F172A; }
         body.light-mode .refunds-summary-desc { color:#475569; }
         body.light-mode .refund-stat-card { background:#fff; border-color:rgba(15,23,42,.08); box-shadow:0 8px 16px rgba(15,23,42,.06); }
+        body.light-mode .refund-stat-card.active-stat { background: unset; border-color: unset; }
         body.light-mode .refund-stat-icon { background:#F8FAFC; border-color:rgba(15,23,42,.08); }
         body.light-mode .refund-stat-label { color:#64748B; }
         body.light-mode .refund-stat-value { color:#0F172A; }
@@ -461,10 +460,7 @@ function badge($s) {
                     <div class="user-role">Administrator</div>
                 </div>
             </div>
-            <div class="theme-toggle" style="margin-bottom: 12px;">
-                <span class="theme-toggle-icon" aria-hidden="true"></span>
-                <span class="theme-toggle-text">Theme</span>
-            </div>
+
             <a href="../logout.php" class="btn-logout">Logout</a>
         </div>
     </aside>

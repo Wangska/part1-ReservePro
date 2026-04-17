@@ -82,6 +82,26 @@ $conn->close();
             flex-wrap: wrap;
             width: 100%;
         }
+
+        .admin-bookings-page .properties-table th,
+        .admin-bookings-page .properties-table td {
+            border-left: none !important;
+            border-right: none !important;
+            border-inline: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .admin-bookings-page .properties-table th {
+            text-align: center;
+        }
+
+        .admin-bookings-page .properties-table {
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
     </style>
 </head>
 <body class="dashboard-page admin-page admin-clean-page admin-bookings-page">
@@ -156,10 +176,7 @@ $conn->close();
                         <div class="user-role">Administrator</div>
                     </div>
                 </div>
-                <div class="theme-toggle" style="margin-bottom: 12px;">
-                    <span class="theme-toggle-icon" aria-hidden="true"></span>
-                    <span class="theme-toggle-text">Theme</span>
-                </div>
+
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
         </aside>
