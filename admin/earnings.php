@@ -73,6 +73,13 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/admin.css?v=25.4">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
+        body.admin-page:not(.light-mode) {
+            background: #06090F !important;
+        }
+        body.admin-page::before,
+        body.admin-page::after {
+            display: none !important;
+        }
         .filter-buttons {
             display: flex;
             gap: 8px;
@@ -102,11 +109,23 @@ $conn->close();
             <nav class="sidebar-nav">
                 <a href="dashboard.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
-                    <span>Admin Panel</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="analytics.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-simple" aria-hidden="true"></i></span>
+                    <span>Analytics</span>
+                </a>
+                <a href="refunds.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></span>
+                    <span>Refunds</span>
                 </a>
                 <a href="host-verifications.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-user-check" aria-hidden="true"></i></span>
                     <span>Host Verifications</span>
+                </a>
+                <a href="submissions.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-file-lines" aria-hidden="true"></i></span>
+                    <span>Submissions</span>
                 </a>
                 <a href="properties.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
@@ -127,6 +146,10 @@ $conn->close();
                 <a href="commission.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
                     <span>Commission</span>
+                </a>
+                <a href="geocode-all-properties.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i></span>
+                    <span>Geocode Properties</span>
                 </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
@@ -156,12 +179,12 @@ $conn->close();
                 <div class="admin-page-hero-content">
                     <span class="admin-page-eyebrow">Revenue Overview</span>
                     <h1>Platform Earnings</h1>
-                    <p>Review guest-paid totals across the platform. For the platform’s commission-only view, open <a href="commission.php" style="color: #FDE68A; text-decoration: underline;">Commission</a>.</p>
+                    <p></p>
                 </div>
                 <div class="admin-page-summary">
                     <span class="admin-page-summary-label">Earned Revenue</span>
                     <strong>₱<?php echo number_format($total_earnings, 0); ?></strong>
-                    <span class="admin-page-summary-text">confirmed and completed booking totals</span>
+                    <span class="admin-page-summary-text"></span>
                 </div>
             </div>
 
@@ -171,7 +194,6 @@ $conn->close();
                     <div class="admin-metric-copy">
                         <div class="stat-label">Earned Revenue</div>
                         <div class="stat-value">₱<?php echo number_format($total_earnings, 2); ?></div>
-                        <div class="stat-change">Confirmed and completed booking totals.</div>
                     </div>
                 </div>
                 <div class="earnings-stat-card admin-metric-card">
@@ -179,7 +201,6 @@ $conn->close();
                     <div class="admin-metric-copy">
                         <div class="stat-label">Pending Pipeline</div>
                         <div class="stat-value">₱<?php echo number_format($pending_earnings, 2); ?></div>
-                        <div class="stat-change">Revenue waiting on booking completion.</div>
                     </div>
                 </div>
                 <div class="earnings-stat-card admin-metric-card">
@@ -187,7 +208,6 @@ $conn->close();
                     <div class="admin-metric-copy">
                         <div class="stat-label">Cancelled Value</div>
                         <div class="stat-value">₱<?php echo number_format($cancelled_value, 2); ?></div>
-                        <div class="stat-change">Historical totals excluded from earnings.</div>
                     </div>
                 </div>
                 <div class="earnings-stat-card admin-metric-card">
@@ -195,7 +215,6 @@ $conn->close();
                     <div class="admin-metric-copy">
                         <div class="stat-label">Total Bookings</div>
                         <div class="stat-value"><?php echo (int) $total_bookings; ?></div>
-                        <div class="stat-change">Every reservation, regardless of status.</div>
                     </div>
                 </div>
             </div>
@@ -204,7 +223,7 @@ $conn->close();
                 <div class="table-header admin-surface-header">
                     <div>
                         <h2>All Booking Transactions</h2>
-                        <p>Use the filters to switch between earned, pending, and cancelled revenue.</p>
+                        <p></p>
                     </div>
                     <div class="filter-buttons">
                         <button type="button" class="filter-btn active" data-filter="all">All</button>

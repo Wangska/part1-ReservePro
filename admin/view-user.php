@@ -124,195 +124,131 @@ function bool_label($value) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
-    <title>User Details - Admin - ReservePro</title>
+    <title>User Details – <?php echo htmlspecialchars($viewUser['first_name'] . ' ' . $viewUser['last_name']); ?> – Admin – ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=25.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.3">
     <link rel="stylesheet" href="../assets/css/admin.css?v=25.0">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
-        .user-details-layout {
-            display: grid;
-            grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
-            gap: 24px;
-        }
-        @media (max-width: 1024px) {
-            .user-details-layout {
-                grid-template-columns: 1fr;
-            }
-        }
-        .user-summary-card {
-            background:
-                linear-gradient(145deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.03)),
-                linear-gradient(135deg, #111827, #020617);
-            border-radius: 18px;
-            padding: 24px;
-            border: 1px solid rgba(212, 165, 116, 0.9);
-            box-shadow:
-                0 22px 70px rgba(0, 0, 0, 0.9),
-                0 0 0 2px rgba(212, 165, 116, 0.7);
-        }
-        .user-summary-header {
+        body.admin-page:not(.light-mode) { background: #06090F !important; }
+        body.admin-page::before, body.admin-page::after { display: none !important; }
+
+        /* ── Hero ── */
+        .vu-hero {
             display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 16px;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            background: linear-gradient(135deg, rgba(17,24,39,0.96), rgba(30,41,59,0.88));
+            border: 1px solid rgba(212,165,116,0.22);
+            border-radius: 24px;
+            padding: 28px 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 24px 48px rgba(0,0,0,0.28);
         }
-        .user-summary-avatar {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #D4A574, #B8935F);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 26px;
-            font-weight: 700;
-            color: #0F0F0F;
+        .vu-hero-left { display: flex; align-items: flex-start; gap: 20px; flex: 1; min-width: 0; }
+        .vu-avatar {
+            width: 72px; height: 72px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px; font-weight: 700; color: #0F0F0F; flex-shrink: 0;
         }
-        .user-summary-name {
-            font-size: 22px;
-            font-weight: 700;
-            color: #FFFFFF;
+        .vu-avatar-guest  { background: linear-gradient(135deg, #3B82F6, #2563EB); color: #fff; }
+        .vu-avatar-host   { background: linear-gradient(135deg, #D4A574, #B8935F); }
+        .vu-avatar-admin  { background: linear-gradient(135deg, #EF4444, #DC2626); color: #fff; }
+        .vu-eyebrow {
+            display: inline-flex; align-items: center; gap: 7px;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+            color: #D4A574; background: rgba(212,165,116,0.12); border: 1px solid rgba(212,165,116,0.22);
+            border-radius: 999px; padding: 5px 14px; margin-bottom: 10px;
         }
-        .user-summary-meta {
-            font-size: 13px;
-            color: #9CA3AF;
+        .vu-hero h1 {
+            font-size: 26px; font-weight: 700; color: #F1F5F9 !important;
+            margin: 0 0 10px 0; line-height: 1.25;
         }
-        .user-meta-grid {
-            margin-top: 16px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 12px;
-            font-size: 13px;
+        .vu-role {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 4px 11px; border-radius: 999px; font-size: 12px; font-weight: 600;
         }
-        .user-meta-item-label {
-            color: #E5E7EB !important;
-            margin-bottom: 4px;
-            font-weight: 600;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
+        .vu-role-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+        .vu-role-guest  { background: rgba(59,130,246,0.12);  color: #93C5FD !important; border: 1px solid rgba(59,130,246,0.25); }
+        .vu-role-guest  .vu-role-dot { background: #3B82F6; }
+        .vu-role-host   { background: rgba(212,165,116,0.12); color: #D4A574 !important; border: 1px solid rgba(212,165,116,0.25); }
+        .vu-role-host   .vu-role-dot { background: #D4A574; }
+        .vu-role-admin  { background: rgba(239,68,68,0.12);   color: #FCA5A5 !important; border: 1px solid rgba(239,68,68,0.25); }
+        .vu-role-admin  .vu-role-dot { background: #EF4444; }
+        .vu-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; }
+        .vu-meta-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #64748B !important; }
+        .vu-meta-item i { color: #64748B; font-size: 11px; }
+        .vu-hero-right { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; flex-shrink: 0; }
+        .btn-vu-back {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 10px 18px; border-radius: 999px; font-size: 13px; font-weight: 700;
+            text-decoration: none; border: 1px solid rgba(148,163,184,0.22);
+            background: rgba(255,255,255,0.05); color: #CBD5E1 !important;
+            transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
         }
-        .user-meta-item-value {
-            color: #FFFFFF !important;
-            font-weight: 600;
-            font-size: 14px;
-        }
-        .detail-section {
-            background: rgba(15, 15, 15, 0.9);
-            border-radius: 18px;
-            padding: 20px 20px 12px;
-            border: 1px solid rgba(55, 65, 81, 0.8);
-            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.75);
-            margin-bottom: 18px;
-        }
-        .detail-section h2 {
-            font-size: 18px;
-            font-weight: 700;
-            color: #FFFFFF !important;
-            margin-bottom: 10px;
-        }
-        .detail-section small {
-            color: #E5E7EB !important;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-        .mini-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            font-size: 13px;
-        }
-        .mini-table th,
-        .mini-table td {
-            padding: 8px 6px;
-            border-bottom: 1px solid rgba(55, 65, 81, 0.9);
-        }
-        .mini-table th {
-            text-align: left;
-            color: #CBD5E1 !important;
-            font-weight: 600;
-        }
-        .mini-table td {
-            color: #F1F5F9 !important;
-        }
-        .mini-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 999px;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-        .mini-badge-role-guest {
-            background: rgba(59, 130, 246, 0.2);
-            color: #60A5FA;
-        }
-        .mini-badge-role-host {
-            background: rgba(212, 165, 116, 0.2);
-            color: #FBBF77;
-        }
-        .mini-badge-role-admin {
-            background: rgba(239, 68, 68, 0.2);
-            color: #FCA5A5;
+        .btn-vu-back:hover {
+            background: rgba(212,165,116,0.12); border-color: rgba(212,165,116,0.38);
+            color: #D4A574 !important; transform: translateY(-1px);
         }
 
-        .nav-btn-outline {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 14px;
-            border-radius: 999px;
-            border: 1px solid rgba(212, 165, 116, 0.32);
-            background: rgba(255, 255, 255, 0.06);
-            color: #FDE68A !important;
-            text-decoration: none;
-            font-weight: 900;
-            font-size: 13px;
-            letter-spacing: 0.02em;
-            box-shadow: 0 14px 30px rgba(0,0,0,0.18);
-            transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
-            white-space: nowrap;
-        }
-        .nav-btn-outline:hover {
-            transform: translateY(-1px);
-            background: rgba(255, 255, 255, 0.09);
-            border-color: rgba(212, 165, 116, 0.52);
-            color: #FFF1A6 !important;
-        }
-        .nav-btn-outline .nav-btn-icon {
-            width: 30px;
-            height: 30px;
-            border-radius: 999px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(212, 165, 116, 0.16);
-            border: 1px solid rgba(212, 165, 116, 0.25);
-            color: #FDE68A;
-            flex: 0 0 auto;
-        }
+        /* ── Layout grid ── */
+        .vu-grid { display: grid; grid-template-columns: 320px 1fr; gap: 20px; align-items: start; }
+        @media (max-width: 900px) { .vu-grid { grid-template-columns: 1fr; } }
 
-        body.light-mode .nav-btn-outline {
-            background: #ffffff !important;
-            border-color: rgba(15, 23, 42, 0.14) !important;
-            color: #0f172a !important;
-            box-shadow: 0 14px 30px rgba(0,0,0,0.08);
+        /* ── Card ── */
+        .vu-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(148,163,184,0.1); border-radius: 14px; padding: 18px 20px; margin-bottom: 14px; }
+        .vu-card:last-child { margin-bottom: 0; }
+        .vu-card-title {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+            color: #94A3B8 !important; margin-bottom: 14px;
         }
-        body.light-mode .nav-btn-outline:hover {
-            background: #F8FAFC !important;
-            border-color: rgba(15, 23, 42, 0.22) !important;
-            color: #0f172a !important;
-        }
-        body.light-mode .nav-btn-outline .nav-btn-icon {
-            background: rgba(15, 23, 42, 0.06);
-            border-color: rgba(15, 23, 42, 0.10);
-            color: #0f172a;
-        }
+        .vu-card-title i { font-size: 12px; }
+
+        /* ── Stats row ── */
+        .vu-stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+        .vu-stat-cell { text-align: center; padding: 12px 8px; background: rgba(255,255,255,0.02); border-radius: 10px; border: 1px solid rgba(148,163,184,0.08); }
+        .vu-stat-num { font-size: 20px; font-weight: 700; color: #E2E8F0 !important; line-height: 1; }
+        .vu-stat-sub { font-size: 11px; color: #64748B !important; margin-top: 3px; }
+
+        /* ── Chips ── */
+        .vu-chips { display: flex; flex-direction: column; }
+        .vu-chip { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(148,163,184,0.08); }
+        .vu-chip:last-child { border-bottom: none; }
+        .vu-chip-icon { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .vu-chip-icon i { color: #64748B; font-size: 12px; }
+        .vu-chip-body { flex: 1; min-width: 0; }
+        .vu-chip-label { font-size: 11px; color: #64748B !important; font-weight: 500; }
+        .vu-chip-value { font-size: 13px; color: #CBD5E1 !important; font-weight: 500; margin-top: 1px; }
+        .vu-verify-yes { display: inline-flex; align-items: center; gap: 5px; color: #86EFAC !important; font-size: 13px; }
+        .vu-verify-no  { display: inline-flex; align-items: center; gap: 5px; color: #64748B !important; font-size: 13px; }
+
+        /* ── Table ── */
+        .vu-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .vu-table thead tr { border-bottom: 1px solid rgba(148,163,184,0.12); }
+        .vu-table th { padding: 8px 10px; text-align: left; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #64748B !important; }
+        .vu-table td { padding: 10px 10px; color: #CBD5E1 !important; border-bottom: 1px solid rgba(148,163,184,0.06); }
+        .vu-table tbody tr:last-child td { border-bottom: none; }
+        .vu-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
+
+        /* ── Status badges ── */
+        .vu-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+        .vu-badge-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+        .vu-badge-confirmed, .vu-badge-approved  { background: rgba(34,197,94,0.1);  color: #86EFAC !important; border: 1px solid rgba(34,197,94,0.2); }
+        .vu-badge-confirmed .vu-badge-dot, .vu-badge-approved .vu-badge-dot { background: #22C55E; }
+        .vu-badge-pending   { background: rgba(234,179,8,0.1);  color: #FDE047 !important; border: 1px solid rgba(234,179,8,0.2); }
+        .vu-badge-pending   .vu-badge-dot { background: #EAB308; }
+        .vu-badge-cancelled, .vu-badge-rejected { background: rgba(244,63,94,0.1); color: #FDA4AF !important; border: 1px solid rgba(244,63,94,0.2); }
+        .vu-badge-cancelled .vu-badge-dot, .vu-badge-rejected .vu-badge-dot { background: #F43F5E; }
+        .vu-badge-completed { background: rgba(99,102,241,0.12); color: #C7D2FE !important; border: 1px solid rgba(99,102,241,0.2); }
+        .vu-badge-completed .vu-badge-dot { background: #6366F1; }
+
+        .vu-empty { color: #64748B !important; font-size: 13px; margin: 0; }
     </style>
 </head>
-<body class="dashboard-page admin-page">
+<body class="dashboard-page admin-page admin-clean-page admin-view-user-page">
     <div class="host-layout">
         <!-- Sidebar -->
         <aside class="host-sidebar">
@@ -322,11 +258,18 @@ function bool_label($value) {
                     <span>ReservePro</span>
                 </a>
             </div>
-            
             <nav class="sidebar-nav">
                 <a href="dashboard.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
                     <span>Dashboard</span>
+                </a>
+                <a href="analytics.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-simple" aria-hidden="true"></i></span>
+                    <span>Analytics</span>
+                </a>
+                <a href="refunds.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></span>
+                    <span>Refunds</span>
                 </a>
                 <a href="host-verifications.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-user-check" aria-hidden="true"></i></span>
@@ -356,12 +299,15 @@ function bool_label($value) {
                     <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
                     <span>Commission</span>
                 </a>
+                <a href="geocode-all-properties.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i></span>
+                    <span>Geocode Properties</span>
+                </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
                     <span>View Site</span>
                 </a>
             </nav>
-            
             <div class="sidebar-footer">
                 <div class="user-profile">
                     <div class="user-avatar" style="background: linear-gradient(135deg, #EF4444, #DC2626);">
@@ -382,183 +328,198 @@ function bool_label($value) {
 
         <!-- Main Content -->
         <main class="host-main">
-            <div class="host-header">
-                <div>
-                    <h1>User Details</h1>
-                    <p class="subtitle">View activity and information for this user</p>
+
+            <!-- Hero -->
+            <div class="vu-hero">
+                <div class="vu-hero-left">
+                    <div class="vu-avatar vu-avatar-<?php echo $viewUser['role']; ?>">
+                        <?php echo strtoupper(substr($viewUser['first_name'], 0, 1) . substr($viewUser['last_name'], 0, 1)); ?>
+                    </div>
+                    <div>
+                        <div class="vu-eyebrow"><i class="fa-solid fa-user"></i> User Profile</div>
+                        <h1><?php echo htmlspecialchars($viewUser['first_name'] . ' ' . $viewUser['last_name']); ?></h1>
+                        <span class="vu-role vu-role-<?php echo $viewUser['role']; ?>">
+                            <span class="vu-role-dot"></span>
+                            <?php echo ucfirst($viewUser['role']); ?>
+                        </span>
+                        <div class="vu-meta">
+                            <span class="vu-meta-item"><i class="fa-solid fa-envelope"></i><?php echo htmlspecialchars($viewUser['email']); ?></span>
+                            <span class="vu-meta-item"><i class="fa-solid fa-hashtag"></i>ID <?php echo $viewUser['id']; ?></span>
+                            <span class="vu-meta-item"><i class="fa-solid fa-calendar"></i>Joined <?php echo date('M j, Y', strtotime($viewUser['created_at'])); ?></span>
+                        </div>
+                    </div>
                 </div>
-                <a href="users.php" class="nav-btn-outline">
-                    <span class="nav-btn-icon" aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
-                    <span>Back to Users</span>
-                </a>
+                <div class="vu-hero-right">
+                    <a href="users.php" class="btn-vu-back"><i class="fa-solid fa-arrow-left"></i> Back to Users</a>
+                </div>
             </div>
 
-            <div class="user-details-layout">
-                <!-- Left: summary -->
-                <section class="user-summary-card">
-                    <div class="user-summary-header">
-                        <div class="user-summary-avatar">
-                            <?php echo strtoupper(substr($viewUser['first_name'], 0, 1) . substr($viewUser['last_name'], 0, 1)); ?>
-                        </div>
-                        <div>
-                            <div class="user-summary-name">
-                                <?php echo htmlspecialchars($viewUser['first_name'] . ' ' . $viewUser['last_name']); ?>
-                            </div>
-                            <div class="user-summary-meta">
-                                ID #<?php echo $viewUser['id']; ?> · 
-                                Role: <?php echo ucfirst($viewUser['role']); ?> ·
-                                Joined <?php echo date('M j, Y', strtotime($viewUser['created_at'])); ?>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="user-meta-grid">
-                        <div>
-                            <div class="user-meta-item-label">Email</div>
-                            <div class="user-meta-item-value"><?php echo htmlspecialchars($viewUser['email']); ?></div>
-                        </div>
-                        <div>
-                            <div class="user-meta-item-label">Email Verified</div>
-                            <div class="user-meta-item-value">
-                                <?php echo bool_label((bool)($viewUser['email_verified'] ?? 0)); ?>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="user-meta-item-label">Bookings as Guest</div>
-                            <div class="user-meta-item-value">
-                                <?php echo (int)($viewUser['total_bookings_as_guest'] ?? 0); ?>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="user-meta-item-label">Properties (Host)</div>
-                            <div class="user-meta-item-value">
-                                <?php echo (int)($viewUser['total_properties'] ?? 0); ?>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="user-meta-item-label">Bookings on Host Properties</div>
-                            <div class="user-meta-item-value">
-                                <?php echo (int)($viewUser['total_bookings_as_host'] ?? 0); ?>
-                            </div>
-                        </div>
-                        <?php if ($viewUser['role'] === 'host'): ?>
-                        <div>
-                            <div class="user-meta-item-label">Host Verified</div>
-                            <div class="user-meta-item-value">
-                                <?php echo bool_label((bool)($viewUser['host_verified'] ?? 0)); ?>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="user-meta-item-label">Host Status</div>
-                            <div class="user-meta-item-value">
-                                <?php echo htmlspecialchars($viewUser['host_verification_status'] ?? 'pending'); ?>
-                            </div>
-                        </div>
-                        <?php endif; ?>
-                    </div>
-                </section>
+            <!-- Content grid -->
+            <div class="vu-grid">
 
-                <!-- Right: activity lists -->
-                <section>
+                <!-- Left column: stats + account details -->
+                <div>
+                    <div class="vu-card">
+                        <div class="vu-card-title"><i class="fa-solid fa-chart-simple"></i> Activity</div>
+                        <div class="vu-stats-row">
+                            <div class="vu-stat-cell">
+                                <div class="vu-stat-num"><?php echo (int)($viewUser['total_bookings_as_guest'] ?? 0); ?></div>
+                                <div class="vu-stat-sub">Bookings</div>
+                            </div>
+                            <div class="vu-stat-cell">
+                                <div class="vu-stat-num"><?php echo (int)($viewUser['total_properties'] ?? 0); ?></div>
+                                <div class="vu-stat-sub">Properties</div>
+                            </div>
+                            <div class="vu-stat-cell">
+                                <div class="vu-stat-num"><?php echo (int)($viewUser['total_bookings_as_host'] ?? 0); ?></div>
+                                <div class="vu-stat-sub">Host Bkgs</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="vu-card">
+                        <div class="vu-card-title"><i class="fa-solid fa-circle-info"></i> Account</div>
+                        <div class="vu-chips">
+                            <div class="vu-chip">
+                                <div class="vu-chip-icon"><i class="fa-solid fa-envelope-circle-check"></i></div>
+                                <div class="vu-chip-body">
+                                    <div class="vu-chip-label">Email Verified</div>
+                                    <div class="vu-chip-value">
+                                        <?php if (!empty($viewUser['email_verified'])): ?>
+                                            <span class="vu-verify-yes"><i class="fa-solid fa-circle-check"></i> Verified</span>
+                                        <?php else: ?>
+                                            <span class="vu-verify-no"><i class="fa-solid fa-circle-xmark"></i> Not verified</span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php if ($viewUser['role'] === 'host'): ?>
+                            <div class="vu-chip">
+                                <div class="vu-chip-icon"><i class="fa-solid fa-shield-check"></i></div>
+                                <div class="vu-chip-body">
+                                    <div class="vu-chip-label">Host Verified</div>
+                                    <div class="vu-chip-value">
+                                        <?php if (!empty($viewUser['host_verified'])): ?>
+                                            <span class="vu-verify-yes"><i class="fa-solid fa-circle-check"></i> Verified</span>
+                                        <?php else: ?>
+                                            <span class="vu-verify-no"><i class="fa-solid fa-circle-xmark"></i> Not verified</span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="vu-chip">
+                                <div class="vu-chip-icon"><i class="fa-solid fa-file-circle-check"></i></div>
+                                <div class="vu-chip-body">
+                                    <div class="vu-chip-label">Verification Status</div>
+                                    <div class="vu-chip-value">
+                                        <?php $hvs = $viewUser['host_verification_status'] ?? 'pending'; ?>
+                                        <span class="vu-badge vu-badge-<?php echo $hvs; ?>">
+                                            <span class="vu-badge-dot"></span>
+                                            <?php echo ucfirst($hvs); ?>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right column: activity tables -->
+                <div>
                     <?php if ($viewUser['role'] === 'host'): ?>
-                        <div class="detail-section">
-                            <h2>Host Properties</h2>
+
+                        <div class="vu-card">
+                            <div class="vu-card-title"><i class="fa-solid fa-house"></i> Host Properties</div>
                             <?php if (empty($properties)): ?>
-                                <small>No properties listed yet.</small>
+                                <p class="vu-empty">No properties listed yet.</p>
                             <?php else: ?>
-                                <table class="mini-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Property</th>
-                                            <th>Location</th>
-                                            <th>Status</th>
-                                            <th>Price / night</th>
-                                        </tr>
-                                    </thead>
+                                <table class="vu-table">
+                                    <thead><tr><th>Property</th><th>Location</th><th>Status</th><th>Price/night</th></tr></thead>
                                     <tbody>
                                         <?php foreach ($properties as $p): ?>
-                                            <tr>
-                                                <td><?php echo htmlspecialchars($p['title']); ?></td>
-                                                <td><?php echo htmlspecialchars($p['city'] . ', ' . $p['country']); ?></td>
-                                                <td><?php echo ucfirst($p['status']); ?></td>
-                                                <td>₱<?php echo number_format($p['price_per_night'], 0); ?></td>
-                                            </tr>
+                                        <tr>
+                                            <td><?php echo htmlspecialchars($p['title']); ?></td>
+                                            <td><?php echo htmlspecialchars($p['city'] . ', ' . $p['country']); ?></td>
+                                            <td>
+                                                <span class="vu-badge vu-badge-<?php echo $p['status']; ?>">
+                                                    <span class="vu-badge-dot"></span>
+                                                    <?php echo ucfirst($p['status']); ?>
+                                                </span>
+                                            </td>
+                                            <td>₱<?php echo number_format($p['price_per_night'], 0); ?></td>
+                                        </tr>
                                         <?php endforeach; ?>
                                     </tbody>
                                 </table>
                             <?php endif; ?>
                         </div>
 
-                        <div class="detail-section">
-                            <h2>Bookings on Host Properties</h2>
+                        <div class="vu-card">
+                            <div class="vu-card-title"><i class="fa-solid fa-calendar-days"></i> Bookings on Host Properties</div>
                             <?php if (empty($bookings_host)): ?>
-                                <small>No bookings yet.</small>
+                                <p class="vu-empty">No bookings yet.</p>
                             <?php else: ?>
-                                <table class="mini-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Property</th>
-                                            <th>Guest</th>
-                                            <th>Dates</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
+                                <table class="vu-table">
+                                    <thead><tr><th>Property</th><th>Guest</th><th>Dates</th><th>Status</th></tr></thead>
                                     <tbody>
                                         <?php foreach ($bookings_host as $b): ?>
-                                            <tr>
-                                                <td><?php echo htmlspecialchars($b['property_title']); ?></td>
-                                                <td><?php echo htmlspecialchars($b['guest_first_name'] . ' ' . $b['guest_last_name']); ?></td>
-                                                <td>
-                                                    <?php echo date('M j', strtotime($b['check_in'])); ?>
-                                                    –
-                                                    <?php echo date('M j, Y', strtotime($b['check_out'])); ?>
-                                                </td>
-                                                <td><?php echo ucfirst($b['status']); ?></td>
-                                            </tr>
+                                        <tr>
+                                            <td><?php echo htmlspecialchars($b['property_title']); ?></td>
+                                            <td><?php echo htmlspecialchars($b['guest_first_name'] . ' ' . $b['guest_last_name']); ?></td>
+                                            <td><?php echo date('M j', strtotime($b['check_in'])) . ' – ' . date('M j, Y', strtotime($b['check_out'])); ?></td>
+                                            <td>
+                                                <span class="vu-badge vu-badge-<?php echo $b['status']; ?>">
+                                                    <span class="vu-badge-dot"></span>
+                                                    <?php echo ucfirst($b['status']); ?>
+                                                </span>
+                                            </td>
+                                        </tr>
                                         <?php endforeach; ?>
                                     </tbody>
                                 </table>
                             <?php endif; ?>
                         </div>
+
                     <?php elseif ($viewUser['role'] === 'guest'): ?>
-                        <div class="detail-section">
-                            <h2>Guest Bookings</h2>
+
+                        <div class="vu-card">
+                            <div class="vu-card-title"><i class="fa-solid fa-calendar-days"></i> Guest Bookings</div>
                             <?php if (empty($bookings_guest)): ?>
-                                <small>No bookings yet.</small>
+                                <p class="vu-empty">No bookings yet.</p>
                             <?php else: ?>
-                                <table class="mini-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Property</th>
-                                            <th>Location</th>
-                                            <th>Dates</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
+                                <table class="vu-table">
+                                    <thead><tr><th>Property</th><th>Location</th><th>Dates</th><th>Status</th></tr></thead>
                                     <tbody>
                                         <?php foreach ($bookings_guest as $b): ?>
-                                            <tr>
-                                                <td><?php echo htmlspecialchars($b['property_title']); ?></td>
-                                                <td><?php echo htmlspecialchars($b['property_city'] . ', ' . $b['property_country']); ?></td>
-                                                <td>
-                                                    <?php echo date('M j', strtotime($b['check_in'])); ?>
-                                                    –
-                                                    <?php echo date('M j, Y', strtotime($b['check_out'])); ?>
-                                                </td>
-                                                <td><?php echo ucfirst($b['status']); ?></td>
-                                            </tr>
+                                        <tr>
+                                            <td><?php echo htmlspecialchars($b['property_title']); ?></td>
+                                            <td><?php echo htmlspecialchars($b['property_city'] . ', ' . $b['property_country']); ?></td>
+                                            <td><?php echo date('M j', strtotime($b['check_in'])) . ' – ' . date('M j, Y', strtotime($b['check_out'])); ?></td>
+                                            <td>
+                                                <span class="vu-badge vu-badge-<?php echo $b['status']; ?>">
+                                                    <span class="vu-badge-dot"></span>
+                                                    <?php echo ucfirst($b['status']); ?>
+                                                </span>
+                                            </td>
+                                        </tr>
                                         <?php endforeach; ?>
                                     </tbody>
                                 </table>
                             <?php endif; ?>
                         </div>
+
                     <?php else: ?>
-                        <div class="detail-section">
-                            <h2>Administrator</h2>
-                            <small>This account is an administrator. Activity is not listed here.</small>
+
+                        <div class="vu-card">
+                            <div class="vu-card-title"><i class="fa-solid fa-shield-halved"></i> Administrator</div>
+                            <p class="vu-empty">This account is an administrator. Activity is not listed here.</p>
                         </div>
+
                     <?php endif; ?>
-                </section>
-            </div>
+                </div>
+
+            </div><!-- /.vu-grid -->
         </main>
     </div>
 
@@ -566,4 +527,3 @@ function bool_label($value) {
     <script src="../assets/js/admin-view-site-confirm.js?v=1.0"></script>
 </body>
 </html>
-

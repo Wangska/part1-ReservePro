@@ -141,17 +141,54 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
             </a>
         </div>
         <nav class="sidebar-nav">
-            <a href="dashboard.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span><span>Admin Panel</span></a>
-            <a href="analytics.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-chart-simple" aria-hidden="true"></i></span><span>Analytics</span></a>
-            <a href="refunds.php" class="nav-item active"><span class="nav-icon"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></span><span>Refunds</span></a>
-            <a href="host-verifications.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user-check" aria-hidden="true"></i></span><span>Host Verifications</span></a>
-            <a href="submissions.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-file-lines" aria-hidden="true"></i></span><span>Submissions</span></a>
-            <a href="properties.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span><span>All Properties</span></a>
-            <a href="users.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-users" aria-hidden="true"></i></span><span>Users</span></a>
-            <a href="bookings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i></span><span>All Bookings</span></a>
-            <a href="earnings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span><span>Earnings</span></a>
-            <a href="commission.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span><span>Commission</span></a>
-            <a href="../home.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span><span>View Site</span></a>
+            <a href="dashboard.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
+                <span>Dashboard</span>
+            </a>
+            <a href="analytics.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-chart-simple" aria-hidden="true"></i></span>
+                <span>Analytics</span>
+            </a>
+            <a href="refunds.php" class="nav-item active">
+                <span class="nav-icon"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></span>
+                <span>Refunds</span>
+            </a>
+            <a href="host-verifications.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-user-check" aria-hidden="true"></i></span>
+                <span>Host Verifications</span>
+            </a>
+            <a href="submissions.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-file-lines" aria-hidden="true"></i></span>
+                <span>Submissions</span>
+            </a>
+            <a href="properties.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
+                <span>All Properties</span>
+            </a>
+            <a href="users.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-users" aria-hidden="true"></i></span>
+                <span>Users</span>
+            </a>
+            <a href="bookings.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i></span>
+                <span>All Bookings</span>
+            </a>
+            <a href="earnings.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span>
+                <span>Earnings</span>
+            </a>
+            <a href="commission.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
+                <span>Commission</span>
+            </a>
+            <a href="geocode-all-properties.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i></span>
+                <span>Geocode Properties</span>
+            </a>
+            <a href="../home.php" class="nav-item">
+                <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
+                <span>View Site</span>
+            </a>
         </nav>
         <div class="sidebar-footer">
             <div class="user-profile">
