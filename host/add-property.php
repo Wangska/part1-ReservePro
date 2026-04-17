@@ -180,9 +180,6 @@ $conn->close();
             </div>
             
             <nav class="sidebar-nav">
-                <a href="dashboard.php" class="nav-item">
-                    <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
-                    <span>Dashboard</span>
                 </a>
                 <a href="properties.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
@@ -210,7 +207,7 @@ $conn->close();
                 </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
-                    <span>View Site</span>
+                    <span>Home</span>
                 </a>
             </nav>
             
@@ -232,17 +229,10 @@ $conn->close();
         <main class="host-main">
             <div class="host-header host-page-hero">
                 <div class="host-page-hero-content">
-                    <span class="host-page-eyebrow">Listing Setup</span>
-                    <h1>Add New Property</h1>
+                    <h1 style="margin-top: 20px;">Add New Property</h1>
                     <!-- subtitle removed -->
                 </div>
-                <div style="display:flex; align-items:flex-start; gap:14px; margin-left:auto;">
-                    <div class="host-page-summary">
-                        <span class="host-page-summary-label">Submission Flow</span>
-                        <strong>3</strong>
-                        <!-- host-page-summary-text removed -->
-                    </div>
-                </div>
+                <!-- host-page-summary removed -->
             </div>
 
             <?php if (!empty($errors)): ?>

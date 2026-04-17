@@ -1382,32 +1382,38 @@ body.light-mode .rp-empty-text {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
-  color: rgba(203,213,225,0.85);
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  color: #F3F4F6;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
   flex-shrink: 0;
   position: relative;
   z-index: 5;
-  transition: background 0.18s, border-color 0.18s, color 0.18s;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 .rp-hero-filter-btn:hover {
-  background: rgba(212,165,116,0.15);
-  border-color: rgba(212,165,116,0.40);
-  color: #D4A574;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
+  border-color: rgba(148, 163, 184, 0.3);
+  color: #FFFFFF;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 body.light-mode .rp-hero-filter-btn {
-  background: rgba(0,0,0,0.06);
-  border-color: rgba(0,0,0,0.12);
-  color: rgba(15,23,42,0.70);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
+  border-color: rgba(15, 23, 42, 0.1);
+  color: #111827;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
 }
 body.light-mode .rp-hero-filter-btn:hover {
-  background: rgba(212,165,116,0.15);
-  border-color: rgba(184,147,95,0.50);
-  color: #B8935F;
+  background: linear-gradient(145deg, #FFFFFF, #F8FAFC);
+  border-color: rgba(184, 147, 95, 0.4);
+  color: rgba(139, 111, 71, 0.95);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
 }
 
 /* ── Filter sidebar — centered popup (all screen sizes) ─────── */

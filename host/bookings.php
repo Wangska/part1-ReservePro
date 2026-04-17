@@ -52,7 +52,7 @@ $conn->close();
     <title>Bookings - ReservePro</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=11.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.3">
+    <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.4">
     <link rel="stylesheet" href="../assets/css/admin.css?v=25.4">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
 </head>
@@ -68,9 +68,6 @@ $conn->close();
             </div>
             
             <nav class="sidebar-nav">
-                <a href="dashboard.php" class="nav-item">
-                    <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
-                    <span>Dashboard</span>
                 </a>
                 <a href="properties.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
@@ -98,7 +95,7 @@ $conn->close();
                 </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
-                    <span>View Site</span>
+                    <span>Home</span>
                 </a>
             </nav>
             
@@ -120,17 +117,10 @@ $conn->close();
         <main class="host-main">
             <div class="host-header host-page-hero">
                 <div class="host-page-hero-content">
-                    <span class="host-page-eyebrow">Reservation Activity</span>
-                    <h1>Bookings</h1>
+                    <h1 style="margin-top: 20px;">Bookings</h1>
                     <!-- subtitle removed -->
                 </div>
-                <div style="display:flex; align-items:flex-start; gap:14px; margin-left:auto;">
-                    <div class="host-page-summary">
-                        <span class="host-page-summary-label">Confirmed Stays</span>
-                        <strong><?php echo $booking_stats['confirmed']; ?></strong>
-                        <!-- host-page-summary-text removed -->
-                    </div>
-                </div>
+                <!-- host-page-summary removed -->
             </div>
 
             <div class="host-metric-grid">
@@ -169,8 +159,8 @@ $conn->close();
             </div>
 
             <?php if (empty($bookings)): ?>
-                <div class="empty-state host-empty-state host-surface">
-                    <span class="empty-icon host-empty-icon"><i class="fa-solid fa-calendar-xmark" aria-hidden="true"></i></span>
+                <div class="empty-state host-empty-state host-surface" style="padding: 52px 36px; border-radius: 20px; background: rgba(17, 24, 39, 0.82); border: 1px solid rgba(148, 163, 184, 0.16); box-shadow: 0 18px 36px rgba(0, 0, 0, 0.16);">
+                    <span class="empty-icon host-empty-icon" style="width: 72px; height: 72px; margin: 0 auto 18px; border-radius: 20px; font-size: 28px; color: #7dd3fc; background: rgba(125, 211, 252, 0.12);"><i class="fa-solid fa-calendar-xmark" aria-hidden="true" style="font-size: 80px;"></i></span>
                     <h3>No bookings yet</h3>
                     <!-- empty state message removed -->
                 </div>

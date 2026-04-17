@@ -3,23 +3,8 @@ require_once __DIR__ . '/config/session.php';
 
 // Redirect logged-in users to their appropriate dashboard
 if (isLoggedIn()) {
-    $user = getCurrentUser();
-    if ($user && isset($user['role'])) {
-        switch ($user['role']) {
-            case 'admin':
-                header('Location: admin/dashboard.php');
-                exit();
-            case 'host':
-                header('Location: host/dashboard.php');
-                exit();
-            default:
-                header('Location: home.php');
-                exit();
-        }
-    } else {
-        header('Location: home.php');
-        exit();
-    }
+    // No redirection for admin or host; allow all roles to access index.php
+    // If you want to restrict other roles, add logic here
 }
 ?>
 <!DOCTYPE html>
@@ -135,6 +120,128 @@ if (isLoggedIn()) {
         .lp-btn-gold:hover {
             transform: translateY(-1px);
             box-shadow: 0 10px 28px rgba(212, 165, 116, 0.44);
+        }
+        .guest-menu {
+            position: relative;
+        }
+        .guest-menu-trigger {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 9px 16px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 999px;
+            color: #F3F4F6;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: inherit;
+            letter-spacing: -0.01em;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        .guest-menu-trigger:hover {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
+            border-color: rgba(148, 163, 184, 0.3);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+        }
+        .guest-menu.guest-menu-open .guest-menu-trigger {
+            border-color: rgba(212, 165, 116, 0.5);
+            box-shadow: 0 0 0 1px rgba(212, 165, 116, 0.15);
+        }
+        .guest-menu-chevron {
+            opacity: 0.7;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .guest-menu.guest-menu-open .guest-menu-chevron {
+            transform: rotate(180deg);
+            opacity: 1;
+        }
+        .guest-menu-panel {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            min-width: 180px;
+            background: linear-gradient(160deg, rgba(30, 41, 59, 0.97), rgba(15, 23, 39, 0.98));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-12px) scale(0.96);
+            transform-origin: top right;
+            transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.22s;
+            z-index: 1100;
+        }
+        .guest-menu-panel-open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+        .guest-menu-item {
+            display: block;
+            padding: 12px 18px;
+            color: #E5E7EB;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            text-align: center;
+            transition: background 0.2s ease, color 0.2s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .guest-menu-item:last-child {
+            border-bottom: none;
+        }
+        .guest-menu-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: #D4A574;
+        }
+        .guest-menu-item-logout {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: 4px;
+            padding-top: 12px;
+        }
+        .guest-menu-item-logout:hover {
+            color: #FCA5A5;
+        }
+        body.light-mode .guest-menu-trigger {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
+            border-color: rgba(15, 23, 42, 0.1);
+            color: #111827;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+        }
+        body.light-mode .guest-menu-trigger:hover {
+            background: linear-gradient(145deg, #FFFFFF, #F8FAFC);
+            border-color: rgba(184, 147, 95, 0.4);
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+        }
+        body.light-mode .guest-menu.guest-menu-open .guest-menu-trigger {
+            border-color: rgba(184, 147, 95, 0.6);
+            box-shadow: 0 0 0 1px rgba(184, 147, 95, 0.2);
+        }
+        body.light-mode .guest-menu-panel {
+            background: linear-gradient(160deg, #FFFFFF, #F8FAFC);
+            border-color: rgba(15, 23, 42, 0.08);
+        }
+        body.light-mode .guest-menu-item {
+            color: rgba(15, 23, 42, 0.90);
+            border-bottom-color: rgba(15, 23, 42, 0.06);
+            text-align: center;
+        }
+        body.light-mode .guest-menu-item:hover {
+            background: rgba(15, 23, 42, 0.04);
+            color: rgba(139, 111, 71, 0.95);
+        }
+        body.light-mode .guest-menu-item-logout {
+            border-top-color: rgba(15, 23, 42, 0.08);
+        }
+        body.light-mode .guest-menu-item-logout:hover {
+            color: rgba(248, 113, 113, 0.95);
         }
 
         /* =====================
@@ -610,8 +717,55 @@ if (isLoggedIn()) {
         <a href="contact.php">Contact</a>
     </div>
     <div class="lp-nav-actions">
-        <a href="login.php" class="lp-btn-ghost">Sign In</a>
+        <?php $user = isLoggedIn() ? getCurrentUser() : null; ?>
+        <?php if ($user): ?>
+        <div class="guest-menu">
+            <button type="button" class="guest-menu-trigger" id="guestMenuTrigger" aria-expanded="false" aria-haspopup="true">
+                <span class="guest-menu-name">Hi, <?php echo htmlspecialchars($user['first_name']); ?></span>
+                <svg class="guest-menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="guest-menu-panel" id="guestMenuPanel" role="menu" aria-hidden="true">
+                <?php if (isset($user['role']) && $user['role'] !== 'admin'): ?>
+                <a href="messages.php" role="menuitem" class="guest-menu-item">Messages</a>
+                <?php endif; ?>
+                <?php if (isset($user['role']) && $user['role'] === 'guest'): ?>
+                <a href="my-bookings.php" role="menuitem" class="guest-menu-item">My bookings</a>
+                <a href="profile.php" role="menuitem" class="guest-menu-item">Profile</a>
+                <?php elseif (isset($user['role']) && $user['role'] === 'host'): ?>
+                <a href="host/properties.php" role="menuitem" class="guest-menu-item">Property</a>
+                <?php elseif (isset($user['role']) && $user['role'] === 'admin'): ?>
+                <a href="admin/dashboard.php" role="menuitem" class="guest-menu-item">Admin</a>
+                <?php endif; ?>
+                <a href="logout.php" role="menuitem" class="guest-menu-item guest-menu-item-logout">Logout</a>
+            </div>
+        </div>
+        <script>
+        (function() {
+            var trigger = document.getElementById('guestMenuTrigger');
+            var panel = document.getElementById('guestMenuPanel');
+            var menu = trigger && trigger.closest('.guest-menu');
+            if (!trigger || !panel) return;
+            function toggle() {
+                var open = panel.classList.toggle('guest-menu-panel-open');
+                trigger.setAttribute('aria-expanded', open);
+                panel.setAttribute('aria-hidden', !open);
+                if (menu) menu.classList.toggle('guest-menu-open', open);
+            }
+            function close() {
+                panel.classList.remove('guest-menu-panel-open');
+                trigger.setAttribute('aria-expanded', 'false');
+                panel.setAttribute('aria-hidden', 'true');
+                if (menu) menu.classList.remove('guest-menu-open');
+            }
+            trigger.addEventListener('click', function(e) { e.stopPropagation(); toggle(); });
+            document.addEventListener('click', function() { close(); });
+            panel.addEventListener('click', function(e) { e.stopPropagation(); });
+        })();
+        </script>
+        <?php else: ?>
+        <a href="login.php" class="lp-btn-ghost" id="openLoginBtn">Sign In</a>
         <a href="register.php" class="lp-btn-gold">Get Started</a>
+        <?php endif; ?>
     </div>
 </nav>
 

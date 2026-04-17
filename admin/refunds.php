@@ -89,11 +89,11 @@ function badge($s) {
             align-items: stretch;
             gap: 20px;
             background: linear-gradient(135deg, rgba(17,24,39,0.96), rgba(30,41,59,0.88));
-            border: 1px solid rgba(212,165,116,0.22);
+            border: 1px solid rgba(148, 163, 184, 0.16);
             border-radius: 24px;
             padding: 28px 30px;
-            margin-bottom: 22px;
-            box-shadow: 0 24px 48px rgba(0,0,0,0.28);
+            margin-bottom: 28px;
+            box-shadow: 0 24px 48px rgba(0,0,0,0.24);
         }
         .refunds-hero-content { flex: 1; }
         .refunds-eyebrow {
@@ -110,7 +110,12 @@ function badge($s) {
             letter-spacing: 0.08em;
             text-transform: uppercase;
         }
-        .refunds-hero h1 { margin: 0 0 10px; color: #fff !important; font-size: 26px; }
+        .refunds-hero h1 {
+            margin: 0 0 10px;
+            color: #fff !important;
+            font-size: 32px;
+            font-weight: 700;
+        }
         .refunds-hero .subtitle { color: #CBD5E1; font-size: 14px; line-height: 1.6; margin: 0; max-width: 580px; }
         .refunds-summary-card {
             min-width: 196px;
@@ -181,13 +186,7 @@ function badge($s) {
             flex-wrap: wrap;
         }
         .refunds-table-header h2 { margin: 0; color: #fff !important; font-size: 16px; }
-        .refunds-count-badge {
-            display: inline-flex; align-items: center;
-            padding: 4px 11px; border-radius: 999px;
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(148,163,184,0.16);
-            color: #CBD5E1; font-size: 12px; font-weight: 700;
-        }
+
 
         /* Filter tabs */
         .refunds-filter-tabs {
@@ -335,7 +334,6 @@ function badge($s) {
             border-radius: 20px;
             display: inline-flex; align-items: center; justify-content: center;
             font-size: 28px; color: #FDE68A;
-            background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.2);
         }
         .rf-empty h3 { color: #F1F5F9 !important; margin: 0 0 8px; font-size: 18px; }
         .rf-empty p  { color: #475569 !important; font-size: 14px; margin: 0; }
@@ -357,7 +355,7 @@ function badge($s) {
         body.light-mode .refund-stat-value { color:#0F172A; }
         body.light-mode .refunds-table-card { background:#fff; border-color:rgba(15,23,42,.08); box-shadow:0 16px 32px rgba(15,23,42,.08); }
         body.light-mode .refunds-table-header h2 { color:#0F172A !important; }
-        body.light-mode .refunds-count-badge { background:#F8FAFC; border-color:rgba(15,23,42,.08); color:#475569; }
+
         body.light-mode .refunds-filter-tabs { gap: 8px; }
         body.light-mode .refunds-filter-tab { background:rgba(15,23,42,.04); border-color:rgba(15,23,42,.12); color:#475569; }
         body.light-mode .refunds-filter-tab:hover { background:rgba(15,23,42,.08); border-color:rgba(184,147,95,.4); color:#334155; transform:translateY(-1px); }
@@ -441,10 +439,6 @@ function badge($s) {
                 <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
                 <span>Commission</span>
             </a>
-            <a href="geocode-all-properties.php" class="nav-item">
-                <span class="nav-icon"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i></span>
-                <span>Geocode Properties</span>
-            </a>
             <a href="../home.php" class="nav-item">
                 <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
                 <span>View Site</span>
@@ -470,18 +464,10 @@ function badge($s) {
             <!-- Hero -->
             <div class="refunds-hero">
                 <div class="refunds-hero-content">
-                    <div class="refunds-eyebrow">
-                        <i class="fa-solid fa-rotate-left"></i>
-                        Refund Management
-                    </div>
                     <h1>Refunds</h1>
                     <p class="subtitle"></p>
                 </div>
-                <div class="refunds-summary-card">
-                    <span class="refunds-summary-label">Total Requests</span>
-                    <strong><?php echo array_sum($counts); ?></strong>
-                    <span class="refunds-summary-desc"></span>
-                </div>
+                <!-- refunds-summary-card removed -->
             </div>
 
             <!-- Status overview cards -->
@@ -513,7 +499,7 @@ function badge($s) {
                 <div class="refunds-table-header">
                     <div style="display:flex;align-items:center;gap:12px;">
                         <h2>Refund Requests</h2>
-                        <span class="refunds-count-badge"><?php echo count($rows); ?> shown</span>
+
                     </div>
                     <div class="refunds-filter-tabs">
                         <?php
@@ -539,7 +525,7 @@ function badge($s) {
                 <div class="rf-empty">
                     <div class="rf-empty-icon"><i class="fa-solid fa-rotate-left"></i></div>
                     <h3>No refund requests</h3>
-                    <p>There are no requests matching the selected filter.</p>
+
                 </div>
                 <?php else: ?>
                 <div class="rf-table-wrap">

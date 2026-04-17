@@ -140,10 +140,6 @@ $conn->close();
             </div>
             
             <nav class="sidebar-nav">
-                <a href="dashboard.php" class="nav-item">
-                    <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
-                    <span>Dashboard</span>
-                </a>
                 <a href="properties.php" class="nav-item active">
                     <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
                     <span>My Properties</span>
@@ -170,7 +166,7 @@ $conn->close();
                 </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
-                    <span>View Site</span>
+                    <span>Home</span>
                 </a>
             </nav>
             
@@ -192,17 +188,11 @@ $conn->close();
         <main class="host-main">
             <div class="host-header host-page-hero">
                 <div class="host-page-hero-content">
-                    <span class="host-page-eyebrow">Listing Management</span>
-                    <h1>My Properties</h1>
+
+                    <h1 style="margin-top: 20px;">My Properties</h1>
                     <!-- subtitle removed -->
                 </div>
-                <div style="display:flex; align-items:flex-start; gap:14px; margin-left:auto;">
-                    <div class="host-page-summary">
-                        <span class="host-page-summary-label">Live Listings</span>
-                        <strong><?php echo $property_stats['approved']; ?></strong>
-                        <!-- host-page-summary-text removed -->
-                    </div>
-                </div>
+                <!-- host-page-summary removed -->
             </div>
 
             <?php if ($action_message): ?>
@@ -258,8 +248,6 @@ $conn->close();
                 <div class="empty-state host-empty-state host-surface">
                     <span class="empty-icon host-empty-icon"><i class="fa-solid fa-house-circle-xmark" aria-hidden="true"></i></span>
                     <h3>No properties yet</h3>
-                    <p>Start hosting by adding your first property</p>
-                    <a href="add-property.php" class="btn-primary">Add Property</a>
                 </div>
             <?php else: ?>
                 <div class="properties-grid">

@@ -94,11 +94,11 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
             align-items: stretch;
             gap: 20px;
             background: linear-gradient(135deg, rgba(17,24,39,0.96), rgba(30,41,59,0.88));
-            border: 1px solid rgba(212,165,116,0.22);
+            border: 1px solid rgba(148, 163, 184, 0.16);
             border-radius: 24px;
             padding: 28px 30px;
-            margin-bottom: 22px;
-            box-shadow: 0 24px 48px rgba(0,0,0,0.28);
+            margin-bottom: 28px;
+            box-shadow: 0 24px 48px rgba(0,0,0,0.24);
         }
         .sub-hero-content { flex: 1; }
         .sub-eyebrow {
@@ -108,7 +108,12 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
             background: rgba(212,165,116,0.14); color: #F3D9B4;
             font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
         }
-        .sub-hero h1 { margin: 0 0 10px; color: #fff !important; font-size: 26px; }
+        .sub-hero h1 {
+            margin: 0 0 10px;
+            color: #fff !important;
+            font-size: 32px;
+            font-weight: 700;
+        }
         .sub-hero .subtitle { color: #CBD5E1; font-size: 14px; line-height: 1.6; margin: 0; max-width: 560px; }
         .sub-summary-card {
             min-width: 180px; padding: 22px; border-radius: 20px;
@@ -418,10 +423,6 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
                 <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
                 <span>Commission</span>
             </a>
-            <a href="geocode-all-properties.php" class="nav-item">
-                <span class="nav-icon"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i></span>
-                <span>Geocode Properties</span>
-            </a>
             <a href="../home.php" class="nav-item">
                 <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
                 <span>View Site</span>
@@ -448,15 +449,10 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
             <!-- Hero -->
             <div class="sub-hero">
                 <div class="sub-hero-content">
-                    <div class="sub-eyebrow"><i class="fa-solid fa-file-lines"></i> User Submissions</div>
                     <h1>Submissions</h1>
                     <p class="subtitle"></p>
                 </div>
-                <div class="sub-summary-card">
-                    <span class="sub-summary-label">Total Users</span>
-                    <strong><?php echo count($rows); ?></strong>
-                    <span class="sub-summary-desc"></span>
-                </div>
+                <!-- sub-summary-card removed -->
             </div>
 
             <!-- Stat cards -->

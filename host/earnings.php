@@ -102,10 +102,16 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
         .earnings-header {
-            background: linear-gradient(135deg, #111827 0%, #1F2933 45%, #020617 100%);
-            padding: 40px;
-            border-radius: 16px;
-            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            gap: 20px;
+            padding: 28px 30px;
+            margin-bottom: 28px;
+            border-radius: 24px;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.96), rgba(30, 41, 59, 0.88));
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.24);
             color: white;
         }
 
@@ -374,9 +380,6 @@ $conn->close();
             </div>
             
             <nav class="sidebar-nav">
-                <a href="dashboard.php" class="nav-item">
-                    <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
-                    <span>Dashboard</span>
                 </a>
                 <a href="properties.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
@@ -404,7 +407,7 @@ $conn->close();
                 </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
-                    <span>View Site</span>
+                    <span>Home</span>
                 </a>
             </nav>
             
@@ -426,15 +429,9 @@ $conn->close();
         <main class="host-main">
             <div class="earnings-header host-page-hero">
                 <div class="host-page-hero-content">
-                    <span class="host-page-eyebrow">Revenue Overview</span>
-                    <h1>Earnings</h1>
+                    <h1 style="margin-top: 20px;">Earnings</h1>
                 </div>
-                <div style="display:flex; align-items:flex-start; gap:14px; margin-left:auto;">
-                    <div class="host-page-summary">
-                        <span class="host-page-summary-label">Total Earnings</span>
-                        <strong>₱<?php echo number_format($total_earnings, 0); ?></strong>
-                    </div>
-                </div>
+                <!-- host-page-summary removed -->
             </div>
 
             <!-- Earnings Statistics -->
@@ -463,14 +460,8 @@ $conn->close();
                 <div class="earnings-stat-card host-metric-card">
                     <div class="host-metric-icon is-red"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></div>
                     <div class="host-metric-copy">
-<<<<<<< HEAD
-                        <div class="stat-label">Total Bookings</div>
-                        <div class="stat-value"><?php echo $total_bookings; ?></div>
-=======
                         <div class="stat-label">Refund deductions</div>
                         <div class="stat-value">₱<?php echo number_format(abs($refund_deductions), 2); ?></div>
-                        <div class="stat-change">Deducted from your earnings when refunds complete.</div>
->>>>>>> 80dcbc10405afcdcd938e95218ead6b7dd5f866f
                     </div>
                 </div>
             </div>
@@ -493,8 +484,6 @@ $conn->close();
                     <div class="empty-earnings host-empty-state host-surface">
                         <span class="host-empty-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
                         <h3>No earnings yet</h3>
-                        <p>You haven't received any bookings yet. Start by adding properties!</p>
-                        <a href="add-property.php" class="btn-primary"><?php echo $host_property_count === 0 ? 'Add Your First Property' : 'Add Your Property'; ?></a>
                     </div>
                 <?php else: ?>
                     <div class="host-table-scroll">

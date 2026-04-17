@@ -149,10 +149,6 @@ $conn->close();
                     <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
                     <span>Commission</span>
                 </a>
-                <a href="geocode-all-properties.php" class="nav-item">
-                    <span class="nav-icon"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i></span>
-                    <span>Geocode Properties</span>
-                </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
                     <span>View Site</span>
@@ -176,14 +172,9 @@ $conn->close();
         <main class="host-main">
             <div class="commission-header admin-page-hero">
                 <div class="admin-page-hero-content">
-                    <span class="admin-page-eyebrow">Commission Tracking</span>
                     <h1>Platform Commission</h1>
                 </div>
-                <div class="admin-page-summary">
-                    <span class="admin-page-summary-label">Earned Commission</span>
-                    <strong>₱<?php echo number_format($commission_earned, 0); ?></strong>
-                    <span class="admin-page-summary-text"></span>
-                </div>
+                
             </div>
 
             <div class="commission-stats admin-metric-grid">

@@ -95,29 +95,19 @@ $conn->close();
         }
 
         .host-dashboard-page .dashboard-hero {
+            display: flex;
+            justify-content: space-between;
             align-items: stretch;
             gap: 20px;
-            background: linear-gradient(135deg, rgba(17, 24, 39, 0.96), rgba(30, 41, 59, 0.88));
-            border: 1px solid rgba(212, 165, 116, 0.22);
-            border-radius: 24px;
             padding: 28px 30px;
-            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
             margin-bottom: 28px;
+            border-radius: 24px;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.96), rgba(30, 41, 59, 0.88));
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.24);
         }
 
-        .host-dashboard-page .dashboard-eyebrow {
-            display: inline-flex;
-            align-items: center;
-            padding: 6px 12px;
-            margin-bottom: 14px;
-            border-radius: 999px;
-            background: rgba(212, 165, 116, 0.14);
-            color: #f3d9b4;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-        }
+
 
         .host-dashboard-page .dashboard-hero h1 {
             margin-bottom: 10px;
@@ -442,10 +432,7 @@ $conn->close();
             box-shadow: 0 16px 32px rgba(15, 23, 42, 0.08);
         }
 
-        body.light-mode.host-dashboard-page .dashboard-eyebrow {
-            background: rgba(184, 147, 95, 0.12);
-            color: #8b6f47;
-        }
+
 
         body.light-mode.host-dashboard-page .dashboard-hero .subtitle,
         body.light-mode.host-dashboard-page .summary-text,
@@ -536,10 +523,6 @@ $conn->close();
             </div>
             
             <nav class="sidebar-nav">
-                <a href="dashboard.php" class="nav-item active">
-                    <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
-                    <span>Dashboard</span>
-                </a>
                 <a href="properties.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
                     <span>My Properties</span>
@@ -566,7 +549,7 @@ $conn->close();
                 </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
-                    <span>View Site</span>
+                    <span>Home</span>
                 </a>
             </nav>
             
@@ -588,8 +571,8 @@ $conn->close();
         <main class="host-main">
             <div class="host-header dashboard-hero">
                 <div>
-                    <span class="dashboard-eyebrow">Host Overview</span>
-                    <h1>Host Dashboard</h1>
+
+                    <h1 style="margin-top: 20px;">Host Dashboard</h1>
                     <!-- subtitle removed -->
                 </div>
                 <div class="dashboard-summary-card">
@@ -637,27 +620,6 @@ $conn->close();
                 </a>
             </div>
 
-            <div class="quick-actions">
-                <h2>Quick Actions</h2>
-                <!-- quick-actions-copy removed -->
-                <div class="actions-grid">
-                    <a href="add-property.php" class="action-card">
-                        <span class="action-icon"><i class="fa-solid fa-plus" aria-hidden="true"></i></span>
-                        <h3>Add New Property</h3>
-                        <!-- Create a new listing and prepare it for review. removed -->
-                    </a>
-                    <a href="properties.php" class="action-card">
-                        <span class="action-icon"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i></span>
-                        <h3>Manage Listings</h3>
-                        <!-- Review details, pricing, and status for your properties. removed -->
-                    </a>
-                    <a href="bookings.php" class="action-card">
-                        <span class="action-icon"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></span>
-                        <h3>View Bookings</h3>
-                        <!-- Check guest reservations and upcoming stays. removed -->
-                    </a>
-                </div>
-            </div>
 
             <div class="properties-section">
                 <div class="section-header dashboard-section-header">

@@ -106,12 +106,13 @@
     border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+
 .dashboard-page:not(.admin-page) .sidebar-nav {
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
-    gap: 10px;
+    justify-content: flex-start;
+    gap: 30px;
 }
 
 .dashboard-page:not(.admin-page) .nav-item {
@@ -122,8 +123,8 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
-    gap: 10px;
+    justify-content: flex-start;
+    gap: 30px;
 }
 
 .admin-page .sidebar-footer {
@@ -528,6 +529,7 @@ a.stat-card-link {
     font-size: 64px;
     margin-bottom: 16px;
     display: block;
+    background: none !important;
 }
 
 .empty-state h3 {
@@ -835,7 +837,7 @@ a.stat-card-link {
     background: rgba(17, 24, 39, 0.86);
     border: 1px solid rgba(148, 163, 184, 0.16);
     border-radius: 22px;
-    overflow: hidden;
+    overflow: visible;
     box-shadow: 0 20px 36px rgba(0, 0, 0, 0.18);
 }
 
@@ -865,30 +867,40 @@ a.stat-card-link {
     color: #94A3B8;
 }
 
+
 .host-empty-state {
-    padding: 52px 36px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
     text-align: center;
+    padding: 40px;
 }
 
 .host-empty-icon {
-    width: 72px;
-    height: 72px;
-    margin: 0 auto 18px;
+    font-size: 80px;
+    margin-bottom: 20px;
+    width: auto;
+    height: auto;
     border-radius: 20px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 28px;
     color: #7DD3FC;
-    background: rgba(125, 211, 252, 0.12);
+    background: none;
 }
 
 .host-empty-state h3 {
-    margin-bottom: 8px;
+    font-size: 24px;
+    margin-bottom: 12px;
+    color: #fff;
 }
 
 .host-empty-state p {
-    margin-bottom: 0;
+    font-size: 16px;
+    color: #B8B8B8;
+    margin-bottom: 24px;
 }
 
 .host-filter-row {

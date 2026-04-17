@@ -156,10 +156,6 @@ $conn->close();
                     <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
                     <span>Commission</span>
                 </a>
-                <a href="geocode-all-properties.php" class="nav-item">
-                    <span class="nav-icon"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i></span>
-                    <span>Geocode Properties</span>
-                </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
                     <span>View Site</span>
@@ -185,14 +181,8 @@ $conn->close();
         <main class="host-main">
             <div class="bookings-header admin-page-hero">
                 <div class="admin-page-hero-content">
-                    <span class="admin-page-eyebrow">Reservation Activity</span>
                     <h1>All Bookings</h1>
                     <p></p>
-                </div>
-                <div class="admin-page-summary">
-                    <span class="admin-page-summary-label">Confirmed Bookings</span>
-                    <strong><?php echo $stats['confirmed']; ?></strong>
-                    <span class="admin-page-summary-text"></span>
                 </div>
             </div>
 
@@ -235,14 +225,8 @@ $conn->close();
                         <h2>Booking History</h2>
                         <p></p>
                     </div>
-                    <div class="filter-tabs" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; width:100%;">
-                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                            <button type="button" class="filter-tab active" onclick="filterBookings('all', this)">All</button>
-                            <button type="button" class="filter-tab" onclick="filterBookings('confirmed', this)">Confirmed</button>
-                            <button type="button" class="filter-tab" onclick="filterBookings('pending', this)">Pending</button>
-                            <button type="button" class="filter-tab" onclick="filterBookings('cancelled', this)">Cancelled</button>
-                        </div>
-                        <div style="margin-left:auto; min-width: 240px; flex: 1 1 320px; max-width: 420px;">
+                    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; width:100%;">
+                        <div style="width: 320px;">
                             <div style="position:relative;">
                                 <i class="fa-solid fa-magnifying-glass" aria-hidden="true" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#94A3B8;"></i>
                                 <input
@@ -253,7 +237,12 @@ $conn->close();
                                     autocomplete="off"
                                 >
                             </div>
-                            <div id="bookingSearchMeta" style="margin-top:6px; font-size:12px; color:#94A3B8; font-weight:700; display:none;"></div>
+                        </div>
+                        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-left:auto;">
+                            <button type="button" class="filter-tab active" onclick="filterBookings('all', this)">All</button>
+                            <button type="button" class="filter-tab" onclick="filterBookings('confirmed', this)">Confirmed</button>
+                            <button type="button" class="filter-tab" onclick="filterBookings('pending', this)">Pending</button>
+                            <button type="button" class="filter-tab" onclick="filterBookings('cancelled', this)">Cancelled</button>
                         </div>
                     </div>
                 </div>
@@ -310,30 +299,14 @@ $conn->close();
         function applyBookingFilters() {
             const rows = document.querySelectorAll('.properties-table tbody tr');
             const qEl = document.getElementById('bookingSearch');
-            const meta = document.getElementById('bookingSearchMeta');
             const q = (qEl ? qEl.value : '').trim().toLowerCase();
 
-            let shown = 0;
-            let total = 0;
-
             rows.forEach(row => {
-                total++;
                 const statusOk = (currentBookingStatusFilter === 'all') || (row.dataset.status === currentBookingStatusFilter);
                 const textOk = (q === '') || ((row.textContent || '').toLowerCase().includes(q));
                 const show = statusOk && textOk;
                 row.style.display = show ? '' : 'none';
-                if (show) shown++;
             });
-
-            if (meta) {
-                if (q !== '') {
-                    meta.style.display = '';
-                    meta.textContent = `Showing ${shown} of ${total} booking(s) for “${q}”`;
-                } else {
-                    meta.style.display = 'none';
-                    meta.textContent = '';
-                }
-            }
         }
 
         function filterBookings(status, el) {

@@ -282,10 +282,6 @@ function toChart(array $rows, string $xKey, string $yKey): array {
                 <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
                 <span>Commission</span>
             </a>
-            <a href="geocode-all-properties.php" class="nav-item">
-                <span class="nav-icon"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i></span>
-                <span>Geocode Properties</span>
-            </a>
             <a href="../home.php" class="nav-item">
                 <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
                 <span>View Site</span>
@@ -307,9 +303,10 @@ function toChart(array $rows, string $xKey, string $yKey): array {
     </aside>
 
     <main class="host-main">
-        <div class="analytics-hero">
-            <div>
-                <h1><i class="fa-solid fa-chart-simple" style="margin-right:10px;"></i>Booking analytics</h1>
+        <div class="properties-header admin-page-hero">
+            <div class="admin-page-hero-content">
+                <h1>Booking analytics</h1>
+                <p></p>
             </div>
             <div class="range-pills">
                 <?php foreach ([30, 90, 180, 365] as $opt): ?>

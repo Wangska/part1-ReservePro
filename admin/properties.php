@@ -111,19 +111,21 @@ $conn->close();
             box-sizing: border-box;
         }
         .admin-properties-page .properties-table th:nth-child(1),
-        .admin-properties-page .properties-table td:nth-child(1) { width: 260px; }
+        .admin-properties-page .properties-table td:nth-child(1) { width: 240px; }
         .admin-properties-page .properties-table th:nth-child(2),
-        .admin-properties-page .properties-table td:nth-child(2) { width: 140px; text-align: center; }
+        .admin-properties-page .properties-table td:nth-child(2) { width: 130px; text-align: center; }
         .admin-properties-page .properties-table th:nth-child(3),
-        .admin-properties-page .properties-table td:nth-child(3) { width: 160px; text-align: center; }
+        .admin-properties-page .properties-table td:nth-child(3) { width: 150px; text-align: center; }
         .admin-properties-page .properties-table th:nth-child(4),
-        .admin-properties-page .properties-table td:nth-child(4) { width: 120px; text-align: center; }
+        .admin-properties-page .properties-table td:nth-child(4) { width: 100px; text-align: center; }
         .admin-properties-page .properties-table th:nth-child(5),
-        .admin-properties-page .properties-table td:nth-child(5) { width: 90px; text-align: center; }
+        .admin-properties-page .properties-table td:nth-child(5) { width: 80px; text-align: center; }
         .admin-properties-page .properties-table th:nth-child(6),
-        .admin-properties-page .properties-table td:nth-child(6) { width: 110px; text-align: center; }
+        .admin-properties-page .properties-table td:nth-child(6) { width: 100px; text-align: center; }
         .admin-properties-page .properties-table th:nth-child(7),
-        .admin-properties-page .properties-table td:nth-child(7) { width: 120px; text-align: center; }
+        .admin-properties-page .properties-table td:nth-child(7) { width: 140px; text-align: center; }
+        .admin-properties-page .properties-table th:nth-child(8),
+        .admin-properties-page .properties-table td:nth-child(8) { width: 120px; text-align: center; }
         .property-cell {
             display: flex;
             gap: 16px;
@@ -280,10 +282,6 @@ $conn->close();
                     <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
                     <span>Commission</span>
                 </a>
-                <a href="geocode-all-properties.php" class="nav-item">
-                    <span class="nav-icon"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i></span>
-                    <span>Geocode Properties</span>
-                </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
                     <span>View Site</span>
@@ -312,15 +310,10 @@ $conn->close();
         <main class="host-main">
             <div class="properties-header admin-page-hero">
                 <div class="admin-page-hero-content">
-                    <span class="admin-page-eyebrow">Listing Management</span>
                     <h1>All Properties</h1>
                     <p></p>
                 </div>
-                <div class="admin-page-summary">
-                    <span class="admin-page-summary-label">Live Inventory</span>
-                    <strong><?php echo $stats['approved']; ?></strong>
-                    <span class="admin-page-summary-text"></span>
-                </div>
+                <!-- admin-page-summary removed -->
             </div>
 
             <?php if (isset($_GET['deleted']) && $_GET['deleted'] == '1'): ?>
@@ -398,15 +391,6 @@ $conn->close();
                     <table class="properties-table">
                         <thead>
                             <tr>
-<<<<<<< HEAD
-                                <th style="text-align:center;">Property</th>
-                                <th style="text-align:center;">Host</th>
-                                <th style="text-align:center;">Location</th>
-                                <th style="text-align:center;">Price</th>
-                                <th style="text-align:center;">Bookings</th>
-                                <th style="text-align:center;">Status</th>
-                                <th style="text-align:center;">Actions</th>
-=======
                                 <th>Property</th>
                                 <th>Host</th>
                                 <th>Location</th>
@@ -415,7 +399,6 @@ $conn->close();
                                 <th>Status</th>
                                 <th>Edited</th>
                                 <th>Actions</th>
->>>>>>> 80dcbc10405afcdcd938e95218ead6b7dd5f866f
                             </tr>
                         </thead>
                         <tbody>

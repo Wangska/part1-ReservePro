@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact — ReservePro</title>
+    <title>Contact ï¿½ ReservePro</title>
     <link rel="icon" href="background%20image/newicon.png" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -85,33 +85,128 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             box-shadow: 0 6px 20px rgba(212,165,116,.3); transition: transform .18s, box-shadow .18s;
         }
         .lp-btn-gold:hover { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(212,165,116,.44); }
-        .lp-user-wrap { position: relative; }
-        .lp-user-pill {
-            display: flex; align-items: center; gap: 8px; padding: 6px 14px 6px 8px;
-            border-radius: 999px; border: 1px solid rgba(255,255,255,.14);
-            background: rgba(255,255,255,.05); cursor: pointer; font-size: 14px; font-weight: 600;
-            color: rgba(241,245,249,.9); transition: background .18s;
+        .guest-menu {
+            position: relative;
         }
-        .lp-user-pill:hover { background: rgba(255,255,255,.09); }
-        .lp-user-avatar {
-            width: 26px; height: 26px; border-radius: 999px;
-            background: linear-gradient(135deg,#D4A574,#B8935F);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 12px; font-weight: 700; color: #fff;
+        .guest-menu-trigger {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 9px 16px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 999px;
+            color: #F3F4F6;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: inherit;
+            letter-spacing: -0.01em;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
-        .lp-user-panel {
-            display: none; position: absolute; top: calc(100% + 10px); right: 0;
-            min-width: 180px; background: #0E1117; border: 1px solid rgba(255,255,255,.1);
-            border-radius: 16px; padding: 8px; box-shadow: 0 24px 48px rgba(0,0,0,.7); z-index: 999;
+        .guest-menu-trigger:hover {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
+            border-color: rgba(148, 163, 184, 0.3);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
         }
-        .lp-user-panel.open { display: block; }
-        .lp-user-panel a {
-            display: block; padding: 10px 14px; font-size: 14px;
-            color: rgba(241,245,249,.85); border-radius: 10px; transition: background .15s, color .15s;
+        .guest-menu.guest-menu-open .guest-menu-trigger {
+            border-color: rgba(212, 165, 116, 0.5);
+            box-shadow: 0 0 0 1px rgba(212, 165, 116, 0.15);
         }
-        .lp-user-panel a:hover { background: rgba(255,255,255,.07); color: #D4A574; }
-        .lp-user-panel a.logout { color: rgba(248,113,113,.85); }
-        .lp-user-panel a.logout:hover { background: rgba(248,113,113,.1); color: #F87171; }
+        .guest-menu-chevron {
+            opacity: 0.7;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .guest-menu.guest-menu-open .guest-menu-chevron {
+            transform: rotate(180deg);
+            opacity: 1;
+        }
+        .guest-menu-panel {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            min-width: 180px;
+            background: linear-gradient(160deg, rgba(30, 41, 59, 0.97), rgba(15, 23, 39, 0.98));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-12px) scale(0.96);
+            transform-origin: top right;
+            transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.22s;
+            z-index: 1100;
+        }
+        .guest-menu-panel-open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+        .guest-menu-item {
+            display: block;
+            padding: 12px 18px;
+            color: #E5E7EB;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            text-align: center;
+            transition: background 0.2s ease, color 0.2s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .guest-menu-item:last-child {
+            border-bottom: none;
+        }
+        .guest-menu-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: #D4A574;
+        }
+        .guest-menu-item-logout {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: 4px;
+            padding-top: 12px;
+        }
+        .guest-menu-item-logout:hover {
+            color: #FCA5A5;
+        }
+        body.light-mode .guest-menu-trigger {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
+            border-color: rgba(15, 23, 42, 0.1);
+            color: #111827;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+        }
+        body.light-mode .guest-menu-trigger:hover {
+            background: linear-gradient(145deg, #FFFFFF, #F8FAFC);
+            border-color: rgba(184, 147, 95, 0.4);
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+        }
+        body.light-mode .guest-menu.guest-menu-open .guest-menu-trigger {
+            border-color: rgba(184, 147, 95, 0.6);
+            box-shadow: 0 0 0 1px rgba(184, 147, 95, 0.2);
+        }
+        body.light-mode .guest-menu-panel {
+            background: linear-gradient(160deg, #FFFFFF, #F8FAFC);
+            border-color: rgba(15, 23, 42, 0.08);
+        }
+        body.light-mode .guest-menu-item {
+            color: rgba(15, 23, 42, 0.90);
+            border-bottom-color: rgba(15, 23, 42, 0.06);
+            text-align: center;
+        }
+        body.light-mode .guest-menu-item:hover {
+            background: rgba(15, 23, 42, 0.04);
+            color: rgba(139, 111, 71, 0.95);
+        }
+        body.light-mode .guest-menu-item-logout {
+            border-top-color: rgba(15, 23, 42, 0.08);
+        }
+        body.light-mode .guest-menu-item-logout:hover {
+            color: rgba(248, 113, 113, 0.95);
+        }
 
         /* -- HERO -- */
         .ct-hero {
@@ -289,23 +384,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
     <div class="lp-nav-actions">
         <?php if ($user): ?>
-        <div class="lp-user-wrap">
-            <button class="lp-user-pill" id="userPillBtn" aria-expanded="false">
-                <span class="lp-user-avatar"><?php echo htmlspecialchars(strtoupper(substr($user['first_name'],0,1))); ?></span>
-                Hi, <?php echo htmlspecialchars($user['first_name']); ?>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        <div class="guest-menu">
+            <button type="button" class="guest-menu-trigger" id="guestMenuTrigger" aria-expanded="false" aria-haspopup="true">
+                <span class="guest-menu-name">Hi, <?php echo htmlspecialchars($user['first_name']); ?></span>
+                <svg class="guest-menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
             </button>
-            <div class="lp-user-panel" id="userPanel">
-                <a href="messages.php">Messages</a>
-                <?php if ($user['role']==='guest'): ?><a href="profile.php">Profile</a>
-                <?php elseif ($user['role']==='host'): ?><a href="host/dashboard.php">Dashboard</a>
-                <?php elseif ($user['role']==='admin'): ?><a href="admin/dashboard.php">Admin Panel</a>
+            <div class="guest-menu-panel" id="guestMenuPanel" role="menu" aria-hidden="true">
+                <?php if (isset($user['role']) && $user['role'] !== 'admin'): ?>
+                <a href="messages.php" role="menuitem" class="guest-menu-item">Messages</a>
                 <?php endif; ?>
-                <a href="logout.php" class="logout">Log out</a>
+                <?php if (isset($user['role']) && $user['role'] === 'guest'): ?>
+                <a href="my-bookings.php" role="menuitem" class="guest-menu-item">My bookings</a>
+                <a href="profile.php" role="menuitem" class="guest-menu-item">Profile</a>
+                <?php elseif (isset($user['role']) && $user['role'] === 'host'): ?>
+                <a href="host/properties.php" role="menuitem" class="guest-menu-item">Property</a>
+                <?php elseif (isset($user['role']) && $user['role'] === 'admin'): ?>
+                <a href="admin/dashboard.php" role="menuitem" class="guest-menu-item">Admin</a>
+                <?php endif; ?>
+                <a href="logout.php" role="menuitem" class="guest-menu-item guest-menu-item-logout">Logout</a>
             </div>
         </div>
+        <script>
+        (function() {
+            var trigger = document.getElementById('guestMenuTrigger');
+            var panel = document.getElementById('guestMenuPanel');
+            var menu = trigger && trigger.closest('.guest-menu');
+            if (!trigger || !panel) return;
+            function toggle() {
+                var open = panel.classList.toggle('guest-menu-panel-open');
+                trigger.setAttribute('aria-expanded', open);
+                panel.setAttribute('aria-hidden', !open);
+                if (menu) menu.classList.toggle('guest-menu-open', open);
+            }
+            function close() {
+                panel.classList.remove('guest-menu-panel-open');
+                trigger.setAttribute('aria-expanded', 'false');
+                panel.setAttribute('aria-hidden', 'true');
+                if (menu) menu.classList.remove('guest-menu-open');
+            }
+            trigger.addEventListener('click', function(e) { e.stopPropagation(); toggle(); });
+            document.addEventListener('click', function() { close(); });
+            panel.addEventListener('click', function(e) { e.stopPropagation(); });
+        })();
+        </script>
         <?php else: ?>
-        <button class="lp-btn-ghost" id="openLoginBtn">Sign In</button>
+        <a href="login.php" class="lp-btn-ghost" id="openLoginBtn">Sign In</a>
         <a href="register.php" class="lp-btn-gold">Get Started</a>
         <?php endif; ?>
     </div>
@@ -314,7 +437,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <section class="ct-hero">
     <div class="ct-hero-label">Contact</div>
     <h1>We'd love to <span>hear from you.</span></h1>
-    <p>Questions, feedback, or just want to say hello — reach out and we'll get back to you.</p>
+    <p>Questions, feedback, or just want to say hello ï¿½ reach out and we'll get back to you.</p>
 </section>
 
 <div style="border-top:1px solid var(--border);"></div>
@@ -327,7 +450,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div>
             <div class="ct-section-label">Reach Us</div>
             <h2>Get in touch</h2>
-            <p class="ct-info-intro">We're a small team and we read every message. If you're a host, a guest, or just curious — we're happy to chat.</p>
+            <p class="ct-info-intro">We're a small team and we read every message. If you're a host, a guest, or just curious ï¿½ we're happy to chat.</p>
             <div class="ct-items">
                 <div class="ct-item">
                     <div class="ct-item-label">Email</div>
@@ -339,7 +462,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div class="ct-item">
                     <div class="ct-item-label">Hours</div>
-                    <div class="ct-item-value">Monday – Friday<br>9:00 AM – 6:00 PM PHT</div>
+                    <div class="ct-item-value">Monday ï¿½ Friday<br>9:00 AM ï¿½ 6:00 PM PHT</div>
                 </div>
                 <div class="ct-item">
                     <div class="ct-item-label">Support</div>
@@ -409,7 +532,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <div class="ct-faq-item">
             <div class="ct-faq-q">Is my payment secure?</div>
-            <div class="ct-faq-a">Yes. Payments are processed through PayMongo — a licensed payment processor in the Philippines. We never store your card details.</div>
+            <div class="ct-faq-a">Yes. Payments are processed through PayMongo ï¿½ a licensed payment processor in the Philippines. We never store your card details.</div>
         </div>
         <div class="ct-faq-item">
             <div class="ct-faq-q">Can I cancel a booking?</div>
@@ -485,7 +608,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <label for="lp-password">Password</label>
                 <input type="password" id="lp-password" name="password" placeholder="Enter your password" required>
             </div>
-            <button type="submit" class="modal-btn">Sign In</button>
+            
         </form>
         <div class="modal-divider"><span>or</span></div>
         <button class="modal-btn-social" onclick="window.location.href='google-login.php'">

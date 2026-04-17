@@ -221,10 +221,6 @@ $conn->close();
                     <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
                     <span>Commission</span>
                 </a>
-                <a href="geocode-all-properties.php" class="nav-item">
-                    <span class="nav-icon"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i></span>
-                    <span>Geocode Properties</span>
-                </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
                     <span>View Site</span>
@@ -253,15 +249,10 @@ $conn->close();
         <main class="host-main">
             <div class="users-header admin-page-hero">
                 <div class="admin-page-hero-content">
-                    <span class="admin-page-eyebrow">Account Directory</span>
                     <h1>Users</h1>
                     <p></p>
                 </div>
-                <div class="admin-page-summary">
-                    <span class="admin-page-summary-label">Active Hosts</span>
-                    <strong><?php echo $stats['hosts']; ?></strong>
-                    <span class="admin-page-summary-text"></span>
-                </div>
+
             </div>
 
             <!-- Statistics -->

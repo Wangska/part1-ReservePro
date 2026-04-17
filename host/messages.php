@@ -103,11 +103,16 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
         .messages-header {
-            /* Trendy gray header instead of brown */
-            background: linear-gradient(135deg, #111827 0%, #1F2933 45%, #020617 100%);
-            padding: 40px;
-            border-radius: 16px;
-            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            gap: 20px;
+            padding: 28px 30px;
+            margin-bottom: 28px;
+            border-radius: 24px;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.96), rgba(30, 41, 59, 0.88));
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.24);
             color: white;
         }
 
@@ -420,10 +425,6 @@ $conn->close();
             </div>
             
             <nav class="sidebar-nav">
-                <a href="dashboard.php" class="nav-item">
-                    <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
-                    <span>Dashboard</span>
-                </a>
                 <a href="properties.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
                     <span>My Properties</span>
@@ -450,7 +451,7 @@ $conn->close();
                 </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
-                    <span>View Site</span>
+                    <span>Home</span>
                 </a>
             </nav>
             
@@ -472,15 +473,9 @@ $conn->close();
         <main class="host-main">
             <div class="messages-header host-page-hero">
                 <div class="host-page-hero-content">
-                    <span class="host-page-eyebrow">Guest Conversations</span>
-                    <h1>Messages</h1>
+                    <h1 style="margin-top: 20px;">Messages</h1>
                 </div>
-                <div style="display:flex; align-items:flex-start; gap:14px; margin-left:auto;">
-                    <div class="host-page-summary">
-                        <span class="host-page-summary-label">Active Threads</span>
-                        <strong><?php echo $conversation_count; ?></strong>
-                    </div>
-                </div>
+                <!-- host-page-summary removed -->
             </div>
 
             <div class="host-messages-layout">
@@ -523,7 +518,6 @@ $conn->close();
                     <div class="empty-messages host-empty-state" id="chatPlaceholder">
                         <div class="empty-messages-icon host-empty-icon"><i class="fa-solid fa-comments" aria-hidden="true"></i></div>
                         <h3>Select a conversation</h3>
-                        <p>Click a conversation from the list to view the thread and reply.</p>
                     </div>
                     <div id="chatMessageDetail" style="display: none; flex: 1; flex-direction: column; min-height: 0;">
                         <div id="chatMessageHeader" class="host-chat-header" style="padding: 20px;"></div>

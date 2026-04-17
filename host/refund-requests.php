@@ -125,14 +125,13 @@ function badge($s) {
             </a>
         </div>
         <nav class="sidebar-nav">
-            <a href="dashboard.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span><span>Dashboard</span></a>
             <a href="properties.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span><span>My Properties</span></a>
             <a href="add-property.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-plus" aria-hidden="true"></i></span><span>Add Property</span></a>
             <a href="bookings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></span><span>Bookings</span></a>
             <a href="refund-requests.php" class="nav-item active"><span class="nav-icon"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></span><span>Refund Requests</span></a>
             <a href="earnings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span><span>Earnings</span></a>
             <a href="messages.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span><span>Messages</span></a>
-            <a href="../home.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span><span>View Site</span></a>
+            <a href="../home.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span><span>Home</span></a>
         </nav>
         <div class="sidebar-footer">
             <div class="user-profile">
@@ -151,8 +150,7 @@ function badge($s) {
     <main class="host-main">
             <div class="host-page-hero">
                 <div class="host-page-hero-content">
-                    <span class="host-page-eyebrow">Guest Refunds</span>
-                    <h1>Refund Requests</h1>
+                    <h1 style="margin-top: 20px;">Refund Requests</h1>
                 </div>
                 <div style="display:flex; align-items:flex-start; gap:14px; margin-left:auto;">
                     <div class="host-page-summary">

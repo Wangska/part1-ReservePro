@@ -155,10 +155,6 @@ $conn->close();
                     <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
                     <span>Commission</span>
                 </a>
-                <a href="geocode-all-properties.php" class="nav-item">
-                    <span class="nav-icon"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i></span>
-                    <span>Geocode Properties</span>
-                </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
                     <span>View Site</span>
@@ -182,15 +178,10 @@ $conn->close();
         <main class="host-main">
             <div class="earnings-header admin-page-hero">
                 <div class="admin-page-hero-content">
-                    <span class="admin-page-eyebrow">Revenue Overview</span>
                     <h1>Platform Earnings</h1>
                     <p></p>
                 </div>
-                <div class="admin-page-summary">
-                    <span class="admin-page-summary-label">Earned Revenue</span>
-                    <strong>₱<?php echo number_format($total_earnings, 0); ?></strong>
-                    <span class="admin-page-summary-text"></span>
-                </div>
+                
             </div>
 
             <div class="earnings-stats admin-metric-grid">
