@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/session.php';
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/database_schema.php';
 
 requireLogin();
 $user = getCurrentUser();
@@ -16,6 +17,7 @@ if (!$property_id) {
 }
 
 $conn = getDBConnection();
+initializeHostTables();
 $stmt = $conn->prepare("
     SELECT p.*, u.first_name, u.last_name, u.email,
     COALESCE(
@@ -53,8 +55,24 @@ $stmt->bind_param("i", $property_id);
 $stmt->execute();
 $property['amenities'] = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
+
+// Latest edit log (what changed, when)
+$latestEdit = null;
+$stmt = $conn->prepare("SELECT id, host_id, changes_json, created_at FROM property_edit_logs WHERE property_id = ? ORDER BY id DESC LIMIT 1");
+if ($stmt) {
+    $stmt->bind_param("i", $property_id);
+    $stmt->execute();
+    $latestEdit = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+}
 $conn->close();
 
+$editChanges = [];
+if ($latestEdit && !empty($latestEdit['changes_json'])) {
+    $decoded = json_decode((string)$latestEdit['changes_json'], true);
+    if (is_array($decoded) && isset($decoded['changes']) && is_array($decoded['changes'])) {
+        $editChanges = $decoded['changes'];
+    }
 function amenityIconSvg(string $name): string {
     $n = strtolower(trim($name));
     $icons = [
@@ -455,6 +473,43 @@ function amenityIconSvg(string $name): string {
                     <a href="properties.php" class="btn-vp-back"><i class="fa-solid fa-arrow-left"></i> Back to Properties</a>
                 </div>
             </div>
+
+            <?php if (!empty($latestEdit)): ?>
+                <div class="vp-card" style="border-color: rgba(245,158,11,0.28);">
+                    <div class="vp-card-title">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                        Edited listing
+                    </div>
+                    <p class="vp-description" style="margin:0 0 10px 0;">
+                        Edited at <strong><?php echo date('M j, Y g:i A', strtotime($latestEdit['created_at'])); ?></strong>.
+                    </p>
+                    <?php if (!empty($editChanges)): ?>
+                        <ul style="margin: 0; padding-left: 18px; color: #CBD5E1;">
+                            <?php foreach ($editChanges as $c): ?>
+                                <li style="margin: 6px 0;">
+                                    <strong style="color:#FDE68A;"><?php echo htmlspecialchars($c['label'] ?? ($c['field'] ?? 'Change')); ?>:</strong>
+                                    <?php if (isset($c['from']) || isset($c['to'])): ?>
+                                        <span style="color:#CBD5E1;"><?php echo htmlspecialchars((string)($c['from'] ?? '')); ?></span>
+                                        <span style="opacity:0.7;">→</span>
+                                        <span style="color:#FFFFFF; font-weight:700;"><?php echo htmlspecialchars((string)($c['to'] ?? '')); ?></span>
+                                    <?php elseif (isset($c['added']) || isset($c['removed'])): ?>
+                                        <?php if (!empty($c['added'])): ?>
+                                            <span style="color:#FFFFFF; font-weight:700;">Added:</span> <?php echo htmlspecialchars(implode(', ', (array)$c['added'])); ?>
+                                        <?php endif; ?>
+                                        <?php if (!empty($c['removed'])): ?>
+                                            <span style="color:#CBD5E1; font-weight:700; margin-left:8px;">Removed:</span> <?php echo htmlspecialchars(implode(', ', (array)$c['removed'])); ?>
+                                        <?php endif; ?>
+                                    <?php elseif (isset($c['count'])): ?>
+                                        <span style="color:#FFFFFF; font-weight:700;"><?php echo (int)$c['count']; ?></span>
+                                    <?php else: ?>
+                                        <span style="color:#FFFFFF; font-weight:700;">Updated</span>
+                                    <?php endif; ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
 
             <?php
             $photos = $property['photos'];

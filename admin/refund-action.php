@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../config/session.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/database_schema.php';
+require_once __DIR__ . '/../config/booking_money.php';
 
 requireLogin();
 $user = getCurrentUser();
@@ -48,9 +49,11 @@ initializeHostTables();
 
 $stmt = $conn->prepare("
     SELECT rr.id, rr.status, rr.refund_percent, rr.refund_amount, rr.booking_id, rr.property_id,
-           b.total_price
+           b.total_price,
+           p.host_id
     FROM refund_requests rr
     JOIN bookings b ON b.id = rr.booking_id
+    JOIN properties p ON p.id = rr.property_id
     WHERE rr.id = ?
     LIMIT 1
 ");
@@ -96,6 +99,27 @@ try {
         $up->bind_param('i', $id);
         $up->execute();
         $up->close();
+
+        // Deduct host money when refund is completed (host share only).
+        $hostId = (int)($r['host_id'] ?? 0);
+        $total = (float)($r['total_price'] ?? 0);
+        $pct = (int)($r['refund_percent'] ?? 0);
+        $hostShare = reservepro_host_share_from_total($total);
+        $deduct = round(max(0, $hostShare) * (max(0, min(100, $pct)) / 100), 2);
+
+        if ($hostId > 0 && $deduct > 0) {
+            // host_ledger has unique key on (refund_request_id, entry_type) to prevent duplicates
+            $note2 = 'Refund completed: deduct host share (' . $pct . '% of host share)';
+            $ins = $conn->prepare("
+                INSERT IGNORE INTO host_ledger (host_id, booking_id, refund_request_id, entry_type, amount, note)
+                VALUES (?, ?, ?, 'refund_debit', ?, ?)
+            ");
+            $bookingId = (int)($r['booking_id'] ?? 0);
+            $neg = -1 * $deduct;
+            $ins->bind_param('iiids', $hostId, $bookingId, $id, $neg, $note2);
+            $ins->execute();
+            $ins->close();
+        }
     } else { // override
         $total = (float)($r['total_price'] ?? 0);
         $amt = round(max(0, $total) * ($overridePercent / 100), 2);

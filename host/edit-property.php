@@ -58,6 +58,19 @@ while ($row = $res->fetch_assoc()) {
 }
 $stmt->close();
 
+// Amenity ID -> label mapping (for readable edit diffs)
+$amenityById = [];
+foreach ($amenities as $cat => $items) {
+    foreach ($items as $a) {
+        $aid = (int)($a['id'] ?? 0);
+        if ($aid > 0) {
+            $icon = trim((string)($a['icon'] ?? ''));
+            $name = trim((string)($a['name'] ?? ''));
+            $amenityById[$aid] = trim(($icon !== '' ? ($icon . ' ') : '') . $name);
+        }
+    }
+}
+
 // Current photos
 $photos = [];
 $stmt = $conn->prepare("SELECT id, photo_url, is_primary FROM property_photos WHERE property_id = ? ORDER BY is_primary DESC, id ASC");
@@ -104,9 +117,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $deletePhotoIds = array_map('intval', $_POST['delete_photos'] ?? []);
     $primaryPhotoId = isset($_POST['primary_photo_id']) ? (int) $_POST['primary_photo_id'] : 0;
 
+    // Capture "before" snapshot for edit audit
+    $before = $property;
+    $beforeAmenityIds = $currentAmenityIds;
+    $beforePhotoIds = array_map(function($p) { return (int)($p['id'] ?? 0); }, $photos);
+    $beforePrimaryId = 0;
+    foreach ($photos as $p) {
+        if (!empty($p['is_primary'])) { $beforePrimaryId = (int)$p['id']; break; }
+    }
+
     if (empty($errors)) {
-        // Update property main fields (keep status as-is)
-        $stmt = $conn->prepare("UPDATE properties SET title = ?, description = ?, property_type = ?, address = ?, city = ?, country = ?, price_per_night = ?, max_guests = ?, bedrooms = ?, bathrooms = ?, latitude = ?, longitude = ? WHERE id = ? AND host_id = ?");
+        // Update property main fields.
+        // IMPORTANT: Any edit requires admin re-approval, so set status back to 'pending'.
+        $stmt = $conn->prepare("UPDATE properties SET title = ?, description = ?, property_type = ?, address = ?, city = ?, country = ?, price_per_night = ?, max_guests = ?, bedrooms = ?, bathrooms = ?, latitude = ?, longitude = ?, status = 'pending' WHERE id = ? AND host_id = ?");
         $stmt->bind_param(
             "ssssssdiidddii",
             $title,
@@ -186,6 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->close();
 
         // Handle new uploads (same rules as add-property)
+        $uploadedCount = 0;
         if (isset($_FILES['property_photos']) && !empty($_FILES['property_photos']['name'][0])) {
             $upload_dir = dirname(__DIR__) . '/uploads/properties/';
             if (!file_exists($upload_dir)) {
@@ -226,6 +250,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     $photo_stmt->bind_param("isi", $property_id, $photo_url, $is_primary_flag);
                                     $photo_stmt->execute();
                                     $photo_stmt->close();
+                                    $uploadedCount++;
                                     $is_primary_flag = 0;
                                 } else {
                                     $upload_errors[] = "File upload succeeded but file not found: " . $file_name;
@@ -283,9 +308,88 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errors)) {
+        // Write edit audit log (what changed + when)
+        $changes = [];
+        $fields = [
+            'title' => 'Title',
+            'description' => 'Description',
+            'property_type' => 'Property type',
+            'address' => 'Address',
+            'city' => 'City',
+            'country' => 'Country',
+            'price_per_night' => 'Price per night',
+            'max_guests' => 'Max guests',
+            'bedrooms' => 'Bedrooms',
+            'bathrooms' => 'Bathrooms',
+            'latitude' => 'Latitude',
+            'longitude' => 'Longitude',
+        ];
+        foreach ($fields as $k => $label) {
+            $old = isset($before[$k]) ? (string)$before[$k] : '';
+            $new = isset($$k) ? (string)$$k : (string)($before[$k] ?? '');
+            // Normalize numbers a bit
+            if (in_array($k, ['price_per_night','latitude','longitude'], true)) {
+                $old = (string)((float)$old);
+                $new = (string)((float)$new);
+            }
+            if (in_array($k, ['max_guests','bedrooms','bathrooms'], true)) {
+                $old = (string)((int)$old);
+                $new = (string)((int)$new);
+            }
+            if ($old !== $new) {
+                $changes[] = ['field' => $k, 'label' => $label, 'from' => $old, 'to' => $new];
+            }
+        }
+
+        // Amenities diff
+        $afterAmenityIds = array_map('intval', $selected_amenities ?? []);
+        $afterAmenityIds = array_values(array_unique(array_filter($afterAmenityIds)));
+        $beforeSet = array_values(array_unique(array_filter(array_map('intval', $beforeAmenityIds))));
+        $added = array_values(array_diff($afterAmenityIds, $beforeSet));
+        $removed = array_values(array_diff($beforeSet, $afterAmenityIds));
+        if (!empty($added) || !empty($removed)) {
+            $changes[] = [
+                'field' => 'amenities',
+                'label' => 'Amenities',
+                'added' => array_map(function($id) use ($amenityById) { return $amenityById[$id] ?? ('Amenity #' . $id); }, $added),
+                'removed' => array_map(function($id) use ($amenityById) { return $amenityById[$id] ?? ('Amenity #' . $id); }, $removed),
+            ];
+        }
+
+        // Photos summary
+        if (!empty($deletePhotoIds)) {
+            $changes[] = ['field' => 'photos_deleted', 'label' => 'Photos deleted', 'count' => count($deletePhotoIds)];
+        }
+        if (!empty($uploadedCount)) {
+            $changes[] = ['field' => 'photos_uploaded', 'label' => 'Photos uploaded', 'count' => (int)$uploadedCount];
+        }
+        if ($primaryPhotoId > 0 && $beforePrimaryId > 0 && $primaryPhotoId !== $beforePrimaryId) {
+            $changes[] = ['field' => 'primary_photo', 'label' => 'Primary photo', 'from' => (string)$beforePrimaryId, 'to' => (string)$primaryPhotoId];
+        }
+
+        // Always include status transition info when edits happen
+        if (($before['status'] ?? '') !== 'pending') {
+            $changes[] = ['field' => 'status', 'label' => 'Status', 'from' => (string)($before['status'] ?? ''), 'to' => 'pending'];
+        }
+
+        $changesJson = json_encode([
+            'property_id' => (int)$property_id,
+            'host_id' => (int)$user['id'],
+            'changes' => $changes,
+        ], JSON_UNESCAPED_SLASHES);
+
+        if ($changesJson !== false) {
+            $log = $conn->prepare("INSERT INTO property_edit_logs (property_id, host_id, changes_json) VALUES (?, ?, ?)");
+            if ($log) {
+                $log->bind_param('iis', $property_id, $user['id'], $changesJson);
+                $log->execute();
+                $log->close();
+            }
+        }
+
         $success = true;
         $conn->close();
-        header('Location: view-property.php?id=' . $property_id . '&updated=1');
+        header('Location: view-property.php?id=' . $property_id . '&updated=1&needs_approval=1');
         exit();
     }
 }
@@ -330,6 +434,7 @@ $conn->close();
                 <a href="properties.php" class="nav-item active"><span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span><span>My Properties</span></a>
                 <a href="add-property.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-plus" aria-hidden="true"></i></span><span>Add Property</span></a>
                 <a href="bookings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></span><span>Bookings</span></a>
+                <a href="refund-requests.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></span><span>Refund Requests</span></a>
                 <a href="earnings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span><span>Earnings</span></a>
                 <a href="messages.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span><span>Messages</span></a>
                 <a href="../home.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span><span>View Site</span></a>

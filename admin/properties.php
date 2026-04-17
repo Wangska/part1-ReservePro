@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/session.php';
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/database_schema.php';
 
 requireLogin();
 $user = getCurrentUser();
@@ -12,6 +13,7 @@ if ($user['role'] !== 'admin') {
 }
 
 $conn = getDBConnection();
+initializeHostTables();
 
 // Handle admin delete property (POST)
 $delete_message = null;
@@ -55,7 +57,8 @@ $query = "
             (SELECT photo_url FROM property_photos WHERE property_id = p.id AND is_primary = 1 LIMIT 1),
             (SELECT photo_url FROM property_photos WHERE property_id = p.id LIMIT 1)
         ) as primary_photo,
-        (SELECT COUNT(*) FROM bookings WHERE property_id = p.id) as total_bookings
+        (SELECT COUNT(*) FROM bookings WHERE property_id = p.id) as total_bookings,
+        (SELECT created_at FROM property_edit_logs WHERE property_id = p.id ORDER BY id DESC LIMIT 1) as last_edited_at
     FROM properties p
     JOIN users u ON p.host_id = u.id
     ORDER BY p.created_at DESC
@@ -126,7 +129,8 @@ $conn->close();
             gap: 16px;
             align-items: center;
         }
-        .property-image {
+        /* Use a unique class name so it won't clash with host-dashboard.css (.property-image) */
+        .property-thumb {
             flex-shrink: 0;
             width: 80px;
             height: 60px;
@@ -334,33 +338,33 @@ $conn->close();
 
             <!-- Statistics -->
             <div class="properties-stats admin-metric-grid">
-                <div class="stat-card admin-metric-card">
-                    <div class="stat-icon admin-metric-icon is-sky"><i class="fa-solid fa-building" aria-hidden="true"></i></div>
-                    <div class="stat-content admin-metric-copy">
+                <div class="admin-metric-card">
+                    <div class="admin-metric-icon is-sky"><i class="fa-solid fa-building" aria-hidden="true"></i></div>
+                    <div class="admin-metric-copy">
                         <p>Total Properties</p>
                         <h3><?php echo $stats['total']; ?></h3>
                         <span class="admin-metric-note"></span>
                     </div>
                 </div>
-                <div class="stat-card admin-metric-card">
-                    <div class="stat-icon admin-metric-icon is-emerald"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></div>
-                    <div class="stat-content admin-metric-copy">
+                <div class="admin-metric-card">
+                    <div class="admin-metric-icon is-emerald"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></div>
+                    <div class="admin-metric-copy">
                         <p>Approved</p>
                         <h3><?php echo $stats['approved']; ?></h3>
                         <span class="admin-metric-note"></span>
                     </div>
                 </div>
-                <div class="stat-card admin-metric-card">
-                    <div class="stat-icon admin-metric-icon is-amber"><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i></div>
-                    <div class="stat-content admin-metric-copy">
+                <div class="admin-metric-card">
+                    <div class="admin-metric-icon is-amber"><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i></div>
+                    <div class="admin-metric-copy">
                         <p>Pending Review</p>
                         <h3><?php echo $stats['pending']; ?></h3>
                         <span class="admin-metric-note"></span>
                     </div>
                 </div>
-                <div class="stat-card admin-metric-card">
-                    <div class="stat-icon admin-metric-icon is-red"><i class="fa-solid fa-ban" aria-hidden="true"></i></div>
-                    <div class="stat-content admin-metric-copy">
+                <div class="admin-metric-card">
+                    <div class="admin-metric-icon is-red"><i class="fa-solid fa-ban" aria-hidden="true"></i></div>
+                    <div class="admin-metric-copy">
                         <p>Rejected</p>
                         <h3><?php echo $stats['rejected']; ?></h3>
                         <span class="admin-metric-note"></span>
@@ -394,6 +398,7 @@ $conn->close();
                     <table class="properties-table">
                         <thead>
                             <tr>
+<<<<<<< HEAD
                                 <th style="text-align:center;">Property</th>
                                 <th style="text-align:center;">Host</th>
                                 <th style="text-align:center;">Location</th>
@@ -401,6 +406,16 @@ $conn->close();
                                 <th style="text-align:center;">Bookings</th>
                                 <th style="text-align:center;">Status</th>
                                 <th style="text-align:center;">Actions</th>
+=======
+                                <th>Property</th>
+                                <th>Host</th>
+                                <th>Location</th>
+                                <th>Price</th>
+                                <th>Bookings</th>
+                                <th>Status</th>
+                                <th>Edited</th>
+                                <th>Actions</th>
+>>>>>>> 80dcbc10405afcdcd938e95218ead6b7dd5f866f
                             </tr>
                         </thead>
                         <tbody>
@@ -420,7 +435,7 @@ $conn->close();
                                         }
                                     ?>
                                             <img src="<?php echo $img_src; ?>" 
-                                                 alt="Property" class="property-image" loading="lazy" decoding="async" onerror="this.src='https://via.placeholder.com/80x60?text=No+Image'">
+                                                 alt="Property" class="property-thumb" loading="lazy" decoding="async" onerror="this.src='https://via.placeholder.com/80x60?text=No+Image'">
                                             <div class="property-info">
                                                 <h3><?php echo htmlspecialchars($property['title']); ?></h3>
                                             </div>
@@ -434,6 +449,20 @@ $conn->close();
                                         <span class="status-badge status-<?php echo $property['status']; ?>">
                                             <?php echo ucfirst($property['status']); ?>
                                         </span>
+                                    </td>
+                                    <td>
+                                        <?php if (!empty($property['last_edited_at'])): ?>
+                                            <span style="display:inline-flex; align-items:center; gap:8px;">
+                                                <span class="mini-badge" style="background: rgba(245,158,11,0.18); color:#FDE68A; border:1px solid rgba(245,158,11,0.28); font-weight:900;">
+                                                    Edited
+                                                </span>
+                                                <span style="color:#94A3B8; font-weight:800; font-size:12px;">
+                                                    <?php echo date('M j, Y g:i A', strtotime($property['last_edited_at'])); ?>
+                                                </span>
+                                            </span>
+                                        <?php else: ?>
+                                            <span style="color:#64748B; font-weight:800; font-size:12px;">—</span>
+                                        <?php endif; ?>
                                     </td>
                                     <td>
                                         <div class="action-buttons">

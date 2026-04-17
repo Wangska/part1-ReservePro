@@ -182,21 +182,26 @@ if (isLoggedIn()) {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 8px 16px;
+            padding: 10px 18px;
             border-radius: 999px;
-            background: rgba(212, 165, 116, 0.12);
-            border: 1px solid rgba(212, 165, 116, 0.28);
-            color: #D4A574;
-            font-size: 12px;
-            font-weight: 700;
+            background: rgba(6, 9, 15, 0.48);
+            border: 1px solid rgba(212, 165, 116, 0.55);
+            box-shadow: 0 18px 45px rgba(0,0,0,0.35), 0 0 0 1px rgba(212, 165, 116, 0.20) inset;
+            backdrop-filter: blur(10px) saturate(160%);
+            -webkit-backdrop-filter: blur(10px) saturate(160%);
+            color: #FFF7D6;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.55);
+            font-size: 13px;
+            font-weight: 900;
             letter-spacing: 0.1em;
             text-transform: uppercase;
             margin-bottom: 30px;
         }
         .lp-hero-badge-dot {
-            width: 7px; height: 7px;
+            width: 9px; height: 9px;
             border-radius: 999px;
-            background: #D4A574;
+            background: #FDE68A;
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.18), 0 8px 20px rgba(245, 158, 11, 0.25);
             animation: blink 2.2s ease infinite;
         }
         @keyframes blink {
