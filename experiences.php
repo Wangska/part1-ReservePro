@@ -331,7 +331,9 @@ $conn->close();
                                 <svg class="guest-menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
                             </button>
                             <div class="guest-menu-panel" id="guestMenuPanel" role="menu" aria-hidden="true">
+                                <?php if (isset($user['role']) && $user['role'] !== 'admin'): ?>
                                 <a href="messages.php" role="menuitem" class="guest-menu-item">Messages</a>
+                                <?php endif; ?>
                                 <?php if (isset($user['role']) && $user['role'] === 'guest'): ?>
                                 <a href="my-bookings.php" role="menuitem" class="guest-menu-item">My bookings</a>
                                 <a href="profile.php" role="menuitem" class="guest-menu-item">Profile</a>

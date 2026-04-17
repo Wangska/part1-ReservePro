@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/session.php';
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/database_schema.php';
 
 requireLogin();
 $user = getCurrentUser();
@@ -16,6 +17,7 @@ if (!$property_id) {
 }
 
 $conn = getDBConnection();
+initializeHostTables();
 $stmt = $conn->prepare("
     SELECT p.*, u.first_name, u.last_name, u.email,
     COALESCE(
@@ -53,7 +55,25 @@ $stmt->bind_param("i", $property_id);
 $stmt->execute();
 $property['amenities'] = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
+
+// Latest edit log (what changed, when)
+$latestEdit = null;
+$stmt = $conn->prepare("SELECT id, host_id, changes_json, created_at FROM property_edit_logs WHERE property_id = ? ORDER BY id DESC LIMIT 1");
+if ($stmt) {
+    $stmt->bind_param("i", $property_id);
+    $stmt->execute();
+    $latestEdit = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+}
 $conn->close();
+
+$editChanges = [];
+if ($latestEdit && !empty($latestEdit['changes_json'])) {
+    $decoded = json_decode((string)$latestEdit['changes_json'], true);
+    if (is_array($decoded) && isset($decoded['changes']) && is_array($decoded['changes'])) {
+        $editChanges = $decoded['changes'];
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -88,6 +108,25 @@ $conn->close();
         .status-pending { background: rgba(234, 179, 8, 0.2); color: #fde047; }
         .status-rejected { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
         .status-out_of_order { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+
+        .edit-chip {
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(245,158,11,0.28);
+            background: rgba(245,158,11,0.16);
+            color: #FDE68A;
+            font-weight: 900;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        .edit-list { margin: 10px 0 0; padding-left: 18px; }
+        .edit-list li { margin: 6px 0; color:#E5E7EB; }
+        .edit-k { color:#FDE68A; font-weight: 900; }
+        .edit-from { color:#CBD5E1; font-weight: 800; }
+        .edit-to { color:#FFFFFF; font-weight: 900; }
     </style>
 </head>
 <body class="dashboard-page admin-page">
@@ -133,6 +172,9 @@ $conn->close();
                     <div>
                         <h1><?php echo htmlspecialchars($property['title']); ?></h1>
                         <span class="status-badge status-<?php echo $property['status']; ?>"><?php echo ucfirst(str_replace('_', ' ', $property['status'])); ?></span>
+                        <?php if (!empty($latestEdit)): ?>
+                            <span class="edit-chip"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>Edited <?php echo date('M j, Y g:i A', strtotime($latestEdit['created_at'])); ?></span>
+                        <?php endif; ?>
                         <p style="margin: 8px 0 0 0; color: #888; font-size: 14px;">📍 <?php echo htmlspecialchars($property['city'] . ', ' . $property['country']); ?></p>
                         <p style="margin: 4px 0 0 0; color: #B8B8B8; font-size: 13px;">Host: <?php echo htmlspecialchars($property['first_name'] . ' ' . $property['last_name']); ?> (<?php echo htmlspecialchars($property['email']); ?>)</p>
                     </div>
@@ -140,6 +182,41 @@ $conn->close();
                         <a href="properties.php" class="btn-view-back">← Back to list</a>
                     </div>
                 </div>
+
+                <?php if (!empty($latestEdit) && !empty($editChanges)): ?>
+                    <div class="view-section" id="edit-changes" style="border-color: rgba(245,158,11,0.28);">
+                        <h2>What’s new (latest edit)</h2>
+                        <p style="margin:0 0 10px 0;">Edited at <strong><?php echo date('M j, Y g:i A', strtotime($latestEdit['created_at'])); ?></strong>. Below are the detected changes from the host.</p>
+                        <ul class="edit-list">
+                            <?php foreach ($editChanges as $c): ?>
+                                <li>
+                                    <span class="edit-k"><?php echo htmlspecialchars($c['label'] ?? ($c['field'] ?? 'Change')); ?>:</span>
+                                    <?php if (isset($c['from']) || isset($c['to'])): ?>
+                                        <span class="edit-from"><?php echo htmlspecialchars((string)($c['from'] ?? '')); ?></span>
+                                        <span style="opacity:0.7;">→</span>
+                                        <span class="edit-to"><?php echo htmlspecialchars((string)($c['to'] ?? '')); ?></span>
+                                    <?php elseif (isset($c['added']) || isset($c['removed'])): ?>
+                                        <?php if (!empty($c['added'])): ?>
+                                            <span class="edit-to">Added:</span> <?php echo htmlspecialchars(implode(', ', (array)$c['added'])); ?>
+                                        <?php endif; ?>
+                                        <?php if (!empty($c['removed'])): ?>
+                                            <span class="edit-from" style="margin-left:8px;">Removed:</span> <?php echo htmlspecialchars(implode(', ', (array)$c['removed'])); ?>
+                                        <?php endif; ?>
+                                    <?php elseif (isset($c['count'])): ?>
+                                        <span class="edit-to"><?php echo (int)$c['count']; ?></span>
+                                    <?php else: ?>
+                                        <span class="edit-to">Updated</span>
+                                    <?php endif; ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                <?php elseif (!empty($latestEdit)): ?>
+                    <div class="view-section" id="edit-changes" style="border-color: rgba(245,158,11,0.28);">
+                        <h2>Edited listing</h2>
+                        <p style="margin:0;">This property was edited at <strong><?php echo date('M j, Y g:i A', strtotime($latestEdit['created_at'])); ?></strong>.</p>
+                    </div>
+                <?php endif; ?>
 
                 <?php
                 $photos = $property['photos'];

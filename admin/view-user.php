@@ -257,6 +257,59 @@ function bool_label($value) {
             background: rgba(239, 68, 68, 0.2);
             color: #FCA5A5;
         }
+
+        .nav-btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(212, 165, 116, 0.32);
+            background: rgba(255, 255, 255, 0.06);
+            color: #FDE68A !important;
+            text-decoration: none;
+            font-weight: 900;
+            font-size: 13px;
+            letter-spacing: 0.02em;
+            box-shadow: 0 14px 30px rgba(0,0,0,0.18);
+            transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+            white-space: nowrap;
+        }
+        .nav-btn-outline:hover {
+            transform: translateY(-1px);
+            background: rgba(255, 255, 255, 0.09);
+            border-color: rgba(212, 165, 116, 0.52);
+            color: #FFF1A6 !important;
+        }
+        .nav-btn-outline .nav-btn-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(212, 165, 116, 0.16);
+            border: 1px solid rgba(212, 165, 116, 0.25);
+            color: #FDE68A;
+            flex: 0 0 auto;
+        }
+
+        body.light-mode .nav-btn-outline {
+            background: #ffffff !important;
+            border-color: rgba(15, 23, 42, 0.14) !important;
+            color: #0f172a !important;
+            box-shadow: 0 14px 30px rgba(0,0,0,0.08);
+        }
+        body.light-mode .nav-btn-outline:hover {
+            background: #F8FAFC !important;
+            border-color: rgba(15, 23, 42, 0.22) !important;
+            color: #0f172a !important;
+        }
+        body.light-mode .nav-btn-outline .nav-btn-icon {
+            background: rgba(15, 23, 42, 0.06);
+            border-color: rgba(15, 23, 42, 0.10);
+            color: #0f172a;
+        }
     </style>
 </head>
 <body class="dashboard-page admin-page">
@@ -334,7 +387,10 @@ function bool_label($value) {
                     <h1>User Details</h1>
                     <p class="subtitle">View activity and information for this user</p>
                 </div>
-                <a href="users.php" class="nav-btn-outline">← Back to Users</a>
+                <a href="users.php" class="nav-btn-outline">
+                    <span class="nav-btn-icon" aria-hidden="true"><i class="fa-solid fa-arrow-left"></i></span>
+                    <span>Back to Users</span>
+                </a>
             </div>
 
             <div class="user-details-layout">

@@ -207,11 +207,26 @@ $conn->close();
                         <h2>Booking History</h2>
                         <p>Filter by status to isolate the reservations that need follow-up.</p>
                     </div>
-                    <div class="filter-tabs">
-                        <button type="button" class="filter-tab active" onclick="filterBookings('all', this)">All</button>
-                        <button type="button" class="filter-tab" onclick="filterBookings('confirmed', this)">Confirmed</button>
-                        <button type="button" class="filter-tab" onclick="filterBookings('pending', this)">Pending</button>
-                        <button type="button" class="filter-tab" onclick="filterBookings('cancelled', this)">Cancelled</button>
+                    <div class="filter-tabs" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; width:100%;">
+                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                            <button type="button" class="filter-tab active" onclick="filterBookings('all', this)">All</button>
+                            <button type="button" class="filter-tab" onclick="filterBookings('confirmed', this)">Confirmed</button>
+                            <button type="button" class="filter-tab" onclick="filterBookings('pending', this)">Pending</button>
+                            <button type="button" class="filter-tab" onclick="filterBookings('cancelled', this)">Cancelled</button>
+                        </div>
+                        <div style="margin-left:auto; min-width: 240px; flex: 1 1 320px; max-width: 420px;">
+                            <div style="position:relative;">
+                                <i class="fa-solid fa-magnifying-glass" aria-hidden="true" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#94A3B8;"></i>
+                                <input
+                                    id="bookingSearch"
+                                    type="text"
+                                    placeholder="Search booking, guest, host, dates…"
+                                    style="width:100%; padding: 10px 12px 10px 36px; border-radius: 999px; border: 1px solid rgba(148,163,184,0.18); background: rgba(255,255,255,0.06); color:#E2E8F0; font-weight:800; font-size:13px;"
+                                    autocomplete="off"
+                                >
+                            </div>
+                            <div id="bookingSearchMeta" style="margin-top:6px; font-size:12px; color:#94A3B8; font-weight:700; display:none;"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -262,20 +277,55 @@ $conn->close();
     <script src="../assets/js/theme-toggle.js?v=27.0"></script>
     <script src="../assets/js/admin-view-site-confirm.js?v=1.0"></script>
     <script>
-        function filterBookings(status, el) {
+        let currentBookingStatusFilter = 'all';
+
+        function applyBookingFilters() {
             const rows = document.querySelectorAll('.properties-table tbody tr');
+            const qEl = document.getElementById('bookingSearch');
+            const meta = document.getElementById('bookingSearchMeta');
+            const q = (qEl ? qEl.value : '').trim().toLowerCase();
+
+            let shown = 0;
+            let total = 0;
+
+            rows.forEach(row => {
+                total++;
+                const statusOk = (currentBookingStatusFilter === 'all') || (row.dataset.status === currentBookingStatusFilter);
+                const textOk = (q === '') || ((row.textContent || '').toLowerCase().includes(q));
+                const show = statusOk && textOk;
+                row.style.display = show ? '' : 'none';
+                if (show) shown++;
+            });
+
+            if (meta) {
+                if (q !== '') {
+                    meta.style.display = '';
+                    meta.textContent = `Showing ${shown} of ${total} booking(s) for “${q}”`;
+                } else {
+                    meta.style.display = 'none';
+                    meta.textContent = '';
+                }
+            }
+        }
+
+        function filterBookings(status, el) {
             const buttons = document.querySelectorAll('.properties-table-container .filter-tab');
             buttons.forEach(btn => btn.classList.remove('active'));
             if (el) el.classList.add('active');
-            
-            rows.forEach(row => {
-                if (status === 'all') {
-                    row.style.display = '';
-                } else {
-                    row.style.display = row.dataset.status === status ? '' : 'none';
-                }
-            });
+
+            currentBookingStatusFilter = status;
+            applyBookingFilters();
         }
+
+        (function initBookingSearch() {
+            const input = document.getElementById('bookingSearch');
+            if (!input) return;
+            let t = null;
+            input.addEventListener('input', function() {
+                if (t) clearTimeout(t);
+                t = setTimeout(applyBookingFilters, 90);
+            });
+        })();
     </script>
 </body>
 </html>

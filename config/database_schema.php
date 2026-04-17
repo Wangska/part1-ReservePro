@@ -309,6 +309,35 @@ function initializeHostTables() {
         FOREIGN KEY (actor_user_id) REFERENCES users(id) ON DELETE CASCADE
     )";
     $conn->query($sql);
+
+    // Property edit audit log (for admin "what changed" + when)
+    $sql = "CREATE TABLE IF NOT EXISTS property_edit_logs (
+        id INT(11) AUTO_INCREMENT PRIMARY KEY,
+        property_id INT(11) NOT NULL,
+        host_id INT(11) NOT NULL,
+        changes_json TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE,
+        FOREIGN KEY (host_id) REFERENCES users(id) ON DELETE CASCADE
+    )";
+    $conn->query($sql);
+
+    // Host earnings ledger (credits/debits). Used to deduct host money on refunds.
+    $sql = "CREATE TABLE IF NOT EXISTS host_ledger (
+        id INT(11) AUTO_INCREMENT PRIMARY KEY,
+        host_id INT(11) NOT NULL,
+        booking_id INT(11) DEFAULT NULL,
+        refund_request_id INT(11) DEFAULT NULL,
+        entry_type ENUM('booking_credit','refund_debit') NOT NULL,
+        amount DECIMAL(10,2) NOT NULL,
+        note VARCHAR(255) DEFAULT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (host_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE SET NULL,
+        FOREIGN KEY (refund_request_id) REFERENCES refund_requests(id) ON DELETE SET NULL,
+        UNIQUE KEY uniq_refund_debit (refund_request_id, entry_type)
+    )";
+    $conn->query($sql);
     
     // Insert default amenities
     $amenitiesList = [

@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '/../config/session.php';
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/database_schema.php';
+require_once __DIR__ . '/../config/booking_money.php';
 
 requireLogin();
 $user = getCurrentUser();
@@ -18,6 +20,7 @@ if ($user['role'] !== 'host') {
 }
 
 $conn = getDBConnection();
+initializeHostTables();
 
 // Get all bookings for host's properties
 $stmt = $conn->prepare("
@@ -47,26 +50,37 @@ $stmt->close();
 
 // Calculate earnings statistics
 // Only confirmed/completed bookings should count toward total earnings.
-$total_earnings     = 0;
-$pending_earnings   = 0;
-$completed_earnings = 0;
+$total_earnings     = 0; // net host earnings (host share - refund deductions)
+$pending_earnings   = 0; // host share preview for pending
+$completed_earnings = 0; // host share for confirmed/completed (gross)
+$refund_deductions  = 0; // negative number (sum of debits)
 $total_bookings     = count($bookings);
 
 foreach ($bookings as $booking) {
-    $amount = (float) $booking['total_price'];
+    $amountTotal = (float) $booking['total_price'];
+    $amountHost  = reservepro_host_share_from_total($amountTotal);
 
     // Pending = awaiting payment, do NOT include in totals
     if ($booking['status'] === 'pending') {
-        $pending_earnings += $amount;
+        $pending_earnings += $amountHost;
         continue;
     }
 
     // Confirmed/completed = paid earnings
     if ($booking['status'] === 'confirmed' || $booking['status'] === 'completed') {
-        $completed_earnings += $amount;
-        $total_earnings     += $amount;
+        $completed_earnings += $amountHost;
+        $total_earnings     += $amountHost;
     }
 }
+
+// Apply refund deductions from host_ledger (only refund debits)
+$stmt = $conn->prepare("SELECT COALESCE(SUM(amount), 0) AS s FROM host_ledger WHERE host_id = ? AND entry_type = 'refund_debit'");
+$stmt->bind_param("i", $user['id']);
+$stmt->execute();
+$row = $stmt->get_result()->fetch_assoc();
+$stmt->close();
+$refund_deductions = (float)($row['s'] ?? 0); // negative
+$total_earnings += $refund_deductions;
 
 // Count host's properties (for "First" vs "Add" button text)
 $count_result = $conn->query("SELECT COUNT(*) as n FROM properties WHERE host_id = " . (int)$user['id']);
@@ -462,11 +476,11 @@ $conn->close();
                     </div>
                 </div>
                 <div class="earnings-stat-card host-metric-card">
-                    <div class="host-metric-icon is-gold"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i></div>
+                    <div class="host-metric-icon is-red"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></div>
                     <div class="host-metric-copy">
-                        <div class="stat-label">Total Bookings</div>
-                        <div class="stat-value"><?php echo $total_bookings; ?></div>
-                        <div class="stat-change">Every reservation linked to your properties.</div>
+                        <div class="stat-label">Refund deductions</div>
+                        <div class="stat-value">₱<?php echo number_format(abs($refund_deductions), 2); ?></div>
+                        <div class="stat-change">Deducted from your earnings when refunds complete.</div>
                     </div>
                 </div>
             </div>

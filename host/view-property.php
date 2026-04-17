@@ -57,6 +57,9 @@ $stmt->execute();
 $property['amenities'] = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 $conn->close();
+
+$justUpdated = isset($_GET['updated']) && $_GET['updated'] === '1';
+$needsApproval = isset($_GET['needs_approval']) && $_GET['needs_approval'] === '1';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -92,6 +95,63 @@ $conn->close();
         .status-pending { background: rgba(234, 179, 8, 0.2); color: #fde047; }
         .status-rejected { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
         .status-out_of_order { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+
+        .rp-approval-banner {
+            border-radius: 16px;
+            padding: 16px 16px;
+            border: 1px solid rgba(245, 158, 11, 0.45);
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.20), rgba(17, 24, 39, 0.75));
+            box-shadow: 0 18px 45px rgba(0,0,0,0.22);
+        }
+        .rp-approval-banner .rp-approval-row {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+        .rp-approval-banner .rp-approval-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(245, 158, 11, 0.18);
+            border: 1px solid rgba(245, 158, 11, 0.30);
+            color: #FDE68A;
+            flex: 0 0 auto;
+        }
+        .rp-approval-banner h2 {
+            margin: 0 0 6px 0;
+            font-size: 18px;
+            color: #FDE68A !important;
+            letter-spacing: -0.01em;
+        }
+        .rp-approval-banner p {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #F1F5F9 !important;
+            font-weight: 700;
+        }
+        .rp-approval-banner strong {
+            color: #FFFFFF !important;
+            font-weight: 900;
+        }
+
+        body.dashboard-page.light-mode .rp-approval-banner {
+            border-color: rgba(180, 83, 9, 0.25);
+            background: linear-gradient(135deg, rgba(234, 179, 8, 0.22), rgba(255, 255, 255, 0.95));
+            box-shadow: 0 14px 35px rgba(0,0,0,0.10);
+        }
+        body.dashboard-page.light-mode .rp-approval-banner h2 {
+            color: #92400e !important;
+        }
+        body.dashboard-page.light-mode .rp-approval-banner p {
+            color: #0f172a !important;
+        }
+        body.dashboard-page.light-mode .rp-approval-banner strong {
+            color: #0f172a !important;
+        }
     </style>
 </head>
 <body class="dashboard-page host-clean-page host-detail-page">
@@ -130,6 +190,23 @@ $conn->close();
 
         <main class="host-main">
             <div class="view-property-page">
+                <?php if ($justUpdated && $needsApproval): ?>
+                    <div class="rp-approval-banner">
+                        <div class="rp-approval-row">
+                            <div class="rp-approval-icon" aria-hidden="true"><i class="fa-solid fa-circle-exclamation"></i></div>
+                            <div>
+                                <h2>Submitted for admin approval</h2>
+                                <p>Your changes were saved and this listing is now <strong>pending</strong> until an admin approves the updates.</p>
+                            </div>
+                        </div>
+                    </div>
+                <?php elseif ($justUpdated): ?>
+                    <div class="view-section host-detail-shell" style="border-color: rgba(34,197,94,0.35); background: rgba(34,197,94,0.10);">
+                        <h2 style="color:#86efac !important;">Updated</h2>
+                        <p style="margin:0;">Your listing was updated successfully.</p>
+                    </div>
+                <?php endif; ?>
+
                 <div class="view-property-header host-page-hero">
                     <div class="host-page-hero-content">
                         <span class="host-page-eyebrow">Property Overview</span>
