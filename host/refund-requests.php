@@ -67,9 +67,9 @@ function badge($s) {
     <link rel="stylesheet" href="../assets/css/style.css?v=25.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.3">
+    <link rel="stylesheet" href="../assets/css/admin.css?v=25.4">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
-        .rr-wrap { max-width: 1200px; margin: 0 auto; padding: 24px; }
         .rr-hero {
             background: linear-gradient(135deg, rgba(17, 24, 39, 0.96), rgba(30, 41, 59, 0.88));
             border: 1px solid rgba(212, 165, 116, 0.22);
@@ -115,7 +115,7 @@ function badge($s) {
         body.light-mode .rr-btn-danger { color:#b91c1c !important; border-color: rgba(185,28,28,0.25) !important; }
     </style>
 </head>
-<body class="dashboard-page host-dashboard-page">
+<body class="dashboard-page admin-page admin-clean-page host-clean-page host-refund-requests-page">
 <div class="host-layout">
     <aside class="host-sidebar">
         <div class="sidebar-header">
@@ -125,14 +125,13 @@ function badge($s) {
             </a>
         </div>
         <nav class="sidebar-nav">
-            <a href="dashboard.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span><span>Dashboard</span></a>
             <a href="properties.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span><span>My Properties</span></a>
             <a href="add-property.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-plus" aria-hidden="true"></i></span><span>Add Property</span></a>
             <a href="bookings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></span><span>Bookings</span></a>
             <a href="refund-requests.php" class="nav-item active"><span class="nav-icon"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></span><span>Refund Requests</span></a>
             <a href="earnings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span><span>Earnings</span></a>
             <a href="messages.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span><span>Messages</span></a>
-            <a href="../home.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span><span>View Site</span></a>
+            <a href="../home.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span><span>Home</span></a>
         </nav>
         <div class="sidebar-footer">
             <div class="user-profile">
@@ -144,34 +143,38 @@ function badge($s) {
                     <div class="user-role">Host</div>
                 </div>
             </div>
-            <div class="theme-toggle" style="margin-bottom: 12px;">
-                <span class="theme-toggle-icon" aria-hidden="true"></span>
-                <span class="theme-toggle-text">Theme</span>
-            </div>
             <a href="../logout.php" class="btn-logout">Logout</a>
         </div>
     </aside>
 
     <main class="host-main">
-        <div class="rr-wrap">
-            <div class="rr-hero">
-                <div>
-                    <h1>Refund requests</h1>
-                    <p>Review guest refund requests first. You can approve full/partial, or reject. Admin can override if needed.</p>
+            <div class="host-page-hero">
+                <div class="host-page-hero-content">
+                    <h1 style="margin-top: 20px;">Refund Requests</h1>
+                </div>
+                <div style="display:flex; align-items:flex-start; gap:14px; margin-left:auto;">
+                    <div class="host-page-summary">
+                        <span class="host-page-summary-label">Total Requests</span>
+                        <strong><?php echo count($requests); ?></strong>
+                    </div>
                 </div>
             </div>
 
-            <div class="rr-card">
-                <div class="rr-head">
-                    <h2>All requests</h2>
-                    <p class="rr-note"><?php echo count($requests); ?> total</p>
+            <div class="host-surface">
+                <div class="host-surface-header">
+                    <div>
+                        <h2>All Requests</h2>
+                    </div>
                 </div>
 
                 <?php if (empty($requests)): ?>
-                    <div style="padding: 16px; color:#CBD5E1;">No refund requests yet.</div>
+                    <div class="host-empty-state">
+                        <span class="host-empty-icon"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></span>
+                        <h3>No refund requests yet</h3>
+                    </div>
                 <?php else: ?>
-                    <div style="overflow-x:auto;">
-                        <table class="rr-table">
+                    <div class="host-table-scroll">
+                        <table class="rr-table host-table">
                             <thead>
                                 <tr>
                                     <th>Request</th>
@@ -226,7 +229,6 @@ function badge($s) {
                     </div>
                 <?php endif; ?>
             </div>
-        </div>
     </main>
 </div>
 

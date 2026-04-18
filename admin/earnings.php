@@ -95,6 +95,14 @@ $conn->close();
             font-weight: 700;
             color: #D4A574;
         }
+
+        .admin-earnings-page .earnings-table th,
+        .admin-earnings-page .earnings-table td {
+            text-align: center;
+            vertical-align: middle;
+            border-left: none !important;
+            border-right: none !important;
+        }
     </style>
 </head>
 <body class="dashboard-page admin-page admin-clean-page admin-earnings-page">
@@ -162,10 +170,7 @@ $conn->close();
                         <div class="user-role">Administrator</div>
                     </div>
                 </div>
-                <div class="theme-toggle" style="margin-bottom: 12px;">
-                    <span class="theme-toggle-icon" aria-hidden="true"></span>
-                    <span class="theme-toggle-text">Theme</span>
-                </div>
+
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
         </aside>
@@ -173,15 +178,10 @@ $conn->close();
         <main class="host-main">
             <div class="earnings-header admin-page-hero">
                 <div class="admin-page-hero-content">
-                    <span class="admin-page-eyebrow">Revenue Overview</span>
                     <h1>Platform Earnings</h1>
                     <p></p>
                 </div>
-                <div class="admin-page-summary">
-                    <span class="admin-page-summary-label">Earned Revenue</span>
-                    <strong>₱<?php echo number_format($total_earnings, 0); ?></strong>
-                    <span class="admin-page-summary-text"></span>
-                </div>
+                
             </div>
 
             <div class="earnings-stats admin-metric-grid">

@@ -242,7 +242,6 @@ $conn->close();
             justify-content: center;
             font-size: 28px;
             color: #FBBF24;
-            background: rgba(245, 158, 11, 0.12);
         }
 
         .admin-dashboard-page .review-list {
@@ -510,10 +509,7 @@ $conn->close();
                 </div>
                 
                 <!-- Theme Toggle -->
-                <div class="theme-toggle" style="margin-bottom: 12px;">
-                    <span class="theme-toggle-icon" aria-hidden="true"></span>
-                    <span class="theme-toggle-text">Theme</span>
-                </div>
+
                 
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
@@ -521,16 +517,10 @@ $conn->close();
 
         <!-- Main Content -->
         <main class="host-main">
-            <div class="host-header dashboard-hero">
-                <div>
-                    <span class="dashboard-eyebrow">Admin Overview</span>
+            <div class="properties-header admin-page-hero">
+                <div class="admin-page-hero-content">
                     <h1>Admin Dashboard</h1>
-                    <p class="subtitle"></p>
-                </div>
-                <div class="dashboard-summary-card">
-                    <span class="summary-label">Needs Attention</span>
-                    <strong><?php echo $stats['pending']; ?></strong>
-                    <span class="summary-text"></span>
+                    <p></p>
                 </div>
             </div>
 
@@ -593,8 +583,8 @@ $conn->close();
             <?php if (empty($pending_properties)): ?>
                 <div class="empty-state">
                     <span class="empty-icon"><i class="fa-solid fa-folder-open" aria-hidden="true"></i></span>
-                    <h3>All caught up!</h3>
-                    <p>No properties pending review</p>
+                    <h3>No pending reviews</h3>
+
                 </div>
             <?php else: ?>
                 <div class="review-list">

@@ -99,14 +99,20 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/style.css?v=11.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.3">
+    <link rel="stylesheet" href="../assets/css/admin.css?v=25.4">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
         .messages-header {
-            /* Trendy gray header instead of brown */
-            background: linear-gradient(135deg, #111827 0%, #1F2933 45%, #020617 100%);
-            padding: 40px;
-            border-radius: 16px;
-            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            gap: 20px;
+            padding: 28px 30px;
+            margin-bottom: 28px;
+            border-radius: 24px;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.96), rgba(30, 41, 59, 0.88));
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.24);
             color: white;
         }
 
@@ -407,7 +413,7 @@ $conn->close();
         }
     </style>
 </head>
-<body class="dashboard-page host-clean-page host-messages-page">
+<body class="dashboard-page admin-page admin-clean-page host-clean-page host-messages-page">
     <div class="host-layout">
         <!-- Sidebar -->
         <aside class="host-sidebar">
@@ -419,10 +425,6 @@ $conn->close();
             </div>
             
             <nav class="sidebar-nav">
-                <a href="dashboard.php" class="nav-item">
-                    <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
-                    <span>Dashboard</span>
-                </a>
                 <a href="properties.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
                     <span>My Properties</span>
@@ -449,7 +451,7 @@ $conn->close();
                 </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
-                    <span>View Site</span>
+                    <span>Home</span>
                 </a>
             </nav>
             
@@ -463,12 +465,6 @@ $conn->close();
                         <div class="user-role">Host</div>
                     </div>
                 </div>
-
-                <div class="theme-toggle">
-                    <span class="theme-toggle-icon">☀️</span>
-                    <span class="theme-toggle-text">Light</span>
-                </div>
-                
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
         </aside>
@@ -477,17 +473,9 @@ $conn->close();
         <main class="host-main">
             <div class="messages-header host-page-hero">
                 <div class="host-page-hero-content">
-                    <span class="host-page-eyebrow">Guest Conversations</span>
-                    <h1>Messages</h1>
-                    <p>Keep every guest thread in one place so you can respond quickly and stay aligned on bookings and property questions.</p>
+                    <h1 style="margin-top: 20px;">Messages</h1>
                 </div>
-                <div style="display:flex; align-items:flex-start; gap:14px; margin-left:auto;">
-                    <div class="host-page-summary">
-                        <span class="host-page-summary-label">Active Threads</span>
-                        <strong><?php echo $conversation_count; ?></strong>
-                        <span class="host-page-summary-text"><?php echo $total_message_count; ?> total messages across your guest conversations</span>
-                    </div>
-                </div>
+                <!-- host-page-summary removed -->
             </div>
 
             <div class="host-messages-layout">
@@ -496,7 +484,6 @@ $conn->close();
                     <div class="host-surface-header" style="border-bottom: 1px solid rgba(148, 163, 184, 0.1); padding-bottom: 20px; align-items: stretch;">
                         <div>
                             <h2>Conversations</h2>
-                            <p>Search by guest name, property, or message snippet.</p>
                         </div>
                         <input type="text" class="search-box" placeholder="Search messages..." id="messagesSearch">
                     </div>
@@ -505,7 +492,6 @@ $conn->close();
                     <div class="empty-messages host-empty-state">
                         <div class="empty-messages-icon host-empty-icon"><i class="fa-solid fa-inbox" aria-hidden="true"></i></div>
                         <h3>No Messages Yet</h3>
-                        <p>When guests contact you about your properties (via "Contact Host" on a listing), messages will appear here.</p>
                     </div>
                     <?php else: ?>
                     <div class="conversation-items" id="conversationItems">
@@ -532,7 +518,6 @@ $conn->close();
                     <div class="empty-messages host-empty-state" id="chatPlaceholder">
                         <div class="empty-messages-icon host-empty-icon"><i class="fa-solid fa-comments" aria-hidden="true"></i></div>
                         <h3>Select a conversation</h3>
-                        <p>Click a conversation from the list to view the thread and reply.</p>
                     </div>
                     <div id="chatMessageDetail" style="display: none; flex: 1; flex-direction: column; min-height: 0;">
                         <div id="chatMessageHeader" class="host-chat-header" style="padding: 20px;"></div>

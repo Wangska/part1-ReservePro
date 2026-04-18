@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/config/session.php';
 require_once __DIR__ . '/config/database.php';
 $user = isLoggedIn() ? getCurrentUser() : null;
@@ -171,13 +171,9 @@ $conn->close();
         <div class="hero-content">
             <!-- Search row: logo + bar + filter + burger/user-menu -->
             <div class="rp-hero-searchrow">
-            <a href="home.php" class="rp-hero-brand">
+            <a href="index.php" class="rp-hero-brand">
                 <?php require __DIR__ . '/includes/brand-icon-svg.php'; ?>
                 <span class="rp-hero-brandname">ReservePro</span>
-            </a>
-            <a href="index.php" class="rp-hero-landing-btn" title="Go back to landing page">
-                <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
-                Landing
             </a>
             <div class="rp-wwwsearch">
                 <div class="rp-wwwfield">
@@ -222,7 +218,6 @@ $conn->close();
             <!-- Hero filter button -->
             <button type="button" class="rp-hero-filter-btn" id="filterToggleHero" aria-label="Open filters">
                 <i class="fa-solid fa-sliders"></i>
-                Filter
             </button>
 
             <?php if ($user): ?>
@@ -239,7 +234,7 @@ $conn->close();
                     <a href="my-bookings.php" role="menuitem" class="guest-menu-item">My bookings</a>
                     <a href="profile.php" role="menuitem" class="guest-menu-item">Profile</a>
                     <?php elseif (isset($user['role']) && $user['role'] === 'host'): ?>
-                    <a href="host/dashboard.php" role="menuitem" class="guest-menu-item">Dashboard</a>
+                    <a href="host/properties.php" role="menuitem" class="guest-menu-item">Property</a>
                     <?php elseif (isset($user['role']) && $user['role'] === 'admin'): ?>
                     <a href="admin/dashboard.php" role="menuitem" class="guest-menu-item">Admin</a>
                     <?php endif; ?>

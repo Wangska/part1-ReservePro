@@ -111,19 +111,21 @@ $conn->close();
             box-sizing: border-box;
         }
         .admin-properties-page .properties-table th:nth-child(1),
-        .admin-properties-page .properties-table td:nth-child(1) { width: 260px; }
+        .admin-properties-page .properties-table td:nth-child(1) { width: 240px; }
         .admin-properties-page .properties-table th:nth-child(2),
-        .admin-properties-page .properties-table td:nth-child(2) { width: 140px; }
+        .admin-properties-page .properties-table td:nth-child(2) { width: 130px; text-align: center; }
         .admin-properties-page .properties-table th:nth-child(3),
-        .admin-properties-page .properties-table td:nth-child(3) { width: 160px; }
+        .admin-properties-page .properties-table td:nth-child(3) { width: 150px; text-align: center; }
         .admin-properties-page .properties-table th:nth-child(4),
-        .admin-properties-page .properties-table td:nth-child(4) { width: 120px; }
+        .admin-properties-page .properties-table td:nth-child(4) { width: 100px; text-align: center; }
         .admin-properties-page .properties-table th:nth-child(5),
-        .admin-properties-page .properties-table td:nth-child(5) { width: 90px; }
+        .admin-properties-page .properties-table td:nth-child(5) { width: 80px; text-align: center; }
         .admin-properties-page .properties-table th:nth-child(6),
-        .admin-properties-page .properties-table td:nth-child(6) { width: 110px; }
+        .admin-properties-page .properties-table td:nth-child(6) { width: 100px; text-align: center; }
         .admin-properties-page .properties-table th:nth-child(7),
-        .admin-properties-page .properties-table td:nth-child(7) { width: 120px; }
+        .admin-properties-page .properties-table td:nth-child(7) { width: 140px; text-align: center; }
+        .admin-properties-page .properties-table th:nth-child(8),
+        .admin-properties-page .properties-table td:nth-child(8) { width: 120px; text-align: center; }
         .property-cell {
             display: flex;
             gap: 16px;
@@ -298,10 +300,7 @@ $conn->close();
                 </div>
                 
                 <!-- Theme Toggle -->
-                <div class="theme-toggle" style="margin-bottom: 12px;">
-                    <span class="theme-toggle-icon" aria-hidden="true"></span>
-                    <span class="theme-toggle-text">Theme</span>
-                </div>
+
                 
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
@@ -311,15 +310,10 @@ $conn->close();
         <main class="host-main">
             <div class="properties-header admin-page-hero">
                 <div class="admin-page-hero-content">
-                    <span class="admin-page-eyebrow">Listing Management</span>
                     <h1>All Properties</h1>
                     <p></p>
                 </div>
-                <div class="admin-page-summary">
-                    <span class="admin-page-summary-label">Live Inventory</span>
-                    <strong><?php echo $stats['approved']; ?></strong>
-                    <span class="admin-page-summary-text"></span>
-                </div>
+                <!-- admin-page-summary removed -->
             </div>
 
             <?php if (isset($_GET['deleted']) && $_GET['deleted'] == '1'): ?>
@@ -427,13 +421,12 @@ $conn->close();
                                                  alt="Property" class="property-thumb" loading="lazy" decoding="async" onerror="this.src='https://via.placeholder.com/80x60?text=No+Image'">
                                             <div class="property-info">
                                                 <h3><?php echo htmlspecialchars($property['title']); ?></h3>
-                                                <p><?php echo htmlspecialchars(substr($property['description'], 0, 50)) . '...'; ?></p>
                                             </div>
                                         </div>
                                     </td>
                                     <td><?php echo htmlspecialchars($property['first_name'] . ' ' . $property['last_name']); ?></td>
                                     <td><?php echo htmlspecialchars($property['city'] . ', ' . $property['country']); ?></td>
-                                    <td class="amount">₱<?php echo number_format($property['price_per_night'], 0); ?>/night</td>
+                                    <td class="amount">₱<?php echo number_format($property['price_per_night'], 0); ?></td>
                                     <td><?php echo $property['total_bookings']; ?></td>
                                     <td>
                                         <span class="status-badge status-<?php echo $property['status']; ?>">

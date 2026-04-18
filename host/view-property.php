@@ -71,6 +71,7 @@ $needsApproval = isset($_GET['needs_approval']) && $_GET['needs_approval'] === '
     <link rel="stylesheet" href="../assets/css/style.css?v=14.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.3">
+    <link rel="stylesheet" href="../assets/css/admin.css?v=25.4">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
         .view-property-page { max-width: 900px; margin: 0 auto; padding: 24px; }
@@ -154,7 +155,7 @@ $needsApproval = isset($_GET['needs_approval']) && $_GET['needs_approval'] === '
         }
     </style>
 </head>
-<body class="dashboard-page host-clean-page host-detail-page">
+<body class="dashboard-page admin-page admin-clean-page host-clean-page host-detail-page">
     <div class="host-layout">
         <aside class="host-sidebar">
             <div class="sidebar-header">

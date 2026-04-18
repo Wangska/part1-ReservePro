@@ -173,10 +173,7 @@ $conn->close();
                         <div class="user-role">Administrator</div>
                     </div>
                 </div>
-                <div class="theme-toggle" style="margin-bottom: 12px;">
-                    <span class="theme-toggle-icon" aria-hidden="true"></span>
-                    <span class="theme-toggle-text">Theme</span>
-                </div>
+
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
         </aside>
@@ -184,7 +181,6 @@ $conn->close();
         <main class="host-main">
             <div class="host-header admin-page-hero">
                 <div class="admin-page-hero-content">
-                    <span class="admin-page-eyebrow">Host Review Queue</span>
                     <h1>Host Verifications</h1>
                     <p class="subtitle"></p>
                 </div>

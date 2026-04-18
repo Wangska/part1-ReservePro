@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     header('Location: admin/dashboard.php');
                     break;
                 case 'host':
-                    header('Location: host/dashboard.php');
+                    header('Location: host/properties.php');
                     break;
                 default:
                     // Guests go to browse properties

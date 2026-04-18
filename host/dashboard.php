@@ -87,6 +87,7 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/style.css?v=25.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.3">
+    <link rel="stylesheet" href="../assets/css/admin.css?v=25.4">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
         .host-dashboard-page .host-main {
@@ -94,29 +95,19 @@ $conn->close();
         }
 
         .host-dashboard-page .dashboard-hero {
+            display: flex;
+            justify-content: space-between;
             align-items: stretch;
             gap: 20px;
-            background: linear-gradient(135deg, rgba(17, 24, 39, 0.96), rgba(30, 41, 59, 0.88));
-            border: 1px solid rgba(212, 165, 116, 0.22);
-            border-radius: 24px;
             padding: 28px 30px;
-            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
             margin-bottom: 28px;
+            border-radius: 24px;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.96), rgba(30, 41, 59, 0.88));
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.24);
         }
 
-        .host-dashboard-page .dashboard-eyebrow {
-            display: inline-flex;
-            align-items: center;
-            padding: 6px 12px;
-            margin-bottom: 14px;
-            border-radius: 999px;
-            background: rgba(212, 165, 116, 0.14);
-            color: #f3d9b4;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-        }
+
 
         .host-dashboard-page .dashboard-hero h1 {
             margin-bottom: 10px;
@@ -441,10 +432,7 @@ $conn->close();
             box-shadow: 0 16px 32px rgba(15, 23, 42, 0.08);
         }
 
-        body.light-mode.host-dashboard-page .dashboard-eyebrow {
-            background: rgba(184, 147, 95, 0.12);
-            color: #8b6f47;
-        }
+
 
         body.light-mode.host-dashboard-page .dashboard-hero .subtitle,
         body.light-mode.host-dashboard-page .summary-text,
@@ -523,7 +511,7 @@ $conn->close();
         }
     </style>
 </head>
-<body class="dashboard-page host-dashboard-page">
+<body class="dashboard-page admin-page admin-clean-page host-dashboard-page">
     <div class="host-layout">
         <!-- Sidebar -->
         <aside class="host-sidebar">
@@ -535,10 +523,6 @@ $conn->close();
             </div>
             
             <nav class="sidebar-nav">
-                <a href="dashboard.php" class="nav-item active">
-                    <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
-                    <span>Dashboard</span>
-                </a>
                 <a href="properties.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
                     <span>My Properties</span>
@@ -565,7 +549,7 @@ $conn->close();
                 </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
-                    <span>View Site</span>
+                    <span>Home</span>
                 </a>
             </nav>
             
@@ -579,12 +563,6 @@ $conn->close();
                         <div class="user-role">Host</div>
                     </div>
                 </div>
-
-                <div class="theme-toggle">
-                    <span class="theme-toggle-icon">☀️</span>
-                    <span class="theme-toggle-text">Light</span>
-                </div>
-                
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
         </aside>
@@ -593,14 +571,14 @@ $conn->close();
         <main class="host-main">
             <div class="host-header dashboard-hero">
                 <div>
-                    <span class="dashboard-eyebrow">Host Overview</span>
-                    <h1>Host Dashboard</h1>
-                    <p class="subtitle">Track your listings, see what needs attention, and keep bookings moving from one place.</p>
+
+                    <h1 style="margin-top: 20px;">Host Dashboard</h1>
+                    <!-- subtitle removed -->
                 </div>
                 <div class="dashboard-summary-card">
                     <span class="summary-label">Needs Attention</span>
                     <strong><?php echo $stats['pending']; ?></strong>
-                    <span class="summary-text">listings currently waiting for review</span>
+                    <!-- summary-text removed -->
                 </div>
             </div>
 
@@ -610,7 +588,7 @@ $conn->close();
                     <div class="stat-content">
                         <p>Total Listings</p>
                         <h3><?php echo $stats['total_listings']; ?></h3>
-                        <span class="stat-meta">All active and in-review properties attached to your account.</span>
+                        <!-- stat-meta removed -->
                     </div>
                 </a>
                 
@@ -619,7 +597,7 @@ $conn->close();
                     <div class="stat-content">
                         <p>Approved</p>
                         <h3><?php echo $stats['approved']; ?></h3>
-                        <span class="stat-meta">Listings already cleared and ready for guests to discover.</span>
+                        <!-- stat-meta removed -->
                     </div>
                 </a>
                 
@@ -628,7 +606,7 @@ $conn->close();
                     <div class="stat-content">
                         <p>Pending Review</p>
                         <h3><?php echo $stats['pending']; ?></h3>
-                        <span class="stat-meta">Listings waiting for approval before they can accept bookings.</span>
+                        <!-- stat-meta removed -->
                     </div>
                 </a>
                 
@@ -637,40 +615,19 @@ $conn->close();
                     <div class="stat-content">
                         <p>Total Bookings</p>
                         <h3><?php echo $stats['total_bookings']; ?></h3>
-                        <span class="stat-meta">Reservation activity across all of your hosted properties.</span>
+                        <!-- stat-meta removed -->
                     </div>
                 </a>
             </div>
 
-            <div class="quick-actions">
-                <h2>Quick Actions</h2>
-                <p class="quick-actions-copy">Jump into the most common host tasks without opening extra pages first.</p>
-                <div class="actions-grid">
-                    <a href="add-property.php" class="action-card">
-                        <span class="action-icon"><i class="fa-solid fa-plus" aria-hidden="true"></i></span>
-                        <h3>Add New Property</h3>
-                        <p>Create a new listing and prepare it for review.</p>
-                    </a>
-                    <a href="properties.php" class="action-card">
-                        <span class="action-icon"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i></span>
-                        <h3>Manage Listings</h3>
-                        <p>Review details, pricing, and status for your properties.</p>
-                    </a>
-                    <a href="bookings.php" class="action-card">
-                        <span class="action-icon"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></span>
-                        <h3>View Bookings</h3>
-                        <p>Check guest reservations and upcoming stays.</p>
-                    </a>
-                </div>
-            </div>
 
             <div class="properties-section">
                 <div class="section-header dashboard-section-header">
                     <div>
                         <h2>Your Properties</h2>
-                        <p>A quick view of the latest listings you have published or submitted for review.</p>
+                        <!-- A quick view of the latest listings you have published or submitted for review. removed -->
                     </div>
-                    <a href="properties.php" class="view-all">View All</a>
+
                 </div>
                 
                 <?php if (empty($properties)): ?>
@@ -733,7 +690,7 @@ $conn->close();
                         <h2>Recent Bookings</h2>
                         <p>The latest reservation activity from guests staying at your listings.</p>
                     </div>
-                    <a href="bookings.php" class="view-all">View All</a>
+
                 </div>
                 
                 <div class="bookings-table">

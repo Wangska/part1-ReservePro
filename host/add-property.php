@@ -165,9 +165,14 @@ $conn->close();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.3">
     <link rel="stylesheet" href="../assets/css/add-property.css?v=17.5">
+<<<<<<< HEAD
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.6">
+=======
+    <link rel="stylesheet" href="../assets/css/admin.css?v=25.4">
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
+>>>>>>> ad87513098603380b3b373b63b23603737d70897
 </head>
-<body class="dashboard-page host-clean-page host-form-page">
+<body class="dashboard-page admin-page admin-clean-page host-clean-page host-form-page">
     <div class="host-layout">
         <!-- Sidebar -->
         <aside class="host-sidebar">
@@ -179,9 +184,6 @@ $conn->close();
             </div>
             
             <nav class="sidebar-nav">
-                <a href="dashboard.php" class="nav-item">
-                    <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
-                    <span>Dashboard</span>
                 </a>
                 <a href="properties.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span>
@@ -195,6 +197,10 @@ $conn->close();
                     <span class="nav-icon"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></span>
                     <span>Bookings</span>
                 </a>
+                <a href="refund-requests.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></span>
+                    <span>Refund Requests</span>
+                </a>
                 <a href="earnings.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span>
                     <span>Earnings</span>
@@ -205,7 +211,7 @@ $conn->close();
                 </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
-                    <span>View Site</span>
+                    <span>Home</span>
                 </a>
             </nav>
             
@@ -219,12 +225,6 @@ $conn->close();
                         <div class="user-role">Host</div>
                     </div>
                 </div>
-
-                <div class="theme-toggle">
-                    <span class="theme-toggle-icon"><i class="fa-solid fa-sun"></i></span>
-                    <span class="theme-toggle-text">Light</span>
-                </div>
-                
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
         </aside>
@@ -233,17 +233,10 @@ $conn->close();
         <main class="host-main">
             <div class="host-header host-page-hero">
                 <div class="host-page-hero-content">
-                    <span class="host-page-eyebrow">Listing Setup</span>
-                    <h1>Add New Property</h1>
-                    <p class="subtitle">Create a complete listing with pricing, details, map pin, and photos so it is ready for review the first time.</p>
+                    <h1 style="margin-top: 20px;">Add New Property</h1>
+                    <!-- subtitle removed -->
                 </div>
-                <div style="display:flex; align-items:flex-start; gap:14px; margin-left:auto;">
-                    <div class="host-page-summary">
-                        <span class="host-page-summary-label">Submission Flow</span>
-                        <strong>3</strong>
-                        <span class="host-page-summary-text">steps to complete before sending for review</span>
-                    </div>
-                </div>
+                <!-- host-page-summary removed -->
             </div>
 
             <?php if (!empty($errors)): ?>
@@ -296,7 +289,7 @@ $conn->close();
 
                             <div class="ap-section">
                                 <h2 class="ap-section-title"><i class="fa-solid fa-pen-to-square"></i> Basic Information</h2>
-                                <p class="ap-section-desc">Give your listing a title that stands out and describe what makes it special.</p>
+                                <!-- ap-section-desc removed -->
 
                                 <div class="ap-field">
                                     <label for="title">Property Title <span style="color:#EF4444">*</span></label>
@@ -329,7 +322,7 @@ $conn->close();
 
                             <div class="ap-section">
                                 <h2 class="ap-section-title"><i class="fa-solid fa-location-dot"></i> Location</h2>
-                                <p class="ap-section-desc">Enter your address then fine-tune the map pin so guests can find you easily.</p>
+                                <!-- ap-section-desc removed -->
 
                                 <div class="ap-field">
                                     <label for="address">Full Address <span style="color:#EF4444">*</span></label>
@@ -365,7 +358,7 @@ $conn->close();
                                         <button type="button" class="btn-map-geocode" id="hostPropertyPinGeocodeBtn">
                                             <i class="fa-solid fa-map-pin" style="margin-right:6px;font-size:12px;"></i>Place from address
                                         </button>
-                                        <p class="host-property-pin-map-hint">Uses your address fields above � drag the pin to fine-tune.</p>
+                                        <!-- host-property-pin-map-hint removed -->
                                     </div>
                                     <p id="hostPropertyPinReverseStatus" class="host-property-pin-map-hint" style="margin: -2px 0 10px 0; opacity: 0; transition: opacity 0.2s ease;"></p>
                                     <div id="hostPropertyPinMap" role="application" aria-label="Map to position property pin"></div>
@@ -381,7 +374,7 @@ $conn->close();
 
                             <div class="ap-section">
                                 <h2 class="ap-section-title"><i class="fa-solid fa-bed"></i> Property Details</h2>
-                                <p class="ap-section-desc">Set the guest capacity and room counts for your listing.</p>
+                                <!-- ap-section-desc removed -->
 
                                 <div class="ap-row">
                                     <div class="ap-field">
@@ -401,7 +394,7 @@ $conn->close();
 
                             <div class="ap-section">
                                 <h2 class="ap-section-title"><i class="fa-solid fa-sliders"></i> Amenities</h2>
-                                <p class="ap-section-desc">Select everything available at your property.</p>
+                                <!-- ap-section-desc removed -->
 
                                 <?php foreach ($amenities as $category => $category_amenities): ?>
                                 <div class="ap-amenity-category">
@@ -433,7 +426,11 @@ $conn->close();
 
                             <div class="ap-section">
                                 <h2 class="ap-section-title"><i class="fa-solid fa-images"></i> Property Photos</h2>
+<<<<<<< HEAD
                                 <p class="ap-section-desc">Upload as many high-quality photos as you want. The first photo becomes your primary listing image.</p>
+=======
+                                <!-- ap-section-desc removed -->
+>>>>>>> ad87513098603380b3b373b63b23603737d70897
 
                                 <div class="ap-photo-drop" id="photoUploadArea">
                                     <div class="ap-photo-drop-icon">

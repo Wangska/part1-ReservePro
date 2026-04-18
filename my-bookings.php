@@ -98,26 +98,13 @@ function booking_status_class(array $b) {
     <link rel="icon" href="background%20image/newicon.png" type="image/png">
     <title>My Bookings - ReservePro</title>
     <link rel="stylesheet" href="assets/css/style.css?v=25.0">
+    <link rel="stylesheet" href="assets/css/host-dashboard.css?v=27.3">
+    <link rel="stylesheet" href="assets/css/admin.css?v=25.0">
     <link rel="stylesheet" href="assets/css/theme-toggle.css?v=27.5">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
-        .gb-page { max-width: 1200px; margin: 0 auto; padding: 24px; }
-        .gb-hero {
-            background: linear-gradient(135deg, #111827 0%, #1F2933 45%, #020617 100%);
-            border-radius: 18px;
-            padding: 26px 26px;
-            display:flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            flex-wrap: wrap;
-            gap: 14px;
-            margin-bottom: 18px;
-        }
-        .gb-hero h1 { margin: 0 0 6px; color:#fff !important; font-size: 28px; }
-        .gb-hero p { margin:0; color:#E5E7EB !important; opacity:0.9; }
-        .gb-nav { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-        .gb-nav a { color:#E5E7EB; text-decoration:none; font-weight:700; font-size:14px; padding:8px 12px; border-radius:10px; }
-        .gb-nav a:hover { background: rgba(255,255,255,0.08); color:#fff; }
+        body.mb-page-body { background: #06090F !important; }
+        body.mb-page-body::before, body.mb-page-body::after { display: none !important; }
         .gb-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
         .gb-card {
             background: rgba(17, 24, 39, 0.78);
@@ -147,7 +134,7 @@ function booking_status_class(array $b) {
         .policy-strict { border-color: rgba(244,63,94,0.35); color:#fecdd3; }
         .gb-body { padding: 14px 14px 16px; }
         .gb-title { margin:0 0 6px; color:#fff !important; font-size: 16px; font-weight: 900; letter-spacing:-0.01em; }
-        .gb-loc { margin:0 0 10px; color:#CBD5E1 !important; font-size: 13px; display:flex; gap:8px; align-items:center; }
+
         .gb-meta { display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
         .gb-pill { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.10); border-radius: 14px; padding: 10px 12px; }
         .gb-pill small { display:block; color:#94A3B8 !important; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; font-size: 10px; margin-bottom: 6px; }
@@ -180,7 +167,7 @@ function booking_status_class(array $b) {
 
         body.light-mode .gb-card { background: #fff !important; border-color:#E2E8F0 !important; }
         body.light-mode .gb-title { color:#0f172a !important; }
-        body.light-mode .gb-loc { color:#334155 !important; }
+
         body.light-mode .gb-pill { background:#F8FAFC !important; border-color:#E2E8F0 !important; }
         body.light-mode .gb-pill small { color:#475569 !important; }
         body.light-mode .gb-pill strong { color:#0f172a !important; }
@@ -192,33 +179,68 @@ function booking_status_class(array $b) {
         body.light-mode .gb-warning { background: rgba(234,179,8,0.14); border-color: rgba(234,179,8,0.35); color:#854d0e; }
     </style>
 </head>
-<body class="dashboard-page">
-    <div class="gb-page">
-        <div class="gb-hero">
-            <div>
-                <h1>My bookings</h1>
-                <p>View your reservations, policy, and status. You can cancel confirmed bookings with a refund preview first.</p>
+<body class="dashboard-page admin-page admin-clean-page mb-page-body">
+    <div class="host-layout">
+        <!-- Sidebar -->
+        <aside class="host-sidebar">
+            <div class="sidebar-header">
+                <a href="home.php" class="sidebar-brand">
+                    <?php require __DIR__ . '/includes/brand-icon-svg.php'; ?>
+                    <span>ReservePro</span>
+                </a>
             </div>
-            <div class="gb-nav">
-                <a href="home.php">Home</a>
-                <a href="messages.php">Messages</a>
-                <a href="profile.php">Profile</a>
-                <a href="logout.php">Logout</a>
-                <div class="theme-toggle theme-toggle-home-static">
-                    <span class="theme-toggle-icon">☀️</span>
-                    <span class="theme-toggle-text">Light</span>
+            <nav class="sidebar-nav">
+                <a href="profile.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-user" aria-hidden="true"></i></span>
+                    <span>Profile</span>
+                </a>
+                <a href="my-bookings.php" class="nav-item active">
+                    <span class="nav-icon"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></span>
+                    <span>My Bookings</span>
+                </a>
+                <a href="messages.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span>
+                    <span>Messages</span>
+                </a>
+                <a href="home.php" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
+                    <span>Home</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar" style="background: linear-gradient(135deg, #3B82F6, #2563EB);">
+                        <?php echo strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_name'], 0, 1)); ?>
+                    </div>
+                    <div class="user-info">
+                        <div class="user-name"><?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?></div>
+                        <div class="user-role">Guest</div>
+                    </div>
+                </div>
+                <a href="logout.php" class="btn-logout">Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="host-main">
+            <div class="admin-page-hero">
+                <div class="admin-page-hero-content">
+
+                    <h1>My Bookings</h1>
                 </div>
             </div>
-        </div>
 
-        <?php if (empty($bookings)): ?>
-            <div class="gb-card" style="padding: 18px;">
-                <h2 class="gb-title" style="font-size:18px;">No bookings yet</h2>
-                <p class="gb-loc">Once you reserve a property, it will appear here.</p>
-                <a class="gb-btn gb-btn-primary" href="home.php"><i class="fa-solid fa-magnifying-glass"></i>Browse stays</a>
-            </div>
-        <?php else: ?>
-            <div class="gb-grid">
+            <?php if (empty($bookings)): ?>
+                <div class="gb-card" style="padding: 28px 24px; text-align:center;">
+                    <div style="width:56px;height:56px;border-radius:16px;background:rgba(212,165,116,0.12);border:1px solid rgba(212,165,116,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+                        <i class="fa-solid fa-calendar-xmark" style="font-size:22px;color:#D4A574;"></i>
+                    </div>
+                    <h2 class="gb-title" style="font-size:18px;margin-bottom:8px;">No bookings yet</h2>
+
+
+                </div>
+            <?php else: ?>
+                <div class="gb-grid">
                 <?php foreach ($bookings as $b):
                     $raw = (string)($b['primary_photo'] ?? '');
                     if ($raw !== '' && strpos($raw, 'http') !== 0) {
@@ -240,7 +262,7 @@ function booking_status_class(array $b) {
                     </div>
                     <div class="gb-body">
                         <h3 class="gb-title"><?php echo h($b['property_title']); ?></h3>
-                        <p class="gb-loc"><i class="fa-solid fa-location-dot"></i><?php echo h(trim(($b['city'] ?? '') . ', ' . ($b['country'] ?? ''))); ?></p>
+
 
                         <div class="gb-meta">
                             <div class="gb-pill">
@@ -287,8 +309,9 @@ function booking_status_class(array $b) {
                     </div>
                 </div>
                 <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
+                </div>
+            <?php endif; ?>
+        </main>
     </div>
 
     <div class="gb-modal-backdrop" id="cancelModalBackdrop" role="dialog" aria-modal="true" aria-hidden="true">
@@ -329,9 +352,7 @@ function booking_status_class(array $b) {
                     <input type="hidden" name="booking_id" id="cancelBookingId" value="">
                     <input type="hidden" name="reason" id="cancelReasonHidden" value="">
                     <input type="hidden" name="refund_ack" id="refundAckHidden" value="0">
-                    <button class="gb-btn gb-btn-primary" type="submit" id="cancelConfirmBtn">
-                        Confirm cancellation
-                    </button>
+
                 </form>
             </div>
         </div>
