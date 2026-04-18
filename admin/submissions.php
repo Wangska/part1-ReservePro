@@ -298,17 +298,23 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
             box-shadow: 0 40px 100px rgba(0,0,0,0.7);
         }
         .img-modal-header {
-            display: flex; justify-content: space-between; align-items: center;
+            display: flex; align-items: center; gap: 12px;
             padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.08);
         }
-        .img-modal-title { color: #fff; font-weight: 800; font-size: 14px; }
+        .img-modal-title {
+            flex: 1; min-width: 0; text-align: center;
+            color: #fff; font-weight: 800; font-size: 14px;
+        }
+        .img-modal-back,
         .img-modal-close {
             display: inline-flex; align-items: center; gap: 6px;
             border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.06);
             color: #E2E8F0; border-radius: 10px; padding: 7px 12px;
             cursor: pointer; font-weight: 700; font-size: 12px;
             transition: background 0.15s;
+            flex-shrink: 0;
         }
+        .img-modal-back:hover,
         .img-modal-close:hover { background: rgba(255,255,255,0.1); }
         .img-modal-body {
             padding: 16px; display: grid; place-items: center; background: rgba(0,0,0,0.2);
@@ -404,10 +410,6 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
             <a href="commission.php" class="nav-item">
                 <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
                 <span>Commission</span>
-            </a>
-            <a href="geocode-all-properties.php" class="nav-item">
-                <span class="nav-icon"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i></span>
-                <span>Geocode Properties</span>
             </a>
             <a href="../home.php" class="nav-item">
                 <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
@@ -594,6 +596,7 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
 <div class="img-modal-backdrop" id="imgModal">
     <div class="img-modal" role="dialog" aria-modal="true" aria-labelledby="imgModalTitle">
         <div class="img-modal-header">
+            <button type="button" class="img-modal-back" id="imgModalBack"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back</button>
             <div class="img-modal-title" id="imgModalTitle">Proof</div>
             <button type="button" class="img-modal-close" id="imgModalClose">Close</button>
         </div>
@@ -610,6 +613,7 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
         var modalImg = document.getElementById('imgModalImg');
         var modalTitle = document.getElementById('imgModalTitle');
         var closeBtn = document.getElementById('imgModalClose');
+        var backBtn = document.getElementById('imgModalBack');
         if (!modal || !modalImg || !modalTitle || !closeBtn) return;
 
         function close() { modal.classList.remove('open'); }
@@ -627,6 +631,7 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
             });
         });
         closeBtn.addEventListener('click', close);
+        if (backBtn) backBtn.addEventListener('click', close);
         modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
         document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
     })();

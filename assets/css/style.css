@@ -306,6 +306,13 @@ p, span, div {
     color: var(--text-dark);
 }
 
+/* Opened <select> list: keep option text readable (native menus often ignore parent colors). */
+.form-group select option {
+    background-color: #ffffff;
+    color: #111827;
+    font-weight: 500;
+}
+
 /* Error messages */
 .error-messages {
     background: #FEE2E2;

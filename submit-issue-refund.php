@@ -44,14 +44,22 @@ function save_refund_evidence(array $file, int $refundRequestId, int $userId, in
     if (($file['size'] ?? 0) < $minSize) { $errors[] = 'Evidence photo looks too small. Please upload a clearer photo.'; return null; }
 
     $ext = strtolower(pathinfo($file['name'] ?? '', PATHINFO_EXTENSION));
-    $allowed = ['jpg','jpeg','png','webp'];
-    if (!in_array($ext, $allowed, true)) { $errors[] = 'Evidence must be an image (JPG, PNG, WEBP).'; return null; }
+    $allowed = ['jpg', 'jpeg', 'png', 'webp', 'avif'];
+    if (!in_array($ext, $allowed, true)) { $errors[] = 'Evidence must be an image (JPG, PNG, WEBP, or AVIF).'; return null; }
 
     $tmp = $file['tmp_name'] ?? '';
     $img = @getimagesize($tmp);
-    if (!$img || empty($img[0]) || empty($img[1])) { $errors[] = 'Evidence must be a valid image.'; return null; }
-    $w = (int)$img[0]; $h = (int)$img[1];
-    if ($w < 900 || $h < 600) { $errors[] = 'Evidence image resolution is too low (min 900×600).'; return null; }
+    if ($img && !empty($img[0]) && !empty($img[1])) {
+        $w = (int)$img[0];
+        $h = (int)$img[1];
+        if ($w < 900 || $h < 600) { $errors[] = 'Evidence image resolution is too low (min 900×600).'; return null; }
+    } elseif ($ext === 'avif') {
+        $mime = function_exists('mime_content_type') ? (string)@mime_content_type($tmp) : '';
+        if ($mime !== '' && stripos($mime, 'image/') !== 0) { $errors[] = 'Evidence must be a valid image.'; return null; }
+    } else {
+        $errors[] = 'Evidence must be a valid image.';
+        return null;
+    }
 
     $baseDir = __DIR__ . '/uploads/refund-evidence/' . (int)$refundRequestId . '/';
     if (!file_exists($baseDir)) {

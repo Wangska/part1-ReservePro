@@ -371,28 +371,11 @@ $conn->close();
                         <?php
                             endif;
 
-                            // Demo-friendly titles/locations (Home page only; does not change DB)
-                            $demo_titles = [
-                                'Sunrise Studio Apartment',
-                                'Harborview Apartment Suite',
-                                'Modern Loft Near IT Park',
-                                'Cozy Urban Apartment',
-                                'Cityscape 1BR Apartment',
-                                'Seaside Apartment Retreat',
-                                'Minimalist Apartment Haven',
-                                'Executive Apartment Residence',
-                                'Skyline Apartment Getaway',
-                                'Boutique Apartment Stay',
-                            ];
-                            $demo_locations = [
-                                ['Cebu City', 'Philippines'],
-                                ['Manila', 'Philippines'],
-                            ];
-                            $demo_seed = (int)($property['id'] ?? 0);
-                            $demo_title = $demo_titles[$demo_seed % count($demo_titles)];
-                            $demo_loc = $demo_locations[$demo_seed % count($demo_locations)];
-                            $demo_city = $demo_loc[0];
-                            $demo_country = $demo_loc[1];
+                            // Use real property title/location from DB
+                            $display_title = (string)($property['title'] ?? '');
+                            $display_city = trim((string)($property['city'] ?? ''));
+                            $display_country = trim((string)($property['country'] ?? ''));
+                            $display_location = trim($display_city . ($display_city && $display_country ? ', ' : '') . $display_country);
 
                             $amenity_count = $property_amenities[$property['id']] ?? 0;
                             $avg_rating = isset($property['average_rating']) ? (float) $property['average_rating'] : null;
@@ -403,19 +386,19 @@ $conn->close();
                              data-price="<?php echo $property['price_per_night']; ?>" 
                              data-date="<?php echo $property['created_at']; ?>"
                              data-type="<?php echo htmlspecialchars($property['property_type']); ?>"
-                             data-title="<?php echo htmlspecialchars(strtolower($demo_title)); ?>"
-                             data-city="<?php echo htmlspecialchars(strtolower($demo_city)); ?>"
-                             data-country="<?php echo htmlspecialchars(strtolower($demo_country)); ?>"
+                             data-title="<?php echo htmlspecialchars(strtolower($display_title)); ?>"
+                             data-city="<?php echo htmlspecialchars(strtolower($display_city)); ?>"
+                             data-country="<?php echo htmlspecialchars(strtolower($display_country)); ?>"
                              data-description="<?php echo htmlspecialchars(strtolower($property['description'])); ?>"
                              data-amenity-ids="<?php echo implode(',', array_map('intval', $property_amenity_ids[$property['id']] ?? [])); ?>"
                              data-rating="<?php echo $rating_for_data; ?>">
                             <div class="card-image">
-                                <img src="<?php echo htmlspecialchars($image_url); ?>" alt="<?php echo htmlspecialchars($demo_title); ?>" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&auto=format&fit=crop&q=80'">
+                                <img src="<?php echo htmlspecialchars($image_url); ?>" alt="<?php echo htmlspecialchars($display_title); ?>" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&auto=format&fit=crop&q=80'">
                                 <span class="card-badge"><?php echo ucfirst($property['property_type']); ?></span>
                                 <button class="card-favorite">&#9825;</button>
                             </div>
                             <div class="card-content">
-                                <h3 class="card-title"><?php echo htmlspecialchars($demo_title); ?></h3>
+                                <h3 class="card-title"><?php echo htmlspecialchars($display_title); ?></h3>
                                 <div class="card-location">
                                     <span class="card-location-icon" aria-hidden="true">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -423,7 +406,7 @@ $conn->close();
                                             <circle cx="12" cy="11" r="2.5"></circle>
                                         </svg>
                                     </span>
-                                    <span><?php echo htmlspecialchars($demo_city . ', ' . $demo_country); ?></span>
+                                    <span><?php echo htmlspecialchars($display_location); ?></span>
                                 </div>
                                 <?php if ($avg_rating !== null && $review_count > 0): ?>
                                     <div class="card-rating">
@@ -629,7 +612,7 @@ $conn->close();
     <!-- Property Details Modal -->
     <div id="propertyModal" class="modal" style="display: none;">
         <div class="modal-overlay" onclick="closePropertyModal()"></div>
-        <div class="modal-content" style="max-width: 1000px; max-height: 90vh; overflow-y: auto;">
+        <div class="modal-content" style="max-width: 1000px; max-height: 90vh;">
             <button class="modal-close" onclick="closePropertyModal()">&times;</button>
             
             <div id="propertyModalContent">

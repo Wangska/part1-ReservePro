@@ -815,6 +815,19 @@ body.light-mode .form-group textarea:focus {
     box-shadow: 0 0 0 3px rgba(184, 147, 95, 0.1) !important;
 }
 
+/* Native <select> dropdown: readable option text (light theme + OS menus) */
+body.light-mode .form-group select {
+    color-scheme: light;
+}
+body.light-mode .form-group select option {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    font-weight: 500;
+}
+body.light-mode .form-group select option[value=""] {
+    color: #475569 !important;
+}
+
 /* ===================================
    MESSAGES PAGE - Light mode (warm, soft, readable)
    =================================== */

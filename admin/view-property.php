@@ -73,6 +73,7 @@ if ($latestEdit && !empty($latestEdit['changes_json'])) {
     if (is_array($decoded) && isset($decoded['changes']) && is_array($decoded['changes'])) {
         $editChanges = $decoded['changes'];
     }
+}
 function amenityIconSvg(string $name): string {
     $n = strtolower(trim($name));
     $icons = [
@@ -421,10 +422,6 @@ function amenityIconSvg(string $name): string {
                 <a href="commission.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
                     <span>Commission</span>
-                </a>
-                <a href="geocode-all-properties.php" class="nav-item">
-                    <span class="nav-icon"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i></span>
-                    <span>Geocode Properties</span>
                 </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>

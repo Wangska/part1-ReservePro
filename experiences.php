@@ -601,7 +601,7 @@ $conn->close();
     <!-- Property Details Modal -->
     <div id="propertyModal" class="modal" style="display: none;">
         <div class="modal-overlay" onclick="closePropertyModal()"></div>
-        <div class="modal-content" style="max-width: 1000px; max-height: 90vh; overflow-y: auto;">
+        <div class="modal-content" style="max-width: 1000px; max-height: 90vh;">
             <button class="modal-close" onclick="closePropertyModal()">&times;</button>
             
             <div id="propertyModalContent">
