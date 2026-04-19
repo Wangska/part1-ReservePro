@@ -437,7 +437,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <section class="ct-hero">
     <div class="ct-hero-label">Contact</div>
     <h1>We'd love to <span>hear from you.</span></h1>
-    <p>Questions, feedback, or just want to say hello � reach out and we'll get back to you.</p>
 </section>
 
 <div style="border-top:1px solid var(--border);"></div>
@@ -608,7 +607,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <label for="lp-password">Password</label>
                 <input type="password" id="lp-password" name="password" placeholder="Enter your password" required>
             </div>
-            
+            <button type="submit" class="modal-btn">Sign In</button>
         </form>
         <div class="modal-divider"><span>or</span></div>
         <button class="modal-btn-social" onclick="window.location.href='google-login.php'">

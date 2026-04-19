@@ -377,7 +377,6 @@ $user = isLoggedIn() ? getCurrentUser() : null;
 <section class="ab-hero">
     <div class="ab-hero-label">About Us</div>
     <h1>We built ReservePro<br>for <span>the Philippines.</span></h1>
-    <p>A simple, honest platform for finding and listing great places to stay � no fluff, no hidden fees.</p>
 </section>
 
 <div style="border-top:1px solid var(--border);"></div>
@@ -427,7 +426,6 @@ $user = isLoggedIn() ? getCurrentUser() : null;
 <div class="ab-section ab-wrap">
     <div class="ab-section-label">Our Team</div>
     <h2>The people behind it</h2>
-    <p>We're a small team. Everyone here does real work and talks to real users.</p>
     <div class="ab-team">
         <div class="ab-team-member">
             <div class="ab-team-initial">R</div>

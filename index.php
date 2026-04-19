@@ -473,11 +473,11 @@ if (isLoggedIn()) {
             position: relative;
             border-radius: 26px;
             overflow: hidden;
-            min-height: 460px;
+            min-height: 340px;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            padding: 32px;
+            padding: 22px 28px 18px 28px;
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(255, 255, 255, 0.08);
             transition: transform 0.28s ease, background 0.28s ease, border-color 0.28s ease;
@@ -513,9 +513,9 @@ if (isLoggedIn()) {
             margin-bottom: 14px;
         }
         .lp-path-pill.guest {
-            background: rgba(212, 165, 116, 0.18);
-            border: 1px solid rgba(212, 165, 116, 0.28);
-            color: #FBBF24;
+            background: none;
+            border: none;
+            color: inherit;
         }
         .lp-path-pill.host {
             background: rgba(129, 140, 248, 0.18);
@@ -691,7 +691,7 @@ if (isLoggedIn()) {
         @media (max-width: 768px) {
             .lp-nav-links { display: none; }
             .lp-two-path { grid-template-columns: 1fr; }
-            .lp-path-card { min-height: 380px; }
+            .lp-path-card { min-height: 260px; padding: 18px 14px 10px 14px; }
             .lp-why-grid { grid-template-columns: 1fr; }
             .lp-footer-top { grid-template-columns: 1fr; gap: 32px; }
             .lp-footer-brand-desc { max-width: 100%; }
@@ -780,39 +780,17 @@ if (isLoggedIn()) {
     </div>
 
     <div class="lp-hero-content">
-        <div class="lp-hero-badge">
-            <span class="lp-hero-badge-dot"></span>
-            Now live across the Philippines
-        </div>
         <h1 class="lp-hero-title">
             Find your perfect<br>
             <span class="gold">stay in the Philippines.</span>
         </h1>
-        <p class="lp-hero-sub">
-            Browse curated apartments, vacation homes, and hosted stays. Book with confidence through verified hosts and secure payments.
-        </p>
+
         <div class="lp-hero-ctas">
             <a href="home.php" class="lp-cta-primary">
                 Browse Stays
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
             </a>
             <a href="become-host.php" class="lp-cta-secondary">Become a Host</a>
-        </div>
-        <div class="lp-hero-trust">
-            <span class="lp-trust-item">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg>
-                Verified hosts
-            </span>
-            <span class="lp-trust-sep"></span>
-            <span class="lp-trust-item">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg>
-                Secure payments
-            </span>
-            <span class="lp-trust-sep"></span>
-            <span class="lp-trust-item">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                Fast support
-            </span>
         </div>
     </div>
 
@@ -850,7 +828,6 @@ if (isLoggedIn()) {
     <div style="text-align:center; margin-bottom:56px;">
         <span class="lp-kicker">How it works</span>
         <h2 class="lp-h2">Two ways to use ReservePro</h2>
-        <p class="lp-lead">Whether you're looking for a short stay or want to earn from your property  we've got you covered.</p>
     </div>
     <div class="lp-two-path">
         <!-- Guest card -->
@@ -895,7 +872,6 @@ if (isLoggedIn()) {
     <div style="text-align: center;">
         <span class="lp-kicker">Why ReservePro</span>
         <h2 class="lp-h2">Built for a better<br>booking experience.</h2>
-        <p class="lp-lead">Everything you need to find, compare, and book — without the noise of crowded international platforms.</p>
     </div>
     <div class="lp-why-grid">
         <div class="lp-why-card">
@@ -928,8 +904,6 @@ if (isLoggedIn()) {
 <section class="lp-cta-band">
     <div class="lp-cta-inner">
         <h2 class="lp-h2">Find your perfect stay today.</h2>
-        <p class="lp-lead">Browse available properties across the Philippines and book the stay that's right for you.</p>
-
     </div>
 </section>
 

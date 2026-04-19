@@ -284,22 +284,22 @@ $conn->close();
                         <div class="ap-wizard-panel">
 
                             <div class="ap-section">
-                                <h2 class="ap-section-title"><i class="fa-solid fa-pen-to-square"></i> Basic Information</h2>
+                                <h2 class="ap-section-title">Basic Information</h2>
                                 <!-- ap-section-desc removed -->
 
                                 <div class="ap-field">
-                                    <label for="title">Property Title <span style="color:#EF4444">*</span></label>
+                                    <label for="title">Property Title</label>
                                     <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($_POST['title'] ?? ''); ?>" placeholder="Cozy 2BR Beachfront Villa in Palawan" required>
                                 </div>
 
                                 <div class="ap-field">
-                                    <label for="description">Description <span style="color:#EF4444">*</span></label>
+                                    <label for="description">Description </label>
                                     <textarea id="description" name="description" rows="5" placeholder="Describe the space, neighbourhood, and what guests will love..." required><?php echo htmlspecialchars($_POST['description'] ?? ''); ?></textarea>
                                 </div>
 
                                 <div class="ap-row">
                                     <div class="ap-field">
-                                        <label for="property_type">Property Type <span style="color:#EF4444">*</span></label>
+                                        <label for="property_type">Property Type</label>
                                         <select id="property_type" name="property_type" required>
                                             <option value="">Select type</option>
                                             <option value="house" <?php echo ($_POST['property_type'] ?? '') === 'house' ? 'selected' : ''; ?>>House</option>
@@ -310,28 +310,28 @@ $conn->close();
                                         </select>
                                     </div>
                                     <div class="ap-field">
-                                        <label for="price_per_night">Price per Night (&#8369;) <span style="color:#EF4444">*</span></label>
+                                        <label for="price_per_night">Price per Night (&#8369;)</label>
                                         <input type="number" id="price_per_night" name="price_per_night" value="<?php echo htmlspecialchars($_POST['price_per_night'] ?? ''); ?>" min="0" step="0.01" placeholder="1500.00" required>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="ap-section">
-                                <h2 class="ap-section-title"><i class="fa-solid fa-location-dot"></i> Location</h2>
+                                <h2 class="ap-section-title">Location</h2>
                                 <!-- ap-section-desc removed -->
 
                                 <div class="ap-field">
-                                    <label for="address">Full Address <span style="color:#EF4444">*</span></label>
+                                    <label for="address">Full Address</label>
                                     <input type="text" id="address" name="address" value="<?php echo htmlspecialchars($_POST['address'] ?? ''); ?>" placeholder="123 Rizal Street, Poblacion" required>
                                 </div>
 
                                 <div class="ap-row">
                                     <div class="ap-field">
-                                        <label for="city">City <span style="color:#EF4444">*</span></label>
+                                        <label for="city">City</label>
                                         <input type="text" id="city" name="city" value="<?php echo htmlspecialchars($_POST['city'] ?? ''); ?>" placeholder="Manila" required>
                                     </div>
                                     <div class="ap-field">
-                                        <label for="country">Country <span style="color:#EF4444">*</span></label>
+                                        <label for="country">Country</label>
                                         <input type="text" id="country" name="country" value="<?php echo htmlspecialchars($_POST['country'] ?? ''); ?>" placeholder="Philippines" required>
                                     </div>
                                 </div>
@@ -369,27 +369,27 @@ $conn->close();
                         <div class="ap-wizard-panel">
 
                             <div class="ap-section">
-                                <h2 class="ap-section-title"><i class="fa-solid fa-bed"></i> Property Details</h2>
+                                <h2 class="ap-section-title">Property Details</h2>
                                 <!-- ap-section-desc removed -->
 
                                 <div class="ap-row">
                                     <div class="ap-field">
-                                        <label for="max_guests">Max Guests <span style="color:#EF4444">*</span></label>
+                                        <label for="max_guests">Max Guests</label>
                                         <input type="number" id="max_guests" name="max_guests" value="<?php echo htmlspecialchars($_POST['max_guests'] ?? ''); ?>" min="1" placeholder="4" required>
                                     </div>
                                     <div class="ap-field">
-                                        <label for="bedrooms">Bedrooms <span style="color:#EF4444">*</span></label>
+                                        <label for="bedrooms">Bedrooms</label>
                                         <input type="number" id="bedrooms" name="bedrooms" value="<?php echo htmlspecialchars($_POST['bedrooms'] ?? ''); ?>" min="1" placeholder="2" required>
                                     </div>
                                     <div class="ap-field">
-                                        <label for="bathrooms">Bathrooms <span style="color:#EF4444">*</span></label>
+                                        <label for="bathrooms">Bathrooms</label>
                                         <input type="number" id="bathrooms" name="bathrooms" value="<?php echo htmlspecialchars($_POST['bathrooms'] ?? ''); ?>" min="1" placeholder="1" required>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="ap-section">
-                                <h2 class="ap-section-title"><i class="fa-solid fa-sliders"></i> Amenities</h2>
+                                <h2 class="ap-section-title">Amenities</h2>
                                 <!-- ap-section-desc removed -->
 
                                 <?php foreach ($amenities as $category => $category_amenities): ?>
@@ -421,7 +421,7 @@ $conn->close();
                         <div class="ap-wizard-panel">
 
                             <div class="ap-section">
-                                <h2 class="ap-section-title"><i class="fa-solid fa-images"></i> Property Photos</h2>
+                                <h2 class="ap-section-title">Property Photos</h2>
                                 <!-- ap-section-desc removed -->
 
                                 <div class="ap-photo-drop" id="photoUploadArea">
@@ -449,7 +449,6 @@ $conn->close();
 
                                 <div class="ap-photo-grid" id="photoPreviewGrid"></div>
 
-                                <p class="ap-photo-tip"><strong>Tip:</strong> The first photo will be your primary listing image shown in search results.</p>
                             </div>
 
                         </div><!-- /panel 3 -->
@@ -461,13 +460,13 @@ $conn->close();
                 <div class="ap-form-actions">
                     <a href="dashboard.php" class="ap-btn-cancel">Cancel</a>
                     <button type="button" class="ap-btn-back" id="wizardBackBtn" style="display:none;">
-                        <i class="fa-solid fa-arrow-left"></i> Back
+                        Back
                     </button>
                     <button type="button" class="ap-btn-next" id="wizardNextBtn">
-                        Next <i class="fa-solid fa-arrow-right"></i>
+                        Next
                     </button>
                     <button type="submit" class="ap-btn-submit" id="wizardSubmitBtn" style="display:none;">
-                        <i class="fa-solid fa-paper-plane"></i> Submit for Review
+                        Submit for Review
                     </button>
                 </div>
 
