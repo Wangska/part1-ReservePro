@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $photo_count = count($_FILES['property_photos']['name']);
                     $is_primary = 1;
                     
-                    for ($i = 0; $i < $photo_count && $i < 5; $i++) {
+                    for ($i = 0; $i < $photo_count; $i++) {
                         if ($_FILES['property_photos']['error'][$i] === UPLOAD_ERR_OK) {
                             $file_tmp = $_FILES['property_photos']['tmp_name'][$i];
                             $file_name = $_FILES['property_photos']['name'][$i];
@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
                             
                             // Validate file
-                            $allowed_ext = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                            $allowed_ext = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'];
                             $max_size = 5 * 1024 * 1024; // 5MB
                             
                             if (in_array($file_ext, $allowed_ext) && $file_size <= $max_size) {
@@ -161,12 +161,16 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>Add Property - ReservePro</title>
-    <link rel="stylesheet" href="../assets/css/style.css?v=14.0">
+    <link rel="stylesheet" href="../assets/css/style.css?v=14.1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.3">
     <link rel="stylesheet" href="../assets/css/add-property.css?v=17.5">
+<<<<<<< HEAD
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.6">
+=======
     <link rel="stylesheet" href="../assets/css/admin.css?v=25.4">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
+>>>>>>> ad87513098603380b3b373b63b23603737d70897
 </head>
 <body class="dashboard-page admin-page admin-clean-page host-clean-page host-form-page">
     <div class="host-layout">
@@ -421,8 +425,16 @@ $conn->close();
                         <div class="ap-wizard-panel">
 
                             <div class="ap-section">
+<<<<<<< HEAD
                                 <h2 class="ap-section-title">Property Photos</h2>
+=======
+                                <h2 class="ap-section-title"><i class="fa-solid fa-images"></i> Property Photos</h2>
+<<<<<<< HEAD
+                                <p class="ap-section-desc">Upload as many high-quality photos as you want. The first photo becomes your primary listing image.</p>
+=======
+>>>>>>> 2aa9d6ced00cde11bd6eaf1dd0241c0b317a5f20
                                 <!-- ap-section-desc removed -->
+>>>>>>> ad87513098603380b3b373b63b23603737d70897
 
                                 <div class="ap-photo-drop" id="photoUploadArea">
                                     <div class="ap-photo-drop-icon">
@@ -434,7 +446,7 @@ $conn->close();
                                     </div>
                                     <h3>Drag &amp; drop photos here</h3>
                                     <p>or click to browse from your computer</p>
-                                    <p class="ap-photo-hint">JPG, PNG, WEBP &mdash; max 5 MB each</p>
+                                    <p class="ap-photo-hint">JPG, PNG, WEBP, AVIF &mdash; max 5 MB each</p>
                                     <label for="propertyPhotos" class="ap-upload-btn-label">
                                         <i class="fa-solid fa-folder-open"></i> Choose Files
                                     </label>
@@ -504,13 +516,12 @@ $conn->close();
         }
 
         function handleFiles(files) {
-            const maxFiles = 5, maxSize = 5 * 1024 * 1024;
+            const maxSize = 5 * 1024 * 1024;
             const newFiles = Array.from(files).filter(f => {
                 if (!f.type.startsWith('image/')) { alert('Please upload image files only.'); return false; }
                 if (f.size > maxSize)              { alert(f.name + ' exceeds 5 MB.');        return false; }
                 return true;
             });
-            if (selectedFiles.length + newFiles.length > maxFiles) { alert('Maximum 5 photos allowed.'); return; }
             selectedFiles = [...selectedFiles, ...newFiles];
             renderPreviews();
         }

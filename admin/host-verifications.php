@@ -62,8 +62,50 @@ $conn->close();
         .verification-card .details { font-size: 13px; color: #B8B8B8; margin-bottom: 16px; }
         .verification-card .details span { display: inline-block; margin-right: 16px; }
         .verification-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+        .hv-doc-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            margin-right: 10px; margin-top: 6px;
+        }
         .alert-success { background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.4); color: #86efac; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; }
         .alert-error { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; }
+        .img-modal-backdrop {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+            display: none; align-items: center; justify-content: center;
+            padding: 24px; z-index: 9999; backdrop-filter: blur(4px);
+        }
+        .img-modal-backdrop.open { display: flex; }
+        .img-modal {
+            width: min(900px, 94vw); max-height: 90vh;
+            border-radius: 20px; border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(17,24,39,0.96); overflow: hidden;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.7);
+        }
+        .img-modal-header {
+            display: flex; align-items: center; gap: 12px;
+            padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .img-modal-title {
+            flex: 1; min-width: 0; text-align: center;
+            color: #fff; font-weight: 800; font-size: 14px;
+        }
+        .img-modal-back,
+        .img-modal-close {
+            display: inline-flex; align-items: center; gap: 6px;
+            border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.06);
+            color: #E2E8F0; border-radius: 10px; padding: 7px 12px;
+            cursor: pointer; font-weight: 700; font-size: 12px;
+            transition: background 0.15s;
+            flex-shrink: 0;
+        }
+        .img-modal-back:hover,
+        .img-modal-close:hover { background: rgba(255,255,255,0.1); }
+        .img-modal-body {
+            padding: 16px; display: grid; place-items: center; background: rgba(0,0,0,0.2);
+        }
+        .img-modal-body img {
+            max-width: 100%; max-height: calc(90vh - 120px);
+            border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);
+        }
     </style>
 </head>
 <body class="dashboard-page admin-page admin-clean-page admin-verifications-page">
@@ -196,11 +238,16 @@ $conn->close();
                         </div>
                     </div>
                     <div class="details" style="margin-top: 14px;">
-                        <?php if (!empty($doc['gov_id_photo_path'])): ?>
-                            <a class="btn-action btn-view" style="display:inline-flex; align-items:center; gap:8px;" href="../<?php echo htmlspecialchars($doc['gov_id_photo_path']); ?>" target="_blank" rel="noopener"><i class="fa-solid fa-id-card"></i> View Government ID</a>
+                        <?php
+                        $hostName = htmlspecialchars(trim(($doc['first_name'] ?? '') . ' ' . ($doc['last_name'] ?? '')));
+                        $govFull = !empty($doc['gov_id_photo_path']) ? '../' . ltrim((string)$doc['gov_id_photo_path'], '/') : '';
+                        $ownFull = !empty($doc['ownership_doc_photo_path']) ? '../' . ltrim((string)$doc['ownership_doc_photo_path'], '/') : '';
+                        ?>
+                        <?php if ($govFull !== ''): ?>
+                            <button type="button" class="btn-action btn-view hv-doc-btn hv-proof-btn" data-img="<?php echo htmlspecialchars($govFull); ?>" data-title="Government ID — <?php echo $hostName; ?>"><i class="fa-solid fa-id-card"></i> View Government ID</button>
                         <?php endif; ?>
-                        <?php if (!empty($doc['ownership_doc_photo_path'])): ?>
-                            <a class="btn-action btn-view" style="display:inline-flex; align-items:center; gap:8px;" href="../<?php echo htmlspecialchars($doc['ownership_doc_photo_path']); ?>" target="_blank" rel="noopener"><i class="fa-solid fa-file-image"></i> View Supporting Doc</a>
+                        <?php if ($ownFull !== ''): ?>
+                            <button type="button" class="btn-action btn-view hv-doc-btn hv-proof-btn" data-img="<?php echo htmlspecialchars($ownFull); ?>" data-title="Supporting Doc — <?php echo $hostName; ?>"><i class="fa-solid fa-file-image"></i> View Supporting Doc</button>
                         <?php endif; ?>
                     </div>
                     <div class="verification-actions">
@@ -220,7 +267,48 @@ $conn->close();
             <?php endif; ?>
         </main>
     </div>
+
+    <div class="img-modal-backdrop" id="hvImgModal">
+        <div class="img-modal" role="dialog" aria-modal="true" aria-labelledby="hvImgModalTitle">
+            <div class="img-modal-header">
+                <button type="button" class="img-modal-back" id="hvImgModalBack"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back</button>
+                <div class="img-modal-title" id="hvImgModalTitle">Document</div>
+                <button type="button" class="img-modal-close" id="hvImgModalClose">Close</button>
+            </div>
+            <div class="img-modal-body">
+                <img id="hvImgModalImg" alt="Host verification document">
+            </div>
+        </div>
+    </div>
+
     <script src="../assets/js/theme-toggle.js?v=26.0"></script>
     <script src="../assets/js/admin-view-site-confirm.js?v=1.0"></script>
+    <script>
+        (function () {
+            var modal = document.getElementById('hvImgModal');
+            var modalImg = document.getElementById('hvImgModalImg');
+            var modalTitle = document.getElementById('hvImgModalTitle');
+            var closeBtn = document.getElementById('hvImgModalClose');
+            var backBtn = document.getElementById('hvImgModalBack');
+            if (!modal || !modalImg || !modalTitle || !closeBtn) return;
+
+            function close() { modal.classList.remove('open'); }
+            function open(src, title) {
+                if (!src) return;
+                modalTitle.textContent = title || 'Document';
+                modalImg.src = src;
+                modal.classList.add('open');
+            }
+            document.querySelectorAll('.hv-proof-btn').forEach(function (el) {
+                el.addEventListener('click', function () {
+                    open(el.getAttribute('data-img') || '', el.getAttribute('data-title') || '');
+                });
+            });
+            closeBtn.addEventListener('click', close);
+            if (backBtn) backBtn.addEventListener('click', close);
+            modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
+            document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && modal.classList.contains('open')) close(); });
+        })();
+    </script>
 </body>
 </html>

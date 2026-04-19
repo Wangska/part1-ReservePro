@@ -392,9 +392,16 @@ body.light-mode .review-star.review-star-active {
     margin: auto;
 }
 
+/* Keep × above slideshow / long content; only #propertyModalContent scrolls (not the whole shell). */
+#propertyModal .modal-close {
+    z-index: 10050;
+    pointer-events: auto;
+}
+
 #propertyModalContent {
     max-height: 85vh;
     overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 /* Property map - embedded in location section */

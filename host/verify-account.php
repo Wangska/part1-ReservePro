@@ -90,23 +90,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             return null;
         }
         $ext = strtolower(pathinfo($file['name'] ?? '', PATHINFO_EXTENSION));
-        $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+        $allowed = ['jpg', 'jpeg', 'png', 'webp', 'avif'];
         if (!in_array($ext, $allowed, true)) {
-            $errors[] = ucfirst($prefix) . ' must be an image (JPG, PNG, or WEBP).';
+            $errors[] = ucfirst($prefix) . ' must be an image (JPG, PNG, WEBP, or AVIF).';
             return null;
         }
         $tmp = $file['tmp_name'] ?? '';
         $img = @getimagesize($tmp);
-        if (!$img || empty($img[0]) || empty($img[1])) {
+        if ($img && !empty($img[0]) && !empty($img[1])) {
+            $w = (int)$img[0];
+            $h = (int)$img[1];
+            if ($w < 900 || $h < 600) {
+                $errors[] = ucfirst($prefix) . ' image resolution is too low. Please upload a clearer photo (at least 900×600).';
+                return null;
+            }
+        } elseif ($ext === 'avif') {
+            $mime = function_exists('mime_content_type') ? (string)@mime_content_type($tmp) : '';
+            if ($mime !== '' && stripos($mime, 'image/') !== 0) {
+                $errors[] = ucfirst($prefix) . ' must be a valid image file.';
+                return null;
+            }
+        } else {
             $errors[] = ucfirst($prefix) . ' must be a valid image file.';
             return null;
         }
+<<<<<<< HEAD
+=======
         $w = (int)$img[0];
         $h = (int)$img[1];
         if ($w < 900 || $h < 600) {
             $errors[] = ucfirst($prefix) . ' image resolution is too low. Please upload a clearer photo (at least 900Ã—600).';
             return null;
         }
+>>>>>>> ad87513098603380b3b373b63b23603737d70897
 
         $baseDir = dirname(__DIR__) . '/uploads/host-documents/' . (int)$userId . '/';
         if (!file_exists($baseDir)) {
@@ -163,7 +179,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   verification_status = ?
                 WHERE user_id = ?
             ");
-            $stmt->bind_param("sssssssssssssssi",
+            $stmt->bind_param("ssssssssssssssi",
                 $id_full_name, $gov_id_type, $gov_id_number, $govPath,
                 $ownership_proof_type, $ownership_reference, $ownPath,
                 $business_registration, $tax_id, $tourism_license,
@@ -178,7 +194,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 (user_id, id_full_name, gov_id_type, gov_id_number, gov_id_photo_path, ownership_proof_type, ownership_reference, ownership_doc_photo_path, business_registration, tax_id, tourism_license, bank_name, bank_account_name, bank_account_number, verification_status)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ");
-            $stmt->bind_param("isssssssssssssss",
+            $stmt->bind_param("issssssssssssss",
                 $user['id'],
                 $id_full_name,
                 $gov_id_type, $gov_id_number, $govPath,

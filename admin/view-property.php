@@ -73,6 +73,7 @@ if ($latestEdit && !empty($latestEdit['changes_json'])) {
     if (is_array($decoded) && isset($decoded['changes']) && is_array($decoded['changes'])) {
         $editChanges = $decoded['changes'];
     }
+}
 function amenityIconSvg(string $name): string {
     $n = strtolower(trim($name));
     $icons = [

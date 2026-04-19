@@ -219,13 +219,13 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
                 <textarea id="description" name="description" maxlength="2000" required <?php echo (!$elig['eligible'] || $active) ? 'disabled' : ''; ?>></textarea>
 
                 <label for="evidence1">Evidence photo (optional)</label>
-                <input type="file" id="evidence1" name="evidence[]" accept=".jpg,.jpeg,.png,.webp" <?php echo (!$elig['eligible'] || $active) ? 'disabled' : ''; ?>>
+                <input type="file" id="evidence1" name="evidence[]" accept=".jpg,.jpeg,.png,.webp,.avif" <?php echo (!$elig['eligible'] || $active) ? 'disabled' : ''; ?>>
 
                 <label for="evidence2">Evidence photo (optional)</label>
-                <input type="file" id="evidence2" name="evidence[]" accept=".jpg,.jpeg,.png,.webp" <?php echo (!$elig['eligible'] || $active) ? 'disabled' : ''; ?>>
+                <input type="file" id="evidence2" name="evidence[]" accept=".jpg,.jpeg,.png,.webp,.avif" <?php echo (!$elig['eligible'] || $active) ? 'disabled' : ''; ?>>
 
                 <label for="evidence3">Evidence photo (optional)</label>
-                <input type="file" id="evidence3" name="evidence[]" accept=".jpg,.jpeg,.png,.webp" <?php echo (!$elig['eligible'] || $active) ? 'disabled' : ''; ?>>
+                <input type="file" id="evidence3" name="evidence[]" accept=".jpg,.jpeg,.png,.webp,.avif" <?php echo (!$elig['eligible'] || $active) ? 'disabled' : ''; ?>>
 
                 <div class="ri-actions">
                     <a class="ri-btn" href="messages.php">Message host</a>

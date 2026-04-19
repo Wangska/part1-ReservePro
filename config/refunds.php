@@ -2,15 +2,19 @@
 /**
  * Refund policy + calculations for ReservePro.
  *
- * Notes:
- * - bookings "created_at" is stored as bookings.booking_date in this codebase.
- * - check_in/check_out are DATE (not DATETIME). For "within 24 hours after check-in",
- *   we treat check-in time as 00:00 local server time.
+ * Cancellation (flexible + moderate): refund is based on hours since the
+ * booking was placed (bookings.booking_date), not days before check-in.
+ *
+ * - 100% if cancel within 12 hours of booking.
+ * - 70% if cancel after 12 hours through 24 hours after booking.
+ * - 50% if cancel after 24 hours through 48 hours (2 days) after booking.
+ * - 0% if cancel after more than 72 hours (3 days) after booking.
+ * - 0% for cancellations between 48 and 72 hours (no tier specified).
+ *
+ * Strict: no automatic refund; support/admin can override.
+ *
+ * Issue-based refunds use reservepro_issue_* helpers below.
  */
-
-if (!defined('RESERVEPRO_FREE_CANCEL_HOURS')) {
-    define('RESERVEPRO_FREE_CANCEL_HOURS', 24);
-}
 
 /**
  * @return array{
@@ -35,51 +39,33 @@ function reservepro_refund_preview_cancellation(
         $bookedAt = $now;
     }
 
-    try {
-        $checkIn = new DateTimeImmutable($checkInDate . ' 00:00:00');
-    } catch (Exception $e) {
-        $checkIn = $now;
-    }
-
     $hoursSinceBooking = (int) floor(max(0, ($now->getTimestamp() - $bookedAt->getTimestamp()) / 3600));
-    $daysBeforeCheckin = (int) floor(($checkIn->getTimestamp() - $now->getTimestamp()) / 86400);
 
     $policy = strtolower(trim($policy));
     $percent = 0;
     $rule = '';
 
-    if ($policy === 'flexible') {
-        // Full refund if within free-cancel window OR at least 1 day before check-in.
-        if ($hoursSinceBooking <= (int) RESERVEPRO_FREE_CANCEL_HOURS || $daysBeforeCheckin >= 1) {
-            $percent = 100;
-            $rule = 'flexible_full';
-        } else {
-            $percent = 50;
-            $rule = 'flexible_late_50';
-        }
-    } elseif ($policy === 'moderate') {
-        // Full refund if within free-cancel window; otherwise tiered by timing.
-        // This matches the expected UX: "book today, cancel today" => 100%.
-        if ($hoursSinceBooking <= (int) RESERVEPRO_FREE_CANCEL_HOURS) {
-            $percent = 100;
-            $rule = 'moderate_free_cancel_full';
-        } elseif ($daysBeforeCheckin >= 7) {
-            $percent = 70;
-            $rule = 'moderate_early_70';
-        } elseif ($daysBeforeCheckin >= 3) {
-            $percent = 50;
-            $rule = 'moderate_mid_50';
-        } elseif ($daysBeforeCheckin >= 1) {
-            $percent = 20;
-            $rule = 'moderate_late_20';
-        } else {
-            $percent = 0;
-            $rule = 'moderate_last_minute_0';
-        }
-    } else { // strict (default)
-        // Strict: no automatic refund; support/admin can override.
+    if ($policy === 'strict') {
         $percent = 0;
         $rule = 'strict_support_only';
+    } else {
+        // flexible + moderate share the same schedule
+        if ($hoursSinceBooking <= 12) {
+            $percent = 100;
+            $rule = 'cancel_within_12h_full';
+        } elseif ($hoursSinceBooking <= 24) {
+            $percent = 70;
+            $rule = 'cancel_12h_to_24h_70';
+        } elseif ($hoursSinceBooking <= 48) {
+            $percent = 50;
+            $rule = 'cancel_24h_to_48h_50';
+        } elseif ($hoursSinceBooking <= 72) {
+            $percent = 0;
+            $rule = 'cancel_48h_to_72h_0';
+        } else {
+            $percent = 0;
+            $rule = 'cancel_after_72h_0';
+        }
     }
 
     $amount = round(max(0, $totalAmount) * ($percent / 100), 2);
@@ -143,4 +129,3 @@ function reservepro_issue_refund_percent(string $issueType): array
     $pct = $map[$t] ?? 30;
     return ['percent' => (int) $pct, 'rule' => 'issue_type_map'];
 }
-

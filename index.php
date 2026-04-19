@@ -1,5 +1,35 @@
 <?php
 require_once __DIR__ . '/config/session.php';
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/config/database_schema.php';
+
+// Build photo ticker images from real approved listings (fallback to demo if none)
+$tickerImages = [];
+try {
+    $conn = getDBConnection();
+    initializeHostTables();
+    $res = $conn->query("
+        SELECT pp.photo_url
+        FROM property_photos pp
+        JOIN properties p ON p.id = pp.property_id
+        WHERE p.status = 'approved'
+        ORDER BY pp.is_primary DESC, pp.id DESC
+        LIMIT 14
+    ");
+    if ($res) {
+        while ($row = $res->fetch_assoc()) {
+            $raw = (string)($row['photo_url'] ?? '');
+            if ($raw === '') continue;
+            // Allow absolute URLs; otherwise treat as local relative path.
+            $tickerImages[] = (preg_match('#^https?://#i', $raw) ? $raw : ltrim($raw, '/'));
+        }
+        $res->free();
+    }
+    $conn->close();
+} catch (Throwable $e) {
+    // If DB is unavailable, keep demo images below.
+    $tickerImages = [];
+}
 
 // Redirect logged-in users to their appropriate dashboard
 if (isLoggedIn()) {
@@ -803,23 +833,24 @@ if (isLoggedIn()) {
 <!-- ===================== PHOTO TICKER ===================== -->
 <div class="lp-ticker" aria-hidden="true">
     <div class="lp-ticker-track">
-        <img class="sliding-image" src="assets/sliding-img/1.jpg" alt="">
-        <img class="sliding-image" src="assets/sliding-img/2.jpg" alt="">
-        <img class="sliding-image" src="assets/sliding-img/3.jpg" alt="">
-        <img class="sliding-image" src="assets/sliding-img/4.jpg" alt="">
-        <img class="sliding-image" src="assets/sliding-img/5.jpg" alt="">
-        <img class="sliding-image" src="assets/sliding-img/6.jpg" alt="">
-        <img class="sliding-image" src="assets/sliding-img/7.jpg" alt="">
-        <!-- duplicate for seamless loop -->
-        <img class="sliding-image" src="assets/sliding-img/1.jpg" alt="">
-        <img class="sliding-image" src="assets/sliding-img/2.jpg" alt="">
-        <img class="sliding-image" src="assets/sliding-img/3.jpg" alt="">
-        <img class="sliding-image" src="assets/sliding-img/4.jpg" alt="">
-        <img class="sliding-image" src="assets/sliding-img/5.jpg" alt="">
-        <img class="sliding-image" src="assets/sliding-img/6.jpg" alt="">
-        <img class="sliding-image" src="assets/sliding-img/7.jpg" alt="">
-        <img class="sliding-image" src="assets/sliding-img/1.jpg" alt="">
-        <img class="sliding-image" src="assets/sliding-img/2.jpg" alt="">
+        <?php
+        $demo = [
+            'assets/sliding-img/1.jpg',
+            'assets/sliding-img/2.jpg',
+            'assets/sliding-img/3.jpg',
+            'assets/sliding-img/4.jpg',
+            'assets/sliding-img/5.jpg',
+            'assets/sliding-img/6.jpg',
+            'assets/sliding-img/7.jpg',
+        ];
+        $srcs = !empty($tickerImages) ? $tickerImages : $demo;
+        // Duplicate for seamless loop (CSS animates -50%).
+        $loop = array_merge($srcs, $srcs);
+        foreach ($loop as $src) {
+            $safe = htmlspecialchars((string)$src);
+            echo '<img class="sliding-image" src="' . $safe . '" alt="">';
+        }
+        ?>
     </div>
 </div>
 

@@ -229,14 +229,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 $is_primary_flag = $hasPrimary ? 0 : 1;
 
-                for ($i = 0; $i < $photo_count && $i < 5; $i++) {
+                for ($i = 0; $i < $photo_count; $i++) {
                     if ($_FILES['property_photos']['error'][$i] === UPLOAD_ERR_OK) {
                         $file_tmp = $_FILES['property_photos']['tmp_name'][$i];
                         $file_name = $_FILES['property_photos']['name'][$i];
                         $file_size = $_FILES['property_photos']['size'][$i];
                         $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
 
-                        $allowed_ext = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                        $allowed_ext = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'];
                         $max_size = 5 * 1024 * 1024;
 
                         if (in_array($file_ext, $allowed_ext, true) && $file_size <= $max_size) {
@@ -413,12 +413,17 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="../background%20image/newicon.png" type="image/png">
     <title>Edit Property - ReservePro</title>
-    <link rel="stylesheet" href="../assets/css/style.css?v=14.0">
+    <link rel="stylesheet" href="../assets/css/style.css?v=14.1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.3">
+<<<<<<< HEAD
+    <link rel="stylesheet" href="../assets/css/add-property.css?v=17.5">
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.6">
+=======
     <link rel="stylesheet" href="../assets/css/add-property.css?v=16.0">
     <link rel="stylesheet" href="../assets/css/admin.css?v=25.4">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
+>>>>>>> ad87513098603380b3b373b63b23603737d70897
 </head>
 <body class="dashboard-page admin-page admin-clean-page host-clean-page host-form-page">
     <div class="host-layout">
@@ -649,14 +654,14 @@ $conn->close();
                 <!-- New Photos -->
                 <div class="form-section">
                     <h2 class="section-title">? Add More Photos</h2>
-                    <p class="section-description">Upload additional high-quality photos (maximum 5 per update, JPG/PNG/WebP up to 5MB each).</p>
+                    <p class="section-description">Upload additional high-quality photos (no limit, JPG/PNG/WebP/AVIF up to 5MB each).</p>
 
                     <div class="photo-upload-container">
                         <div class="photo-upload-area" id="photoUploadArea">
                             <div class="upload-icon">??</div>
                             <h3>Click to Upload Photos</h3>
                             <p>Or drag and drop images here</p>
-                            <p class="upload-hint">Supported: JPG, PNG, WEBP (Max 5MB each)</p>
+                            <p class="upload-hint">Supported: JPG, PNG, WEBP, AVIF (Max 5MB each)</p>
                         </div>
                         <input type="file" id="propertyPhotos" name="property_photos[]" multiple accept="image/*" style="display:none;">
                         <div style="text-align:center; margin-top:16px;">
@@ -721,7 +726,6 @@ $conn->close();
         }
 
         function handleFiles(files) {
-            const maxFiles = 5;
             const maxSize = 5 * 1024 * 1024;
             const newFiles = Array.from(files).filter(file => {
                 if (!file.type.startsWith('image/')) {
@@ -734,10 +738,6 @@ $conn->close();
                 }
                 return true;
             });
-            if (selectedFiles.length + newFiles.length > maxFiles) {
-                alert('You can only upload a maximum of ' + maxFiles + ' photos at a time.');
-                return;
-            }
             selectedFiles = [...selectedFiles, ...newFiles];
             updatePhotoPreview();
         }
