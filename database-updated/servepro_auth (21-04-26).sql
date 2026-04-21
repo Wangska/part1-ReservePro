@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 18, 2026 at 10:36 AM
+-- Generation Time: Apr 21, 2026 at 05:38 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -83,10 +83,12 @@ CREATE TABLE `bookings` (
 --
 
 INSERT INTO `bookings` (`id`, `property_id`, `guest_id`, `check_in`, `check_out`, `guests`, `total_price`, `status`, `booking_date`) VALUES
-(14, 17, 3, '2026-04-20', '2026-04-22', 1, 35200.00, 'pending', '2026-04-18 07:36:02'),
+(14, 17, 3, '2026-04-20', '2026-04-22', 1, 35200.00, 'confirmed', '2026-04-18 07:36:02'),
 (15, 1, 3, '2026-04-20', '2026-04-30', 1, 439989.00, 'pending', '2026-04-18 07:41:25'),
 (16, 1, 3, '2026-04-30', '2026-05-30', 1, 1319967.00, 'pending', '2026-04-18 07:42:34'),
-(17, 15, 3, '2026-04-19', '2026-04-22', 1, 14850.00, 'pending', '2026-04-18 07:48:32');
+(17, 15, 3, '2026-04-19', '2026-04-22', 1, 14850.00, 'cancelled', '2026-04-18 07:48:32'),
+(18, 19, 3, '2026-04-22', '2026-04-24', 1, 33000.00, 'cancelled', '2026-04-21 13:47:16'),
+(19, 17, 3, '2026-04-22', '2026-04-26', 1, 70400.00, 'confirmed', '2026-04-21 14:32:24');
 
 -- --------------------------------------------------------
 
@@ -104,6 +106,14 @@ CREATE TABLE `booking_cancellations` (
   `reason` varchar(255) DEFAULT NULL,
   `cancelled_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `booking_cancellations`
+--
+
+INSERT INTO `booking_cancellations` (`id`, `booking_id`, `user_id`, `policy`, `refund_percent_preview`, `refund_amount_preview`, `reason`, `cancelled_at`) VALUES
+(2, 17, 3, 'moderate', 70, 10395.00, '', '2026-04-19 13:47:04'),
+(3, 18, 3, 'moderate', 99, 32670.00, 'change my mind', '2026-04-21 14:11:06');
 
 -- --------------------------------------------------------
 
@@ -171,6 +181,41 @@ CREATE TABLE `messages` (
   `read_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `messages`
+--
+
+INSERT INTO `messages` (`id`, `property_id`, `sender_id`, `receiver_id`, `message`, `created_at`, `read_at`) VALUES
+(5, 17, 3, 1, 'hi can i ask a questions?', '2026-04-21 14:31:35', NULL),
+(6, 17, 1, 3, 'okay what is it?', '2026-04-21 14:46:06', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notifications`
+--
+
+CREATE TABLE `notifications` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `type` varchar(40) NOT NULL,
+  `title` varchar(160) NOT NULL,
+  `body` varchar(500) DEFAULT NULL,
+  `link` varchar(255) DEFAULT NULL,
+  `is_read` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `notifications`
+--
+
+INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `body`, `link`, `is_read`, `created_at`) VALUES
+(1, 1, 'new_message', 'New message', 'angela lopez messaged you about Aloguinsan Adventure Base | Near Falls & River Tours.', '../host/messages.php', 0, '2026-04-21 14:31:35'),
+(2, 1, 'booking_created', 'New booking (pending)', 'angela lopez booked Aloguinsan Adventure Base | Near Falls & River Tours · Booking #19', '../host/bookings.php', 0, '2026-04-21 14:32:25'),
+(3, 2, 'booking_created', 'New booking (pending)', 'angela lopez booked Aloguinsan Adventure Base | Near Falls & River Tours · Booking #19', '../admin/bookings.php', 0, '2026-04-21 14:32:26'),
+(4, 3, 'new_message', 'New message', 'Host replied about Aloguinsan Adventure Base | Near Falls & River Tours.', 'messages.php', 0, '2026-04-21 14:46:06');
+
 -- --------------------------------------------------------
 
 --
@@ -199,7 +244,9 @@ INSERT INTO `payments` (`id`, `booking_id`, `provider`, `method`, `amount`, `cur
 (13, 14, 'paymongo', 'checkout_session', 35200.00, 'PHP', 'pending', 'cs_aedcb30258ac382d68da747d', NULL, '2026-04-18 07:36:02', '2026-04-18 07:36:03'),
 (14, 15, 'paymongo', 'checkout_session', 439989.00, 'PHP', 'pending', 'cs_20c6d6aa7d58d7b819bb7f43', NULL, '2026-04-18 07:41:25', '2026-04-18 07:41:34'),
 (15, 16, 'paymongo', 'checkout_session', 1319967.00, 'PHP', 'pending', 'cs_67e47ed20048cf3e9bb7a81c', NULL, '2026-04-18 07:42:34', '2026-04-18 07:42:36'),
-(16, 17, 'paymongo', 'checkout_session', 14850.00, 'PHP', 'pending', 'cs_f48eec46852bf3a0068380cb', NULL, '2026-04-18 07:48:32', '2026-04-18 07:48:33');
+(16, 17, 'paymongo', 'checkout_session', 14850.00, 'PHP', 'cancelled', 'cs_f48eec46852bf3a0068380cb', NULL, '2026-04-18 07:48:32', '2026-04-19 13:47:04'),
+(17, 18, 'paymongo', 'checkout_session', 33000.00, 'PHP', 'cancelled', 'cs_608e83912a96081ab3296de7', NULL, '2026-04-21 13:47:16', '2026-04-21 14:11:06'),
+(18, 19, 'paymongo', 'checkout_session', 70400.00, 'PHP', 'pending', 'cs_871190f3baed7b9a64f5bac0', NULL, '2026-04-21 14:32:24', '2026-04-21 14:32:25');
 
 -- --------------------------------------------------------
 
@@ -241,7 +288,8 @@ INSERT INTO `properties` (`id`, `host_id`, `title`, `description`, `property_typ
 (15, 1, 'Lapu-Lapu Coastal Escape | Near Beaches + Pool', 'Unwind in this peaceful Lapu-Lapu retreat just minutes from the beach. Perfect for couples or small groups, the space offers a cozy bed, air conditioning, and fast Wi-Fi. Spend your days exploring nearby islands or relaxing by the pool, then come home to a quiet, comfortable space. Conveniently located near restaurants, cafes, and the airport, it’s the ideal base for your island adventure.', 'condo', 'Bartolome Mangubat Dimataga Street, Poblacion', 'Lapu-Lapu', 'Philippines', 4500.00, 3, 1, 1, 10.31220200, 123.94716600, 0, 'moderate', NULL, 0, 'approved', '', '2026-04-18 06:07:46', '2026-04-18 07:05:05'),
 (16, 1, 'Stylish Aloguinsan Stay w/ Balcony & Fast Wi-Fi', 'Enjoy a modern and comfortable stay in Aloguinsan with a touch of style. This space features clean interiors, cozy furnishings, and a relaxing balcony for your morning coffee. Ideal for travelers looking for a peaceful escape while still having essential comforts like Wi-Fi and air conditioning.', 'apartment', 'Aloguinsan, Cebu', 'Aloguinsan', 'Philippines', 2500.00, 2, 1, 1, 10.22821200, 123.55034800, 0, 'moderate', NULL, 0, 'approved', '', '2026-04-18 07:04:22', '2026-04-18 07:06:54'),
 (17, 1, 'Aloguinsan Adventure Base | Near Falls & River Tours', 'Perfect for explorers, this Aloguinsan stay puts you close to waterfalls, river cruises, and scenic trails. After a day of adventure, come home to a comfortable and quiet space with all the essentials. Ideal for nature lovers looking for both excitement and relaxation.', 'house', 'Looc', 'Danao', 'Philippines', 16000.00, 8, 3, 3, 10.51161600, 124.02301800, 0, 'moderate', NULL, 0, 'approved', '', '2026-04-18 07:31:46', '2026-04-18 07:33:47'),
-(18, 1, 'Romantic Aloguinsan Hideaway | Peaceful & Private', 'Escape the noise and enjoy a quiet, intimate stay in Aloguinsan. This cozy space is perfect for couples seeking privacy and relaxation. Surrounded by nature, it’s an ideal spot to unwind, reconnect, and enjoy slow, peaceful moments together.', 'apartment', 'Diosdado Macapagal Highway, Poblacion', 'Aloguinsan', 'Philippines', 6800.00, 8, 4, 4, 10.22200100, 123.54878300, 0, 'moderate', NULL, 0, 'approved', '', '2026-04-18 08:06:42', '2026-04-18 08:09:25');
+(18, 1, 'Romantic Aloguinsan Hideaway | Peaceful & Private', 'Escape the noise and enjoy a quiet, intimate stay in Aloguinsan. This cozy space is perfect for couples seeking privacy and relaxation. Surrounded by nature, it’s an ideal spot to unwind, reconnect, and enjoy slow, peaceful moments together.', 'apartment', 'Diosdado Macapagal Highway, Poblacion', 'Aloguinsan', 'Philippines', 6800.00, 8, 4, 4, 10.22200100, 123.54878300, 0, 'moderate', NULL, 0, 'approved', '', '2026-04-18 08:06:42', '2026-04-18 08:09:25'),
+(19, 1, 'Cozy 2-Bedroom Condo in Cebu City', 'A comfortable 2-bedroom condo located in the heart of Cebu City. Offers easy access to malls, restaurants, and business districts, making it ideal for professionals and small families.', 'villa', 'P. Burgos Street, San Roque', 'Cebu City', 'Philippines', 15000.00, 12, 12, 12, 10.29342100, 123.90226100, 0, 'moderate', NULL, 0, 'approved', '', '2026-04-21 13:10:12', '2026-04-21 13:34:17');
 
 -- --------------------------------------------------------
 
@@ -313,7 +361,27 @@ INSERT INTO `property_amenities` (`property_id`, `amenity_id`) VALUES
 (18, 17),
 (18, 18),
 (18, 19),
-(18, 20);
+(18, 20),
+(19, 1),
+(19, 2),
+(19, 3),
+(19, 4),
+(19, 5),
+(19, 6),
+(19, 7),
+(19, 8),
+(19, 9),
+(19, 10),
+(19, 11),
+(19, 12),
+(19, 13),
+(19, 14),
+(19, 15),
+(19, 16),
+(19, 17),
+(19, 18),
+(19, 19),
+(19, 20);
 
 -- --------------------------------------------------------
 
@@ -400,7 +468,22 @@ INSERT INTO `property_photos` (`id`, `property_id`, `photo_url`, `is_primary`, `
 (60, 18, 'uploads/properties/property_18_1776499602_14.avif', 0, '2026-04-18 08:06:42'),
 (61, 18, 'uploads/properties/property_18_1776499602_15.avif', 0, '2026-04-18 08:06:42'),
 (62, 18, 'uploads/properties/property_18_1776499602_16.avif', 0, '2026-04-18 08:06:42'),
-(63, 18, 'uploads/properties/property_18_1776499602_17.avif', 0, '2026-04-18 08:06:42');
+(63, 18, 'uploads/properties/property_18_1776499602_17.avif', 0, '2026-04-18 08:06:42'),
+(64, 19, 'uploads/properties/property_19_1776777012_0.avif', 1, '2026-04-21 13:10:12'),
+(65, 19, 'uploads/properties/property_19_1776777012_1.avif', 0, '2026-04-21 13:10:12'),
+(66, 19, 'uploads/properties/property_19_1776777012_2.avif', 0, '2026-04-21 13:10:12'),
+(67, 19, 'uploads/properties/property_19_1776777012_3.avif', 0, '2026-04-21 13:10:12'),
+(68, 19, 'uploads/properties/property_19_1776777012_4.avif', 0, '2026-04-21 13:10:12'),
+(69, 19, 'uploads/properties/property_19_1776777012_5.avif', 0, '2026-04-21 13:10:12'),
+(70, 19, 'uploads/properties/property_19_1776777012_6.avif', 0, '2026-04-21 13:10:12'),
+(71, 19, 'uploads/properties/property_19_1776777012_7.avif', 0, '2026-04-21 13:10:12'),
+(72, 19, 'uploads/properties/property_19_1776777012_8.avif', 0, '2026-04-21 13:10:12'),
+(73, 19, 'uploads/properties/property_19_1776777012_9.avif', 0, '2026-04-21 13:10:12'),
+(74, 19, 'uploads/properties/property_19_1776777012_10.avif', 0, '2026-04-21 13:10:12'),
+(75, 19, 'uploads/properties/property_19_1776777012_11.avif', 0, '2026-04-21 13:10:12'),
+(76, 19, 'uploads/properties/property_19_1776777012_12.avif', 0, '2026-04-21 13:10:12'),
+(77, 19, 'uploads/properties/property_19_1776777012_13.avif', 0, '2026-04-21 13:10:12'),
+(78, 19, 'uploads/properties/property_19_1776777012_14.avif', 0, '2026-04-21 13:10:12');
 
 -- --------------------------------------------------------
 
@@ -436,6 +519,14 @@ CREATE TABLE `refund_logs` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `refund_logs`
+--
+
+INSERT INTO `refund_logs` (`id`, `refund_request_id`, `actor_user_id`, `actor_role`, `action`, `from_status`, `to_status`, `note`, `meta_json`, `created_at`) VALUES
+(2, 2, 3, 'guest', 'create_cancellation_refund_request', NULL, 'pending', NULL, '{\"policy\":\"moderate\",\"preview_rule\":\"cancel_12h_to_24h_70\",\"warning\":\"If you cancel now, you will receive a 70% refund.\",\"refund_percent\":70,\"refund_amount\":10395}', '2026-04-19 13:47:04'),
+(3, 3, 3, 'guest', 'create_cancellation_refund_request', NULL, 'approved', 'Cancellation reason: change my mind', '{\"policy\":\"moderate\",\"preview_rule\":\"cancel_within_6h_99\",\"warning\":\"If you cancel now, you will receive a 99% refund.\",\"refund_percent\":99,\"refund_amount\":32670}', '2026-04-21 14:11:06');
+
 -- --------------------------------------------------------
 
 --
@@ -465,6 +556,14 @@ CREATE TABLE `refund_requests` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `refund_requests`
+--
+
+INSERT INTO `refund_requests` (`id`, `booking_id`, `requester_user_id`, `property_id`, `request_type`, `issue_type`, `description`, `evidence_json`, `policy`, `refund_percent`, `refund_amount`, `currency`, `status`, `host_decision`, `host_decision_percent`, `host_decision_note`, `admin_override_percent`, `admin_override_note`, `created_at`, `updated_at`) VALUES
+(2, 17, 3, 15, 'cancellation', NULL, NULL, NULL, 'moderate', 70, 10395.00, 'PHP', 'pending', 'none', NULL, NULL, NULL, NULL, '2026-04-19 13:47:04', '2026-04-19 13:47:04'),
+(3, 18, 3, 19, 'cancellation', NULL, NULL, NULL, 'moderate', 99, 32670.00, 'PHP', 'approved', 'none', NULL, NULL, NULL, NULL, '2026-04-21 14:11:06', '2026-04-21 14:11:06');
+
 -- --------------------------------------------------------
 
 --
@@ -476,6 +575,7 @@ CREATE TABLE `users` (
   `first_name` varchar(50) NOT NULL,
   `last_name` varchar(50) NOT NULL,
   `date_of_birth` date DEFAULT NULL,
+  `profile_photo` varchar(255) DEFAULT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -490,11 +590,11 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `first_name`, `last_name`, `date_of_birth`, `email`, `password`, `created_at`, `role`, `email_verified`, `verification_token`, `host_verified`, `host_verification_status`) VALUES
-(1, 'angel', 'lou', NULL, 'angel@gmail.com', '$2y$10$IhgBdkVY/9C7PEq7f7KWSepGCehUQYsEJWeMPyoQ6g7.pk4NXkxzS', '2026-02-06 07:00:02', 'host', 1, NULL, 1, 'approved'),
-(2, 'Admin', 'ServePro', NULL, 'admin@servepro.com', '$2y$10$IWAaKuos/UEVZ0boNWZoTOinH2d1n/3Zbi6t41DOI3PXwoASZTm/i', '2026-02-06 08:03:38', 'admin', 1, NULL, 0, 'none'),
-(3, 'angela', 'lopez', NULL, 'angela@gmail.com', '$2y$10$4f07bVfO1WD/owvmjYnUw.Uol7U.Pb/gtf6XaKT/KL1fqw6hjnBNW', '2026-02-06 08:29:04', 'guest', 1, NULL, 0, 'none'),
-(4, 'john', 'cena', NULL, 'johncena@gmail.com', '$2y$10$z3W6HvtJSkSkWojp.GGdxuK/bSEgcb7izG2SeELquNDymc0l6oXuK', '2026-02-06 08:37:01', 'guest', 0, NULL, 0, 'none');
+INSERT INTO `users` (`id`, `first_name`, `last_name`, `date_of_birth`, `profile_photo`, `email`, `password`, `created_at`, `role`, `email_verified`, `verification_token`, `host_verified`, `host_verification_status`) VALUES
+(1, 'angel', 'lou', '2000-01-01', 'uploads/profile-photos/1/avatar_1_1776784854.webp', 'angel@gmail.com', '$2y$10$IhgBdkVY/9C7PEq7f7KWSepGCehUQYsEJWeMPyoQ6g7.pk4NXkxzS', '2026-02-06 07:00:02', 'host', 1, NULL, 1, 'approved'),
+(2, 'Admin', 'ServePro', NULL, NULL, 'admin@servepro.com', '$2y$10$IWAaKuos/UEVZ0boNWZoTOinH2d1n/3Zbi6t41DOI3PXwoASZTm/i', '2026-02-06 08:03:38', 'admin', 1, NULL, 0, 'none'),
+(3, 'angela', 'lopez', '2003-01-20', 'uploads/profile-photos/3/avatar_3_1776784401.jpg', 'angela@gmail.com', '$2y$10$4f07bVfO1WD/owvmjYnUw.Uol7U.Pb/gtf6XaKT/KL1fqw6hjnBNW', '2026-02-06 08:29:04', 'guest', 1, NULL, 0, 'none'),
+(4, 'john', 'cena', NULL, NULL, 'johncena@gmail.com', '$2y$10$z3W6HvtJSkSkWojp.GGdxuK/bSEgcb7izG2SeELquNDymc0l6oXuK', '2026-02-06 08:37:01', 'guest', 0, NULL, 0, 'none');
 
 --
 -- Indexes for dumped tables
@@ -547,6 +647,13 @@ ALTER TABLE `messages`
   ADD KEY `property_id` (`property_id`),
   ADD KEY `sender_id` (`sender_id`),
   ADD KEY `receiver_id` (`receiver_id`);
+
+--
+-- Indexes for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_user_read_time` (`user_id`,`is_read`,`created_at`);
 
 --
 -- Indexes for table `payments`
@@ -624,19 +731,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `amenities`
 --
 ALTER TABLE `amenities`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34481;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46721;
 
 --
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `booking_cancellations`
 --
 ALTER TABLE `booking_cancellations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `host_documents`
@@ -654,19 +761,25 @@ ALTER TABLE `host_ledger`
 -- AUTO_INCREMENT for table `messages`
 --
 ALTER TABLE `messages`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `notifications`
+--
+ALTER TABLE `notifications`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `properties`
 --
 ALTER TABLE `properties`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `property_edit_logs`
@@ -678,7 +791,7 @@ ALTER TABLE `property_edit_logs`
 -- AUTO_INCREMENT for table `property_photos`
 --
 ALTER TABLE `property_photos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
 
 --
 -- AUTO_INCREMENT for table `property_reviews`
@@ -690,13 +803,13 @@ ALTER TABLE `property_reviews`
 -- AUTO_INCREMENT for table `refund_logs`
 --
 ALTER TABLE `refund_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `refund_requests`
 --
 ALTER TABLE `refund_requests`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -743,6 +856,12 @@ ALTER TABLE `messages`
   ADD CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`property_id`) REFERENCES `properties` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `messages_ibfk_2` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `messages_ibfk_3` FOREIGN KEY (`receiver_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `payments`
