@@ -305,6 +305,7 @@ function amenityIconSvg(string $name): string {
         </aside>
 
         <main class="host-main">
+            <?php require __DIR__ . '/../includes/notifications-widget.php'; ?>
             <div class="view-property-page">
 
                 <div class="vp-hero">

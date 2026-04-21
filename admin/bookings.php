@@ -179,6 +179,7 @@ $conn->close();
 
         <!-- Main Content -->
         <main class="host-main">
+            <?php require __DIR__ . '/../includes/notifications-widget.php'; ?>
             <div class="bookings-header admin-page-hero">
                 <div class="admin-page-hero-content">
                     <h1>All Bookings</h1>

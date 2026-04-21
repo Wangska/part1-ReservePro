@@ -520,6 +520,8 @@ $conn->close();
                 </div>
             </div>
 
+            <?php require __DIR__ . '/../includes/notifications-widget.php'; ?>
+
             <!-- Stats Grid -->
             <div class="stats-grid">
                 <div class="stat-card">

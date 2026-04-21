@@ -3,6 +3,7 @@ require_once __DIR__ . '/config/session.php';
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/database_schema.php';
 require_once __DIR__ . '/config/refunds.php';
+require_once __DIR__ . '/config/notifications.php';
 
 requireLogin();
 $user = getCurrentUser();
@@ -109,8 +110,8 @@ if (strtolower($policy) === 'strict') {
     $refundPercent = 0;
     $refundAmount = 0.0;
     $refundStatus = 'pending_review';
-} elseif ($refundPercent >= 100) {
-    // Optional enhancement: auto-approve full refund for flexible when eligible
+} elseif ($refundPercent >= 99) {
+    // Optional enhancement: auto-approve highest cancellation refund tier when eligible
     $refundStatus = 'approved';
 }
 
@@ -174,6 +175,26 @@ try {
 
     $conn->commit();
     $conn->close();
+
+    // Notifications: host + admins (sent after successful commit)
+    $hostId = (int)($booking['host_id'] ?? 0);
+    $bookingLabel = '#' . (int)$bookingId;
+    if ($hostId > 0) {
+        reservepro_notification_create(
+            $hostId,
+            'booking_cancelled',
+            'Booking cancelled',
+            'A guest cancelled booking ' . $bookingLabel . '.',
+            '../host/bookings.php'
+        );
+    }
+    reservepro_notification_notify_admins(
+        'booking_cancelled',
+        'Booking cancelled',
+        'A guest cancelled booking ' . $bookingLabel . '.',
+        '../admin/bookings.php'
+    );
+
     header('Location: my-bookings.php?cancelled=1');
     exit();
 } catch (Exception $e) {

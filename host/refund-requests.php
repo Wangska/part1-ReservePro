@@ -153,6 +153,8 @@ function badge($s) {
             </a>
         </div>
         <nav class="sidebar-nav">
+            <a href="dashboard.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span><span>Dashboard</span></a>
+            <a href="profile.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user" aria-hidden="true"></i></span><span>Profile</span></a>
             <a href="properties.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span><span>My Properties</span></a>
             <a href="add-property.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-plus" aria-hidden="true"></i></span><span>Add Property</span></a>
             <a href="bookings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></span><span>Bookings</span></a>
@@ -163,8 +165,17 @@ function badge($s) {
         </nav>
         <div class="sidebar-footer">
             <div class="user-profile">
-                <div class="user-avatar">
-                    <?php echo strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_name'], 0, 1)); ?>
+                <div class="user-avatar" style="overflow:hidden;">
+                    <?php if (!empty($user['profile_photo'])): ?>
+                        <img
+                            src="<?php echo htmlspecialchars('../' . ltrim((string)$user['profile_photo'], '/')); ?>"
+                            alt="Profile photo"
+                            style="width:100%;height:100%;object-fit:cover;display:block;"
+                            onerror="this.style.display='none'"
+                        >
+                    <?php else: ?>
+                        <?php echo strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_name'], 0, 1)); ?>
+                    <?php endif; ?>
                 </div>
                 <div class="user-info">
                     <div class="user-name"><?php echo h($user['first_name'] . ' ' . $user['last_name']); ?></div>
@@ -176,6 +187,7 @@ function badge($s) {
     </aside>
 
     <main class="host-main">
+        <?php require __DIR__ . '/../includes/notifications-widget.php'; ?>
             <div class="host-page-hero">
                 <div class="host-page-hero-content">
                     <h1 style="margin-top: 20px;">Refund Requests</h1>

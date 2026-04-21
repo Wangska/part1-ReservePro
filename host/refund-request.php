@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../config/session.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/database_schema.php';
+require_once __DIR__ . '/../config/refunds.php';
 
 requireLogin();
 $user = getCurrentUser();
@@ -28,6 +29,7 @@ $stmt = $conn->prepare("
         rr.*,
         b.check_in, b.check_out, b.total_price, b.status AS booking_status, b.booking_date,
         p.title AS property_title, p.city, p.country, p.host_id,
+        p.cancellation_policy AS listing_cancellation_policy,
         g.first_name AS guest_first_name, g.last_name AS guest_last_name, g.email AS guest_email
     FROM refund_requests rr
     JOIN bookings b ON b.id = rr.booking_id
@@ -57,7 +59,19 @@ if (!empty($r['evidence_json'])) {
 
 $conn->close();
 
+$policySnapshot = (string)($r['policy'] ?? '');
+$policyLatest = (string)($r['listing_cancellation_policy'] ?? $policySnapshot);
+if ($policyLatest === '') {
+    $policyLatest = 'moderate';
+}
+$policyLatestSummary = reservepro_cancellation_policy_human_summary($policyLatest);
+
 function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
+
+$isReviewable = in_array((string)($r['status'] ?? ''), ['pending_review', 'pending'], true);
+$needsHostDecision = $isReviewable
+    && ((string)($r['host_decision'] ?? 'none') === 'none')
+    && ((int)($r['refund_percent'] ?? 0) === 50);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -153,14 +167,34 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
             color:#E2E8F0;
             font-size: 14px;
         }
-        textarea { min-height: 100px; resize: vertical; }
-        .thumbs { display:flex; gap:14px; flex-wrap:wrap; margin-top: 14px; }
-        .thumbs a { display:block; width: 180px; height: 135px; border-radius: 12px; overflow:hidden; border: 1px solid rgba(255,255,255,0.14); }
+        select.rf-host-decision-select {
+            color-scheme: dark;
+            background-color: #0f172a !important;
+            color: #e2e8f0 !important;
+            border-color: rgba(148, 163, 184, 0.4) !important;
+        }
+        select.rf-host-decision-select option {
+            background-color: #1e293b;
+            color: #f8fafc;
+        }
+        textarea { min-height: 90px; resize: vertical; }
+        .thumbs { display:flex; gap:10px; flex-wrap:wrap; margin-top: 10px; }
+        .thumbs a { display:block; width: 120px; height: 90px; border-radius: 12px; overflow:hidden; border: 1px solid rgba(255,255,255,0.14); }
         .thumbs img { width:100%; height:100%; object-fit: cover; display:block; }
         body.light-mode .rr-pill { background:#F8FAFC !important; border-color:#E2E8F0 !important; }
         body.light-mode .rr-pill small { color:#475569 !important; }
         body.light-mode .rr-pill strong { color:#0f172a !important; }
         body.light-mode textarea, body.light-mode select, body.light-mode input[type="number"] { background:#fff; color:#0f172a; border-color:#E2E8F0; }
+        body.light-mode select.rf-host-decision-select {
+            color-scheme: light;
+            background-color: #fff !important;
+            color: #0f172a !important;
+            border-color: #cbd5e1 !important;
+        }
+        body.light-mode select.rf-host-decision-select option {
+            background-color: #fff;
+            color: #0f172a;
+        }
         body.light-mode .btn { background:#fff !important; color:#0f172a !important; border-color:#E2E8F0 !important; }
         body.light-mode .btn-primary { background: linear-gradient(135deg, #D4A574, #B8935F) !important; color:#0f172a !important; }
         body.light-mode .btn-danger { color:#b91c1c !important; border-color: rgba(185,28,28,0.25) !important; }
@@ -177,6 +211,7 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
         </div>
         <nav class="sidebar-nav">
             <a href="dashboard.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span><span>Dashboard</span></a>
+            <a href="profile.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user" aria-hidden="true"></i></span><span>Profile</span></a>
             <a href="properties.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span><span>My Properties</span></a>
             <a href="bookings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></span><span>Bookings</span></a>
             <a href="refund-requests.php" class="nav-item active"><span class="nav-icon"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></span><span>Refund Requests</span></a>
@@ -185,8 +220,17 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
         </nav>
         <div class="sidebar-footer">
             <div class="user-profile">
-                <div class="user-avatar">
-                    <?php echo strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_name'], 0, 1)); ?>
+                <div class="user-avatar" style="overflow:hidden;">
+                    <?php if (!empty($user['profile_photo'])): ?>
+                        <img
+                            src="<?php echo htmlspecialchars('../' . ltrim((string)$user['profile_photo'], '/')); ?>"
+                            alt="Profile photo"
+                            style="width:100%;height:100%;object-fit:cover;display:block;"
+                            onerror="this.style.display='none'"
+                        >
+                    <?php else: ?>
+                        <?php echo strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_name'], 0, 1)); ?>
+                    <?php endif; ?>
                 </div>
                 <div class="user-info">
                     <div class="user-name"><?php echo h($user['first_name'] . ' ' . $user['last_name']); ?></div>
@@ -202,6 +246,8 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
     </aside>
 
     <main class="host-main">
+        <?php require __DIR__ . '/../includes/notifications-widget.php'; ?>
+
             <div class="host-page-hero">
                 <div class="host-page-hero-content">
                     <h1 style="margin-top:20px;">Refund Request #<?php echo (int)$r['id']; ?></h1>
@@ -255,28 +301,32 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
                     </div>
                 </div>
                 <div class="rr-surface-body">
-                    <form method="post" action="refund-request-action.php">
-                        <input type="hidden" name="refund_request_id" value="<?php echo (int)$r['id']; ?>">
+                    <?php if ($needsHostDecision): ?>
+                        <form method="post" action="refund-request-action.php" style="margin-top: 14px;">
+                            <input type="hidden" name="refund_request_id" value="<?php echo (int)$r['id']; ?>">
+                            <input type="hidden" name="partial_percent" value="50">
 
-                        <label class="rr-form-label">Decision *</label>
-                        <select name="decision" required>
-                            <option value="">Select a decision</option>
-                            <option value="approve_full">Approve full refund (100%)</option>
-                            <option value="approve_partial">Approve partial refund</option>
-                            <option value="reject">Reject</option>
-                        </select>
+                            <label class="rr-form-label">Decision *</label>
+                            <select name="decision" class="rf-host-decision-select" required>
+                                <option value="">Select</option>
+                                <option value="approve_50">Approve 50% refund</option>
+                                <option value="reject">Reject</option>
+                            </select>
 
-                        <label class="rr-form-label">Partial percent <span style="color:#64748B;">(only if partial)</span></label>
-                        <input type="number" name="partial_percent" min="1" max="100" step="1" placeholder="e.g. 50">
+                            <label class="rr-form-label">Note to admin/guest <span style="color:#64748B;">(optional)</span></label>
+                            <textarea name="note" maxlength="1000" placeholder="Explain your decision (optional)"></textarea>
 
-                        <label class="rr-form-label">Note to admin/guest <span style="color:#64748B;">(optional)</span></label>
-                        <textarea name="note" maxlength="1000" placeholder="Explain your decision…"></textarea>
-
-                        <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap; margin-top: 20px;">
-                            <button type="submit" class="btn btn-primary">Submit decision</button>
-                            <a class="btn btn-danger" href="../messages.php">Message instead</a>
+                            <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap; margin-top: 12px;">
+                                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i>Submit decision</button>
+                                <a class="btn btn-danger" href="../messages.php"><i class="fa-solid fa-envelope"></i>Message instead</a>
+                            </div>
+                        </form>
+                    <?php else: ?>
+                        <div class="rr-pill" style="margin-top: 14px;">
+                            <small>Host decision</small>
+                            <strong>This request does not require a host decision (only 50% refund cases require host action).</strong>
                         </div>
-                    </form>
+                    <?php endif; ?>
                 </div>
             </div>
     </main>

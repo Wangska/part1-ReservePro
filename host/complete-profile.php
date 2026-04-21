@@ -333,7 +333,7 @@ if (!empty($date_of_birth)) {
 
                 <div class="host-onboard-footer">
                     By selecting Agree and continue, you confirm that your details are correct and agree to ReservePro’s
-                    <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+                    <a href="../terms.php" target="_blank" rel="noopener">Terms of Service</a> and <a href="../assets/docs/ReservePro-policy.pdf" target="_blank" rel="noopener">Privacy Policy</a>.
                 </div>
             </form>
         </div>

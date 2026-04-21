@@ -162,6 +162,12 @@ function initializeHostTables() {
         $conn->query("ALTER TABLE users ADD COLUMN date_of_birth DATE NULL AFTER last_name");
     }
 
+    // Profile photo path (optional)
+    $result = $conn->query("SHOW COLUMNS FROM users LIKE 'profile_photo'");
+    if ($result && $result->num_rows == 0) {
+        $conn->query("ALTER TABLE users ADD COLUMN profile_photo VARCHAR(255) NULL AFTER date_of_birth");
+    }
+
     // Email verification fields
     $result = $conn->query("SHOW COLUMNS FROM users LIKE 'email_verified'");
     if ($result && $result->num_rows == 0) {
@@ -247,6 +253,21 @@ function initializeHostTables() {
         FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE,
         FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
         FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
+    )";
+    $conn->query($sql);
+
+    // Notifications (used across dashboards)
+    $sql = "CREATE TABLE IF NOT EXISTS notifications (
+        id INT(11) AUTO_INCREMENT PRIMARY KEY,
+        user_id INT(11) NOT NULL,
+        type VARCHAR(40) NOT NULL,
+        title VARCHAR(160) NOT NULL,
+        body VARCHAR(500) DEFAULT NULL,
+        link VARCHAR(255) DEFAULT NULL,
+        is_read TINYINT(1) NOT NULL DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        KEY idx_user_read_time (user_id, is_read, created_at)
     )";
     $conn->query($sql);
 

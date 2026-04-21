@@ -5,6 +5,7 @@ header('Content-Type: application/json');
 try {
     require_once __DIR__ . '/config/session.php';
     require_once __DIR__ . '/config/database.php';
+    require_once __DIR__ . '/config/notifications.php';
 } catch (Throwable $e) {
     echo json_encode(['success' => false, 'error' => 'Server configuration error. Please try again.']);
     exit();
@@ -79,7 +80,7 @@ try {
         FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
     )");
 
-    $stmt = $conn->prepare("SELECT id, host_id FROM properties WHERE id = ? AND status = 'approved'");
+    $stmt = $conn->prepare("SELECT id, host_id, title FROM properties WHERE id = ? AND status = 'approved'");
     if (!$stmt) {
         $conn->close();
         echo json_encode(['success' => false, 'error' => 'Server error. Please try again.']);
@@ -114,6 +115,15 @@ try {
     if ($stmt->execute()) {
         $stmt->close();
         $conn->close();
+        $propTitle = trim((string)($property['title'] ?? 'Property'));
+        $senderName = trim((string)($user['first_name'] ?? '') . ' ' . (string)($user['last_name'] ?? ''));
+        reservepro_notification_create(
+            $host_id,
+            'new_message',
+            'New message',
+            ($senderName !== '' ? ($senderName . ' messaged you about ') : 'New message about ') . $propTitle . '.',
+            '../host/messages.php'
+        );
         echo json_encode(['success' => true, 'message' => 'Message sent to the host. They will reply from their Messages page.']);
     } else {
         $stmt->close();

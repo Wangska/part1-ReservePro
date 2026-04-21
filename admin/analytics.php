@@ -303,6 +303,7 @@ function toChart(array $rows, string $xKey, string $yKey): array {
     </aside>
 
     <main class="host-main">
+        <?php require __DIR__ . '/../includes/notifications-widget.php'; ?>
         <div class="properties-header admin-page-hero">
             <div class="admin-page-hero-content">
                 <h1>Booking analytics</h1>

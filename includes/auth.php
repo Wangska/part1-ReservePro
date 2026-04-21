@@ -2,12 +2,13 @@
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/session.php';
 require_once __DIR__ . '/../config/database_schema.php';
+require_once __DIR__ . '/../config/notifications.php';
 require_once __DIR__ . '/mailer2.php';
 
 class Auth {
     
     // Register new user
-    public static function register($first_name, $last_name, $email, $password, $role = 'guest') {
+    public static function register($first_name, $last_name, $email, $password, $role = 'guest', $date_of_birth = null) {
         $errors = [];
         
         // Validation
@@ -29,6 +30,20 @@ class Auth {
             $errors[] = "Password is required";
         } elseif (strlen($password) < 8) {
             $errors[] = "Password must be at least 8 characters";
+        }
+
+        // Date of birth (required)
+        $dob = null;
+        $date_of_birth = is_string($date_of_birth) ? trim($date_of_birth) : '';
+        if ($date_of_birth === '') {
+            $errors[] = "Date of birth is required";
+        } else {
+            try {
+                $d = new DateTimeImmutable($date_of_birth);
+                $dob = $d->format('Y-m-d');
+            } catch (Exception $e) {
+                $errors[] = "Invalid date of birth";
+            }
         }
         
         // Validate role (prevent admin registration from public form)
@@ -70,8 +85,8 @@ class Auth {
         }
         
         // Insert user with role and verification info
-        $stmt = $conn->prepare("INSERT INTO users (first_name, last_name, email, password, role, email_verified, verification_token) VALUES (?, ?, ?, ?, ?, 0, ?)");
-        $stmt->bind_param("ssssss", $first_name, $last_name, $email, $hashed_password, $role, $verification_token);
+        $stmt = $conn->prepare("INSERT INTO users (first_name, last_name, date_of_birth, email, password, role, email_verified, verification_token) VALUES (?, ?, ?, ?, ?, ?, 0, ?)");
+        $stmt->bind_param("sssssss", $first_name, $last_name, $dob, $email, $hashed_password, $role, $verification_token);
         
         if ($stmt->execute()) {
             $user_id = $stmt->insert_id;
@@ -80,6 +95,13 @@ class Auth {
 
             // Fire-and-forget verification email
             sendVerificationEmail($email, $first_name, $verification_token);
+
+            // Notify admins
+            reservepro_notification_notify_admins(
+                'user_created',
+                'New user created',
+                trim($first_name . ' ' . $last_name) . ' (' . $email . ')'
+            );
             
             return ['success' => true, 'user_id' => $user_id];
         } else {

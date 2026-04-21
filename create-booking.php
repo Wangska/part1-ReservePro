@@ -3,6 +3,7 @@ require_once __DIR__ . '/config/session.php';
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/database_schema.php';
 require_once __DIR__ . '/config/paymongo.php';
+require_once __DIR__ . '/config/notifications.php';
 
 header('Content-Type: application/json');
 
@@ -109,7 +110,8 @@ if (!paymongo_is_configured()) {
     exit();
 }
 
-// Calculate total price (nights * price_per_night + 10% service fee)
+// Calculate total price (nights * price_per_night + 10% fee).
+// Note: reporting splits attribute 9% to admin/platform and 90% to host (remaining ~1% un-attributed).
 $pricePerNight = (float) $property['price_per_night'];
 $subtotal      = $nights * $pricePerNight;
 $serviceFee    = $subtotal * 0.10;
@@ -175,6 +177,26 @@ if ($stmt->execute()) {
     } else {
         $payment_checkout_failed = true;
     }
+
+    // Notifications: host + admins
+    $hostId = (int)($property['host_id'] ?? 0);
+    $guestName = trim((string)($user['first_name'] ?? '') . ' ' . (string)($user['last_name'] ?? ''));
+    $propTitle = trim((string)($property['title'] ?? 'Property'));
+    if ($hostId > 0) {
+        reservepro_notification_create(
+            $hostId,
+            'booking_created',
+            'New booking' . ($status === 'confirmed' ? ' (confirmed)' : ' (pending)'),
+            ($guestName !== '' ? ($guestName . ' booked ') : 'A guest booked ') . $propTitle . ' · Booking #' . $booking_id,
+            '../host/bookings.php'
+        );
+    }
+    reservepro_notification_notify_admins(
+        'booking_created',
+        'New booking' . ($status === 'confirmed' ? ' (confirmed)' : ' (pending)'),
+        ($guestName !== '' ? ($guestName . ' booked ') : 'A guest booked ') . $propTitle . ' · Booking #' . $booking_id,
+        '../admin/bookings.php'
+    );
 
     $conn->close();
 

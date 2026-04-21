@@ -124,6 +124,7 @@ if ($run) {
             </div>
         </aside>
         <main class="host-main">
+            <?php require __DIR__ . '/../includes/notifications-widget.php'; ?>
             <div class="host-header">
                 <h1>📍 Update map coordinates</h1>
                 <p class="subtitle">Set correct pin locations for all listed properties (Lapu-Lapu/Cebu vs Manila, etc.)</p>

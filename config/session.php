@@ -16,11 +16,16 @@ function getCurrentUser() {
     }
     
     require_once __DIR__ . '/database.php';
+    require_once __DIR__ . '/database_schema.php';
+    // Ensure any newly added user columns exist (idempotent)
+    if (function_exists('initializeHostTables')) {
+        initializeHostTables();
+    }
     $conn = getDBConnection();
     
     $user_id = $_SESSION['user_id'];
-    // Include host_verified flag when present
-    $stmt = $conn->prepare("SELECT id, first_name, last_name, email, role, IFNULL(host_verified, 0) AS host_verified FROM users WHERE id = ?");
+    // Include common profile fields (host_verified when present)
+    $stmt = $conn->prepare("SELECT id, first_name, last_name, date_of_birth, profile_photo, email, role, IFNULL(host_verified, 0) AS host_verified FROM users WHERE id = ?");
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
     $result = $stmt->get_result();

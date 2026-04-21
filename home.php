@@ -504,14 +504,14 @@ $conn->close();
                     <ul>
                         <li><a href="contact.php">Help Center</a></li>
                         <li><a href="#">FAQs</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="assets/docs/ReservePro-policy.pdf" target="_blank" rel="noopener">Privacy Policy</a></li>
                     </ul>
                 </div>
             </div>
             <div class="lp-footer-bottom">
                 <p>&copy; 2026 ReservePro. All rights reserved.</p>
                 <div class="lp-footer-bottom-links">
-                    <a href="#">Privacy</a>
+                    <a href="assets/docs/ReservePro-policy.pdf" target="_blank" rel="noopener">Privacy</a>
                     <a href="#">Terms</a>
                     <a href="contact.php">Contact</a>
                 </div>

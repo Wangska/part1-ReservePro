@@ -5,17 +5,9 @@ require_once __DIR__ . '/config/database.php';
 requireLogin();
 $user = getCurrentUser();
 
-// Profile page is for guest accounts only; hosts and admins are redirected
-if ($user['role'] !== 'guest') {
-    if ($user['role'] === 'host') {
-        header('Location: host/dashboard.php');
-        exit();
-    }
-    if ($user['role'] === 'admin') {
-        header('Location: admin/dashboard.php');
-        exit();
-    }
-    header('Location: dashboard.php');
+// Guests only (hosts have their own profile page)
+if (($user['role'] ?? '') !== 'guest') {
+    header('Location: ' . (($user['role'] ?? '') === 'host' ? 'host/profile.php' : 'admin/dashboard.php'));
     exit();
 }
 
@@ -29,6 +21,8 @@ if (isset($_SESSION['profile_updated'])) unset($_SESSION['profile_updated']);
 $first_name = $old['first_name'] ?? $user['first_name'];
 $last_name = $old['last_name'] ?? $user['last_name'];
 $email = $old['email'] ?? $user['email'];
+$date_of_birth = $old['date_of_birth'] ?? ($user['date_of_birth'] ?? '');
+$profile_photo = (string)($user['profile_photo'] ?? '');
 
 $role_label = isset($user['role']) ? ucfirst($user['role']) : 'Guest';
 ?>
@@ -69,6 +63,7 @@ $role_label = isset($user['role']) ? ucfirst($user['role']) : 'Guest';
             transition: border-color 0.2s ease;
         }
         .pf-form-group input:focus { outline: none; border-color: rgba(212,165,116,0.5); }
+        .pf-form-group input[type="file"] { padding: 10px 12px; }
 
         .pf-info-row {
             display: flex; align-items: center; gap: 16px;
@@ -145,7 +140,9 @@ $role_label = isset($user['role']) ? ucfirst($user['role']) : 'Guest';
             border: 3px solid rgba(59,130,246,0.4);
             box-shadow: 0 8px 24px rgba(59,130,246,0.25);
             flex-shrink: 0;
+            overflow: hidden;
         }
+        .pf-banner-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
         .pf-banner-info { flex: 1; min-width: 0; }
         .pf-banner-name {
             font-size: 22px; font-weight: 800; color: #F1F5F9;
@@ -297,8 +294,12 @@ $role_label = isset($user['role']) ? ucfirst($user['role']) : 'Guest';
 
             <div class="sidebar-footer">
                 <div class="user-profile">
-                    <div class="user-avatar" style="background: linear-gradient(135deg, #3B82F6, #2563EB);">
-                        <?php echo strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_name'], 0, 1)); ?>
+                    <div class="user-avatar" style="background: linear-gradient(135deg, #3B82F6, #2563EB); overflow:hidden;">
+                        <?php if (!empty($profile_photo)): ?>
+                            <img src="<?php echo htmlspecialchars($profile_photo); ?>" alt="Profile photo" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'">
+                        <?php else: ?>
+                            <?php echo strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_name'], 0, 1)); ?>
+                        <?php endif; ?>
                     </div>
                     <div class="user-info">
                         <div class="user-name"><?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?></div>
@@ -311,6 +312,7 @@ $role_label = isset($user['role']) ? ucfirst($user['role']) : 'Guest';
 
         <!-- Main Content -->
         <main class="host-main">
+            <?php require __DIR__ . '/includes/notifications-widget.php'; ?>
 
             <?php if ($updated): ?>
             <div class="pf-alert pf-alert-success"><i class="fa-solid fa-circle-check"></i> Your profile has been updated successfully.</div>
@@ -330,7 +332,11 @@ $role_label = isset($user['role']) ? ucfirst($user['role']) : 'Guest';
             <div class="pf-banner">
                 <div class="pf-banner-inner">
                     <div class="pf-banner-avatar">
-                        <?php echo strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_name'], 0, 1)); ?>
+                        <?php if (!empty($profile_photo)): ?>
+                            <img src="<?php echo htmlspecialchars($profile_photo); ?>" alt="Profile photo" onerror="this.style.display='none'">
+                        <?php else: ?>
+                            <?php echo strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_name'], 0, 1)); ?>
+                        <?php endif; ?>
                     </div>
                     <div class="pf-banner-info">
                         <h2 class="pf-banner-name"><?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?></h2>
@@ -366,6 +372,13 @@ $role_label = isset($user['role']) ? ucfirst($user['role']) : 'Guest';
                             <div class="pf-detail-value"><?php echo htmlspecialchars($user['email']); ?></div>
                         </div>
                     </div>
+                    <div class="pf-detail-row">
+                        <div class="pf-detail-icon"><i class="fa-solid fa-cake-candles"></i></div>
+                        <div>
+                            <div class="pf-detail-label">Date of Birth</div>
+                            <div class="pf-detail-value"><?php echo !empty($user['date_of_birth']) ? htmlspecialchars($user['date_of_birth']) : '—'; ?></div>
+                        </div>
+                    </div>
 
                 </div>
             </div>
@@ -380,7 +393,7 @@ $role_label = isset($user['role']) ? ucfirst($user['role']) : 'Guest';
                 <button class="pf-modal-close" onclick="closeEditModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="pf-modal-body">
-                <form method="post" action="update-profile.php">
+                <form method="post" action="update-profile.php" enctype="multipart/form-data">
                     <div class="pf-form-group">
                         <label for="first_name">First name</label>
                         <input type="text" id="first_name" name="first_name" value="<?php echo htmlspecialchars($first_name); ?>" required>
@@ -390,8 +403,16 @@ $role_label = isset($user['role']) ? ucfirst($user['role']) : 'Guest';
                         <input type="text" id="last_name" name="last_name" value="<?php echo htmlspecialchars($last_name); ?>" required>
                     </div>
                     <div class="pf-form-group">
+                        <label for="date_of_birth">Date of birth</label>
+                        <input type="date" id="date_of_birth" name="date_of_birth" value="<?php echo htmlspecialchars((string)$date_of_birth); ?>" required>
+                    </div>
+                    <div class="pf-form-group">
                         <label for="email">Email</label>
                         <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($email); ?>" required>
+                    </div>
+                    <div class="pf-form-group">
+                        <label for="profile_photo">Profile photo (optional)</label>
+                        <input type="file" id="profile_photo" name="profile_photo" accept="image/*">
                     </div>
                     <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:4px;">
                         <button type="button" onclick="closeEditModal()" style="padding:10px 18px; background:rgba(255,255,255,0.06); border:1px solid rgba(148,163,184,0.18); border-radius:10px; color:#94A3B8; font-weight:700; font-size:13px; cursor:pointer;">Cancel</button>

@@ -25,11 +25,11 @@ $partial = isset($_POST['partial_percent']) ? (int)$_POST['partial_percent'] : 0
 $note = trim((string)($_POST['note'] ?? ''));
 if (strlen($note) > 1000) $note = substr($note, 0, 1000);
 
-if ($id <= 0 || !in_array($decision, ['approve_full','approve_partial','reject'], true)) {
+if ($id <= 0 || !in_array($decision, ['approve_full','approve_partial','approve_50','reject'], true)) {
     header('Location: refund-requests.php?error=invalid');
     exit();
 }
-if ($decision === 'approve_partial' && ($partial < 1 || $partial > 100)) {
+if (($decision === 'approve_partial' || $decision === 'approve_50') && ($partial < 1 || $partial > 100)) {
     header('Location: refund-request.php?id=' . $id . '&error=bad_partial');
     exit();
 }
@@ -66,6 +66,13 @@ if (!in_array($currentStatus, ['pending_review','pending'], true)) {
     exit();
 }
 
+$suggestedPct = (int)($r['refund_percent'] ?? 0);
+if ($suggestedPct !== 50) {
+    $conn->close();
+    header('Location: refund-request.php?id=' . $id . '&error=not_allowed');
+    exit();
+}
+
 $total = (float)($r['total_price'] ?? 0);
 $hostDecision = 'none';
 $hostPct = null;
@@ -73,9 +80,9 @@ $hostPct = null;
 if ($decision === 'approve_full') {
     $hostDecision = 'approve_full';
     $hostPct = 100;
-} elseif ($decision === 'approve_partial') {
+} elseif ($decision === 'approve_partial' || $decision === 'approve_50') {
     $hostDecision = 'approve_partial';
-    $hostPct = $partial;
+    $hostPct = ($decision === 'approve_50') ? 50 : $partial;
 } else {
     $hostDecision = 'reject';
     $hostPct = 0;

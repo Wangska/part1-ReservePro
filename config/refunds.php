@@ -5,11 +5,9 @@
  * Cancellation (flexible + moderate): refund is based on hours since the
  * booking was placed (bookings.booking_date), not days before check-in.
  *
- * - 100% if cancel within 12 hours of booking.
- * - 70% if cancel after 12 hours through 24 hours after booking.
- * - 50% if cancel after 24 hours through 48 hours (2 days) after booking.
- * - 0% if cancel after more than 72 hours (3 days) after booking.
- * - 0% for cancellations between 48 and 72 hours (no tier specified).
+ * - 99% if cancel within 6 hours of booking.
+ * - 50% if cancel after 6 hours through 12 hours after booking.
+ * - 0% if cancel after more than 12 hours after booking.
  *
  * Strict: no automatic refund; support/admin can override.
  *
@@ -50,29 +48,23 @@ function reservepro_refund_preview_cancellation(
         $rule = 'strict_support_only';
     } else {
         // flexible + moderate share the same schedule
-        if ($hoursSinceBooking <= 12) {
-            $percent = 100;
-            $rule = 'cancel_within_12h_full';
-        } elseif ($hoursSinceBooking <= 24) {
-            $percent = 70;
-            $rule = 'cancel_12h_to_24h_70';
-        } elseif ($hoursSinceBooking <= 48) {
+        if ($hoursSinceBooking <= 6) {
+            $percent = 99;
+            $rule = 'cancel_within_6h_99';
+        } elseif ($hoursSinceBooking <= 12) {
             $percent = 50;
-            $rule = 'cancel_24h_to_48h_50';
-        } elseif ($hoursSinceBooking <= 72) {
-            $percent = 0;
-            $rule = 'cancel_48h_to_72h_0';
+            $rule = 'cancel_6h_to_12h_50';
         } else {
             $percent = 0;
-            $rule = 'cancel_after_72h_0';
+            $rule = 'cancel_after_12h_0';
         }
     }
 
     $amount = round(max(0, $totalAmount) * ($percent / 100), 2);
 
     $warning = '';
-    if ($percent >= 100) {
-        $warning = "If you cancel now, you will receive a FULL refund.";
+    if ($percent >= 99) {
+        $warning = "If you cancel now, you will receive a {$percent}% refund.";
     } elseif ($percent > 0) {
         $warning = "If you cancel now, you will receive a {$percent}% refund.";
     } else {
@@ -115,6 +107,18 @@ function reservepro_issue_eligibility(string $checkInDate, ?DateTimeImmutable $n
 /**
  * @return array{percent:int, rule:string}
  */
+/**
+ * One-paragraph explanation of cancellation refund tiers (for hosts/admins).
+ */
+function reservepro_cancellation_policy_human_summary(string $policy): string
+{
+    $policy = strtolower(trim($policy));
+    if ($policy === 'strict') {
+        return 'Strict: no automatic refund when a guest cancels; any refund is decided in review (host/admin).';
+    }
+    return 'Flexible / moderate: guest cancellation refunds are based on time since the booking was placed — 99% within 6 hours, 50% within 12 hours, then no refund after 12 hours.';
+}
+
 function reservepro_issue_refund_percent(string $issueType): array
 {
     $t = strtolower(trim($issueType));

@@ -10,25 +10,33 @@ $success = false;
 $fieldErrors = [
     'first_name' => false,
     'last_name' => false,
+    'date_of_birth' => false,
     'email' => false,
     'password' => false,
     'confirm_password' => false,
+    'terms' => false,
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $first_name = trim($_POST['first_name'] ?? '');
     $last_name = trim($_POST['last_name'] ?? '');
+    $date_of_birth = trim($_POST['date_of_birth'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
+    $terms = isset($_POST['terms']) ? trim((string)$_POST['terms']) : '';
     // All new signups are guests by default
     $role = 'guest';
     
+    if ($terms !== '1') {
+        $errors[] = "You must agree to the Terms & Conditions";
+    }
+
     // Check if passwords match
     if ($password !== $confirm_password) {
         $errors[] = "Passwords do not match";
     } else {
-        $result = Auth::register($first_name, $last_name, $email, $password, $role);
+        $result = Auth::register($first_name, $last_name, $email, $password, $role, $date_of_birth);
         
         if ($result['success']) {
             // After signup, show "check your email" instructions
@@ -60,6 +68,11 @@ foreach ($errors as $error) {
         continue;
     }
 
+    if (strpos($msg, 'date of birth') !== false) {
+        $fieldErrors['date_of_birth'] = true;
+        continue;
+    }
+
     if (strpos($msg, 'email') !== false) {
         $fieldErrors['email'] = true;
         continue;
@@ -67,6 +80,11 @@ foreach ($errors as $error) {
 
     if (strpos($msg, 'password') !== false) {
         $fieldErrors['password'] = true;
+        continue;
+    }
+
+    if (strpos($msg, 'terms') !== false) {
+        $fieldErrors['terms'] = true;
         continue;
     }
 }
@@ -390,6 +408,21 @@ foreach ($errors as $error) {
                 </div>
 
                 <div class="rp-field">
+                    <label for="date_of_birth">Date of Birth</label>
+                    <div class="rp-input-wrap">
+                        <input
+                            type="date"
+                            id="date_of_birth"
+                            name="date_of_birth"
+                            value="<?php echo htmlspecialchars($_POST['date_of_birth'] ?? ''); ?>"
+                            class="<?php echo $fieldErrors['date_of_birth'] ? 'is-error' : ''; ?>"
+                            required
+                        >
+                        <i class="fa-solid fa-cake-candles"></i>
+                    </div>
+                </div>
+
+                <div class="rp-field">
                     <label for="password">Password</label>
                     <div class="rp-input-wrap">
                         <input type="password" id="password" name="password"
@@ -409,6 +442,21 @@ foreach ($errors as $error) {
                             required>
                         <i class="fa-solid fa-lock"></i>
                     </div>
+                </div>
+
+                <div style="display:flex; gap:10px; align-items:flex-start; margin-top: 4px;">
+                    <input
+                        type="checkbox"
+                        id="terms"
+                        name="terms"
+                        value="1"
+                        <?php echo (($_POST['terms'] ?? '') === '1') ? 'checked' : ''; ?>
+                        style="margin-top:4px;"
+                        required
+                    >
+                    <label for="terms" style="margin:0; color: #CBD5E1; font-size: 13px; font-weight: 600; line-height: 1.45;">
+                        I agree to the <a href="terms.php" style="color: var(--gold); text-decoration:none; font-weight:800;">Terms &amp; Conditions</a>.
+                    </label>
                 </div>
 
                 <button type="submit" class="rp-btn" id="submitBtn">

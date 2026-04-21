@@ -25,6 +25,8 @@ $stmt = $conn->prepare("
         u.id,
         u.first_name,
         u.last_name,
+        u.date_of_birth,
+        u.profile_photo,
         u.email,
         u.role,
         u.email_verified,
@@ -324,12 +326,22 @@ function bool_label($value) {
 
         <!-- Main Content -->
         <main class="host-main">
+            <?php require __DIR__ . '/../includes/notifications-widget.php'; ?>
 
             <!-- Hero -->
             <div class="vu-hero">
                 <div class="vu-hero-left">
                     <div class="vu-avatar vu-avatar-<?php echo $viewUser['role']; ?>">
-                        <?php echo strtoupper(substr($viewUser['first_name'], 0, 1) . substr($viewUser['last_name'], 0, 1)); ?>
+                        <?php if (!empty($viewUser['profile_photo'])): ?>
+                            <img
+                                src="<?php echo htmlspecialchars('../' . ltrim((string)$viewUser['profile_photo'], '/')); ?>"
+                                alt="Profile photo"
+                                style="width:100%;height:100%;object-fit:cover;display:block;"
+                                onerror="this.style.display='none'"
+                            >
+                        <?php else: ?>
+                            <?php echo strtoupper(substr($viewUser['first_name'], 0, 1) . substr($viewUser['last_name'], 0, 1)); ?>
+                        <?php endif; ?>
                     </div>
                     <div>
                         <!-- vu-eyebrow removed -->
@@ -342,6 +354,9 @@ function bool_label($value) {
                             <span class="vu-meta-item"><i class="fa-solid fa-envelope"></i><?php echo htmlspecialchars($viewUser['email']); ?></span>
                             <span class="vu-meta-item"><i class="fa-solid fa-hashtag"></i>ID <?php echo $viewUser['id']; ?></span>
                             <span class="vu-meta-item"><i class="fa-solid fa-calendar"></i>Joined <?php echo date('M j, Y', strtotime($viewUser['created_at'])); ?></span>
+                            <?php if (!empty($viewUser['date_of_birth'])): ?>
+                                <span class="vu-meta-item"><i class="fa-solid fa-cake-candles"></i>DOB <?php echo htmlspecialchars($viewUser['date_of_birth']); ?></span>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>

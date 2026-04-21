@@ -449,6 +449,7 @@ $conn->close();
 
         <!-- Main Content -->
         <main class="host-main">
+            <?php require __DIR__ . '/includes/notifications-widget.php'; ?>
             <div class="messages-header host-page-hero">
                 <div class="host-page-hero-content">
                     <h1 style="margin-top: 20px;">Messages</h1>

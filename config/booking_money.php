@@ -1,16 +1,18 @@
 <?php
 /**
- * Pricing model: guest pays subtotal (nights × rate) + 10% service fee.
- * total_price stored on bookings = subtotal × 1.1
- * Platform commission (service fee) = total_price / 11
- * Host share (subtotal) = total_price − commission
+ * Money split model (based on stored bookings.total_price):
+ * - Host share: 90% of total_price
+ * - Admin/platform share: 9% of total_price
+ *
+ * Note: if your checkout still adds a 10% fee on top of subtotal, the remaining ~1%
+ * is simply not attributed by these helpers (e.g. payment processing / rounding).
  */
 function reservepro_platform_commission_from_total(float $totalPrice): float
 {
-    return round($totalPrice / 11, 2);
+    return round($totalPrice * 0.09, 2);
 }
 
 function reservepro_host_share_from_total(float $totalPrice): float
 {
-    return round($totalPrice - ($totalPrice / 11), 2);
+    return round($totalPrice * 0.90, 2);
 }

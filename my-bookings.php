@@ -223,6 +223,7 @@ function booking_status_class(array $b) {
 
         <!-- Main Content -->
         <main class="host-main">
+            <?php require __DIR__ . '/includes/notifications-widget.php'; ?>
             <div class="admin-page-hero">
                 <div class="admin-page-hero-content">
 
@@ -325,6 +326,12 @@ function booking_status_class(array $b) {
             </div>
             <div class="gb-modal-body">
                 <div class="gb-warning" id="cancelWarning">Loading refund preview…</div>
+                <div style="margin-top:8px; color:#94A3B8; font-weight:800; font-size:12px; line-height:1.45;">
+                    Policy: 99% refund within 6 hours, 50% within 12 hours, none after 12 hours.
+                </div>
+                <div id="cancelSubmitMsg" style="display:none; margin-top:10px; background: rgba(34,197,94,0.10); border: 1px solid rgba(34,197,94,0.28); color:#86efac; border-radius: 14px; padding: 10px 12px; font-weight: 800; font-size: 13px; line-height: 1.5;">
+                    Submitting your cancellation… please wait.
+                </div>
                 <div class="gb-preview-grid">
                     <div class="gb-pill">
                         <small>Refund percent</small>
@@ -352,7 +359,7 @@ function booking_status_class(array $b) {
                     <input type="hidden" name="booking_id" id="cancelBookingId" value="">
                     <input type="hidden" name="reason" id="cancelReasonHidden" value="">
                     <input type="hidden" name="refund_ack" id="refundAckHidden" value="0">
-
+                    <button type="submit" class="gb-btn gb-btn-danger" id="cancelConfirmBtn" disabled>Confirm cancellation</button>
                 </form>
             </div>
         </div>
@@ -372,12 +379,15 @@ function booking_status_class(array $b) {
         const ackBox = document.getElementById('refundAck');
         const ackHidden = document.getElementById('refundAckHidden');
         const confirmBtn = document.getElementById('cancelConfirmBtn');
+        const submitMsg = document.getElementById('cancelSubmitMsg');
 
         let previewOk = false;
 
         function syncConfirmState() {
             const ackOk = !!(ackBox && ackBox.checked);
-            confirmBtn.disabled = !(previewOk && ackOk);
+            if (confirmBtn) {
+                confirmBtn.disabled = !(previewOk && ackOk);
+            }
         }
 
         function openModal() {
@@ -454,6 +464,11 @@ function booking_status_class(array $b) {
         document.getElementById('cancelForm').addEventListener('submit', function() {
             reasonHidden.value = reasonInput.value || '';
             ackHidden.value = (ackBox && ackBox.checked) ? '1' : '0';
+            if (submitMsg) submitMsg.style.display = 'block';
+            if (confirmBtn) {
+                confirmBtn.disabled = true;
+                confirmBtn.textContent = 'Submitting…';
+            }
         });
 
         if (ackBox) {

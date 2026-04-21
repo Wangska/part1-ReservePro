@@ -467,6 +467,7 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
     </aside>
 
     <main class="host-main">
+        <?php require __DIR__ . '/../includes/notifications-widget.php'; ?>
         <div>
 
             <!-- Hero -->
