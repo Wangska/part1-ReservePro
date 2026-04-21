@@ -445,7 +445,7 @@ a.stat-card-link {
 
 .status-pending {
     background: rgba(245, 158, 11, 0.2);
-    color: #F59E0B !important;
+    color: #fff !important;
 }
 
 .status-approved {
@@ -1021,238 +1021,23 @@ a.stat-card-link {
 }
 
 .host-action-btn.is-info {
-    background: rgba(59, 130, 246, 0.14);
-    color: #93C5FD;
-    border-color: rgba(59, 130, 246, 0.24);
-}
-
-.host-stack-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.host-meta-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.host-form-shell,
-.host-detail-shell {
-    background: rgba(17, 24, 39, 0.86);
-    border: 1px solid rgba(148, 163, 184, 0.16);
-    border-radius: 24px;
-    box-shadow: 0 22px 40px rgba(0, 0, 0, 0.18);
-}
-
-.host-form-shell {
-    padding: 28px;
-}
-
-.host-detail-shell {
-    padding: 24px;
-}
-
-.host-detail-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 12px;
-}
-
-.host-detail-card {
-    padding: 12px 14px;
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(148, 163, 184, 0.12);
-}
-
-.host-detail-label {
-    display: block;
-    margin-bottom: 4px;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: #94A3B8;
-}
-
-.host-detail-value {
-    font-size: 14px;
-    font-weight: 600;
-    color: #FFFFFF;
-}
-
-.host-form-page .property-form .form-section,
-.host-form-page .view-section,
-.host-detail-page .view-section {
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(148, 163, 184, 0.12);
-}
-
-.host-messages-layout {
-    display: grid;
-    grid-template-columns: 340px minmax(0, 1fr);
-    gap: 24px;
-    min-height: calc(100vh - 320px);
-}
-
-.host-conversations-list,
-.host-chat-shell {
-    background: rgba(17, 24, 39, 0.86);
-    border: 1px solid rgba(148, 163, 184, 0.16);
-    border-radius: 22px;
-    box-shadow: 0 20px 36px rgba(0, 0, 0, 0.18);
-}
-
-.host-conversation-item {
-    padding: 16px 18px;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-    cursor: pointer;
-    transition: background 0.2s ease, border-color 0.2s ease;
-}
-
-.host-conversation-item:hover,
-.host-conversation-item.is-active {
-    background: rgba(255, 255, 255, 0.04);
-}
-
-.host-chat-header,
-.host-chat-input {
-    border-top: 1px solid rgba(148, 163, 184, 0.1);
-}
-
-.host-chat-header {
-    border-top: none;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-}
-
-.host-message-bubble {
-    padding: 12px 16px;
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.05);
-    color: #E2E8F0;
-}
-
-.host-message.is-sent .host-message-bubble {
     background: linear-gradient(135deg, #D4A574, #B8935F);
     color: #0F0F0F;
+    border: none;
+    box-shadow: none;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s, border-color 0.2s;
 }
 
-body.light-mode.host-clean-page .host-main {
-    background: linear-gradient(180deg, rgba(248, 250, 252, 0.92) 0%, rgba(248, 250, 252, 0) 260px);
+.host-action-btn.is-info:hover {
+    background: linear-gradient(135deg, #B8935F, #D4A574);
+    color: #fff;
+    border: none;
+    box-shadow: 0 2px 10px rgba(212,165,116,0.10);
 }
 
-body.light-mode.host-clean-page .host-page-hero,
-body.light-mode.host-clean-page .host-metric-card,
-body.light-mode.host-clean-page .host-surface,
-body.light-mode.host-clean-page .host-form-shell,
-body.light-mode.host-clean-page .host-detail-shell,
-body.light-mode.host-clean-page .host-conversations-list,
-body.light-mode.host-clean-page .host-chat-shell,
-body.light-mode.host-clean-page .property-card {
-    background: #FFFFFF !important;
-    border-color: rgba(15, 23, 42, 0.08) !important;
-    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.08) !important;
-}
-
-body.light-mode.host-clean-page .host-page-eyebrow {
-    background: rgba(184, 147, 95, 0.12);
-    color: #8B6F47;
-}
-
-body.light-mode.host-clean-page .host-page-summary {
-    background: #F8FAFC;
-    border-color: rgba(15, 23, 42, 0.08);
-}
-
-body.light-mode.host-clean-page .host-page-summary strong,
-body.light-mode.host-clean-page .host-surface-header h2,
-body.light-mode.host-clean-page .host-detail-value,
-body.light-mode.host-clean-page .property-info h3,
-body.light-mode.host-clean-page .guest-info strong,
-body.light-mode.host-clean-page .view-section h2 {
-    color: #0F172A !important;
-}
-
-body.light-mode.host-clean-page .host-page-hero-content .subtitle,
-body.light-mode.host-clean-page .host-page-hero-content p,
-body.light-mode.host-clean-page .host-page-summary-text,
-body.light-mode.host-clean-page .host-metric-note,
-body.light-mode.host-clean-page .host-inline-note,
-body.light-mode.host-clean-page .host-surface-header p,
-body.light-mode.host-clean-page .property-location,
-body.light-mode.host-clean-page .guest-info small,
-body.light-mode.host-clean-page .view-section p,
-body.light-mode.host-clean-page .view-section .detail-row {
-    color: #475569 !important;
-}
-
-body.light-mode.host-clean-page .host-page-summary-label,
-body.light-mode.host-clean-page .host-metric-copy p,
-body.light-mode.host-clean-page .host-metric-copy .stat-label,
-body.light-mode.host-clean-page .host-detail-label,
-body.light-mode.host-clean-page .host-table th {
-    color: #64748B !important;
-}
-
-body.light-mode.host-clean-page .host-detail-card,
-body.light-mode.host-clean-page .host-form-page .property-form .form-section,
-body.light-mode.host-clean-page .host-form-page .view-section,
-body.light-mode.host-clean-page .host-detail-page .view-section,
-body.light-mode.host-clean-page .host-message-bubble,
-body.light-mode.host-clean-page .property-detail-item {
-    background: #F8FAFC !important;
-    border-color: rgba(15, 23, 42, 0.08) !important;
-}
-
-body.light-mode.host-clean-page .host-metric-icon,
-body.light-mode.host-clean-page .host-action-btn,
-body.light-mode.host-clean-page .host-pill-btn,
-body.light-mode.host-clean-page .host-filter-btn {
-    background: #FFFFFF;
-    border-color: rgba(15, 23, 42, 0.1);
-    color: #334155;
-}
-
-body.light-mode.host-clean-page .host-metric-icon.is-indigo { color: #4F46E5; }
-body.light-mode.host-clean-page .host-metric-icon.is-sky { color: #0369A1; }
-body.light-mode.host-clean-page .host-metric-icon.is-emerald { color: #047857; }
-body.light-mode.host-clean-page .host-metric-icon.is-amber { color: #B45309; }
-body.light-mode.host-clean-page .host-metric-icon.is-red { color: #B91C1C; }
-body.light-mode.host-clean-page .host-metric-icon.is-gold { color: #8B6F47; }
-
-body.light-mode.host-clean-page .host-filter-btn:hover,
-body.light-mode.host-clean-page .host-action-btn:hover,
-body.light-mode.host-clean-page .host-pill-btn:hover {
-    background: #F8FAFC;
-    color: #0F172A;
-}
-
-body.light-mode.host-clean-page .host-filter-btn.active,
-body.light-mode.host-clean-page .host-action-btn.is-primary,
-body.light-mode.host-clean-page .host-pill-btn.is-primary {
-    color: #FFFFFF;
-    background: linear-gradient(135deg, #B8935F, #8B6F47);
-    box-shadow: 0 10px 24px rgba(139, 111, 71, 0.2);
-}
-
-body.light-mode.host-clean-page .host-table thead {
-    background: #F8FAFC;
-}
-
-body.light-mode.host-clean-page .host-table td {
-    color: #0F172A;
-    border-bottom-color: rgba(15, 23, 42, 0.08);
-}
-
-body.light-mode.host-clean-page .host-table tbody tr:hover {
-    background: #F8FAFC;
-}
-
+/* Responsive */
 @media (max-width: 1024px) {
     .host-page-hero {
         flex-direction: column;

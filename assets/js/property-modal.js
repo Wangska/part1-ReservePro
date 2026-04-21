@@ -616,7 +616,7 @@ function renderPropertyDetails(property, bookedDates) {
 
                             ${paymentMethodsHTML}
 
-                            <button type="submit" class="pm-cta-btn modal-btn modal-reserve-submit" ${paymongoOn ? '' : 'disabled'} style="opacity:${paymongoOn ? '1' : '0.45'};cursor:${paymongoOn ? 'pointer' : 'not-allowed'};">${paymongoOn ? 'Reserve &rarr;' : 'Booking unavailable'}</button>
+                            <button type="submit" class="pm-cta-btn modal-btn modal-reserve-submit" ${paymongoOn ? '' : 'disabled'} style="opacity:${paymongoOn ? '1' : '0.45'};cursor:${paymongoOn ? 'pointer' : 'not-allowed'};">${paymongoOn ? 'Reserve' : 'Booking unavailable'}</button>
 
                         </form>
                     </div>

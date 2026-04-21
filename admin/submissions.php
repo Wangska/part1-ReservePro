@@ -199,6 +199,7 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
         .sub-col-email   { width: 12%; }
         .sub-col-host    { width: 11%; }
         .sub-col-doc     { width: 14%; }
+        .sub-col-documents { width: 14%; }
         .sub-col-joined  { width: 12%; }
         .sub-col-actions { width: 16%; }
         .sub-table tbody tr { transition: background 0.15s; }
@@ -371,6 +372,22 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
         body.light-mode .sub-stat-value { color:#0F172A; }
         body.light-mode .sub-stat-label { color:#64748B; }
 
+        /* Animated sub-doc-link button */
+        .sub-doc-link {
+            transition: background 0.18s, color 0.18s, box-shadow 0.18s, border-color 0.18s, transform 0.18s !important;
+        }
+        .sub-doc-link:hover {
+            background: linear-gradient(135deg, #B8935F, #D4A574) !important;
+            color: #0F0F0F !important;
+            border-color: #D4A574 !important;
+            box-shadow: 0 6px 24px rgba(212,165,116,0.28) !important;
+            transform: scale(1.08) !important;
+        }
+        .sub-doc-link:active {
+            transform: scale(0.96) !important;
+            box-shadow: 0 1px 2px rgba(212,165,116,0.10) !important;
+        }
+
         @media (max-width: 1100px) { .sub-stats { grid-template-columns: repeat(2,1fr); } }
         @media (max-width: 900px) {
             .sub-hero { flex-direction: column; }
@@ -515,6 +532,7 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
                                 <th class="sub-col-email" style="text-align:center;">Email Verified</th>
                                 <th class="sub-col-host" style="text-align:center;">Host Verified</th>
                                 <th class="sub-col-doc" style="text-align:center;">Host Doc Status</th>
+                                <th class="sub-col-documents" style="text-align:center;">Document</th>
                                 <th class="sub-col-joined" style="text-align:center;">Joined</th>
                                 <th class="sub-col-actions" style="text-align:center;">Actions</th>
                             </tr>
@@ -539,9 +557,6 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
                             </td>
                             <td>
                                 <span class="sub-role sub-role-<?php echo h($role); ?>">
-                                    <?php if ($role === 'host'): ?><i class="fa-solid fa-house-user"></i>
-                                    <?php elseif ($role === 'admin'): ?><i class="fa-solid fa-shield-halved"></i>
-                                    <?php else: ?><i class="fa-solid fa-user"></i><?php endif; ?>
                                     <?php echo h($role); ?>
                                 </span>
                             </td>
@@ -571,21 +586,21 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
                                 <?php endif; ?>
                             </td>
                             <td>
+                                <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
+                                    <?php if ($govImg): ?>
+                                    <a href="<?php echo h($govImg); ?>" target="_blank" class="sub-doc-link" style="display:inline-block;margin:0 2px 2px 0;padding:4px 10px;border-radius:7px;background:linear-gradient(135deg,#D4A574,#B8935F);color:#212121;font-size:11px;font-weight:700;text-decoration:none;border:2px solid #B8935F;box-shadow:0 2px 8px rgba(212,165,116,0.13);cursor:pointer;transition:background 0.18s,color 0.18s,box-shadow 0.18s,border-color 0.18s;">Gov ID</a>
+                                    <?php endif; ?>
+                                    <?php if ($ownImg): ?>
+                                    <a href="<?php echo h($ownImg); ?>" target="_blank" class="sub-doc-link" style="display:inline-block;margin:0 2px 2px 0;padding:4px 10px;border-radius:7px;background:linear-gradient(135deg,#D4A574,#B8935F);color:#212121;font-size:11px;font-weight:700;text-decoration:none;border:2px solid #B8935F;box-shadow:0 2px 8px rgba(212,165,116,0.13);cursor:pointer;transition:background 0.18s,color 0.18s,box-shadow 0.18s,border-color 0.18s;">Ownership</a>
+                                    <?php endif; ?>
+                                </div>
+                            </td>
+                            <td>
                                 <span class="sub-date"><?php echo !empty($r['created_at']) ? date('M j, Y', strtotime($r['created_at'])) : '—'; ?></span>
                             </td>
                             <td>
                                 <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
                                     <a class="sub-action-btn" href="view-user.php?id=<?php echo (int)$r['id']; ?>">View</a>
-                                    <?php if ($govImg): ?>
-                                    <button type="button" class="sub-proof-btn" data-img="<?php echo h($govImg); ?>" data-title="Government ID — <?php echo h(trim(($r['first_name'] ?? '') . ' ' . ($r['last_name'] ?? ''))); ?>">
-                                        <i class="fa-solid fa-id-card"></i> Gov ID
-                                    </button>
-                                    <?php endif; ?>
-                                    <?php if ($ownImg): ?>
-                                    <button type="button" class="sub-proof-btn" data-img="<?php echo h($ownImg); ?>" data-title="Supporting Doc — <?php echo h(trim(($r['first_name'] ?? '') . ' ' . ($r['last_name'] ?? ''))); ?>">
-                                        <i class="fa-solid fa-file-image"></i> Doc
-                                    </button>
-                                    <?php endif; ?>
                                 </div>
                             </td>
                         </tr>

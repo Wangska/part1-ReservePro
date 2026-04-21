@@ -103,30 +103,46 @@ $conn->close();
         }
 
         .role-badge {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: capitalize;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            border: 1px solid transparent;
         }
 
         .role-guest {
-            background: rgba(59, 130, 246, 0.2);
-            color: #3B82F6;
-            border: 1px solid rgba(59, 130, 246, 0.3);
+            background: rgba(186,230,253,0.1);
+            color: #BAE6FD;
+            border: 1px solid rgba(186,230,253,0.2);
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
 
         .role-host {
             background: rgba(212, 165, 116, 0.2);
             color: #D4A574;
             border: 1px solid rgba(212, 165, 116, 0.3);
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
 
         .role-admin {
             background: rgba(239, 68, 68, 0.2);
             color: #EF4444;
             border: 1px solid rgba(239, 68, 68, 0.3);
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
 
         .admin-users-page .btn-action.btn-view {

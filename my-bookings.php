@@ -105,7 +105,7 @@ function booking_status_class(array $b) {
     <style>
         body.mb-page-body { background: #06090F !important; }
         body.mb-page-body::before, body.mb-page-body::after { display: none !important; }
-        .gb-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
+        .gb-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 380px)); gap: 14px; justify-content: start; }
         .gb-card {
             background: rgba(17, 24, 39, 0.78);
             border: 1px solid rgba(148, 163, 184, 0.16);
@@ -257,7 +257,7 @@ function booking_status_class(array $b) {
                         <img src="<?php echo $img; ?>" alt="Property image" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&auto=format&fit=crop&q=80'">
                         <div class="gb-badges">
                             <span class="badge <?php echo booking_status_class($b); ?>"><i class="fa-solid fa-circle" style="font-size:8px;"></i><?php echo h(booking_status_label($b)); ?></span>
-                            <span class="badge <?php echo policy_badge_class($policy); ?>"><i class="fa-solid fa-shield-heart"></i><?php echo h(policy_label($policy)); ?></span>
+                            <span class="badge <?php echo policy_badge_class($policy); ?>"><?php echo h(policy_label($policy)); ?></span>
                         </div>
                     </div>
                     <div class="gb-body">

@@ -144,7 +144,7 @@ try {
         ) VALUES (?, ?, ?, 'issue', ?, ?, NULL, ?, ?, ?, 'PHP', 'pending_review')
     ");
     $propertyId = (int)$b['property_id'];
-    $ins->bind_param('iiisssidd', $bookingId, $user['id'], $propertyId, $issueType, $desc, $policy, $refundPercent, $refundAmount);
+    $ins->bind_param('iiisssdd', $bookingId, $user['id'], $propertyId, $issueType, $desc, $policy, $refundPercent, $refundAmount);
     $ins->execute();
     $refundRequestId = (int)$conn->insert_id;
     $ins->close();

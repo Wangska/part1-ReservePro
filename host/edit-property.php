@@ -416,14 +416,8 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/style.css?v=14.1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.3">
-<<<<<<< HEAD
     <link rel="stylesheet" href="../assets/css/add-property.css?v=17.5">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.6">
-=======
-    <link rel="stylesheet" href="../assets/css/add-property.css?v=16.0">
-    <link rel="stylesheet" href="../assets/css/admin.css?v=25.4">
-    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
->>>>>>> ad87513098603380b3b373b63b23603737d70897
 </head>
 <body class="dashboard-page admin-page admin-clean-page host-clean-page host-form-page">
     <div class="host-layout">
@@ -435,14 +429,13 @@ $conn->close();
                 </a>
             </div>
             <nav class="sidebar-nav">
-                <a href="dashboard.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span><span>Dashboard</span></a>
                 <a href="properties.php" class="nav-item active"><span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span><span>My Properties</span></a>
                 <a href="add-property.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-plus" aria-hidden="true"></i></span><span>Add Property</span></a>
                 <a href="bookings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></span><span>Bookings</span></a>
                 <a href="refund-requests.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></span><span>Refund Requests</span></a>
                 <a href="earnings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span><span>Earnings</span></a>
                 <a href="messages.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span><span>Messages</span></a>
-                <a href="../home.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span><span>View Site</span></a>
+                <a href="../home.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span><span>Home</span></a>
             </nav>
             <div class="sidebar-footer">
                 <div class="user-profile">
@@ -466,16 +459,7 @@ $conn->close();
         <main class="host-main">
             <div class="host-header host-page-hero">
                 <div class="host-page-hero-content">
-                    <span class="host-page-eyebrow">Listing Update</span>
                     <h1>Edit Property</h1>
-                    <p class="subtitle">Refine your property details, update photos, and keep the listing accurate before guests book it again.</p>
-                </div>
-                <div style="display:flex; align-items:flex-start; gap:14px; margin-left:auto;">
-                    <div class="host-page-summary">
-                        <span class="host-page-summary-label">Current Status</span>
-                        <strong><?php echo ucfirst(str_replace('_', ' ', $property['status'])); ?></strong>
-                        <span class="host-page-summary-text">make updates carefully so the listing stays guest-ready</span>
-                    </div>
                 </div>
             </div>
 
@@ -496,18 +480,18 @@ $conn->close();
 
                 <!-- Basic Information -->
                 <div class="form-section">
-                    <h2 class="section-title">?? Basic Information</h2>
+                    <h2 class="section-title">Basic Information</h2>
                     <div class="form-group">
-                        <label for="title">Property Title *</label>
+                        <label for="title">Property Title</label>
                         <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($_POST['title'] ?? $property['title']); ?>" required>
                     </div>
                     <div class="form-group">
-                        <label for="description">Description *</label>
+                        <label for="description">Description</label>
                         <textarea id="description" name="description" rows="5" required><?php echo htmlspecialchars($_POST['description'] ?? $property['description']); ?></textarea>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="property_type">Property Type *</label>
+                            <label for="property_type">Property Type</label>
                             <?php $typeVal = $_POST['property_type'] ?? $property['property_type']; ?>
                             <select id="property_type" name="property_type" required>
                                 <option value="">Select type</option>
@@ -519,7 +503,7 @@ $conn->close();
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="price_per_night">Price per Night (?) *</label>
+                            <label for="price_per_night">Price per Night</label>
                             <input type="number" id="price_per_night" name="price_per_night" min="0" step="0.01" required
                                 value="<?php echo htmlspecialchars($_POST['price_per_night'] ?? $property['price_per_night']); ?>">
                         </div>
@@ -528,42 +512,38 @@ $conn->close();
 
                 <!-- Location -->
                 <div class="form-section">
-                    <h2 class="section-title">?? Location</h2>
+                    <h2 class="section-title">Location</h2>
                     <div class="form-group">
-                        <label for="address">Full Address *</label>
+                        <label for="address">Full Address</label>
                         <input type="text" id="address" name="address" required
                             value="<?php echo htmlspecialchars($_POST['address'] ?? $property['address']); ?>">
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="city">City *</label>
+                            <label for="city">City</label>
                             <input type="text" id="city" name="city" required
                                 value="<?php echo htmlspecialchars($_POST['city'] ?? $property['city']); ?>">
                         </div>
                         <div class="form-group">
-                            <label for="country">Country *</label>
+                            <label for="country">Country</label>
                             <input type="text" id="country" name="country" required
                                 value="<?php echo htmlspecialchars($_POST['country'] ?? $property['country']); ?>">
                         </div>
                     </div>
                     <div class="host-property-pin-map-wrap">
-                        <p class="section-description" style="margin-bottom:12px;">Drag the pin so it matches your entrance exactly. You can also tap the map or use your address as a starting point.</p>
                         <div class="host-property-pin-map-actions">
                             <button type="button" class="btn-map-geocode" id="hostPropertyPinGeocodeBtn">Place from address</button>
-                            <p class="host-property-pin-map-hint">Fine-tune after lookup by dragging the marker.</p>
                         </div>
-                        <p id="hostPropertyPinReverseStatus" class="host-property-pin-map-hint" style="margin: -2px 0 10px 0; opacity: 0; transition: opacity 0.2s ease;"></p>
                         <div id="hostPropertyPinMap" role="application" aria-label="Map to position property pin"></div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="latitude">Latitude (optional)</label>
+                            <label for="latitude">Latitude</label>
                             <input type="text" id="latitude" name="latitude" inputmode="decimal" autocomplete="off"
                                 value="<?php echo htmlspecialchars($_POST['latitude'] ?? ($property['latitude'] ?: '')); ?>">
-                            <small class="helper-text">Updates when you move the pin.</small>
                         </div>
                         <div class="form-group">
-                            <label for="longitude">Longitude (optional)</label>
+                            <label for="longitude">Longitude</label>
                             <input type="text" id="longitude" name="longitude" inputmode="decimal" autocomplete="off"
                                 value="<?php echo htmlspecialchars($_POST['longitude'] ?? ($property['longitude'] ?: '')); ?>">
                         </div>
@@ -572,20 +552,20 @@ $conn->close();
 
                 <!-- Property Details -->
                 <div class="form-section">
-                    <h2 class="section-title">??? Property Details</h2>
+                    <h2 class="section-title">Property Details</h2>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="max_guests">Maximum Guests *</label>
+                            <label for="max_guests">Maximum Guests</label>
                             <input type="number" id="max_guests" name="max_guests" min="1" required
                                 value="<?php echo htmlspecialchars($_POST['max_guests'] ?? $property['max_guests']); ?>">
                         </div>
                         <div class="form-group">
-                            <label for="bedrooms">Bedrooms *</label>
+                            <label for="bedrooms">Bedrooms</label>
                             <input type="number" id="bedrooms" name="bedrooms" min="1" required
                                 value="<?php echo htmlspecialchars($_POST['bedrooms'] ?? $property['bedrooms']); ?>">
                         </div>
                         <div class="form-group">
-                            <label for="bathrooms">Bathrooms *</label>
+                            <label for="bathrooms">Bathrooms</label>
                             <input type="number" id="bathrooms" name="bathrooms" min="1" required
                                 value="<?php echo htmlspecialchars($_POST['bathrooms'] ?? $property['bathrooms']); ?>">
                         </div>
@@ -594,23 +574,24 @@ $conn->close();
 
                 <!-- Amenities -->
                 <div class="form-section">
-                    <h2 class="section-title">? Amenities</h2>
-                    <p class="section-description">Update which amenities are available at your property</p>
+                    <h2 class="section-title">Amenities</h2>
                     <?php
                     $checkedIds = array_map('intval', $_POST['amenities'] ?? $currentAmenityIds);
                     foreach ($amenities as $category => $category_amenities): ?>
-                        <div class="amenities-category">
-                            <h3 class="category-title"><?php echo ucfirst($category); ?></h3>
-                            <div class="amenities-grid">
+                        <div class="ap-amenity-category">
+                            <h3 class="ap-category-title"><?php echo ucfirst($category); ?></h3>
+                            <div class="ap-amenity-grid">
                                 <?php foreach ($category_amenities as $a):
                                     $id = (int)$a['id'];
                                     $isChecked = in_array($id, $checkedIds, true);
                                 ?>
-                                <label class="amenity-checkbox">
+                                <label class="ap-amenity-item">
                                     <input type="checkbox" name="amenities[]" value="<?php echo $id; ?>" <?php echo $isChecked ? 'checked' : ''; ?>>
-                                    <span class="amenity-label">
-                                        <span class="amenity-icon"><?php echo $a['icon']; ?></span>
-                                        <span class="amenity-name"><?php echo htmlspecialchars($a['name']); ?></span>
+                                    <span class="ap-amenity-tile">
+                                        <span class="ap-amenity-check">
+                                            <span class="ap-amenity-check-icon"><i class="fa-solid fa-check"></i></span>
+                                        </span>
+                                        <span class="amenity-name" style="font-size: 15px; color: #F1F5F9; font-weight: 500; letter-spacing: 0.01em;"><?php echo htmlspecialchars($a['name']); ?></span>
                                     </span>
                                 </label>
                                 <?php endforeach; ?>
@@ -621,11 +602,10 @@ $conn->close();
 
                 <!-- Existing Photos -->
                 <div class="form-section">
-                    <h2 class="section-title">?? Existing Photos</h2>
+                    <h2 class="section-title">Existing Photos</h2>
                     <?php if (empty($photos)): ?>
                         <p style="color:#B8B8B8;">No photos yet. Upload some below.</p>
                     <?php else: ?>
-                        <p class="section-description">Choose a primary photo and optionally remove photos.</p>
                         <div style="display:flex; flex-wrap:wrap; gap:12px;">
                             <?php foreach ($photos as $p): 
                                 $thumb = $p['photo_url'];
@@ -653,12 +633,11 @@ $conn->close();
 
                 <!-- New Photos -->
                 <div class="form-section">
-                    <h2 class="section-title">? Add More Photos</h2>
+                    <h2 class="section-title">Add More Photos</h2>
                     <p class="section-description">Upload additional high-quality photos (no limit, JPG/PNG/WebP/AVIF up to 5MB each).</p>
 
                     <div class="photo-upload-container">
                         <div class="photo-upload-area" id="photoUploadArea">
-                            <div class="upload-icon">??</div>
                             <h3>Click to Upload Photos</h3>
                             <p>Or drag and drop images here</p>
                             <p class="upload-hint">Supported: JPG, PNG, WEBP, AVIF (Max 5MB each)</p>
@@ -666,7 +645,7 @@ $conn->close();
                         <input type="file" id="propertyPhotos" name="property_photos[]" multiple accept="image/*" style="display:none;">
                         <div style="text-align:center; margin-top:16px;">
                             <label for="propertyPhotos" style="display:inline-block; padding:12px 24px; background:linear-gradient(135deg,#D4A574,#B8935F); color:#0F0F0F; border-radius:8px; cursor:pointer; font-weight:600;">
-                                ?? Choose Files
+                                Choose Files
                             </label>
                         </div>
                         <div class="photo-preview-grid" id="photoPreviewGrid"></div>

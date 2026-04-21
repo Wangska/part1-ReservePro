@@ -72,11 +72,18 @@ $stats = [
     'total' => count($properties),
     'approved' => 0,
     'pending' => 0,
-    'rejected' => 0
+    'rejected' => 0,
+    'out_of_order' => 0,
+    'archived' => 0
 ];
 
 foreach ($properties as $property) {
-    $stats[$property['status']]++;
+    $status = $property['status'];
+    if (isset($stats[$status])) {
+        $stats[$status]++;
+    } else {
+        $stats[$status] = 1;
+    }
 }
 
 $conn->close();
@@ -435,16 +442,16 @@ $conn->close();
                                     </td>
                                     <td>
                                         <?php if (!empty($property['last_edited_at'])): ?>
-                                            <span style="display:inline-flex; align-items:center; gap:8px;">
-                                                <span class="mini-badge" style="background: rgba(245,158,11,0.18); color:#FDE68A; border:1px solid rgba(245,158,11,0.28); font-weight:900;">
-                                                    Edited
+                                            <span style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+                                                <span title="Last edited: <?php echo htmlspecialchars(date('F j, Y g:i A', strtotime($property['last_edited_at']))); ?>" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:8px;background:rgba(245,158,11,0.13);border:1px solid rgba(245,158,11,0.22);color:#F59E0B;font-weight:800;font-size:12px;line-height:1.1;">
+                                                    <span>Edited</span>
                                                 </span>
-                                                <span style="color:#94A3B8; font-weight:800; font-size:12px;">
-                                                    <?php echo date('M j, Y g:i A', strtotime($property['last_edited_at'])); ?>
+                                                <span style="color:#FBBF24;font-weight:700;font-size:12px;letter-spacing:0.01em;" title="<?php echo htmlspecialchars(date('F j, Y g:i A', strtotime($property['last_edited_at']))); ?>">
+                                                    <?php echo date('M j, Y', strtotime($property['last_edited_at'])); ?>
                                                 </span>
                                             </span>
                                         <?php else: ?>
-                                            <span style="color:#64748B; font-weight:800; font-size:12px;">—</span>
+                                            <span style="color:#64748B; font-weight:800; font-size:13px;opacity:0.7;">—</span>
                                         <?php endif; ?>
                                     </td>
                                     <td>

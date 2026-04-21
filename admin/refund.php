@@ -75,60 +75,183 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
     <link rel="stylesheet" href="../assets/css/admin.css?v=25.0">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
-        .wrap { max-width: 1100px; margin: 0 auto; padding: 24px; }
-        .hero {
-            background: linear-gradient(135deg, rgba(17, 24, 39, 0.96), rgba(30, 41, 59, 0.88));
-            border: 1px solid rgba(212, 165, 116, 0.22);
-            border-radius: 22px;
-            padding: 20px 22px;
-            margin-bottom: 14px;
-            display:flex; justify-content: space-between; align-items:flex-start; gap: 12px; flex-wrap:wrap;
-            box-shadow: 0 22px 50px rgba(0,0,0,0.22);
+        body.admin-page:not(.light-mode) { background: #06090F !important; }
+        body.admin-page::before, body.admin-page::after { display: none !important; }
+
+        /* ── Hero ── */
+        .vu-hero {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            background: linear-gradient(135deg, rgba(17,24,39,0.96), rgba(30,41,59,0.88));
+            border: 1px solid rgba(212,165,116,0.22);
+            border-radius: 24px;
+            padding: 28px 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 24px 48px rgba(0,0,0,0.28);
         }
-        .hero h1 { margin:0 0 6px; color:#fff !important; font-size: 20px; }
-        .hero p { margin:0; color:#CBD5E1 !important; }
-        .card { background: rgba(17,24,39,0.78); border: 1px solid rgba(148,163,184,0.16); border-radius: 18px; padding: 16px; }
-        .grid { display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-        @media (max-width: 980px) { .grid { grid-template-columns: 1fr; } }
-        .pill { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.10); border-radius: 14px; padding: 10px 12px; }
-        .pill small { display:block; color:#94A3B8 !important; font-weight: 900; font-size: 10px; letter-spacing:0.04em; text-transform: uppercase; margin-bottom: 6px; }
-        .pill strong { color:#F1F5F9 !important; font-size: 13px; }
-        .btn {
-            display:inline-flex; align-items:center; gap:8px;
-            padding: 10px 12px; border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.14);
-            background: rgba(255,255,255,0.06);
-            color:#E2E8F0; text-decoration:none; font-weight: 900; font-size: 13px;
-            cursor:pointer;
+        .vu-hero-left { display: flex; align-items: flex-start; gap: 20px; flex: 1; min-width: 0; }
+        .vu-eyebrow {
+            display: inline-flex; align-items: center; gap: 7px;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+            color: #D4A574; background: rgba(212,165,116,0.12); border: 1px solid rgba(212,165,116,0.22);
+            border-radius: 999px; padding: 5px 14px; margin-bottom: 10px;
         }
-        .btn-primary { background: linear-gradient(135deg, #D4A574, #B8935F); color:#0f172a; border-color: transparent; }
-        .btn-danger { border-color: rgba(239,68,68,0.28); color:#fecaca; }
+        .vu-hero h1 {
+            font-size: 26px; font-weight: 700; color: #F1F5F9 !important;
+            margin: 0 0 10px 0; line-height: 1.25;
+        }
+        .vu-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; }
+        .vu-meta-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #64748B !important; }
+        .vu-meta-item i { color: #64748B; font-size: 11px; }
+        .vu-hero-right { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; flex-shrink: 0; }
+        .btn-vu-back {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 10px 18px; border-radius: 999px; font-size: 13px; font-weight: 700;
+            text-decoration: none; border: 1px solid rgba(148,163,184,0.22);
+            background: rgba(255,255,255,0.05); color: #CBD5E1 !important;
+            transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+        }
+        .btn-vu-back:hover {
+            background: rgba(212,165,116,0.12); border-color: rgba(212,165,116,0.38);
+            color: #D4A574 !important; transform: translateY(-1px);
+        }
+
+        /* ── Status badges ── */
+        .vu-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+        .vu-badge-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+        .vu-badge-pending         { background: rgba(234,179,8,0.1);   color: #FDE047 !important; border: 1px solid rgba(234,179,8,0.2); }
+        .vu-badge-pending         .vu-badge-dot { background: #EAB308; }
+        .vu-badge-pending_review  { background: rgba(245,158,11,0.1);  color: #FCD34D !important; border: 1px solid rgba(245,158,11,0.2); }
+        .vu-badge-pending_review  .vu-badge-dot { background: #F59E0B; }
+        .vu-badge-approved        { background: rgba(34,197,94,0.1);   color: #86EFAC !important; border: 1px solid rgba(34,197,94,0.2); }
+        .vu-badge-approved        .vu-badge-dot { background: #22C55E; }
+        .vu-badge-rejected        { background: rgba(244,63,94,0.1);   color: #FDA4AF !important; border: 1px solid rgba(244,63,94,0.2); }
+        .vu-badge-rejected        .vu-badge-dot { background: #F43F5E; }
+        .vu-badge-processing      { background: rgba(59,130,246,0.1);  color: #93C5FD !important; border: 1px solid rgba(59,130,246,0.2); }
+        .vu-badge-processing      .vu-badge-dot { background: #3B82F6; }
+        .vu-badge-completed       { background: rgba(99,102,241,0.12); color: #C7D2FE !important; border: 1px solid rgba(99,102,241,0.2); }
+        .vu-badge-completed       .vu-badge-dot { background: #6366F1; }
+        .vu-badge-confirmed       { background: rgba(34,197,94,0.1);   color: #86EFAC !important; border: 1px solid rgba(34,197,94,0.2); }
+        .vu-badge-confirmed       .vu-badge-dot { background: #22C55E; }
+        .vu-badge-cancelled       { background: rgba(244,63,94,0.1);   color: #FDA4AF !important; border: 1px solid rgba(244,63,94,0.2); }
+        .vu-badge-cancelled       .vu-badge-dot { background: #F43F5E; }
+
+        /* ── Layout grid ── */
+        .vu-grid { display: grid; grid-template-columns: 320px 1fr; gap: 20px; align-items: start; }
+        @media (max-width: 900px) { .vu-grid { grid-template-columns: 1fr; } }
+
+        /* ── Card ── */
+        .vu-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(148,163,184,0.1); border-radius: 14px; padding: 18px 20px; margin-bottom: 14px; }
+        .vu-card:last-child { margin-bottom: 0; }
+        .vu-card-title {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+            color: #94A3B8 !important; margin-bottom: 14px;
+        }
+        .vu-card-title i { font-size: 12px; }
+
+        /* ── Chips ── */
+        .vu-chips { display: flex; flex-direction: column; }
+        .vu-chip { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(148,163,184,0.08); }
+        .vu-chip:last-child { border-bottom: none; }
+        .vu-chip-icon { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+        .vu-chip-icon i { color: #64748B; font-size: 12px; }
+        .vu-chip-body { flex: 1; min-width: 0; }
+        .vu-chip-label { font-size: 11px; color: #64748B !important; font-weight: 500; }
+        .vu-chip-value { font-size: 13px; color: #CBD5E1 !important; font-weight: 500; margin-top: 1px; }
+
+        /* ── Table ── */
+        .vu-table-wrap { overflow-x: auto; }
+        .vu-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .vu-table thead tr { border-bottom: 1px solid rgba(148,163,184,0.12); }
+        .vu-table th { padding: 8px 10px; text-align: left; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #64748B !important; }
+        .vu-table td { padding: 10px 10px; color: #CBD5E1 !important; border-bottom: 1px solid rgba(148,163,184,0.06); }
+        .vu-table tbody tr:last-child td { border-bottom: none; }
+        .vu-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
+
+        /* ── Form inputs ── */
+        .form-group { margin-bottom: 14px; }
+        .form-label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; color: #94A3B8 !important; }
         textarea, select, input[type="number"] {
-            width:100%;
-            padding: 12px 12px;
-            border-radius: 12px;
+            width: 100%; box-sizing: border-box;
+            padding: 10px 12px; border-radius: 10px;
             border: 1px solid rgba(148,163,184,0.18);
-            background: rgba(255,255,255,0.06);
-            color:#E2E8F0;
+            background: rgba(255,255,255,0.04);
+            color: #CBD5E1; font-size: 13px;
+            outline: none; transition: border-color 0.2s, background 0.2s;
         }
         textarea { min-height: 90px; resize: vertical; }
-        .thumbs { display:flex; gap:10px; flex-wrap:wrap; margin-top: 10px; }
-        .thumbs a { display:block; width: 120px; height: 90px; border-radius: 12px; overflow:hidden; border: 1px solid rgba(255,255,255,0.14); }
+        textarea:focus, select:focus, input[type="number"]:focus {
+            border-color: rgba(212,165,116,0.4);
+            background: rgba(255,255,255,0.06);
+        }
+        select option { background: #1E293B; color: #E2E8F0; }
+
+        /* ── Action buttons ── */
+        .btn-action {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%; padding: 11px 16px; border-radius: 10px;
+            font-size: 13px; font-weight: 700; cursor: pointer;
+            border: 1px solid rgba(148,163,184,0.22);
+            background: rgba(255,255,255,0.05); color: #CBD5E1 !important;
+            text-decoration: none; transition: background 0.18s, border-color 0.18s, transform 0.15s;
+            margin-bottom: 8px;
+        }
+        .btn-action:last-child { margin-bottom: 0; }
+        .btn-action:hover { background: rgba(255,255,255,0.09); transform: translateY(-1px); }
+        .btn-action-primary {
+            background: linear-gradient(135deg, #D4A574, #B8935F);
+            color: #0f172a !important; border-color: transparent;
+            box-shadow: 0 6px 16px rgba(212,165,116,0.25);
+        }
+        .btn-action-primary:hover { box-shadow: 0 8px 22px rgba(212,165,116,0.35); }
+        .btn-action-danger { border-color: rgba(239,68,68,0.28); color: #fca5a5 !important; }
+        .btn-action-danger:hover { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.4); }
+
+        /* ── Issue block ── */
+        .issue-block {
+            background: rgba(245,158,11,0.06);
+            border: 1px solid rgba(245,158,11,0.18);
+            border-radius: 10px; padding: 14px 16px; margin-top: 10px;
+        }
+        .issue-block-label { color: #FCD34D !important; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .issue-block-text  { color: #CBD5E1 !important; font-size: 12px; line-height: 1.6; }
+
+        /* ── Evidence thumbs ── */
+        .thumbs { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+        .thumbs a { display: block; width: 80px; height: 60px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); transition: transform 0.15s; }
+        .thumbs a:hover { transform: scale(1.05); }
         .thumbs img { width:100%; height:100%; object-fit: cover; display:block; }
-        .log { margin-top: 14px; }
-        .log table { width:100%; border-collapse: collapse; }
-        .log th, .log td { padding: 10px 10px; border-bottom: 1px solid rgba(148,163,184,0.12); font-size: 12px; vertical-align: top; }
-        .log th { text-align:left; color:#CBD5E1 !important; font-weight: 900; text-transform: uppercase; font-size: 11px; letter-spacing: 0.04em; }
-        .log td { color:#F1F5F9 !important; font-weight: 700; }
-        body.light-mode .card { background:#fff !important; border-color:#E2E8F0 !important; }
-        body.light-mode .pill { background:#F8FAFC !important; border-color:#E2E8F0 !important; }
-        body.light-mode .pill small { color:#475569 !important; }
-        body.light-mode .pill strong { color:#0f172a !important; }
-        body.light-mode textarea, body.light-mode select, body.light-mode input[type="number"] { background:#fff; color:#0f172a; border-color:#E2E8F0; }
-        body.light-mode .btn { background:#fff !important; color:#0f172a !important; border-color:#E2E8F0 !important; }
-        body.light-mode .btn-danger { color:#b91c1c !important; border-color: rgba(185,28,28,0.25) !important; }
-        body.light-mode .log th { color:#334155 !important; }
-        body.light-mode .log td { color:#0f172a !important; }
+
+        /* ── Empty state ── */
+        .vu-empty { color: #64748B !important; font-size: 13px; margin: 0; }
+
+        /* ── Light mode ── */
+        body.light-mode .vu-hero { background: #fff; border-color: rgba(15,23,42,.08); box-shadow: 0 16px 40px rgba(15,23,42,.1); }
+        body.light-mode .vu-hero h1 { color: #0F172A !important; }
+        body.light-mode .vu-eyebrow { background: rgba(184,147,95,.12); color: #8B6F47; border-color: rgba(184,147,95,.2); }
+        body.light-mode .btn-vu-back { background: rgba(15,23,42,.04) !important; color: #0F172A !important; border-color: rgba(15,23,42,.12) !important; }
+        body.light-mode .btn-vu-back:hover { background: rgba(212,165,116,.1) !important; color: #8B6F47 !important; }
+        body.light-mode .vu-meta-item { color: #64748B !important; }
+        body.light-mode .vu-card { background: #fff; border-color: rgba(15,23,42,.08); }
+        body.light-mode .vu-card-title { color: #475569 !important; }
+        body.light-mode .vu-chip { border-bottom-color: rgba(15,23,42,.06); }
+        body.light-mode .vu-chip-label { color: #64748B !important; }
+        body.light-mode .vu-chip-value { color: #0F172A !important; }
+        body.light-mode .vu-table th { color: #64748B !important; }
+        body.light-mode .vu-table td { color: #0F172A !important; border-bottom-color: rgba(15,23,42,.06); }
+        body.light-mode .vu-table tbody tr:hover td { background: rgba(15,23,42,.02); }
+        body.light-mode .form-label { color: #475569 !important; }
+        body.light-mode textarea, body.light-mode select, body.light-mode input[type="number"] { background: #F8FAFC; color: #0f172a; border-color: rgba(15,23,42,.14); }
+        body.light-mode textarea:focus, body.light-mode select:focus, body.light-mode input[type="number"]:focus { border-color: #D4A574; background: #fff; }
+        body.light-mode select option { background: #fff; color: #0f172a; }
+        body.light-mode .btn-action { background: #F8FAFC !important; color: #0f172a !important; border-color: rgba(15,23,42,.12) !important; }
+        body.light-mode .btn-action:hover { background: #F1F5F9 !important; }
+        body.light-mode .btn-action-danger { color: #b91c1c !important; border-color: rgba(185,28,28,.25) !important; }
+        body.light-mode .issue-block { background: rgba(245,158,11,.04); border-color: rgba(245,158,11,.2); }
+        body.light-mode .issue-block-text { color: #334155 !important; }
     </style>
 </head>
 <body class="dashboard-page admin-page admin-clean-page">
@@ -205,86 +328,190 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
     </aside>
 
     <main class="host-main">
-        <div class="wrap">
-            <div class="hero">
+
+        <!-- Hero -->
+        <div class="vu-hero">
+            <div class="vu-hero-left">
                 <div>
+                    <span class="vu-eyebrow"><i class="fa-solid fa-rotate-left"></i> Refund Request</span>
                     <h1>Refund #<?php echo (int)$r['id']; ?></h1>
-                    <p><?php echo h($r['request_type']); ?> · status: <strong><?php echo h($r['status']); ?></strong></p>
+                    <div class="vu-meta">
+                        <?php
+                            $sk = strtolower(str_replace(' ','_',(string)$r['status']));
+                            $sl = ucfirst(str_replace('_',' ',$r['status']));
+                        ?>
+                        <span class="vu-meta-item">
+                            <span class="vu-badge vu-badge-<?php echo h($sk); ?>">
+                                <span class="vu-badge-dot"></span><?php echo h($sl); ?>
+                            </span>
+                        </span>
+                        <span class="vu-meta-item"><i class="fa-solid fa-tag"></i><?php echo h($r['request_type']); ?></span>
+                        <span class="vu-meta-item"><i class="fa-solid fa-calendar"></i>Requested <?php echo date('M j, Y', strtotime($r['created_at'])); ?></span>
+                    </div>
                 </div>
-                <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                    <a class="btn" href="refunds.php"><i class="fa-solid fa-arrow-left"></i>Back</a>
-                    <a class="btn" href="../messages.php"><i class="fa-solid fa-envelope"></i>Open messages</a>
+            </div>
+            <div class="vu-hero-right">
+                <a href="refunds.php" class="btn-vu-back"><i class="fa-solid fa-arrow-left"></i> Back to Refunds</a>
+                <a href="../messages.php" class="btn-vu-back"><i class="fa-solid fa-envelope"></i> Messages</a>
+            </div>
+        </div>
+
+        <!-- Content grid -->
+        <div class="vu-grid">
+
+            <!-- Left column: Admin Action + Amounts -->
+            <div>
+                <div class="vu-card">
+                    <div class="vu-card-title"><i class="fa-solid fa-sliders"></i> Admin Action</div>
+                    <form method="post" action="refund-action.php">
+                        <input type="hidden" name="refund_request_id" value="<?php echo (int)$r['id']; ?>">
+                        <div class="form-group">
+                            <label class="form-label">Action <span style="color:#f87171;">*</span></label>
+                            <select name="action" required>
+                                <option value="">Select an action</option>
+                                <option value="approve">Approve</option>
+                                <option value="reject">Reject</option>
+                                <option value="processing">Mark as Processing</option>
+                                <option value="completed">Mark as Completed</option>
+                                <option value="override">Override Percent</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Override Percent <span style="color:#64748B; font-weight:400;">(override only)</span></label>
+                            <input type="number" name="override_percent" min="0" max="100" step="1" placeholder="e.g. 50">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Admin Note</label>
+                            <textarea name="note" maxlength="1000" placeholder="Explain your decision…"></textarea>
+                        </div>
+                        <button type="submit" class="btn-action btn-action-primary">
+                            <i class="fa-solid fa-check"></i> Save Decision
+                        </button>
+                        <a class="btn-action btn-action-danger" href="../messages.php">
+                            <i class="fa-solid fa-envelope"></i> Contact Host / Guest
+                        </a>
+                    </form>
+                </div>
+
+                <div class="vu-card">
+                    <div class="vu-card-title"><i class="fa-solid fa-peso-sign"></i> Amounts</div>
+                    <div class="vu-chips">
+                        <div class="vu-chip">
+                            <div class="vu-chip-icon"><i class="fa-solid fa-receipt"></i></div>
+                            <div class="vu-chip-body">
+                                <div class="vu-chip-label">Booking Total</div>
+                                <div class="vu-chip-value">₱<?php echo number_format((float)$r['total_price'], 2); ?></div>
+                            </div>
+                        </div>
+                        <div class="vu-chip">
+                            <div class="vu-chip-icon"><i class="fa-solid fa-percent"></i></div>
+                            <div class="vu-chip-body">
+                                <div class="vu-chip-label">Suggested Refund</div>
+                                <div class="vu-chip-value"><?php echo (int)$r['refund_percent']; ?>% — ₱<?php echo number_format((float)$r['refund_amount'], 2); ?></div>
+                            </div>
+                        </div>
+                        <div class="vu-chip">
+                            <div class="vu-chip-icon"><i class="fa-solid fa-gavel"></i></div>
+                            <div class="vu-chip-body">
+                                <div class="vu-chip-label">Host Decision</div>
+                                <div class="vu-chip-value"><?php echo !empty($r['host_decision']) ? h($r['host_decision']) . ($r['host_decision_percent'] !== null ? ' (' . (int)$r['host_decision_percent'] . '%)' : '') : '—'; ?></div>
+                            </div>
+                        </div>
+                        <div class="vu-chip">
+                            <div class="vu-chip-icon"><i class="fa-solid fa-file-contract"></i></div>
+                            <div class="vu-chip-body">
+                                <div class="vu-chip-label">Cancellation Policy</div>
+                                <div class="vu-chip-value"><?php echo !empty($r['cancellation_policy']) ? h($r['cancellation_policy']) : '—'; ?></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="card">
-                <div class="grid">
-                    <div class="pill"><small>Guest</small><strong><?php echo h(trim(($r['guest_first_name'] ?? '') . ' ' . ($r['guest_last_name'] ?? ''))); ?></strong></div>
-                    <div class="pill"><small>Host</small><strong><?php echo h(trim(($r['host_first_name'] ?? '') . ' ' . ($r['host_last_name'] ?? ''))); ?></strong></div>
-                    <div class="pill"><small>Property</small><strong><?php echo h($r['property_title'] ?? ''); ?></strong></div>
-                    <div class="pill"><small>Stay</small><strong><?php echo h((string)$r['check_in']); ?> → <?php echo h((string)$r['check_out']); ?></strong></div>
-                    <div class="pill"><small>Total</small><strong>₱<?php echo number_format((float)$r['total_price'], 2); ?></strong></div>
-                    <div class="pill"><small>Current refund</small><strong><?php echo (int)$r['refund_percent']; ?>% · ₱<?php echo number_format((float)$r['refund_amount'], 2); ?></strong></div>
-                    <div class="pill"><small>Host decision</small><strong><?php echo h($r['host_decision']); ?><?php echo $r['host_decision_percent'] !== null ? (' · ' . (int)$r['host_decision_percent'] . '%') : ''; ?></strong></div>
-                    <div class="pill"><small>Policy</small><strong><?php echo h($r['policy'] ?? ''); ?></strong></div>
-                    <div class="pill"><small>Processing time</small><strong>5–15 business days</strong></div>
-                </div>
-
-                <?php if (!empty($r['issue_type'])): ?>
-                    <div style="margin-top: 12px;" class="pill">
-                        <small>Issue</small>
-                        <strong><?php echo h($r['issue_type']); ?></strong>
-                        <div style="margin-top:8px; color:#CBD5E1; font-weight:700; line-height:1.55;"><?php echo nl2br(h($r['description'] ?? '')); ?></div>
-                        <?php if (!empty($evidence)): ?>
-                            <div class="thumbs">
-                                <?php foreach ($evidence as $p): ?>
-                                    <a href="../<?php echo h(ltrim((string)$p, '/')); ?>" target="_blank" rel="noopener">
-                                        <img src="../<?php echo h(ltrim((string)$p, '/')); ?>" alt="Evidence">
-                                    </a>
-                                <?php endforeach; ?>
+            <!-- Right column: Details + Log -->
+            <div>
+                <div class="vu-card">
+                    <div class="vu-card-title"><i class="fa-solid fa-circle-info"></i> Refund Details</div>
+                    <div class="vu-chips">
+                        <div class="vu-chip">
+                            <div class="vu-chip-icon"><i class="fa-solid fa-user"></i></div>
+                            <div class="vu-chip-body">
+                                <div class="vu-chip-label">Guest</div>
+                                <div class="vu-chip-value"><?php echo h(trim(($r['guest_first_name'] ?? '') . ' ' . ($r['guest_last_name'] ?? ''))); ?> — <span style="font-size:11px;color:#64748B;"><?php echo h($r['guest_email'] ?? ''); ?></span></div>
                             </div>
+                        </div>
+                        <div class="vu-chip">
+                            <div class="vu-chip-icon"><i class="fa-solid fa-house-user"></i></div>
+                            <div class="vu-chip-body">
+                                <div class="vu-chip-label">Host</div>
+                                <div class="vu-chip-value"><?php echo h(trim(($r['host_first_name'] ?? '') . ' ' . ($r['host_last_name'] ?? ''))); ?> — <span style="font-size:11px;color:#64748B;"><?php echo h($r['host_email'] ?? ''); ?></span></div>
+                            </div>
+                        </div>
+                        <div class="vu-chip">
+                            <div class="vu-chip-icon"><i class="fa-solid fa-building"></i></div>
+                            <div class="vu-chip-body">
+                                <div class="vu-chip-label">Property</div>
+                                <div class="vu-chip-value"><?php echo h($r['property_title'] ?? ''); ?> <span style="font-size:11px;color:#64748B;"><?php echo h(($r['city'] ?? '') . ', ' . ($r['country'] ?? '')); ?></span></div>
+                            </div>
+                        </div>
+                        <div class="vu-chip">
+                            <div class="vu-chip-icon"><i class="fa-solid fa-calendar-days"></i></div>
+                            <div class="vu-chip-body">
+                                <div class="vu-chip-label">Stay Dates</div>
+                                <div class="vu-chip-value"><?php echo h((string)$r['check_in']); ?> → <?php echo h((string)$r['check_out']); ?></div>
+                            </div>
+                        </div>
+                        <div class="vu-chip">
+                            <div class="vu-chip-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                            <div class="vu-chip-body">
+                                <div class="vu-chip-label">Booking Date</div>
+                                <div class="vu-chip-value"><?php echo h((string)($r['booking_date'] ?? '')); ?></div>
+                            </div>
+                        </div>
+                        <div class="vu-chip">
+                            <div class="vu-chip-icon"><i class="fa-solid fa-calendar-xmark"></i></div>
+                            <div class="vu-chip-body">
+                                <div class="vu-chip-label">Booking Status</div>
+                                <div class="vu-chip-value">
+                                    <span class="vu-badge vu-badge-<?php echo strtolower($r['booking_status'] ?? ''); ?>">
+                                        <span class="vu-badge-dot"></span>
+                                        <?php echo ucfirst($r['booking_status'] ?? ''); ?>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <?php if (!empty($r['issue_type'])): ?>
+                    <div class="issue-block">
+                        <div class="issue-block-label"><i class="fa-solid fa-triangle-exclamation"></i> Issue — <?php echo h($r['issue_type']); ?></div>
+                        <div class="issue-block-text"><?php echo nl2br(h($r['description'] ?? '')); ?></div>
+                        <?php if (!empty($evidence)): ?>
+                        <div class="thumbs">
+                            <?php foreach ($evidence as $ep): ?>
+                                <a href="../<?php echo h(ltrim((string)$ep, '/')); ?>" target="_blank" rel="noopener">
+                                    <img src="../<?php echo h(ltrim((string)$ep, '/')); ?>" alt="Evidence photo">
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
                         <?php endif; ?>
                     </div>
-                <?php endif; ?>
+                    <?php endif; ?>
+                </div>
 
-                <form method="post" action="refund-action.php" style="margin-top: 14px;">
-                    <input type="hidden" name="refund_request_id" value="<?php echo (int)$r['id']; ?>">
-
-                    <label style="display:block; margin-top: 10px; margin-bottom: 6px; font-weight:900; color:#CBD5E1;">Action *</label>
-                    <select name="action" required>
-                        <option value="">Select</option>
-                        <option value="approve">Approve</option>
-                        <option value="reject">Reject</option>
-                        <option value="processing">Mark as processing</option>
-                        <option value="completed">Mark as completed</option>
-                        <option value="override">Override percent</option>
-                    </select>
-
-                    <label style="display:block; margin-top: 10px; margin-bottom: 6px; font-weight:900; color:#CBD5E1;">Override percent (only if override)</label>
-                    <input type="number" name="override_percent" min="0" max="100" step="1" placeholder="e.g. 50">
-
-                    <label style="display:block; margin-top: 10px; margin-bottom: 6px; font-weight:900; color:#CBD5E1;">Note (required for override)</label>
-                    <textarea name="note" maxlength="1000" placeholder="Explain decision / override"></textarea>
-
-                    <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap; margin-top: 12px;">
-                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i>Save</button>
-                        <a class="btn btn-danger" href="../messages.php"><i class="fa-solid fa-envelope"></i>Ask host/guest</a>
-                    </div>
-                </form>
-
-                <div class="log">
-                    <div class="pill">
-                        <small>Refund log</small>
-                        <strong><?php echo count($logs); ?> entries</strong>
-                    </div>
-                    <div style="overflow-x:auto; margin-top:10px;">
-                        <table>
+                <div class="vu-card">
+                    <div class="vu-card-title"><i class="fa-solid fa-clock-rotate-left"></i> Activity Log (<?php echo count($logs); ?>)</div>
+                    <?php if (empty($logs)): ?>
+                        <p class="vu-empty">No activity logged yet.</p>
+                    <?php else: ?>
+                    <div class="vu-table-wrap">
+                        <table class="vu-table">
                             <thead>
                                 <tr>
                                     <th>When</th>
                                     <th>Actor</th>
                                     <th>Action</th>
-                                    <th>Status</th>
+                                    <th>Status Change</th>
                                     <th>Note</th>
                                 </tr>
                             </thead>
@@ -292,7 +519,7 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
                                 <?php foreach ($logs as $l): ?>
                                 <tr>
                                     <td><?php echo h($l['created_at']); ?></td>
-                                    <td><?php echo h(($l['actor_role'] ?? '') . ' #' . ($l['actor_user_id'] ?? '')); ?></td>
+                                    <td><?php echo h(ucfirst($l['actor_role'] ?? '') . ' #' . ($l['actor_user_id'] ?? '')); ?></td>
                                     <td><?php echo h($l['action']); ?></td>
                                     <td><?php echo h(($l['from_status'] ?? '—') . ' → ' . ($l['to_status'] ?? '—')); ?></td>
                                     <td><?php echo h($l['note'] ?? ''); ?></td>
@@ -301,13 +528,16 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
                             </tbody>
                         </table>
                     </div>
+                    <?php endif; ?>
                 </div>
-            </div>
-        </div>
+            </div><!-- end right column -->
+
+        </div><!-- end vu-grid -->
     </main>
 </div>
 
 <script src="../assets/js/theme-toggle.js?v=26.0"></script>
+<script src="../assets/js/admin-view-site-confirm.js?v=1.0"></script>
 </body>
 </html>
 

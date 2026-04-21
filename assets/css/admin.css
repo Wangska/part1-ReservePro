@@ -1,3 +1,6 @@
+.admin-refunds-page .admin-surface-header {
+    border-bottom: none !important;
+}
 /* Center Host Verifications heading for host-verifications.php */
 body.admin-verifications-page .admin-page-hero-content h1 {
     margin-top: 32px;
@@ -75,17 +78,18 @@ body.admin-verifications-page .admin-page-hero-content h1 {
 
 .review-price {
     text-align: right;
+    color: #fff;
 }
 
 .review-price strong {
     display: block;
     font-size: 24px;
-    color: #D4A574;
+    color: #fff;
 }
 
 .review-price span {
     font-size: 14px;
-    color: #B8B8B8;
+    color: #fff;
 }
 
 .review-description {
@@ -109,37 +113,51 @@ body.admin-verifications-page .admin-page-hero-content h1 {
 }
 
 .btn-approve {
-    padding: 10px 24px;
-    background: linear-gradient(135deg, #10B981, #059669);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 20px;
+    background: rgba(16, 185, 129, 0.08);
+    color: #6EE7B7;
+    border: 1px solid rgba(16, 185, 129, 0.36);
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.02em;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .btn-approve:hover {
+    background: linear-gradient(135deg, #10B981, #059669);
+    border-color: transparent;
+    color: #FFFFFF;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    box-shadow: 0 10px 22px rgba(16, 185, 129, 0.28);
 }
 
 .btn-reject {
-    padding: 10px 24px;
-    background: linear-gradient(135deg, #EF4444, #DC2626);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 20px;
+    background: rgba(239, 68, 68, 0.08);
+    color: #FCA5A5;
+    border: 1px solid rgba(239, 68, 68, 0.36);
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.02em;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .btn-reject:hover {
+    background: linear-gradient(135deg, #EF4444, #DC2626);
+    border-color: transparent;
+    color: #FFFFFF;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    box-shadow: 0 10px 22px rgba(239, 68, 68, 0.28);
 }
 
 .btn-view {
@@ -345,8 +363,6 @@ body.admin-verifications-page .admin-page-hero-content h1 {
     font-weight: 800;
     line-height: 1.1;
     color: #FFFFFF !important;
-    background: none !important;
-    -webkit-text-fill-color: currentColor !important;
 }
 
 .admin-metric-note,
@@ -795,20 +811,23 @@ body.light-mode.admin-clean-page .admin-metric-icon.is-gold {
     border-collapse: collapse;
 }
 
-.admin-properties-page .table-header {
+.admin-properties-page .table-header,
+.admin-refunds-page .table-header {
     flex-direction: row;
     align-items: flex-end;
     gap: 16px;
 }
 
-.admin-properties-page .filter-tabs {
+.admin-properties-page .filter-tabs,
+.admin-refunds-page .filter-tabs {
     display: flex;
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
 }
 
-.admin-properties-page .filter-tab {
+.admin-properties-page .filter-tab,
+.admin-refunds-page .filter-tab {
     appearance: none;
     border: 1px solid rgba(148, 163, 184, 0.16);
     background: rgba(255, 255, 255, 0.04);
@@ -823,20 +842,23 @@ body.light-mode.admin-clean-page .admin-metric-icon.is-gold {
     transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.admin-properties-page .filter-tab:hover {
+.admin-properties-page .filter-tab:hover,
+.admin-refunds-page .filter-tab:hover {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(212, 165, 116, 0.38);
     color: #FFFFFF;
     transform: translateY(-1px);
 }
 
-.admin-properties-page .filter-tab:focus-visible {
+.admin-properties-page .filter-tab:focus-visible,
+.admin-refunds-page .filter-tab:focus-visible {
     outline: none;
     border-color: rgba(212, 165, 116, 0.6);
     box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.16);
 }
 
-.admin-properties-page .filter-tab.active {
+.admin-properties-page .filter-tab.active,
+.admin-refunds-page .filter-tab.active {
     background: linear-gradient(135deg, #D4A574, #B8935F);
     color: #0F0F0F;
     border-color: transparent;
@@ -917,19 +939,22 @@ body.light-mode.admin-properties-page .properties-table thead {
     background: #F8FAFC;
 }
 
-body.light-mode.admin-properties-page .filter-tab {
+body.light-mode.admin-properties-page .filter-tab,
+body.light-mode.admin-refunds-page .filter-tab {
     background: #FFFFFF;
     color: #334155;
     border-color: rgba(15, 23, 42, 0.1);
 }
 
-body.light-mode.admin-properties-page .filter-tab:hover {
+body.light-mode.admin-properties-page .filter-tab:hover,
+body.light-mode.admin-refunds-page .filter-tab:hover {
     background: #F8FAFC;
     color: #0F172A;
     border-color: rgba(184, 147, 95, 0.38);
 }
 
-body.light-mode.admin-properties-page .filter-tab.active {
+body.light-mode.admin-properties-page .filter-tab.active,
+body.light-mode.admin-refunds-page .filter-tab.active {
     color: #FFFFFF;
     background: linear-gradient(135deg, #B8935F, #8B6F47);
     box-shadow: 0 10px 24px rgba(139, 111, 71, 0.2);

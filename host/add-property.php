@@ -142,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             if (empty($errors)) {
                 $success = true;
-                header('Location: dashboard.php?success=property_added');
+                header('Location: properties.php?success=property_added');
                 exit();
             }
         } else {
@@ -165,12 +165,9 @@ $conn->close();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.3">
     <link rel="stylesheet" href="../assets/css/add-property.css?v=17.5">
-<<<<<<< HEAD
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.6">
-=======
     <link rel="stylesheet" href="../assets/css/admin.css?v=25.4">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
->>>>>>> ad87513098603380b3b373b63b23603737d70897
 </head>
 <body class="dashboard-page admin-page admin-clean-page host-clean-page host-form-page">
     <div class="host-layout">
@@ -425,16 +422,8 @@ $conn->close();
                         <div class="ap-wizard-panel">
 
                             <div class="ap-section">
-<<<<<<< HEAD
                                 <h2 class="ap-section-title">Property Photos</h2>
-=======
-                                <h2 class="ap-section-title"><i class="fa-solid fa-images"></i> Property Photos</h2>
-<<<<<<< HEAD
-                                <p class="ap-section-desc">Upload as many high-quality photos as you want. The first photo becomes your primary listing image.</p>
-=======
->>>>>>> 2aa9d6ced00cde11bd6eaf1dd0241c0b317a5f20
                                 <!-- ap-section-desc removed -->
->>>>>>> ad87513098603380b3b373b63b23603737d70897
 
                                 <div class="ap-photo-drop" id="photoUploadArea">
                                     <div class="ap-photo-drop-icon">

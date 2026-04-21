@@ -55,6 +55,29 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.4">
     <link rel="stylesheet" href="../assets/css/admin.css?v=25.4">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
+    <style>
+        .host-action-btn.is-info {
+            padding: 8px 14px !important;
+            background: transparent !important;
+            color: #D4A574 !important;
+            border: none !important;
+            border-radius: 10px !important;
+            font-weight: 600 !important;
+            font-size: 13px !important;
+            text-decoration: none !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            cursor: pointer !important;
+            transition: background 0.2s !important, color 0.2s !important, box-shadow 0.2s !important;
+            white-space: nowrap !important;
+            box-shadow: none !important;
+        }
+        .host-action-btn.is-info:hover {
+            background: linear-gradient(135deg, #D4A574, #B8935F) !important;
+            color: #0F0F0F !important;
+            box-shadow: 0 8px 20px rgba(212,165,116,0.22) !important;
+        }
+    </style>
 </head>
 <body class="dashboard-page admin-page admin-clean-page host-clean-page host-bookings-page">
     <div class="host-layout">

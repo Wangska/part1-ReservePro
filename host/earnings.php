@@ -299,56 +299,6 @@ $conn->close();
             border: 1px solid rgba(239, 68, 68, 0.3);
         }
 
-        .status-labels {
-            margin-top: 32px;
-            padding: 24px;
-            background: #1F1F1F;
-            border-radius: 12px;
-            border: 1px solid #3A3A3A;
-        }
-
-        .status-labels h3 {
-            font-size: 16px;
-            margin-bottom: 16px;
-            color: #FFFFFF !important;
-        }
-
-        .status-labels ul {
-            list-style: none;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 24px;
-        }
-
-        .status-labels li {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #B8B8B8;
-        }
-
-        .status-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-
-        .dot-completed {
-            background: #22C55E;
-        }
-
-        .dot-pending {
-            background: #FBBF24;
-        }
-
-        .dot-cancelled {
-            background: #EF4444;
-        }
-
-        .dot-confirmed {
-            background: #3B82F6;
-        }
-
         .empty-earnings {
             text-align: center;
             padding: 80px 20px;
@@ -521,26 +471,7 @@ $conn->close();
                 <?php endif; ?>
             </div>
 
-            <!-- Status Labels -->
-            <?php if (!empty($bookings)): ?>
-            <div class="status-labels">
-                <h3>Status Labels</h3>
-                <ul>
-                    <li>
-                        <span class="status-dot dot-completed"></span>
-                        Confirmed (paid)
-                    </li>
-                    <li>
-                        <span class="status-dot dot-pending"></span>
-                        Pending
-                    </li>
-                    <li>
-                        <span class="status-dot dot-cancelled"></span>
-                        Cancelled (₱0)
-                    </li>
-                </ul>
-            </div>
-            <?php endif; ?>
+            <!-- Status Labels removed -->
         </main>
     </div>
 

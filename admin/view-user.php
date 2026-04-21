@@ -332,7 +332,7 @@ function bool_label($value) {
                         <?php echo strtoupper(substr($viewUser['first_name'], 0, 1) . substr($viewUser['last_name'], 0, 1)); ?>
                     </div>
                     <div>
-                        <div class="vu-eyebrow"><i class="fa-solid fa-user"></i> User Profile</div>
+                        <!-- vu-eyebrow removed -->
                         <h1><?php echo htmlspecialchars($viewUser['first_name'] . ' ' . $viewUser['last_name']); ?></h1>
                         <span class="vu-role vu-role-<?php echo $viewUser['role']; ?>">
                             <span class="vu-role-dot"></span>
@@ -431,19 +431,19 @@ function bool_label($value) {
                                 <p class="vu-empty">No properties listed yet.</p>
                             <?php else: ?>
                                 <table class="vu-table">
-                                    <thead><tr><th>Property</th><th>Location</th><th>Status</th><th>Price/night</th></tr></thead>
+                                    <thead><tr><th>Property</th><th>Location</th><th>Price/night</th><th>Status</th></tr></thead>
                                     <tbody>
                                         <?php foreach ($properties as $p): ?>
                                         <tr>
                                             <td><?php echo htmlspecialchars($p['title']); ?></td>
                                             <td><?php echo htmlspecialchars($p['city'] . ', ' . $p['country']); ?></td>
+                                            <td>₱<?php echo number_format($p['price_per_night'], 0); ?></td>
                                             <td>
                                                 <span class="vu-badge vu-badge-<?php echo $p['status']; ?>">
                                                     <span class="vu-badge-dot"></span>
                                                     <?php echo ucfirst($p['status']); ?>
                                                 </span>
                                             </td>
-                                            <td>₱<?php echo number_format($p['price_per_night'], 0); ?></td>
                                         </tr>
                                         <?php endforeach; ?>
                                     </tbody>

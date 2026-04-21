@@ -1,3 +1,20 @@
+/* Force readable dropdowns for refund issue page */
+.ri-select,
+.ri-select-large,
+.ri-select option,
+.ri-select-large option {
+    background: #fff !important;
+    color: #1F2937 !important;
+    border: 1.5px solid #D1D5DB !important;
+}
+body.dark-mode .ri-select,
+body.dark-mode .ri-select-large,
+body.dark-mode .ri-select option,
+body.dark-mode .ri-select-large option {
+    background: #181C23 !important;
+    color: #F3F4F6 !important;
+    border-color: #374151 !important;
+}
 /* ReservePro Authentication System */
 
 * {

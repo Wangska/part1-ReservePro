@@ -756,7 +756,7 @@ body.light-mode .status-badge {
 
 body.light-mode .status-pending {
     background: rgba(251, 191, 36, 0.15) !important;
-    color: #B45309 !important;
+    color: #fff !important;
 }
 
 body.light-mode .status-approved {
@@ -1336,17 +1336,41 @@ body.light-mode .amenity-label input:checked + span {
 
 /* Buttons */
 body.light-mode .btn-save,
-body.light-mode .btn-approve,
 body.light-mode .btn-success {
     background: linear-gradient(135deg, #22C55E, #16A34A) !important;
     color: #FFFFFF !important;
 }
 
+body.light-mode .btn-approve {
+    background: rgba(16, 185, 129, 0.10) !important;
+    border: 1px solid rgba(16, 185, 129, 0.4) !important;
+    color: #065F46 !important;
+}
+
+body.light-mode .btn-approve:hover {
+    background: linear-gradient(135deg, #10B981, #059669) !important;
+    border-color: transparent !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 10px 22px rgba(16, 185, 129, 0.28) !important;
+}
+
 body.light-mode .btn-cancel,
-body.light-mode .btn-reject,
 body.light-mode .btn-danger {
     background: linear-gradient(135deg, #EF4444, #DC2626) !important;
     color: #FFFFFF !important;
+}
+
+body.light-mode .btn-reject {
+    background: rgba(239, 68, 68, 0.10) !important;
+    border: 1px solid rgba(239, 68, 68, 0.4) !important;
+    color: #991B1B !important;
+}
+
+body.light-mode .btn-reject:hover {
+    background: linear-gradient(135deg, #EF4444, #DC2626) !important;
+    border-color: transparent !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 10px 22px rgba(239, 68, 68, 0.28) !important;
 }
 
 body.light-mode .btn-edit,

@@ -217,12 +217,7 @@ $conn->close();
             font-size: 14px;
         }
 
-        .admin-dashboard-page .badge-pending {
-            padding: 8px 12px;
-            border-radius: 999px;
-            background: rgba(245, 158, 11, 0.16);
-            color: #FBBF24 !important;
-        }
+
 
         .admin-dashboard-page .empty-state {
             padding: 52px 36px;
@@ -327,8 +322,9 @@ $conn->close();
         .admin-dashboard-page .btn-reject,
         .admin-dashboard-page .btn-view {
             min-height: 38px;
-            padding: 8px 14px;
+            padding: 9px 20px;
             border-radius: 10px;
+            font-size: 13px;
         }
 
         body.light-mode.admin-dashboard-page .host-main {
@@ -577,7 +573,7 @@ $conn->close();
                 <div>
                     <h2>Pending Property Reviews</h2>
                 </div>
-                <span class="badge badge-pending"><?php echo count($pending_properties); ?> pending</span>
+
             </div>
 
             <?php if (empty($pending_properties)): ?>
@@ -608,11 +604,10 @@ $conn->close();
                                     <div>
                                         <h3><?php echo htmlspecialchars($property['title']); ?></h3>
                                         <p class="review-host">Hosted by <?php echo htmlspecialchars($property['first_name'] . ' ' . $property['last_name']); ?></p>
-                                        <p class="review-location"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><?php echo htmlspecialchars($property['city'] . ', ' . $property['country']); ?></p>
+                                        <p class="review-location"><?php echo htmlspecialchars($property['city'] . ', ' . $property['country']); ?></p>
                                     </div>
                                     <div class="review-price">
                                         <strong>₱<?php echo number_format($property['price_per_night'], 2); ?></strong>
-                                        <span>/night</span>
                                     </div>
                                 </div>
                                 

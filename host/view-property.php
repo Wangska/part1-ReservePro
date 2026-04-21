@@ -74,28 +74,125 @@ $needsApproval = isset($_GET['needs_approval']) && $_GET['needs_approval'] === '
     <link rel="stylesheet" href="../assets/css/admin.css?v=25.4">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
-        .view-property-page { max-width: 900px; margin: 0 auto; padding: 24px; }
-        .view-property-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }
-        .view-property-header h1 { font-size: 24px; margin: 0 0 8px 0; color: #fff !important; }
-        .view-property-header .actions { display: flex; gap: 10px; flex-wrap: wrap; }
-        .btn-view-back { padding: 10px 18px; background: #3B82F6; color: #fff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px; }
-        .btn-view-back:hover { background: #2563EB; }
-        .btn-edit-link { padding: 10px 18px; background: #6366F1; color: #fff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px; }
-        .btn-edit-link:hover { background: #4F46E5; }
-        .view-gallery { border-radius: 12px; overflow: hidden; margin-bottom: 24px; background: #1F1F1F; }
-        .view-gallery img { width: 100%; max-height: 400px; object-fit: cover; display: block; }
-        .view-section { background: var(--bg-secondary, #1A1A1A); border: 1px solid var(--border-color, #3A3A3A); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
-        .view-section h2 { font-size: 16px; margin: 0 0 12px 0; color: #D4A574 !important; }
-        .view-section p, .view-section .detail-row { color: #E0E0E0 !important; margin: 0 0 8px 0; }
-        .detail-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
-        .detail-grid span { padding: 8px 12px; background: #2C2C2C; border-radius: 8px; font-size: 14px; color: #E0E0E0; }
-        .amenities-list { display: flex; flex-wrap: wrap; gap: 8px; }
-        .amenities-list span { padding: 6px 12px; background: #2C2C2C; border-radius: 6px; font-size: 13px; color: #E0E0E0; }
-        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }
-        .status-approved { background: rgba(34, 197, 94, 0.2); color: #86efac; }
-        .status-pending { background: rgba(234, 179, 8, 0.2); color: #fde047; }
-        .status-rejected { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
-        .status-out_of_order { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+        /* ── Page layout ── */
+        .view-property-page { max-width: 1280px; margin: 0 auto; padding: 28px 32px; }
+
+        /* ── Hero header ── */
+        .vp-hero {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            flex-wrap: wrap; gap: 16px; margin-bottom: 28px;
+        }
+        .vp-hero h1 {
+            font-size: 26px; font-weight: 800; margin: 0 0 6px;
+            color: #F1F5F9 !important; letter-spacing: -0.02em; line-height: 1.2;
+        }
+        .vp-hero .vp-location {
+            font-size: 13px; color: #94a3b8; display: flex; align-items: center; gap: 5px;
+        }
+        .vp-hero .vp-actions {
+            display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-left: auto;
+        }
+
+        /* ── Status badge ── */
+        .status-badge { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+        .status-pending  { background: rgba(234,179,8,0.15);  color: #fde047; border: 1px solid rgba(234,179,8,0.3); }
+        .status-rejected { background: rgba(239,68,68,0.15);  color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+        .status-out_of_order { background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+
+        /* ── Back button ── */
+        .vp-btn-back {
+            padding: 9px 16px;
+            background: linear-gradient(135deg, #D4A574, #B8935F);
+            color: #0F0F0F;
+            border: none; border-radius: 10px;
+            font-weight: 700; font-size: 13px;
+            text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .vp-btn-back:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(212,165,116,0.25); }
+
+        /* ── Gallery ── */
+        .view-gallery {
+            border-radius: 18px; overflow: hidden; margin-bottom: 22px;
+            background: #1a1a1a;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+        }
+        .view-gallery img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            object-fit: unset;
+        }
+
+        /* ── Sections ── */
+        .view-section {
+            background: var(--bg-secondary, #161616);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px;
+            padding: 22px 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+        }
+        .view-section h2 {
+            font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+            margin: 0 0 16px; color: #D4A574 !important;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .view-section h2::before {
+            display: none !important;
+        }
+        .view-section p, .view-section .detail-row { color: #C0C0C0 !important; margin: 0 0 8px; line-height: 1.7; }
+
+        /* ── Detail grid cards ── */
+        .host-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+        }
+        .host-detail-card {
+            display: flex; flex-direction: column; gap: 4px;
+            padding: 14px 16px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+        }
+        .host-detail-label { font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; }
+        .host-detail-value { font-size: 15px; font-weight: 700; color: #F1F5F9; }
+
+        /* ── Amenity pills (matches modal.css design) ── */
+        .vp-amenities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 0;
+            column-gap: 24px;
+        }
+        .amenity-pill {
+            display: flex; align-items: center; gap: 10px;
+            padding: 9px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            background: transparent;
+        }
+        .amenity-pill:last-child { border-bottom: none; }
+        .amenity-pill-icon {
+            width: 20px; height: 20px;
+            display: flex; align-items: center; justify-content: center;
+            color: #D4A574; flex-shrink: 0; font-size: 15px;
+        }
+        .amenity-pill-label { font-size: 14px; color: #C0C0C0; font-weight: 400; }
+
+        /* ── Light mode overrides ── */
+        body.light-mode .view-section { background: #fff; border-color: rgba(0,0,0,0.07); box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+        body.light-mode .view-section p, body.light-mode .view-section .detail-row { color: #374151 !important; }
+        body.light-mode .vp-hero h1 { color: #0f172a !important; }
+        body.light-mode .vp-hero .vp-location { color: #64748b; }
+        body.light-mode .host-detail-card { background: #f8fafc; border-color: rgba(0,0,0,0.08); }
+        body.light-mode .host-detail-value { color: #0f172a; }
+        body.light-mode .amenity-pill { border-bottom-color: rgba(0,0,0,0.08); }
+        body.light-mode .amenity-pill-label { color: #374151; }
+        body.light-mode .amenity-pill-icon { color: #B8935F; }
+        body.light-mode .status-pending  { background: rgba(234,179,8,0.1);  color: #a16207; border-color: rgba(234,179,8,0.25); }
+        body.light-mode .status-rejected, body.light-mode .status-out_of_order { background: rgba(239,68,68,0.1); color: #dc2626; border-color: rgba(239,68,68,0.25); }
 
         .rp-approval-banner {
             border-radius: 16px;
@@ -165,13 +262,13 @@ $needsApproval = isset($_GET['needs_approval']) && $_GET['needs_approval'] === '
                 </a>
             </div>
             <nav class="sidebar-nav">
-                <a href="dashboard.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span><span>Dashboard</span></a>
                 <a href="properties.php" class="nav-item active"><span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span><span>My Properties</span></a>
                 <a href="add-property.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-plus" aria-hidden="true"></i></span><span>Add Property</span></a>
                 <a href="bookings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></span><span>Bookings</span></a>
+                <a href="refund-requests.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></span><span>Refund Requests</span></a>
                 <a href="earnings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span><span>Earnings</span></a>
                 <a href="messages.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span><span>Messages</span></a>
-                <a href="../home.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span><span>View Site</span></a>
+                <a href="../home.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span><span>Home</span></a>
             </nav>
             <div class="sidebar-footer">
                 <div class="user-profile">
@@ -180,10 +277,6 @@ $needsApproval = isset($_GET['needs_approval']) && $_GET['needs_approval'] === '
                         <div class="user-name"><?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?></div>
                         <div class="user-role">Host</div>
                     </div>
-                </div>
-                <div class="theme-toggle">
-                    <span class="theme-toggle-icon">☀️</span>
-                    <span class="theme-toggle-text">Light</span>
                 </div>
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
@@ -208,16 +301,13 @@ $needsApproval = isset($_GET['needs_approval']) && $_GET['needs_approval'] === '
                     </div>
                 <?php endif; ?>
 
-                <div class="view-property-header host-page-hero">
-                    <div class="host-page-hero-content">
-                        <span class="host-page-eyebrow">Property Overview</span>
+                <div class="vp-hero">
+                    <div>
                         <h1><?php echo htmlspecialchars($property['title']); ?></h1>
-                        <p class="subtitle"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> <?php echo htmlspecialchars($property['city'] . ', ' . $property['country']); ?></p>
+                        <p class="vp-location"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> <?php echo htmlspecialchars($property['city'] . ', ' . $property['country']); ?></p>
                     </div>
-                    <div class="actions" style="display: flex; align-items: center; gap: 12px; flex-wrap:wrap; margin-left:auto;">
-                        <span class="status-badge status-<?php echo $property['status']; ?>"><?php echo ucfirst(str_replace('_', ' ', $property['status'])); ?></span>
-                        <a href="properties.php" class="host-action-btn is-info">Back to list</a>
-                        <a href="edit-property.php?id=<?php echo (int)$property['id']; ?>" class="host-action-btn is-primary">Edit</a>
+                    <div class="vp-actions">
+                        <a href="properties.php" class="vp-btn-back">Back to list</a>
                     </div>
                 </div>
 
@@ -236,7 +326,7 @@ $needsApproval = isset($_GET['needs_approval']) && $_GET['needs_approval'] === '
                 </div>
                 <?php if (!empty($photos) && count($photos) > 1): ?>
                     <div class="view-section" style="margin-top: 12px;">
-                        <h2>Photo gallery</h2>
+                        <h2 style="color: #fff !important;">Photo gallery</h2>
                         <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;">
                             <?php foreach ($photos as $idx => $p): 
                                 $thumb = $p['photo_url'];
@@ -254,33 +344,35 @@ $needsApproval = isset($_GET['needs_approval']) && $_GET['needs_approval'] === '
                 <?php endif; ?>
 
                 <div class="view-section host-detail-shell">
-                    <h2>Description</h2>
+                    <h2 style="color: #fff !important;">Description</h2>
                     <p style="white-space: pre-wrap;"><?php echo nl2br(htmlspecialchars($property['description'])); ?></p>
                 </div>
 
                 <div class="view-section host-detail-shell">
-                    <h2>Details</h2>
+                    <h2 style="color: #fff !important;">Details</h2>
                     <div class="host-detail-grid">
                         <div class="host-detail-card"><span class="host-detail-label">Property Type</span><span class="host-detail-value"><?php echo htmlspecialchars(ucfirst($property['property_type'])); ?></span></div>
                         <div class="host-detail-card"><span class="host-detail-label">Bedrooms</span><span class="host-detail-value"><?php echo (int)$property['bedrooms']; ?> beds</span></div>
                         <div class="host-detail-card"><span class="host-detail-label">Bathrooms</span><span class="host-detail-value"><?php echo (int)$property['bathrooms']; ?> baths</span></div>
                         <div class="host-detail-card"><span class="host-detail-label">Guests</span><span class="host-detail-value"><?php echo (int)$property['max_guests']; ?> guests</span></div>
-                        <div class="host-detail-card"><span class="host-detail-label">Nightly Rate</span><span class="host-detail-value">₱<?php echo number_format($property['price_per_night'], 0); ?>/night</span></div>
+                        <div class="host-detail-card"><span class="host-detail-label">Nightly Rate</span><span class="host-detail-value">₱<?php echo number_format($property['price_per_night'], 0); ?></span></div>
                     </div>
                 </div>
 
                 <div class="view-section host-detail-shell">
-                    <h2>Address</h2>
+                    <h2 style="color: #fff !important;">Address</h2>
                     <p><?php echo nl2br(htmlspecialchars($property['address'])); ?></p>
                     <p><?php echo htmlspecialchars($property['city'] . ', ' . $property['country']); ?></p>
                 </div>
 
                 <?php if (!empty($property['amenities'])): ?>
                 <div class="view-section host-detail-shell">
-                    <h2>Amenities</h2>
-                    <div class="amenities-list">
+                    <h2 style="color: #fff !important;">Amenities</h2>
+                    <div class="vp-amenities-grid">
                         <?php foreach ($property['amenities'] as $a): ?>
-                        <span><?php echo $a['icon'] ? $a['icon'] . ' ' : ''; ?><?php echo htmlspecialchars($a['name']); ?></span>
+                        <div class="amenity-pill">
+                            <div class="amenity-pill-label"><?php echo htmlspecialchars($a['name']); ?></div>
+                        </div>
                         <?php endforeach; ?>
                     </div>
                 </div>

@@ -56,24 +56,7 @@ $stmt->execute();
 $property['amenities'] = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 
-// Latest edit log (what changed, when)
-$latestEdit = null;
-$stmt = $conn->prepare("SELECT id, host_id, changes_json, created_at FROM property_edit_logs WHERE property_id = ? ORDER BY id DESC LIMIT 1");
-if ($stmt) {
-    $stmt->bind_param("i", $property_id);
-    $stmt->execute();
-    $latestEdit = $stmt->get_result()->fetch_assoc();
-    $stmt->close();
-}
-$conn->close();
 
-$editChanges = [];
-if ($latestEdit && !empty($latestEdit['changes_json'])) {
-    $decoded = json_decode((string)$latestEdit['changes_json'], true);
-    if (is_array($decoded) && isset($decoded['changes']) && is_array($decoded['changes'])) {
-        $editChanges = $decoded['changes'];
-    }
-}
 function amenityIconSvg(string $name): string {
     $n = strtolower(trim($name));
     $icons = [
@@ -115,94 +98,28 @@ function amenityIconSvg(string $name): string {
     <link rel="stylesheet" href="../assets/css/style.css?v=14.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.3">
-    <link rel="stylesheet" href="../assets/css/admin.css?v=14.0">
-    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=26.0">
+    <link rel="stylesheet" href="../assets/css/admin.css?v=25.4">
+    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
-        body.admin-page:not(.light-mode) {
-            background: #06090F !important;
-        }
-        body.admin-page::before,
-        body.admin-page::after {
-            display: none !important;
-        }
+        /* ── Page layout ── */
+        .view-property-page { max-width: 1280px; margin: 0 auto; padding: 28px 32px; }
 
-        /* ── Hero ── */
+        /* ── Hero header ── */
         .vp-hero {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 20px;
-            background: linear-gradient(135deg, rgba(17,24,39,0.96), rgba(30,41,59,0.88));
-            border: 1px solid rgba(212,165,116,0.22);
-            border-radius: 24px;
-            padding: 28px 30px;
-            margin-bottom: 24px;
-            box-shadow: 0 24px 48px rgba(0,0,0,0.28);
-        }
-        .vp-hero-left { flex: 1; min-width: 0; }
-        .vp-eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: #D4A574;
-            background: rgba(212,165,116,0.12);
-            border: 1px solid rgba(212,165,116,0.22);
-            border-radius: 999px;
-            padding: 5px 14px;
-            margin-bottom: 14px;
+            display: flex; justify-content: space-between; align-items: flex-start;
+            flex-wrap: wrap; gap: 16px; margin-bottom: 28px;
         }
         .vp-hero h1 {
-            font-size: 26px;
-            font-weight: 700;
-            color: #F1F5F9 !important;
-            margin: 0 0 10px 0;
-            line-height: 1.25;
+            font-size: 26px; font-weight: 800; margin: 0 0 6px;
+            color: #F1F5F9 !important; letter-spacing: -0.02em; line-height: 1.2;
+            .vp-status.status-approved  { background: rgba(34,197,94,0.1)   !important; color: #86EFAC !important; border-color: rgba(34,197,94,0.22); }
+            .vp-status.status-pending   { background: rgba(234,179,8,0.1)   !important; color: #FDE047 !important; border-color: rgba(234,179,8,0.22); }
+            .vp-status.status-rejected  { background: rgba(244,63,94,0.1)   !important; color: #FDA4AF !important; border-color: rgba(244,63,94,0.22); }
+            font-weight: 700; font-size: 13px;
+            text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-        .vp-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 8px;
-        }
-        .vp-meta-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 12px;
-            color: #64748B !important;
-        }
-        .vp-meta-item i { color: #64748B; font-size: 11px; }
-        .vp-hero-right {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 12px;
-            flex-shrink: 0;
-        }
-        .btn-vp-back {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            padding: 10px 18px;
-            border-radius: 999px;
-            font-size: 13px;
-            font-weight: 700;
-            text-decoration: none;
-            border: 1px solid rgba(148,163,184,0.22);
-            background: rgba(255,255,255,0.05);
-            color: #CBD5E1 !important;
-            transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
-        }
-        .btn-vp-back:hover {
-            background: rgba(212,165,116,0.12);
-            border-color: rgba(212,165,116,0.38);
-            color: #D4A574 !important;
-            transform: translateY(-1px);
-        }
+        .vp-btn-back:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(212,165,116,0.25); }
 
         /* ── Status badges ── */
         .vp-status {
@@ -227,150 +144,91 @@ function amenityIconSvg(string $name): string {
         .vp-status.status-pending   .vp-status-dot { background: #EAB308 !important; }
         .vp-status.status-rejected  { background: rgba(244,63,94,0.1)   !important; color: #FDA4AF !important; border-color: rgba(244,63,94,0.22); }
         .vp-status.status-rejected  .vp-status-dot { background: #F43F5E !important; }
-        .vp-status.status-out_of_order { background: rgba(148,163,184,0.1) !important; color: #94A3B8 !important; border-color: rgba(148,163,184,0.22); }
-        .vp-status.status-out_of_order .vp-status-dot { background: #94A3B8 !important; }
+
+        /* ── Sections ── */
+        .view-section {
+            background: var(--bg-secondary, #161616);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px;
+            padding: 22px 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+        }
+        .view-section h2 {
+            font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+            margin: 0 0 16px; color: #fff !important;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .view-section h2::before { display: none !important; }
+        .view-section p, .view-section .detail-row { color: #C0C0C0 !important; margin: 0 0 8px; line-height: 1.7; }
+
+        /* ── Detail grid cards ── */
+        .host-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+        }
+        .host-detail-card {
+            display: flex; flex-direction: column; gap: 4px;
+            padding: 14px 16px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+        }
+        .host-detail-label { font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; }
+        .host-detail-value { font-size: 15px; font-weight: 700; color: #F1F5F9; }
 
         /* ── Gallery ── */
-        .vp-gallery { margin-bottom: 24px; border-radius: 22px; overflow: hidden; border: 1px solid rgba(148,163,184,0.12); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
-        .vp-gallery-main { position: relative; background: #0A0F1A; }
-        .vp-gallery-main {
-            aspect-ratio: 16 / 7;
-            overflow: hidden;
+        .view-gallery {
+            border-radius: 18px; overflow: hidden; margin-bottom: 22px;
+            background: #1a1a1a;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.35);
         }
-        .vp-gallery-main img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            object-position: center;
+        .view-gallery img {
+            max-width: 100%;
+            height: auto;
             display: block;
-            background: #0A0F1A;
-        }
-        .vp-thumbs {
-            display: flex;
-            gap: 8px;
-            padding: 12px 16px;
-            background: rgba(17,24,39,0.96);
-            overflow-x: auto;
-        }
-        .vp-thumbs::-webkit-scrollbar { height: 4px; }
-        .vp-thumbs::-webkit-scrollbar-track { background: transparent; }
-        .vp-thumbs::-webkit-scrollbar-thumb { background: rgba(212,165,116,0.3); border-radius: 99px; }
-        .vp-thumb {
-            flex: 0 0 auto;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 2px solid transparent;
-            cursor: pointer;
-            transition: border-color 0.2s, transform 0.2s;
-        }
-        .vp-thumb:hover { transform: translateY(-2px); border-color: rgba(212,165,116,0.5); }
-        .vp-thumb.active { border-color: #D4A574; }
-        .vp-thumb img { width: 100px; height: 68px; object-fit: cover; display: block; }
-
-        /* ── Content grid ── */
-        .vp-grid {
-            display: grid;
-            grid-template-columns: 1fr 340px;
-            gap: 20px;
-            align-items: start;
-        }
-        @media (max-width: 900px) { .vp-grid { grid-template-columns: 1fr; } }
-
-        /* ── Cards ── */
-        .vp-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(148,163,184,0.1);
-            border-radius: 14px;
-            padding: 18px 20px;
-            margin-bottom: 14px;
-        }
-        .vp-card:last-child { margin-bottom: 0; }
-        .vp-card-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            color: #94A3B8 !important;
-            margin-bottom: 14px;
-        }
-        .vp-card-title i { font-size: 12px; }
-        .vp-description {
-            font-size: 14px;
-            line-height: 1.75;
-            color: #CBD5E1 !important;
-            white-space: pre-wrap;
+            margin: 0 auto;
+            object-fit: unset;
         }
 
-        /* ── Detail chips ── */
-        .vp-chips {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-        .vp-chip {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 12px;
-            background: transparent;
-            border-bottom: 1px solid rgba(148,163,184,0.08);
-        }
-        .vp-chip-icon {
-            width: 18px; height: 18px;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-        }
-        .vp-chip-icon i { color: #64748B; font-size: 12px; }
-        .vp-chip-label { font-size: 11px; color: #64748B !important; font-weight: 500; }
-        .vp-chip-value { font-size: 13px; color: #CBD5E1 !important; font-weight: 500; margin-top: 1px; }
-
-        /* ── Price highlight ── */
-        .vp-price-card { border-color: rgba(148,163,184,0.1); }
-        .vp-price-big {
-            font-size: 22px;
-            font-weight: 700;
-            color: #E2E8F0 !important;
-            line-height: 1;
-        }
-        .vp-price-sub { font-size: 12px; color: #64748B !important; margin-top: 4px; }
-
-        /* ── Amenities ── */
-        .vp-amenities {
+        /* ── Amenity pills ── */
+        .vp-amenities-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 0;
+            column-gap: 24px;
         }
-        .vp-amenity {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(148,163,184,0.1);
-            font-size: 14px;
-            color: #CBD5E1 !important;
-            font-weight: 400;
+        .amenity-pill {
+            display: flex; align-items: center; gap: 10px;
+            padding: 9px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            background: transparent;
         }
-        .vp-amenity:nth-last-child(-n+2) { border-bottom: none; }
-        .vp-amenity-icon {
-            width: 20px; height: 20px;
-            display: flex; align-items: center; justify-content: center;
-            color: #D4A574;
-            flex-shrink: 0;
-        }
+        .amenity-pill:last-child { border-bottom: none; }
+        .amenity-pill-label { font-size: 14px; color: #C0C0C0; font-weight: 400; }
 
-        /* ── Address ── */
-        .vp-address-line {
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            color: #94A3B8 !important;
-            font-size: 13px;
-            line-height: 1.6;
+        /* ── Light mode ── */
+        body.light-mode .vp-hero {
+            background: #ffffff;
+            border-color: rgba(212,165,116,0.2);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
         }
-        .vp-address-line i { color: #64748B; margin-top: 3px; flex-shrink: 0; font-size: 12px; }
+        body.light-mode .vp-hero h1 { color: #0f172a !important; }
+        body.light-mode .vp-eyebrow { color: #92400e; background: rgba(184,147,95,0.1); border-color: rgba(184,147,95,0.2); }
+        body.light-mode .vp-meta-item { color: #64748b !important; }
+        body.light-mode .vp-meta-item i { color: #94a3b8; }
+        body.light-mode .vp-btn-back { background: linear-gradient(135deg, #B8935F, #D4A574); color: #0F0F0F; }
+        body.light-mode .vp-btn-back:hover { box-shadow: 0 6px 18px rgba(184,147,95,0.3); }
+        body.light-mode .view-section { background: #fff; border-color: rgba(0,0,0,0.07); box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+        body.light-mode .view-section h2 { color: #fff !important; }
+        body.light-mode .view-section p, body.light-mode .view-section .detail-row { color: #374151 !important; }
+        body.light-mode .host-detail-card { background: #f8fafc; border-color: rgba(0,0,0,0.08); }
+        body.light-mode .host-detail-value { color: #0f172a; }
+        body.light-mode .host-detail-label { color: #64748b; }
+        body.light-mode .amenity-pill { border-bottom-color: rgba(0,0,0,0.08); }
+        body.light-mode .amenity-pill-label { color: #374151; }
+        body.light-mode .view-gallery { background: #e2e8f0; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body class="dashboard-page admin-page admin-clean-page admin-view-property-page">
@@ -447,69 +305,29 @@ function amenityIconSvg(string $name): string {
         </aside>
 
         <main class="host-main">
+            <div class="view-property-page">
 
-            <!-- Hero -->
-            <div class="vp-hero">
-                <div class="vp-hero-left">
-                    <div class="vp-eyebrow">
-                        <i class="fa-solid fa-house"></i>
-                        Property Detail
+                <div class="vp-hero">
+                    <div>
+                        <h1><?php echo htmlspecialchars($property['title']); ?></h1>
+                        <p class="vp-location"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> <?php echo htmlspecialchars($property['city'] . ', ' . $property['country']); ?></p>
                     </div>
-                    <h1><?php echo htmlspecialchars($property['title']); ?></h1>
-                    <span class="vp-status status-<?php echo $property['status']; ?>">
-                        <span class="vp-status-dot"></span>
-                        <?php echo ucfirst(str_replace('_', ' ', $property['status'])); ?>
-                    </span>
-                    <div class="vp-meta">
-                        <span class="vp-meta-item"><i class="fa-solid fa-location-dot"></i><?php echo htmlspecialchars($property['city'] . ', ' . $property['country']); ?></span>
-                        <span class="vp-meta-item"><i class="fa-solid fa-user-tie"></i><?php echo htmlspecialchars($property['first_name'] . ' ' . $property['last_name']); ?></span>
-                        <span class="vp-meta-item"><i class="fa-solid fa-envelope"></i><?php echo htmlspecialchars($property['email']); ?></span>
+                    <div class="vp-actions">
+                        <a href="properties.php" class="vp-btn-back">Back to Properties</a>
                     </div>
                 </div>
-                <div class="vp-hero-right">
-                    <a href="properties.php" class="btn-vp-back"><i class="fa-solid fa-arrow-left"></i> Back to Properties</a>
-                </div>
-            </div>
 
-            <?php if (!empty($latestEdit)): ?>
-                <div class="vp-card" style="border-color: rgba(245,158,11,0.28);">
-                    <div class="vp-card-title">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                        Edited listing
-                    </div>
-                    <p class="vp-description" style="margin:0 0 10px 0;">
-                        Edited at <strong><?php echo date('M j, Y g:i A', strtotime($latestEdit['created_at'])); ?></strong>.
-                    </p>
-                    <?php if (!empty($editChanges)): ?>
-                        <ul style="margin: 0; padding-left: 18px; color: #CBD5E1;">
-                            <?php foreach ($editChanges as $c): ?>
-                                <li style="margin: 6px 0;">
-                                    <strong style="color:#FDE68A;"><?php echo htmlspecialchars($c['label'] ?? ($c['field'] ?? 'Change')); ?>:</strong>
-                                    <?php if (isset($c['from']) || isset($c['to'])): ?>
-                                        <span style="color:#CBD5E1;"><?php echo htmlspecialchars((string)($c['from'] ?? '')); ?></span>
-                                        <span style="opacity:0.7;">→</span>
-                                        <span style="color:#FFFFFF; font-weight:700;"><?php echo htmlspecialchars((string)($c['to'] ?? '')); ?></span>
-                                    <?php elseif (isset($c['added']) || isset($c['removed'])): ?>
-                                        <?php if (!empty($c['added'])): ?>
-                                            <span style="color:#FFFFFF; font-weight:700;">Added:</span> <?php echo htmlspecialchars(implode(', ', (array)$c['added'])); ?>
-                                        <?php endif; ?>
-                                        <?php if (!empty($c['removed'])): ?>
-                                            <span style="color:#CBD5E1; font-weight:700; margin-left:8px;">Removed:</span> <?php echo htmlspecialchars(implode(', ', (array)$c['removed'])); ?>
-                                        <?php endif; ?>
-                                    <?php elseif (isset($c['count'])): ?>
-                                        <span style="color:#FFFFFF; font-weight:700;"><?php echo (int)$c['count']; ?></span>
-                                    <?php else: ?>
-                                        <span style="color:#FFFFFF; font-weight:700;">Updated</span>
-                                    <?php endif; ?>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
-                    <?php endif; ?>
-                </div>
-            <?php endif; ?>
 
-            <?php
-            $photos = $property['photos'];
+
+                <!-- Host Info (admin-only) -->
+                <div class="view-section">
+                    <h2><i class="fa-solid fa-user-tie"></i> Host</h2>
+                    <div style="font-size:15px; color:#F1F5F9; font-weight:600; margin-bottom:4px;"><?php echo htmlspecialchars($property['first_name'] . ' ' . $property['last_name']); ?></div>
+                    <div style="font-size:13px; color:#94a3b8;"><?php echo htmlspecialchars($property['email']); ?></div>
+                </div>
+
+                <?php
+                $photos = $property['photos'];
             $main_photo = !empty($photos) ? $photos[0]['photo_url'] : ($property['primary_photo'] ?? null);
             if ($main_photo && strpos($main_photo, 'http') !== 0) {
                 $main_photo = '../' . ltrim($main_photo, '/');
@@ -519,112 +337,70 @@ function amenityIconSvg(string $name): string {
             }
             ?>
 
-            <!-- Gallery -->
-            <div class="vp-gallery">
-                <div class="vp-gallery-main">
+                <!-- Gallery -->
+                <div class="view-gallery">
                     <img id="admin-main-photo" src="<?php echo htmlspecialchars($main_photo); ?>" alt="<?php echo htmlspecialchars($property['title']); ?>" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800'">
                 </div>
                 <?php if (!empty($photos) && count($photos) > 1): ?>
-                <div class="vp-thumbs">
-                    <?php foreach ($photos as $idx => $p):
-                        $thumb = $p['photo_url'];
-                        if ($thumb && strpos($thumb, 'http') !== 0) $thumb = '../' . ltrim($thumb, '/');
-                    ?>
-                    <div class="vp-thumb <?php echo $idx === 0 ? 'active' : ''; ?>"
-                         onclick="setMainPhoto(this, '<?php echo htmlspecialchars($thumb, ENT_QUOTES); ?>')">
-                        <img src="<?php echo htmlspecialchars($thumb); ?>" alt="Photo <?php echo $idx + 1; ?>">
-                    </div>
-                    <?php endforeach; ?>
-                </div>
-                <?php endif; ?>
-            </div>
-
-            <!-- Content Grid -->
-            <div class="vp-grid">
-                <!-- Left column -->
-                <div>
-                    <!-- Description -->
-                    <div class="vp-card">
-                        <div class="vp-card-title"><i class="fa-solid fa-align-left"></i> Description</div>
-                        <p class="vp-description"><?php echo nl2br(htmlspecialchars($property['description'])); ?></p>
-                    </div>
-
-                    <!-- Address -->
-                    <div class="vp-card">
-                        <div class="vp-card-title"><i class="fa-solid fa-map-pin"></i> Address</div>
-                        <div class="vp-address-line">
-                            <i class="fa-solid fa-location-dot"></i>
-                            <span><?php echo nl2br(htmlspecialchars($property['address'])); ?><br><?php echo htmlspecialchars($property['city'] . ', ' . $property['country']); ?></span>
-                        </div>
-                    </div>
-
-                    <!-- Amenities -->
-                    <?php if (!empty($property['amenities'])): ?>
-                    <div class="vp-card">
-                        <div class="vp-card-title"><i class="fa-solid fa-star"></i> Amenities</div>
-                        <div class="vp-amenities">
-                            <?php foreach ($property['amenities'] as $a): ?>
-                            <span class="vp-amenity">
-                                <span class="vp-amenity-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><?php echo amenityIconSvg($a['name']); ?></svg>
-                                </span>
-                                <?php echo htmlspecialchars($a['name']); ?>
-                            </span>
+                    <div class="view-section" style="margin-top: 12px; margin-bottom: 18px;">
+                        <h2 style="color: #fff !important;">Photo gallery</h2>
+                        <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;">
+                            <?php foreach ($photos as $idx => $p):
+                                $thumb = $p['photo_url'];
+                                if ($thumb && strpos($thumb, 'http') !== 0) $thumb = '../' . ltrim($thumb, '/');
+                            ?>
+                                <div style="flex: 0 0 auto; border-radius: 8px; overflow: hidden; border: 2px solid <?php echo $idx === 0 ? '#D4A574' : 'transparent'; ?>; cursor: pointer;"
+                                     onclick="document.getElementById('admin-main-photo').src='<?php echo htmlspecialchars($thumb, ENT_QUOTES); ?>';">
+                                    <img src="<?php echo htmlspecialchars($thumb); ?>" alt="Photo <?php echo $idx + 1; ?>" style="width: 120px; height: 80px; object-fit: cover;">
+                                </div>
                             <?php endforeach; ?>
                         </div>
                     </div>
-                    <?php endif; ?>
+                <?php endif; ?>
+
+                <!-- Description -->
+                <div class="view-section host-detail-shell">
+                    <h2>Description</h2>
+                    <p style="white-space: pre-wrap;"><?php echo nl2br(htmlspecialchars($property['description'])); ?></p>
                 </div>
 
-                <!-- Right column -->
-                <div>
-                    <!-- Price -->
-                    <div class="vp-card vp-price-card">
-                        <div class="vp-card-title"><i class="fa-solid fa-tag"></i> Pricing</div>
-                        <div class="vp-price-big">₱<?php echo number_format($property['price_per_night'], 0); ?></div>
-                        <div class="vp-price-sub">per night</div>
+                <!-- Details -->
+                <div class="view-section host-detail-shell">
+                    <h2>Details</h2>
+                    <div class="host-detail-grid">
+                        <div class="host-detail-card"><span class="host-detail-label">Property Type</span><span class="host-detail-value"><?php echo htmlspecialchars(ucfirst($property['property_type'])); ?></span></div>
+                        <div class="host-detail-card"><span class="host-detail-label">Bedrooms</span><span class="host-detail-value"><?php echo (int)$property['bedrooms']; ?> beds</span></div>
+                        <div class="host-detail-card"><span class="host-detail-label">Bathrooms</span><span class="host-detail-value"><?php echo (int)$property['bathrooms']; ?> baths</span></div>
+                        <div class="host-detail-card"><span class="host-detail-label">Guests</span><span class="host-detail-value"><?php echo (int)$property['max_guests']; ?> guests</span></div>
+                        <div class="host-detail-card"><span class="host-detail-label">Nightly Rate</span><span class="host-detail-value">₱<?php echo number_format($property['price_per_night'], 0); ?></span></div>
                     </div>
+                </div>
 
-                    <!-- Details -->
-                    <div class="vp-card">
-                        <div class="vp-card-title"><i class="fa-solid fa-circle-info"></i> Details</div>
-                        <div class="vp-chips">
-                            <div class="vp-chip">
-                                <div class="vp-chip-icon"><i class="fa-solid fa-building"></i></div>
-                                <div>
-                                    <div class="vp-chip-label">Type</div>
-                                    <div class="vp-chip-value"><?php echo htmlspecialchars(ucfirst($property['property_type'])); ?></div>
-                                </div>
-                            </div>
-                            <div class="vp-chip">
-                                <div class="vp-chip-icon"><i class="fa-solid fa-bed"></i></div>
-                                <div>
-                                    <div class="vp-chip-label">Bedrooms</div>
-                                    <div class="vp-chip-value"><?php echo (int)$property['bedrooms']; ?></div>
-                                </div>
-                            </div>
-                            <div class="vp-chip">
-                                <div class="vp-chip-icon"><i class="fa-solid fa-shower"></i></div>
-                                <div>
-                                    <div class="vp-chip-label">Bathrooms</div>
-                                    <div class="vp-chip-value"><?php echo (int)$property['bathrooms']; ?></div>
-                                </div>
-                            </div>
-                            <div class="vp-chip">
-                                <div class="vp-chip-icon"><i class="fa-solid fa-users"></i></div>
-                                <div>
-                                    <div class="vp-chip-label">Max Guests</div>
-                                    <div class="vp-chip-value"><?php echo (int)$property['max_guests']; ?></div>
-                                </div>
-                            </div>
+                <!-- Address -->
+                <div class="view-section host-detail-shell">
+                    <h2>Address</h2>
+                    <p><?php echo nl2br(htmlspecialchars($property['address'])); ?></p>
+                    <p><?php echo htmlspecialchars($property['city'] . ', ' . $property['country']); ?></p>
+                </div>
+
+                <!-- Amenities -->
+                <?php if (!empty($property['amenities'])): ?>
+                <div class="view-section host-detail-shell">
+                    <h2>Amenities</h2>
+                    <div class="vp-amenities-grid">
+                        <?php foreach ($property['amenities'] as $a): ?>
+                        <div class="amenity-pill">
+                            <div class="amenity-pill-label"><?php echo htmlspecialchars($a['name']); ?></div>
                         </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
-            </div>
+                <?php endif; ?>
 
+            </div><!-- /.view-property-page -->
         </main>
     </div>
-    <script src="../assets/js/theme-toggle.js?v=26.0"></script>
+    <script src="../assets/js/theme-toggle.js?v=27.5"></script>
     <script src="../assets/js/admin-view-site-confirm.js?v=1.0"></script>
     <script>
         function setMainPhoto(el, src) {

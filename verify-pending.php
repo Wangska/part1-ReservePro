@@ -117,11 +117,6 @@ if (isLoggedIn()) {
     </style>
 </head>
 <body>
-    <div class="theme-toggle theme-toggle-home-static" style="position: fixed; top: 16px; right: 16px; z-index: 1000;">
-        <span class="theme-toggle-icon">☀️</span>
-        <span class="theme-toggle-text">Light</span>
-    </div>
-
     <div class="verify-wrapper">
         <div class="verify-card">
             <div class="verify-header">
@@ -130,7 +125,6 @@ if (isLoggedIn()) {
                 </div>
                 <div class="verify-brand">
                     <div class="verify-brand-title">ReservePro</div>
-                    <div class="verify-brand-sub">Stay reservations made simple</div>
                 </div>
             </div>
             <div class="verify-title">Check your email</div>

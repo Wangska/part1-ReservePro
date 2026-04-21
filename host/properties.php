@@ -127,6 +127,141 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.3">
     <link rel="stylesheet" href="../assets/css/admin.css?v=25.4">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
+    <link rel="stylesheet" href="../assets/css/landing.css?v=25.1">
+    <link rel="stylesheet" href="../assets/css/animations.css?v=1.0">
+    <link rel="stylesheet" href="../assets/css/home-modern.css?v=4.5">
+    <style>
+        .host-prop-card { cursor: default !important; }
+        .hpc-status-badge {
+            position: absolute; top: 10px; right: 10px;
+            padding: 4px 10px; border-radius: 20px;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase;
+        }
+        .hpc-status-badge.status-approved  { background: rgba(34,197,94,0.85);  color: #fff; }
+        .hpc-status-badge.status-pending   { background: rgba(234,179,8,0.85);  color: #fff; }
+        .hpc-status-badge.status-rejected  { background: rgba(239,68,68,0.85);  color: #fff; }
+        .hpc-status-badge.status-out_of_order { background: rgba(239,68,68,0.85); color: #fff; }
+        .card-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+        .hpc-actions { display: flex; gap: 6px; align-items: center; }
+        .hpc-toggles {
+            display: flex; flex-direction: column; gap: 6px;
+            margin-top: 10px; padding-top: 10px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        .hpc-toggle-form { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+        .hpc-toggle-label { font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+        .hpc-toggle-on      { color: #86efac; }
+        .hpc-toggle-off     { color: #fca5a5; }
+        .hpc-toggle-neutral { color: #94a3b8; }
+        .hpc-toggle-btn {
+            padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;
+            cursor: pointer; border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.08); color: #E0E0E0;
+            transition: background 0.2s; white-space: nowrap; flex-shrink: 0;
+        }
+        .hpc-toggle-btn:hover { background: rgba(255,255,255,0.15); }
+        .hpc-toggle-on-btn  { background: rgba(34,197,94,0.18); border-color: rgba(34,197,94,0.4); color: #86efac; }
+        .hpc-toggle-on-btn:hover { background: rgba(34,197,94,0.3); }
+        /* Light mode */
+        body.light-mode .hpc-toggles { border-top-color: rgba(0,0,0,0.08); }
+        body.light-mode .hpc-toggle-on      { color: #16a34a; }
+        body.light-mode .hpc-toggle-off     { color: #dc2626; }
+        body.light-mode .hpc-toggle-neutral { color: #64748b; }
+        body.light-mode .hpc-toggle-btn { background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.12); color: #334155; }
+        body.light-mode .hpc-toggle-btn:hover { background: rgba(0,0,0,0.10); }
+        body.light-mode .hpc-toggle-on-btn  { background: rgba(34,197,94,0.12); border-color: rgba(22,163,74,0.35); color: #15803d; }
+
+        /* Make .host-action-btn.is-info identical to .sub-action-btn */
+        .host-action-btn.is-info {
+            padding: 9px 14px;
+            background: linear-gradient(135deg, #D4A574, #B8935F);
+            color: #0F0F0F;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 13px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+            white-space: nowrap;
+            min-height: 40px;
+        }
+        .host-action-btn.is-info:hover {
+            transform: translateY(-1px);
+            border-color: rgba(212, 165, 116, 0.35);
+            background: linear-gradient(135deg, #D4A574, #B8935F);
+            color: #0F0F0F;
+            box-shadow: 0 8px 20px rgba(212,165,116,0.22);
+        }
+
+
+        .status-approved {
+            color: #fff !important;
+            background: #22c55e !important;
+        }
+        .status-out_of_order {
+            color: #fff !important;
+            background: #ef4444 !important;
+        }
+        .hpc-status-badge.status-approved {
+            background: linear-gradient(90deg, #e6faed 60%, #c6f6d5 100%);
+            color: #fff !important;
+            box-shadow: 0 2px 8px rgba(34,197,94,0.07);
+            letter-spacing: 0.03em;
+            font-weight: 500;
+            font-family: inherit;
+            text-shadow: none;
+            border-radius: 14px;
+        }
+        .hpc-status-badge.status-out_of_order {
+            background: linear-gradient(90deg, #fee2e2 60%, #fecaca 100%);
+            color: #b91c1c;
+
+            box-shadow: 0 2px 8px rgba(239,68,68,0.07);
+            letter-spacing: 0.03em;
+            font-weight: 500;
+            font-family: inherit;
+            text-shadow: none;
+            border-radius: 14px;
+        }
+/* Make .host-action-btn.is-primary identical to .host-action-btn.is-info */
+        .host-action-btn.is-primary {
+            padding: 9px 14px;
+            background: linear-gradient(135deg, #D4A574, #B8935F);
+            color: #212121 !important;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 13px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+            white-space: nowrap;
+            min-height: 40px;
+        }
+        .host-action-btn.is-primary:hover {
+            transform: translateY(-1px);
+            border-color: rgba(212, 165, 116, 0.35);
+            background: linear-gradient(135deg, #D4A574, #B8935F);
+            color: #0F0F0F;
+            box-shadow: 0 8px 20px rgba(212,165,116,0.22);
+        }
+
+        .property-image .status-badge.status-approved,
+        .property-image .status-badge.status-out_of_order {
+            border: none;
+        }
+
+@keyframes hpc-btn-pop {
+    0% { transform: scale(1); }
+    60% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+}
+    </style>
 </head>
 <body class="dashboard-page admin-page admin-clean-page host-clean-page host-properties-page">
     <div class="host-layout">
@@ -195,11 +330,7 @@ $conn->close();
                 <!-- host-page-summary removed -->
             </div>
 
-            <?php if ($action_message): ?>
-                <div class="alert alert-success">
-                    <?php echo htmlspecialchars($action_message); ?>
-                </div>
-            <?php endif; ?>
+
             <?php if ($action_error): ?>
                 <div class="alert alert-error">
                     <?php echo htmlspecialchars($action_error); ?>
@@ -250,86 +381,116 @@ $conn->close();
                     <h3>No properties yet</h3>
                 </div>
             <?php else: ?>
-                <div class="properties-grid">
-                    <?php foreach ($properties as $property): 
+                <div class="cards-grid">
+                    <?php foreach ($properties as $property):
                         $raw_photo = $property['primary_photo'] ?? '';
                         if (!empty($raw_photo) && strpos($raw_photo, 'http') !== 0) {
                             $photo_url = htmlspecialchars('../' . ltrim($raw_photo, '/'));
                         } else {
                             $photo_url = !empty($raw_photo) ? htmlspecialchars($raw_photo) : 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400';
                         }
+                        $display_title    = htmlspecialchars($property['title'] ?? '');
+                        $display_city     = htmlspecialchars($property['city'] ?? '');
+                        $display_country  = htmlspecialchars($property['country'] ?? '');
+                        $display_location = trim($display_city . ($display_city && $display_country ? ', ' : '') . $display_country);
                     ?>
-                        <div class="property-card">
-                            <div class="property-image">
-                                <img src="<?php echo $photo_url; ?>" alt="Property" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400'">
-                                <span class="status-badge status-<?php echo $property['status']; ?>">
-                                    <?php echo ucfirst($property['status']); ?>
+                        <div class="service-card host-prop-card">
+                            <div class="card-image">
+                                <img src="<?php echo $photo_url; ?>" alt="<?php echo $display_title; ?>" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400'">
+                                <span class="card-badge"><?php echo ucfirst(htmlspecialchars($property['property_type'] ?? 'property')); ?></span>
+                                <span class="hpc-status-badge status-<?php echo htmlspecialchars($property['status']); ?>">
+                                    <?php echo ucfirst(str_replace('_', ' ', $property['status'])); ?>
                                 </span>
                             </div>
-                            <div class="property-info">
-                                <h3><?php echo htmlspecialchars($property['title']); ?></h3>
-                                <p class="property-location"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><?php echo htmlspecialchars($property['city'] . ', ' . $property['country']); ?></p>
-                                <div class="property-details">
-                                    <div class="property-detail-item">
-                                        <span class="property-detail-label">Bedrooms</span>
-                                        <span class="property-detail-value"><?php echo $property['bedrooms']; ?> beds</span>
-                                    </div>
-                                    <div class="property-detail-item">
-                                        <span class="property-detail-label">Bathrooms</span>
-                                        <span class="property-detail-value"><?php echo $property['bathrooms']; ?> baths</span>
-                                    </div>
-                                    <div class="property-detail-item">
-                                        <span class="property-detail-label">Guest Capacity</span>
-                                        <span class="property-detail-value"><?php echo $property['max_guests']; ?> guests</span>
-                                    </div>
+                            <div class="card-content">
+                                <h3 class="card-title"><?php echo $display_title; ?></h3>
+                                <div class="card-location">
+                                    <span class="card-location-icon" aria-hidden="true">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M12 21s-6-4.35-6-10a6 6 0 1 1 12 0c0 5.65-6 10-6 10Z"></path>
+                                            <circle cx="12" cy="11" r="2.5"></circle>
+                                        </svg>
+                                    </span>
+                                    <span><?php echo $display_location; ?></span>
                                 </div>
-                                <div class="property-footer" style="display:flex; flex-direction:column; gap:10px; align-items:stretch;">
-                                    <div class="host-meta-row">
-                                        <span class="price">₱<?php echo number_format($property['price_per_night'], 2); ?><small>/night</small></span>
-                                        <div class="host-stack-actions">
-                                            <a href="view-property.php?id=<?php echo (int)$property['id']; ?>" class="host-action-btn is-info">View</a>
-                                            <form method="POST" action="properties.php" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this property? This cannot be undone.');">
-                                                <input type="hidden" name="property_id" value="<?php echo (int)$property['id']; ?>">
-                                                <input type="hidden" name="action" value="delete_property">
-                                                <button type="submit" class="host-action-btn is-danger">Delete</button>
-                                            </form>
+                                <div class="card-details">
+                                    <span class="card-meta-item">
+                                        <span class="card-meta-icon" aria-hidden="true">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M3 11V7.5A2.5 2.5 0 0 1 5.5 5h13A2.5 2.5 0 0 1 21 7.5V11"></path>
+                                                <path d="M3 13h18"></path><path d="M5 19v-6"></path><path d="M19 19v-6"></path>
+                                            </svg>
+                                        </span>
+                                        <span><?php echo $property['bedrooms']; ?> bed<?php echo $property['bedrooms'] > 1 ? 's' : ''; ?></span>
+                                    </span>
+                                    <span class="card-meta-item">
+                                        <span class="card-meta-icon" aria-hidden="true">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M7 21h10"></path><path d="M9 17h6"></path>
+                                                <path d="M8 3h8l1 9a5 5 0 0 1-10 0l1-9Z"></path>
+                                            </svg>
+                                        </span>
+                                        <span><?php echo $property['bathrooms']; ?> bath<?php echo $property['bathrooms'] > 1 ? 's' : ''; ?></span>
+                                    </span>
+                                    <span class="card-meta-item">
+                                        <span class="card-meta-icon" aria-hidden="true">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"></path>
+                                                <circle cx="9.5" cy="7" r="4"></circle>
+                                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                            </svg>
+                                        </span>
+                                        <span><?php echo $property['max_guests']; ?> guest<?php echo $property['max_guests'] > 1 ? 's' : ''; ?></span>
+                                    </span>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="card-price">
+                                        <div class="price-wrapper">
+                                            <span class="price-current price-amount">₱<?php echo number_format($property['price_per_night'], 2); ?></span>
                                         </div>
                                     </div>
-                                    <div>
-                                        <a href="edit-property.php?id=<?php echo (int)$property['id']; ?>" class="btn-edit">Edit</a>
+                                    <div class="host-stack-actions">
+                                        <a href="view-property.php?id=<?php echo (int)$property['id']; ?>" class="host-action-btn is-info">View</a>
+                                        <a href="edit-property.php?id=<?php echo (int)$property['id']; ?>" class="host-action-btn is-primary">Edit</a>
+                                        <form method="POST" action="properties.php" style="display:contents;" onsubmit="return confirm('Delete this property? This cannot be undone.');">
+                                            <input type="hidden" name="property_id" value="<?php echo (int)$property['id']; ?>">
+                                            <input type="hidden" name="action" value="delete_property">
+                                            <button type="submit" class="host-action-btn is-danger">Delete</button>
+                                        </form>
                                     </div>
-
+                                </div>
+                                <div class="hpc-toggles">
                                     <?php if (in_array($property['status'], ['approved', 'out_of_order'])): ?>
-                                    <div class="host-meta-row">
-                                        <form method="POST" action="properties.php" style="display: inline-flex; align-items: center; gap: 8px;">
+                                    <div class="hpc-toggle-row">
+                                        <form method="POST" action="properties.php" class="hpc-toggle-form">
                                             <input type="hidden" name="property_id" value="<?php echo (int)$property['id']; ?>">
                                             <input type="hidden" name="action" value="update_availability">
                                             <?php if ($property['status'] === 'out_of_order'): ?>
                                                 <input type="hidden" name="new_status" value="approved">
-                                                <span class="badge badge-warning">Out of Order (hidden from guests)</span>
-                                                <button type="submit" class="host-pill-btn is-primary">Mark Available</button>
+                                                <span class="hpc-toggle-label hpc-toggle-off"> Out of Order</span>
+                                                <button type="submit" class="hpc-toggle-btn hpc-toggle-on-btn">Mark Available</button>
                                             <?php else: ?>
                                                 <input type="hidden" name="new_status" value="out_of_order">
-                                                <span class="badge badge-success">Available</span>
-                                                <button type="submit" class="host-pill-btn">Mark Out of Order</button>
+                                                <span class="hpc-toggle-label hpc-toggle-on">Available</span>
+                                                <button type="submit" class="hpc-toggle-btn">Mark Out of Order</button>
                                             <?php endif; ?>
                                         </form>
                                     </div>
                                     <?php else: ?>
-                                        <div class="host-meta-row">
-                                            <span class="badge badge-neutral">Status: <?php echo ucfirst($property['status']); ?></span>
-                                        </div>
+                                    <div class="hpc-toggle-row">
+                                        <span class="hpc-toggle-label hpc-toggle-neutral"><?php echo ucfirst($property['status']); ?></span>
+                                    </div>
                                     <?php endif; ?>
-
-                                    <div class="host-meta-row">
-                                        <form method="POST" action="properties.php" style="display: inline-flex; align-items: center; gap: 8px;">
+                                    <div class="hpc-toggle-row">
+                                        <form method="POST" action="properties.php" class="hpc-toggle-form">
                                             <input type="hidden" name="property_id" value="<?php echo (int)$property['id']; ?>">
                                             <input type="hidden" name="action" value="toggle_auto_accept">
                                             <input type="hidden" name="new_value" value="<?php echo $property['auto_accept_bookings'] ? 0 : 1; ?>">
-                                            <span class="badge <?php echo $property['auto_accept_bookings'] ? 'badge-success' : 'badge-neutral'; ?>">
+                                            <span class="hpc-toggle-label <?php echo $property['auto_accept_bookings'] ? 'hpc-toggle-on' : 'hpc-toggle-neutral'; ?>">
                                                 Auto-accept: <?php echo $property['auto_accept_bookings'] ? 'On' : 'Off'; ?>
                                             </span>
-                                            <button type="submit" class="host-pill-btn">
+                                            <button type="submit" class="hpc-toggle-btn <?php echo $property['auto_accept_bookings'] ? '' : 'hpc-toggle-on-btn'; ?>">
                                                 <?php echo $property['auto_accept_bookings'] ? 'Disable' : 'Enable'; ?>
                                             </button>
                                         </form>

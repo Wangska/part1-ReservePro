@@ -185,7 +185,7 @@ function badge($s) {
             gap: 14px;
             flex-wrap: wrap;
         }
-        .refunds-table-header h2 { margin: 0; color: #fff !important; font-size: 16px; }
+        .refunds-table-header h2 { margin: 0 0 6px; color: #fff !important; }
 
 
         /* Filter tabs */
@@ -224,31 +224,48 @@ function badge($s) {
             box-shadow: 0 10px 24px rgba(212,165,116,0.22);
         }
         /* Table */
-        .rf-table-wrap { overflow-x: auto; }
-        .rf-new-table { width: 100%; border-collapse: collapse; }
+        .rf-table-wrap { overflow-x: auto; width: 100%; }
+        .rf-new-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        .rf-new-table thead { background: rgba(255,255,255,0.04); }
         .rf-new-table th {
-            padding: 11px 16px;
-            text-align: left;
-            color: #475569 !important;
+            padding: 14px 18px;
+            text-align: center;
+            color: #94A3B8;
             font-weight: 700;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
+            font-size: 12px;
+            letter-spacing: 0.05em;
             border-bottom: 1px solid rgba(148,163,184,0.12);
-            background: rgba(0,0,0,0.12);
-            white-space: nowrap;
+        }
+        .rf-new-table th:first-child {
+            text-align: left;
+            width: 1%;
+            min-width: 36px;
+            max-width: 48px;
         }
         .rf-new-table td {
-            padding: 13px 16px;
-            border-bottom: 1px solid rgba(148,163,184,0.07);
+            padding: 16px 18px;
+            border-bottom: 1px solid rgba(148,163,184,0.1);
             vertical-align: middle;
+            color: #E2E8F0;
+            text-align: center;
         }
-        .rf-new-table tbody tr { transition: background 0.14s; }
-        .rf-new-table tbody tr:hover { background: rgba(255,255,255,0.025); }
+        .rf-new-table td:first-child {
+            text-align: left;
+            padding-left: 4px;
+            padding-right: 4px;
+            width: 1%;
+            min-width: 36px;
+            max-width: 48px;
+        }
+        .rf-new-table tbody tr { transition: background 0.15s; }
+        .rf-new-table tbody tr:hover { background: rgba(255,255,255,0.04); }
         .rf-new-table tbody tr:last-child td { border-bottom: none; }
 
         /* User cell */
-        .rf-user-cell { display: flex; align-items: center; gap: 10px; }
+        .rf-user-cell {
+            display: block;
+            text-align: center;
+        }
         .rf-user-avatar {
             width: 34px; height: 34px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
@@ -275,29 +292,35 @@ function badge($s) {
         .rf-prop-loc { color: #475569 !important; font-size: 12px; font-weight: 600; margin-top: 2px; }
 
         /* Amount */
-        .rf-amount-pct { color: #F1F5F9 !important; font-weight: 800; font-size: 14px; }
-        .rf-amount-val { color: #4ADE80 !important; font-size: 12px; font-weight: 700; margin-top: 2px; }
+        .rf-amount-pct {
+            color: #fff !important;
+            font-weight: 800;
+            font-size: 14px;
+        }
+        .rf-amount-val {
+            color: #fff !important;
+            font-size: 12px;
+            font-weight: 700;
+            margin-top: 2px;
+        }
 
         /* Status badge */
         .rf-status {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 5px 10px; border-radius: 999px;
-            font-weight: 800; font-size: 12px;
-            border: 1px solid; white-space: nowrap;
+            display: inline-block;
+            padding: 7px 12px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            white-space: nowrap;
         }
-        .rf-status-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
-        .rf-status-pending      { color:#FDE68A; border-color:rgba(234,179,8,0.3);    background:rgba(234,179,8,0.08);    }
-        .rf-status-pending      .rf-status-dot { background:#FDE68A; }
-        .rf-status-pending_review { color:#FCD34D; border-color:rgba(245,158,11,0.3);  background:rgba(245,158,11,0.08);  }
-        .rf-status-pending_review .rf-status-dot { background:#FCD34D; }
-        .rf-status-approved     { color:#86EFAC; border-color:rgba(34,197,94,0.3);    background:rgba(34,197,94,0.08);    }
-        .rf-status-approved     .rf-status-dot { background:#86EFAC; }
-        .rf-status-rejected     { color:#FCA5A5; border-color:rgba(239,68,68,0.3);    background:rgba(239,68,68,0.08);    }
-        .rf-status-rejected     .rf-status-dot { background:#FCA5A5; }
-        .rf-status-processing   { color:#93C5FD; border-color:rgba(59,130,246,0.3);   background:rgba(59,130,246,0.08);   }
-        .rf-status-processing   .rf-status-dot { background:#93C5FD; }
-        .rf-status-completed    { color:#C4B5FD; border-color:rgba(139,92,246,0.3);   background:rgba(139,92,246,0.08);   }
-        .rf-status-completed    .rf-status-dot { background:#C4B5FD; }
+        .rf-status-pending      { background: rgba(234,179,8,0.2);   color: #FDE68A; }
+        .rf-status-pending_review { background: rgba(245,158,11,0.2); color: #FCD34D; }
+        .rf-status-approved     { background: rgba(34,197,94,0.2);   color: #86EFAC; }
+        .rf-status-rejected     { background: rgba(239,68,68,0.2);   color: #FCA5A5; }
+        .rf-status-processing   { background: rgba(59,130,246,0.2);  color: #93C5FD; }
+        .rf-status-completed    { background: rgba(139,92,246,0.2);  color: #C4B5FD; }
 
         /* Action button */
         .rf-manage-btn {
@@ -315,11 +338,17 @@ function badge($s) {
 
         /* ID chip */
         .rf-id {
-            color: #475569 !important; font-size: 12px; font-weight: 700;
+            color: #fff !important;
+            font-size: 15px;
+            font-weight: 400;
             font-family: monospace;
-            background: rgba(255,255,255,0.04);
-            padding: 3px 8px; border-radius: 6px;
-            border: 1px solid rgba(148,163,184,0.1);
+            background: rgba(255,255,255,0.10);
+            padding: 3px 10px;
+            border-radius: 7px;
+            border: none;
+            letter-spacing: 0.5px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+            transition: color 0.2s, background 0.2s;
         }
 
         /* Host decision */
@@ -368,8 +397,15 @@ function badge($s) {
         body.light-mode .rf-user-email { color:#64748B !important; }
         body.light-mode .rf-prop-title { color:#0F172A !important; }
         body.light-mode .rf-prop-loc { color:#64748B !important; }
-        body.light-mode .rf-amount-pct { color:#0F172A !important; }
-        body.light-mode .rf-id { color:#64748B !important; background:#F8FAFC; border-color:rgba(15,23,42,.08); }
+        body.light-mode .rf-amount-val {
+            color: #fff !important;
+        }
+        body.light-mode .rf-id {
+            color: #0F172A !important;
+            background: #fff;
+            border: none;
+            font-weight: 400;
+        }
         body.light-mode .rf-decision-val { color:#0F172A !important; }
         body.light-mode .rf-decision-pct { color:#64748B !important; }
         body.light-mode .rf-manage-btn { background:rgba(184,147,95,.1); border-color:rgba(184,147,95,.22); color:#8B6F47 !important; }
@@ -460,6 +496,7 @@ function badge($s) {
     </aside>
 
     <main class="host-main">
+        <div>
 
             <!-- Hero -->
             <div class="refunds-hero">
@@ -470,38 +507,39 @@ function badge($s) {
                 <!-- refunds-summary-card removed -->
             </div>
 
-            <!-- Status overview cards -->
-            <div class="refunds-stats">
+            <!-- Status overview cards (unified with properties-stats) -->
+            <div class="admin-metric-grid refunds-stats">
                 <?php
                 $statItems = [
-                    ['key' => 'pending',        'label' => 'Pending',       'icon' => 'fa-clock',           'color' => '#FDE68A'],
-                    ['key' => 'pending_review', 'label' => 'Under Review',  'icon' => 'fa-magnifying-glass','color' => '#FCD34D'],
-                    ['key' => 'processing',     'label' => 'Processing',    'icon' => 'fa-spinner',         'color' => '#93C5FD'],
-                    ['key' => 'approved',       'label' => 'Approved',      'icon' => 'fa-circle-check',    'color' => '#86EFAC'],
-                    ['key' => 'completed',      'label' => 'Completed',     'icon' => 'fa-flag-checkered',  'color' => '#C4B5FD'],
+                    ['key' => 'pending',        'label' => 'Pending',       'icon' => 'fa-clock',           'class' => 'is-amber'],
+                    ['key' => 'pending_review', 'label' => 'Under Review',  'icon' => 'fa-magnifying-glass','class' => 'is-sky'],
+                    ['key' => 'processing',     'label' => 'Processing',    'icon' => 'fa-spinner',         'class' => 'is-indigo'],
+                    ['key' => 'approved',       'label' => 'Approved',      'icon' => 'fa-circle-check',    'class' => 'is-emerald'],
+                    ['key' => 'completed',      'label' => 'Completed',     'icon' => 'fa-flag-checkered',  'class' => 'is-gold'],
                 ];
                 foreach ($statItems as $si):
                     $cnt = (int)($counts[$si['key']] ?? 0);
                     $isActive = $filter === $si['key'];
                 ?>
-                <a href="refunds.php?status=<?php echo h($si['key']); ?>" class="refund-stat-card<?php echo $isActive ? ' active-stat' : ''; ?>">
-                    <div class="refund-stat-icon" style="color:<?php echo $si['color']; ?>;">
-                        <i class="fa-solid <?php echo $si['icon']; ?>"></i>
+                <a href="refunds.php?status=<?php echo h($si['key']); ?>" class="admin-metric-card<?php echo $isActive ? ' active-stat' : ''; ?>">
+                    <div class="admin-metric-icon <?php echo $si['class']; ?>"><i class="fa-solid <?php echo $si['icon']; ?>" aria-hidden="true"></i></div>
+                    <div class="admin-metric-copy">
+                        <p><?php echo $si['label']; ?></p>
+                        <h3><?php echo $cnt; ?></h3>
+                        <span class="admin-metric-note"></span>
                     </div>
-                    <div class="refund-stat-label"><?php echo $si['label']; ?></div>
-                    <div class="refund-stat-value"><?php echo $cnt; ?></div>
                 </a>
                 <?php endforeach; ?>
             </div>
 
             <!-- Table card -->
-            <div class="refunds-table-card">
-                <div class="refunds-table-header">
-                    <div style="display:flex;align-items:center;gap:12px;">
+            <div class="refunds-table-card admin-surface">
+                <div class="refunds-table-header admin-surface-header">
+                    <div>
                         <h2>Refund Requests</h2>
-
+                        <p></p>
                     </div>
-                    <div class="refunds-filter-tabs">
+                    <div class="filter-tabs">
                         <?php
                         $tabs = [
                             'all'            => 'All',
@@ -514,7 +552,7 @@ function badge($s) {
                         ];
                         foreach ($tabs as $k => $label):
                         ?>
-                        <a class="refunds-filter-tab <?php echo $filter === $k ? 'active' : ''; ?>" href="refunds.php?status=<?php echo h($k); ?>">
+                        <a class="filter-tab <?php echo $filter === $k ? 'active' : ''; ?>" href="refunds.php?status=<?php echo h($k); ?>">
                             <?php echo h($label); ?>
                         </a>
                         <?php endforeach; ?>
@@ -565,7 +603,6 @@ function badge($s) {
                                 </td>
                                 <td>
                                     <div class="rf-user-cell">
-                                        <div class="rf-user-avatar" style="background:linear-gradient(135deg,#6366F1,#4F46E5);"><?php echo $guestInitials; ?></div>
                                         <div>
                                             <div class="rf-user-name"><?php echo h(trim(($r['guest_first_name'] ?? '') . ' ' . ($r['guest_last_name'] ?? ''))); ?></div>
                                             <div class="rf-user-email"><?php echo h($r['guest_email']); ?></div>
@@ -574,7 +611,6 @@ function badge($s) {
                                 </td>
                                 <td>
                                     <div class="rf-user-cell">
-                                        <div class="rf-user-avatar" style="background:linear-gradient(135deg,#F59E0B,#D97706);"><?php echo $hostInitials; ?></div>
                                         <div>
                                             <div class="rf-user-name"><?php echo h(trim(($r['host_first_name'] ?? '') . ' ' . ($r['host_last_name'] ?? ''))); ?></div>
                                             <div class="rf-user-email"><?php echo h($r['host_email']); ?></div>
@@ -595,13 +631,12 @@ function badge($s) {
                                 </td>
                                 <td>
                                     <span class="rf-status rf-status-<?php echo h($statusKey); ?>">
-                                        <span class="rf-status-dot"></span>
                                         <?php echo h($statusLabel); ?>
                                     </span>
                                 </td>
                                 <td>
                                     <a class="rf-manage-btn" href="refund.php?id=<?php echo (int)$r['id']; ?>">
-                                        <i class="fa-solid fa-screwdriver-wrench"></i> Manage
+                                        Manage
                                     </a>
                                 </td>
                             </tr>
@@ -612,6 +647,7 @@ function badge($s) {
                 <?php endif; ?>
             </div>
 
+        </div>
     </main>
 </div>
 

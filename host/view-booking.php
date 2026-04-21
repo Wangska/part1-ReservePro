@@ -70,20 +70,6 @@ $nightly  = (float) $booking['price_per_night'];
 $subtotal = $nights * $nightly;
 $serviceFee = max(0, (float) $booking['total_price'] - $subtotal);
 
-// Map status to badge class
-$statusClass = 'status-pending';
-switch ($booking['status']) {
-    case 'confirmed':
-        $statusClass = 'status-confirmed';
-        break;
-    case 'completed':
-        $statusClass = 'status-completed';
-        break;
-    case 'cancelled':
-        $statusClass = 'status-cancelled';
-        break;
-}
-
 // Hosts may approve a booking only while it's pending
 $canApprove = ($booking['status'] === 'pending');
 
@@ -102,89 +88,153 @@ $justConfirmed = isset($_GET['confirmed']) && $_GET['confirmed'] === '1';
     <link rel="stylesheet" href="../assets/css/admin.css?v=25.4">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
+        /* ── Page ── */
         .view-booking-page {
-            max-width: 900px;
+            max-width: 1280px;
             margin: 0 auto;
-            padding: 24px;
+            padding: 32px 36px;
         }
-        .view-booking-header {
+
+        /* ── Header ── */
+        .vb-hero {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
             flex-wrap: wrap;
             gap: 16px;
-            margin-bottom: 24px;
+            margin-bottom: 32px;
         }
-        .view-booking-header h1 {
-            font-size: 24px;
-            margin: 0 0 8px 0;
-            color: #fff !important;
+        .vb-hero h1 {
+            font-size: 30px;
+            font-weight: 800;
+            margin: 0 0 6px;
+            color: #F1F5F9 !important;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
         }
-        body.dashboard-page.light-mode .view-booking-page .view-booking-header h1 {
-            color: #0f172a !important;
-        }
-        .view-booking-header .subtitle {
-            margin: 0;
+        .vb-hero .vb-subtitle {
             font-size: 14px;
-            color: #9CA3AF;
+            color: #94a3b8;
+            margin: 0;
         }
-        body.dashboard-page.light-mode .view-booking-page .view-booking-header .subtitle {
-            color: #475569 !important;
-        }
-        .view-booking-header .actions {
+        .vb-hero .vb-actions {
             display: flex;
+            align-items: center;
             gap: 10px;
             flex-wrap: wrap;
-            align-items: center;
+            margin-left: auto;
         }
-        .btn-view-back {
-            padding: 10px 18px;
-            background: #3B82F6;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 14px;
-        }
-        .btn-view-back:hover {
-            background: #2563EB;
-        }
+
+        /* ── Sections ── */
         .view-section {
-            background: var(--bg-secondary, #1A1A1A);
-            border: 1px solid var(--border-color, #3A3A3A);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 16px;
+            background: var(--bg-secondary, #161616);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px;
+            padding: 26px 28px;
+            margin-bottom: 18px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
         .view-section h2 {
-            font-size: 16px;
-            margin: 0 0 12px 0;
-            color: #D4A574 !important;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #fff !important;
+            margin: 0 0 20px;
         }
-        body.dashboard-page.light-mode .view-booking-page .view-section h2 {
-            color: #b45309 !important;
+        .view-section p,
+        .view-section .detail-row {
+            color: #C0C0C0 !important;
+            margin: 0 0 10px;
+            font-size: 15px;
+            line-height: 1.7;
         }
-        body.dashboard-page:not(.light-mode) .view-section p,
-        body.dashboard-page:not(.light-mode) .view-section .detail-row {
-            color: #E0E0E0 !important;
-            margin: 0 0 8px 0;
-            font-size: 14px;
-        }
-        body.dashboard-page.light-mode .view-booking-page .view-section p,
-        body.dashboard-page.light-mode .view-booking-page .view-section .detail-row {
-            color: #0f172a !important;
-            margin: 0 0 8px 0;
-            font-size: 14px;
-        }
-        body.dashboard-page.light-mode .view-booking-page .view-section p strong,
-        body.dashboard-page.light-mode .view-booking-page .view-section .detail-row strong {
-            color: #020617 !important;
-        }
-        .detail-grid {
+        .view-section p strong { color: #F1F5F9 !important; }
+
+        /* ── Two-column layout ── */
+        .vb-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 12px;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
         }
+        @media (max-width: 760px) { .vb-grid { grid-template-columns: 1fr; } }
+
+        /* ── Detail grid cards ── */
+        .host-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 14px;
+        }
+        .host-detail-card {
+            display: flex; flex-direction: column; gap: 5px;
+            padding: 16px 18px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+        }
+        .host-detail-label { font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; }
+        .host-detail-value { font-size: 16px; font-weight: 700; color: #F1F5F9; }
+
+        /* ── Pricing rows ── */
+        .vb-price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            font-size: 15px;
+            color: #C0C0C0;
+        }
+        .vb-price-row:last-child { border-bottom: none; padding-bottom: 0; }
+        .vb-price-row.total { font-weight: 700; font-size: 17px; color: #F1F5F9; }
+        .vb-price-row.total span:last-child { color: #D4A574; }
+
+        /* ── Payment info rows ── */
+        .vb-info-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            font-size: 14px;
+            color: #C0C0C0;
+        }
+        .vb-info-row:last-child { border-bottom: none; }
+        .vb-info-label { min-width: 120px; font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em; }
+        .vb-info-value { color: #F1F5F9; font-weight: 500; }
+
+        /* ── Guest card ── */
+        .vb-guest-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .vb-guest-avatar {
+            width: 52px; height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #D4A574, #B8935F);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; font-weight: 700; color: #0F0F0F;
+            flex-shrink: 0;
+        }
+        .vb-guest-name { font-size: 17px; font-weight: 700; color: #F1F5F9; margin-bottom: 2px; }
+        .vb-guest-email { font-size: 13px; color: #94a3b8; }
+
+        /* ── Light mode ── */
+        body.light-mode .view-section { background: #fff; border-color: rgba(0,0,0,0.07); box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+        body.light-mode .view-section h2 { color: #0f172a !important; }
+        body.light-mode .view-section p, body.light-mode .view-section .detail-row { color: #374151 !important; }
+        body.light-mode .host-detail-card { background: #f8fafc; border-color: rgba(0,0,0,0.08); }
+        body.light-mode .host-detail-value { color: #0f172a; }
+        body.light-mode .host-detail-label { color: #64748b; }
+        body.light-mode .vb-price-row { color: #374151; border-bottom-color: rgba(0,0,0,0.07); }
+        body.light-mode .vb-price-row.total { color: #0f172a; }
+        body.light-mode .vb-info-row { color: #374151; border-bottom-color: rgba(0,0,0,0.07); }
+        body.light-mode .vb-info-value { color: #0f172a; }
+        body.light-mode .vb-guest-name { color: #0f172a; }
+        body.light-mode .vb-hero h1 { color: #0f172a !important; }
+        body.light-mode .vb-hero .vb-subtitle { color: #64748b; }
+
         .detail-pill {
             padding: 8px 12px;
             background: #111827;
@@ -192,7 +242,6 @@ $justConfirmed = isset($_GET['confirmed']) && $_GET['confirmed'] === '1';
             font-size: 13px;
             color: #f8fafc !important;
         }
-        /* Light mode: theme-toggle sets body.light-mode div { color: ... !important } — reassert pill text on dark chips */
         body.dashboard-page.light-mode .view-booking-page .detail-pill {
             color: #f8fafc !important;
             background: #0f172a !important;
@@ -339,14 +388,13 @@ $justConfirmed = isset($_GET['confirmed']) && $_GET['confirmed'] === '1';
                 </a>
             </div>
             <nav class="sidebar-nav">
-                <a href="dashboard.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span><span>Dashboard</span></a>
                 <a href="properties.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span><span>My Properties</span></a>
                 <a href="add-property.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-plus" aria-hidden="true"></i></span><span>Add Property</span></a>
                 <a href="bookings.php" class="nav-item active"><span class="nav-icon"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></span><span>Bookings</span></a>
                 <a href="refund-requests.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></span><span>Refund Requests</span></a>
                 <a href="earnings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span><span>Earnings</span></a>
                 <a href="messages.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span><span>Messages</span></a>
-                <a href="../home.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span><span>View Site</span></a>
+                <a href="../home.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span><span>Home</span></a>
             </nav>
             <div class="sidebar-footer">
                 <div class="user-profile">
@@ -358,85 +406,82 @@ $justConfirmed = isset($_GET['confirmed']) && $_GET['confirmed'] === '1';
                         <div class="user-role">Host</div>
                     </div>
                 </div>
-                <div class="theme-toggle">
-                    <span class="theme-toggle-icon">☀️</span>
-                    <span class="theme-toggle-text">Light</span>
-                </div>
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
         </aside>
 
         <main class="host-main">
             <div class="view-booking-page">
-                <div class="view-booking-header host-page-hero">
-                    <div class="host-page-hero-content">
-                        <span class="host-page-eyebrow">Booking Details</span>
+                <div class="vb-hero">
+                    <div>
                         <h1>Booking #<?php echo htmlspecialchars($booking['id']); ?></h1>
-                        <p class="subtitle"><?php echo htmlspecialchars($booking['property_title']); ?> · <?php echo htmlspecialchars($booking['city'] . ', ' . $booking['country']); ?></p>
+                        <p class="vb-subtitle"><?php echo htmlspecialchars($booking['property_title']); ?> &mdash; <?php echo htmlspecialchars($booking['city'] . ', ' . $booking['country']); ?></p>
                     </div>
-                    <div class="actions" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-left:auto;">
-                        <span class="status-badge <?php echo $statusClass; ?>">
-                            <?php echo ucfirst($booking['status']); ?>
-                        </span>
-                        <a href="bookings.php" class="host-action-btn is-info">Back to bookings</a>
-                        <?php if ($canApprove): ?>
-                            <form method="POST" action="update-booking-status.php" style="display:inline;">
-                                <input type="hidden" name="booking_id" value="<?php echo (int)$booking['id']; ?>">
-                                <input type="hidden" name="new_status" value="confirmed">
-                                <button type="submit" class="host-action-btn is-primary">
-                                    Approve booking
-                                </button>
-                            </form>
-                        <?php endif; ?>
+                    <div class="vb-actions">
+                        <a href="bookings.php" class="host-action-btn is-primary">Back to bookings</a>
                     </div>
                 </div>
 
+                <!-- Stay Details (full width) -->
                 <div class="view-section host-detail-shell">
-                    <h2>Stay details</h2>
+                    <h2>Stay Details</h2>
                     <div class="host-detail-grid">
                         <div class="host-detail-card"><span class="host-detail-label">Check-In</span><span class="host-detail-value"><?php echo $checkIn->format('M d, Y'); ?></span></div>
                         <div class="host-detail-card"><span class="host-detail-label">Check-Out</span><span class="host-detail-value"><?php echo $checkOut->format('M d, Y'); ?></span></div>
                         <div class="host-detail-card"><span class="host-detail-label">Nights</span><span class="host-detail-value"><?php echo $nights; ?></span></div>
                         <div class="host-detail-card"><span class="host-detail-label">Guests</span><span class="host-detail-value"><?php echo (int) $booking['guests']; ?></span></div>
-                        <div class="host-detail-card"><span class="host-detail-label">Booked On</span><span class="host-detail-value"><?php echo date('M d, Y H:i', strtotime($booking['booking_date'])); ?></span></div>
+                        <div class="host-detail-card"><span class="host-detail-label">Booked On</span><span class="host-detail-value"><?php echo date('M d, Y', strtotime($booking['booking_date'])); ?></span></div>
+                    </div>
+                    <div style="margin-top: 24px; text-align: right;">
                     </div>
                 </div>
 
-                <div class="view-section host-detail-shell">
-                    <h2>Pricing</h2>
-                    <p class="detail-row">Nightly rate: ₱<?php echo number_format($nightly, 2); ?></p>
-                    <p class="detail-row">Subtotal (<?php echo $nights; ?> nights): ₱<?php echo number_format($subtotal, 2); ?></p>
-                    <p class="detail-row">Service fee (approx.): ₱<?php echo number_format($serviceFee, 2); ?></p>
-                    <p class="detail-row" style="font-weight: 700;">Total: ₱<?php echo number_format($booking['total_price'], 2); ?></p>
+                <!-- Two-column: Pricing + Guest -->
+                <div class="vb-grid">
+                    <div class="view-section host-detail-shell">
+                        <h2>Pricing</h2>
+                        <div class="vb-price-row"><span>Nightly rate</span><span>₱<?php echo number_format($nightly, 2); ?></span></div>
+                        <div class="vb-price-row"><span>Subtotal (<?php echo $nights; ?> nights)</span><span>₱<?php echo number_format($subtotal, 2); ?></span></div>
+                        <div class="vb-price-row"><span>Service fee</span><span>₱<?php echo number_format($serviceFee, 2); ?></span></div>
+                        <div class="vb-price-row total"><span>Total</span><span>₱<?php echo number_format($booking['total_price'], 2); ?></span></div>
+                    </div>
+
+                    <div class="view-section host-detail-shell">
+                        <h2>Guest</h2>
+                        <div class="vb-guest-card">
+                            <div class="vb-guest-avatar"><?php echo strtoupper(substr($booking['first_name'], 0, 1) . substr($booking['last_name'], 0, 1)); ?></div>
+                            <div>
+                                <div class="vb-guest-name"><?php echo htmlspecialchars($booking['first_name'] . ' ' . $booking['last_name']); ?></div>
+                                <div class="vb-guest-email"><?php echo htmlspecialchars($booking['email']); ?></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="view-section host-detail-shell">
-                    <h2>Guest</h2>
-                    <p class="detail-row">
-                        <strong><?php echo htmlspecialchars($booking['first_name'] . ' ' . $booking['last_name']); ?></strong><br>
-                        <?php echo htmlspecialchars($booking['email']); ?>
-                    </p>
-                </div>
-
+                <!-- Payment -->
                 <div class="view-section host-detail-shell">
                     <h2>Payment</h2>
                     <?php if (!empty($booking['payment_status'])): ?>
-                        <p class="detail-row">
-                            Status:
-                            <span class="badge-payment <?php echo htmlspecialchars($booking['payment_status']); ?>">
-                                <?php echo ucfirst($booking['payment_status']); ?>
-                            </span>
-                        </p>
-                        <p class="detail-row">Amount: ₱<?php echo number_format((float) $booking['payment_amount'], 2); ?></p>
-                        <p class="detail-row">Provider: <?php echo htmlspecialchars(strtoupper($booking['provider'])); ?></p>
-                        <p class="detail-row">Method: <?php echo htmlspecialchars(strtoupper($booking['method'])); ?></p>
+                        <div class="vb-info-row"><span class="vb-info-label">Status</span><span class="vb-info-value"><span class="badge-payment <?php echo htmlspecialchars($booking['payment_status']); ?>"><?php echo ucfirst($booking['payment_status']); ?></span></span></div>
+                        <div class="vb-info-row"><span class="vb-info-label">Amount</span><span class="vb-info-value">₱<?php echo number_format((float) $booking['payment_amount'], 2); ?></span></div>
+                        <div class="vb-info-row"><span class="vb-info-label">Provider</span><span class="vb-info-value"><?php echo htmlspecialchars(strtoupper($booking['provider'])); ?></span></div>
+                        <div class="vb-info-row"><span class="vb-info-label">Method</span><span class="vb-info-value"><?php echo htmlspecialchars(strtoupper($booking['method'])); ?></span></div>
                         <?php if (!empty($booking['external_reference'])): ?>
-                            <p class="detail-row">Reference: <?php echo htmlspecialchars($booking['external_reference']); ?></p>
+                            <div class="vb-info-row"><span class="vb-info-label">Reference</span><span class="vb-info-value"><?php echo htmlspecialchars($booking['external_reference']); ?></span></div>
                         <?php endif; ?>
                     <?php else: ?>
-                        <p class="detail-row">No payment record yet for this booking.</p>
+                        <p class="detail-row" style="margin:0;">No payment record yet for this booking.</p>
                     <?php endif; ?>
                 </div>
+                <?php if ($canApprove): ?>
+                <div style="text-align: right; margin-bottom: 24px;">
+                    <form method="POST" action="update-booking-status.php" style="display:inline;">
+                        <input type="hidden" name="booking_id" value="<?php echo (int)$booking['id']; ?>">
+                        <input type="hidden" name="new_status" value="confirmed">
+                        <button type="submit" class="host-action-btn is-primary">Approve booking</button>
+                    </form>
+                </div>
+                <?php endif; ?>
             </div>
         </main>
     </div>

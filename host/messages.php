@@ -128,23 +128,18 @@ $conn->close();
             color: #E0E0E0 !important;
         }
 
-        .messages-layout {
+        .host-messages-layout {
             display: grid;
             grid-template-columns: 350px 1fr;
             gap: 24px;
             height: calc(100vh - 280px);
         }
 
-        .conversations-list {
+        .host-conversations-list {
             background: #1F1F1F;
             border-radius: 12px;
             border: 1px solid #3A3A3A;
             overflow-y: auto;
-        }
-
-        .conversations-header {
-            padding: 20px;
-            border-bottom: 1px solid #3A3A3A;
         }
 
         .search-box {
@@ -166,7 +161,7 @@ $conn->close();
             border-color: #D4A574;
         }
 
-        .conversation-item {
+        .host-conversation-item {
             padding: 16px 20px;
             border-bottom: 1px solid #2C2C2C;
             cursor: pointer;
@@ -176,11 +171,11 @@ $conn->close();
             align-items: flex-start;
         }
 
-        .conversation-item:hover {
+        .host-conversation-item:hover {
             background: #2C2C2C;
         }
 
-        .conversation-item.active {
+        .host-conversation-item.active {
             background: #2C2C2C;
             border-left: 3px solid #D4A574;
         }
@@ -233,7 +228,7 @@ $conn->close();
             margin-left: auto;
         }
 
-        .chat-container {
+        .host-chat-shell {
             background: #1F1F1F;
             border-radius: 12px;
             border: 1px solid #3A3A3A;
@@ -241,7 +236,7 @@ $conn->close();
             flex-direction: column;
         }
 
-        .chat-header {
+        .host-chat-header {
             padding: 20px;
             border-bottom: 1px solid #3A3A3A;
             display: flex;
@@ -282,13 +277,13 @@ $conn->close();
             gap: 16px;
         }
 
-        .message {
+        .host-message {
             display: flex;
             gap: 12px;
             max-width: 70%;
         }
 
-        .message.sent {
+        .host-message.sent {
             margin-left: auto;
             flex-direction: row-reverse;
         }
@@ -311,7 +306,7 @@ $conn->close();
             flex: 1;
         }
 
-        .message-bubble {
+        .host-message-bubble {
             padding: 12px 16px;
             border-radius: 12px;
             background: #2C2C2C;
@@ -319,7 +314,7 @@ $conn->close();
             line-height: 1.5;
         }
 
-        .message.sent .message-bubble {
+        .host-message.sent .host-message-bubble {
             background: linear-gradient(135deg, #D4A574, #B8935F);
             color: #0F0F0F;
         }
@@ -330,7 +325,7 @@ $conn->close();
             margin-top: 4px;
         }
 
-        .chat-input-area {
+        .host-chat-input {
             padding: 20px;
             border-top: 1px solid #3A3A3A;
             display: flex;
@@ -403,11 +398,11 @@ $conn->close();
         }
 
         @media (max-width: 968px) {
-            .messages-layout {
+            .host-messages-layout {
                 grid-template-columns: 1fr;
             }
             
-            .conversations-list {
+            .host-conversations-list {
                 max-height: 400px;
             }
         }

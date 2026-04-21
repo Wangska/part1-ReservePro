@@ -339,7 +339,7 @@ $role_label = isset($user['role']) ? ucfirst($user['role']) : 'Guest';
                     </div>
                     <div class="pf-banner-actions">
                         <button class="pf-edit-btn" onclick="openEditModal()">
-                            <i class="fa-solid fa-pen-to-square"></i> Edit Profile
+                            Edit Profile
                         </button>
                     </div>
                 </div>
@@ -376,7 +376,7 @@ $role_label = isset($user['role']) ? ucfirst($user['role']) : 'Guest';
     <div class="pf-modal-overlay" id="editModal" onclick="handleOverlayClick(event)">
         <div class="pf-modal">
             <div class="pf-modal-head">
-                <h3><i class="fa-solid fa-pen-to-square" style="color:#D4A574; margin-right:8px;"></i>Edit Profile</h3>
+                <h3>Edit Profile</h3>
                 <button class="pf-modal-close" onclick="closeEditModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="pf-modal-body">

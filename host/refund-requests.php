@@ -81,11 +81,28 @@ function badge($s) {
         }
         .rr-hero h1 { margin:0 0 6px; color:#fff !important; font-size: 24px; }
         .rr-hero p { margin:0; color:#CBD5E1 !important; }
-        .rr-table { width:100%; border-collapse: collapse; }
-        .rr-table th, .rr-table td { padding: 12px 12px; border-bottom: 1px solid rgba(148,163,184,0.12); font-size: 13px; vertical-align: top; }
-        .rr-table th { text-align:left; color:#CBD5E1 !important; font-weight: 900; text-transform: uppercase; font-size: 11px; letter-spacing: 0.04em; }
-        .rr-table td { color:#F1F5F9 !important; font-weight: 700; }
-        .badge { display:inline-flex; align-items:center; gap:6px; padding: 6px 10px; border-radius:999px; font-weight: 900; font-size: 12px; border:1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.06); }
+        .rr-table { width: 100%; border-collapse: collapse; }
+        .rr-table thead { background: rgba(255, 255, 255, 0.04); }
+        .rr-table th {
+            padding: 14px 18px;
+            text-align: left;
+            font-weight: 500;
+            font-size: 12px;
+            color: #94A3B8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+        }
+        .rr-table td {
+            padding: 16px 18px;
+            color: #E2E8F0;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.10);
+            vertical-align: middle;
+            font-size: 13px;
+        }
+        .rr-table tbody tr { transition: background 0.2s ease; }
+        .rr-table tbody tr:hover { background: rgba(255, 255, 255, 0.04); }
+        .badge { display:inline-flex; align-items:center; gap:6px; padding: 6px 10px; border-radius:999px; font-weight: 500; font-size: 12px; border:1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.06); }
         .badge-pending { color:#FDE68A; border-color: rgba(234,179,8,0.28); }
         .badge-approved { color:#86efac; border-color: rgba(34,197,94,0.28); }
         .badge-rejected { color:#fecaca; border-color: rgba(239,68,68,0.28); }
@@ -97,12 +114,23 @@ function badge($s) {
             padding: 9px 10px; border-radius: 12px;
             border: 1px solid rgba(255,255,255,0.14);
             background: rgba(255,255,255,0.06);
-            color:#E2E8F0; text-decoration:none; font-weight: 900; font-size: 12px;
+            color:#E2E8F0; text-decoration:none; font-weight: 500; font-size: 12px;
         }
         .rr-btn:hover { background: rgba(255,255,255,0.09); }
         .rr-btn-danger { border-color: rgba(239,68,68,0.28); color:#fecaca; }
-        .rr-btn-primary { background: linear-gradient(135deg, #D4A574, #B8935F); color:#0f172a; border-color: transparent; }
-        .rr-card { background: rgba(17,24,39,0.78); border: 1px solid rgba(148,163,184,0.16); border-radius: 18px; overflow:hidden; }
+        .rr-btn-primary { background: linear-gradient(135deg, #D4A574, #B8935F); color:#0f172a; border-color: transparent; transition: background 0.2s, color 0.2s; }
+        .rr-btn-primary:hover, .rr-btn-primary:focus {
+            background: linear-gradient(135deg, #E6C48B, #D4A574);
+            color: #0f172a;
+            border-color: transparent;
+        }
+        .rr-card {
+            background: rgba(17, 24, 39, 0.86);
+            border-radius: 22px;
+            overflow: hidden;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            box-shadow: 0 20px 36px rgba(0, 0, 0, 0.18);
+        }
         .rr-head { padding: 14px 16px; border-bottom: 1px solid rgba(148,163,184,0.12); display:flex; justify-content: space-between; align-items:center; gap:12px; flex-wrap:wrap; }
         .rr-head h2 { margin:0; color:#fff !important; font-size: 15px; }
         .rr-note { color:#94A3B8 !important; font-size: 13px; margin:0; }
@@ -191,26 +219,26 @@ function badge($s) {
                                 <tr>
                                     <td>
                                         #<?php echo (int)$r['id']; ?><br>
-                                        <span style="color:#94A3B8; font-weight:800;"><?php echo h($r['request_type']); ?></span>
+                                        <span style="color:#94A3B8;"><?php echo h($r['request_type']); ?></span>
                                     </td>
                                     <td>
                                         <?php echo h(trim(($r['guest_first_name'] ?? '') . ' ' . ($r['guest_last_name'] ?? ''))); ?><br>
-                                        <span style="color:#94A3B8; font-weight:800;"><?php echo h($r['guest_email'] ?? ''); ?></span>
+                                        <span style="color:#94A3B8;"><?php echo h($r['guest_email'] ?? ''); ?></span>
                                     </td>
                                     <td>
                                         <?php echo h($r['property_title'] ?? ''); ?><br>
-                                        <span style="color:#94A3B8; font-weight:800;"><?php echo h(($r['city'] ?? '') . ', ' . ($r['country'] ?? '')); ?></span>
+                                        <span style="color:#94A3B8;"><?php echo h(($r['city'] ?? '') . ', ' . ($r['country'] ?? '')); ?></span>
                                     </td>
                                     <td>
                                         <?php echo h((string)$r['check_in']); ?> → <?php echo h((string)$r['check_out']); ?>
                                     </td>
                                     <td>
                                         <?php echo (int)$r['refund_percent']; ?>%<br>
-                                        <span style="color:#94A3B8; font-weight:800;">₱<?php echo number_format((float)$r['refund_amount'], 2); ?></span>
+                                        <span style="color:#94A3B8;">₱<?php echo number_format((float)$r['refund_amount'], 2); ?></span>
                                     </td>
                                     <td>
                                         <span class="badge <?php echo badge($r['status']); ?>"><?php echo h($r['status']); ?></span><br>
-                                        <span style="color:#94A3B8; font-weight:800;">Host: <?php echo h($r['host_decision']); ?></span>
+                                        <span style="color:#94A3B8;">Host: <?php echo h($r['host_decision']); ?></span>
                                     </td>
                                     <td>
                                         <div class="rr-actions">
@@ -218,7 +246,7 @@ function badge($s) {
                                                 <i class="fa-solid fa-envelope"></i>Message
                                             </a>
                                             <a class="rr-btn rr-btn-primary" href="refund-request.php?id=<?php echo (int)$r['id']; ?>">
-                                                <i class="fa-solid fa-gavel"></i>Review
+                                                Review
                                             </a>
                                         </div>
                                     </td>
