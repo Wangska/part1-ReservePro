@@ -288,6 +288,23 @@ $conn->close();
         .btn-home:hover {
             transform: scale(1.05);
         }
+
+        /* Show password (modal) */
+        .rp-modal-showpass {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 6px;
+            user-select: none;
+            color: rgba(203,213,225,0.78);
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .rp-modal-showpass input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #D4A574;
+        }
     </style>
 </head>
 <body class="dashboard-page experiences-page">
@@ -572,6 +589,10 @@ $conn->close();
                     <label for="modal_confirm_password">Confirm Password</label>
                     <input type="password" id="modal_confirm_password" name="confirm_password" placeholder="Confirm your password" required>
                 </div>
+                <label class="rp-modal-showpass" for="modal_show_password">
+                    <input type="checkbox" id="modal_show_password" aria-controls="modal_password modal_confirm_password">
+                    Show password
+                </label>
 
                 <button type="submit" class="btn-primary">Create Account</button>
             </form>
@@ -617,6 +638,20 @@ $conn->close();
     <script src="assets/js/landing.js"></script>
     <script src="assets/js/modal.js"></script>
     <script src="assets/js/property-modal.js?v=6.4"></script>
+    <script src="assets/js/image-lightbox.js?v=1.0"></script>
+    <script>
+        (function () {
+            var toggle = document.getElementById('modal_show_password');
+            var pass = document.getElementById('modal_password');
+            var confirm = document.getElementById('modal_confirm_password');
+            if (!toggle || !pass) return;
+            toggle.addEventListener('change', function () {
+                var show = !!toggle.checked;
+                pass.type = show ? 'text' : 'password';
+                if (confirm) confirm.type = show ? 'text' : 'password';
+            });
+        })();
+    </script>
     <script>
         (function(){var t=document.getElementById('guestMenuTrigger'),p=document.getElementById('guestMenuPanel'),m=t&&t.closest('.guest-menu');if(!t||!p)return;function o(){var x=p.classList.toggle('guest-menu-panel-open');t.setAttribute('aria-expanded',x);p.setAttribute('aria-hidden',!x);if(m)m.classList.toggle('guest-menu-open',x);}function c(){p.classList.remove('guest-menu-panel-open');t.setAttribute('aria-expanded','false');p.setAttribute('aria-hidden','true');if(m)m.classList.remove('guest-menu-open');}t.addEventListener('click',function(e){e.stopPropagation();o();});document.addEventListener('click',c);p.addEventListener('click',function(e){e.stopPropagation();});})();
     </script>

@@ -289,6 +289,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         .rp-card-footer a:hover { color: #FAD798; }
 
+        /* Show password */
+        .rp-showpass {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 2px;
+            user-select: none;
+            color: rgba(203,213,225,0.78);
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .rp-showpass input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--gold);
+        }
+
         @media (max-width: 540px) {
             .rp-card { padding: 32px 22px; border-radius: 20px; }
         }
@@ -339,6 +356,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             required>
                         <i class="fa-solid fa-lock"></i>
                     </div>
+                    <label class="rp-showpass" for="show_password">
+                        <input type="checkbox" id="show_password" aria-controls="password">
+                        Show password
+                    </label>
                 </div>
 
                 <button type="submit" class="rp-btn" id="submitBtn">
@@ -366,5 +387,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         </div>
     </div>
+
+    <script>
+        (function () {
+            var toggle = document.getElementById('show_password');
+            var pass = document.getElementById('password');
+            if (!toggle || !pass) return;
+            toggle.addEventListener('change', function () {
+                pass.type = toggle.checked ? 'text' : 'password';
+            });
+        })();
+    </script>
 </body>
 </html>

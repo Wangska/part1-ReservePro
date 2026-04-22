@@ -134,6 +134,23 @@ $conn->close();
             background: rgba(15, 23, 42, 0.08);
             color: #0f172a;
         }
+
+        /* Show password (modal) */
+        .rp-modal-showpass {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 6px;
+            user-select: none;
+            color: rgba(203,213,225,0.78);
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .rp-modal-showpass input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #D4A574;
+        }
     </style>
 </head>
 <body>
@@ -596,6 +613,10 @@ $conn->close();
                     <label for="register-confirm">Confirm Password</label>
                     <input type="password" id="register-confirm" name="confirm_password" placeholder="Re-enter password" required>
                 </div>
+                <label class="rp-modal-showpass" for="register-show-password">
+                    <input type="checkbox" id="register-show-password" aria-controls="register-password register-confirm">
+                    Show password
+                </label>
                 <button type="submit" class="modal-btn">Create Account</button>
             </form>
             <div class="modal-footer">
@@ -623,6 +644,7 @@ $conn->close();
     <script src="assets/js/landing.js?v=1.1"></script>
     <script src="assets/js/modal.js"></script>
     <script src="assets/js/property-modal.js?v=7.2"></script>
+    <script src="assets/js/image-lightbox.js?v=1.0"></script>
     <script>
         // Fade out 3D loader when page finishes loading
         window.addEventListener('load', function () {
@@ -684,6 +706,20 @@ $conn->close();
             plusBtn.addEventListener('click',  function () { if (count < MAX) { count++; update(); } });
 
             update();
+        })();
+    </script>
+
+    <script>
+        (function () {
+            var toggle = document.getElementById('register-show-password');
+            var pass = document.getElementById('register-password');
+            var confirm = document.getElementById('register-confirm');
+            if (!toggle || !pass) return;
+            toggle.addEventListener('change', function () {
+                var show = !!toggle.checked;
+                pass.type = show ? 'text' : 'password';
+                if (confirm) confirm.type = show ? 'text' : 'password';
+            });
         })();
     </script>
 

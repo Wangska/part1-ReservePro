@@ -116,6 +116,7 @@ $needsApproval = isset($_GET['needs_approval']) && $_GET['needs_approval'] === '
             border-radius: 18px; overflow: hidden; margin-bottom: 22px;
             background: #1a1a1a;
             box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+            position: relative;
         }
         .view-gallery img {
             max-width: 100%;
@@ -124,6 +125,34 @@ $needsApproval = isset($_GET['needs_approval']) && $_GET['needs_approval'] === '
             margin: 0 auto;
             object-fit: unset;
         }
+        .vp-gallery-nav {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+        .vp-gallery-arrow {
+            pointer-events: auto;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 46px;
+            height: 46px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.18);
+            background: rgba(15,23,42,0.35);
+            color: #E2E8F0;
+            font-weight: 900;
+            font-size: 26px;
+            line-height: 1;
+            cursor: pointer;
+            display: inline-grid;
+            place-items: center;
+            backdrop-filter: blur(4px);
+        }
+        .vp-gallery-arrow:hover { background: rgba(15,23,42,0.55); }
+        .vp-gallery-arrow:disabled { opacity: .25; cursor: not-allowed; }
+        .vp-gallery-prev { left: 14px; }
+        .vp-gallery-next { right: 14px; }
 
         /* ── Sections ── */
         .view-section {
@@ -250,6 +279,20 @@ $needsApproval = isset($_GET['needs_approval']) && $_GET['needs_approval'] === '
         body.dashboard-page.light-mode .rp-approval-banner strong {
             color: #0f172a !important;
         }
+
+        /* ── Map ── */
+        .vp-map {
+            width: 100%;
+            height: 420px;
+            border-radius: 14px;
+            overflow: hidden;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        body.light-mode .vp-map {
+            background: #f8fafc;
+            border-color: rgba(0,0,0,0.08);
+        }
     </style>
 </head>
 <body class="dashboard-page admin-page admin-clean-page host-clean-page host-detail-page">
@@ -335,7 +378,13 @@ $needsApproval = isset($_GET['needs_approval']) && $_GET['needs_approval'] === '
                 }
                 ?>
                 <div class="view-gallery">
-                    <img id="host-main-photo" src="<?php echo htmlspecialchars($main_photo); ?>" alt="<?php echo htmlspecialchars($property['title']); ?>" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800'">
+                    <img id="host-main-photo" data-lightbox="property" data-lightbox-title="<?php echo htmlspecialchars($property['title'], ENT_QUOTES); ?>" src="<?php echo htmlspecialchars($main_photo); ?>" alt="<?php echo htmlspecialchars($property['title']); ?>" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800'">
+                    <?php if (!empty($photos) && count($photos) > 1): ?>
+                        <div class="vp-gallery-nav" aria-hidden="true">
+                            <button type="button" class="vp-gallery-arrow vp-gallery-prev" id="vpGalleryPrev" aria-label="Previous photo">‹</button>
+                            <button type="button" class="vp-gallery-arrow vp-gallery-next" id="vpGalleryNext" aria-label="Next photo">›</button>
+                        </div>
+                    <?php endif; ?>
                 </div>
                 <?php if (!empty($photos) && count($photos) > 1): ?>
                     <div class="view-section" style="margin-top: 12px;">
@@ -347,9 +396,8 @@ $needsApproval = isset($_GET['needs_approval']) && $_GET['needs_approval'] === '
                                     $thumb = '../' . ltrim($thumb, '/');
                                 }
                             ?>
-                                <div style="flex: 0 0 auto; border-radius: 8px; overflow: hidden; border: 2px solid <?php echo $idx === 0 ? '#D4A574' : 'transparent'; ?>; cursor: pointer;"
-                                     onclick="document.getElementById('host-main-photo').src='<?php echo htmlspecialchars($thumb); ?>';">
-                                    <img src="<?php echo htmlspecialchars($thumb); ?>" alt="Photo <?php echo $idx + 1; ?>" style="width: 120px; height: 80px; object-fit: cover;">
+                                <div class="vp-thumb" data-vp-thumb data-index="<?php echo (int)$idx; ?>" data-src="<?php echo htmlspecialchars($thumb, ENT_QUOTES); ?>" style="flex: 0 0 auto; border-radius: 8px; overflow: hidden; border: 2px solid <?php echo $idx === 0 ? '#D4A574' : 'transparent'; ?>; cursor: pointer;">
+                                    <img src="<?php echo htmlspecialchars($thumb); ?>" data-lightbox="property" data-lightbox-title="<?php echo htmlspecialchars($property['title'], ENT_QUOTES); ?>" alt="Photo <?php echo $idx + 1; ?>" style="width: 120px; height: 80px; object-fit: cover;">
                                 </div>
                             <?php endforeach; ?>
                         </div>
@@ -376,6 +424,7 @@ $needsApproval = isset($_GET['needs_approval']) && $_GET['needs_approval'] === '
                     <h2 style="color: #fff !important;">Address</h2>
                     <p><?php echo nl2br(htmlspecialchars($property['address'])); ?></p>
                     <p><?php echo htmlspecialchars($property['city'] . ', ' . $property['country']); ?></p>
+                    <div id="vpMap" class="vp-map" style="margin-top:14px;"></div>
                 </div>
 
                 <?php if (!empty($property['amenities'])): ?>
@@ -395,5 +444,117 @@ $needsApproval = isset($_GET['needs_approval']) && $_GET['needs_approval'] === '
     </div>
     <script src="../assets/js/theme-toggle.js?v=27.5"></script>
     <script src="../assets/js/host-view-site-confirm.js?v=1.0"></script>
+    <script src="../assets/js/image-lightbox.js?v=1.0"></script>
+    <script>
+        (function () {
+            var mapEl = document.getElementById('vpMap');
+            if (!mapEl) return;
+
+            var data = <?php
+                $payload = [
+                    'title' => $property['title'] ?? '',
+                    'address' => $property['address'] ?? '',
+                    'city' => $property['city'] ?? '',
+                    'country' => $property['country'] ?? '',
+                    'latitude' => $property['latitude'] ?? null,
+                    'longitude' => $property['longitude'] ?? null,
+                ];
+                echo json_encode($payload);
+            ?>;
+
+            function loadLeaflet(cb) {
+                if (window.L) return cb();
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+                document.head.appendChild(link);
+
+                var script = document.createElement('script');
+                script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+                script.onload = cb;
+                script.onerror = function () {
+                    mapEl.innerHTML = '<div style="padding:14px;color:#94a3b8;font-size:13px;">Map failed to load.</div>';
+                };
+                document.head.appendChild(script);
+            }
+
+            function initMap(lat, lng) {
+                if (!window.L) return;
+                var L = window.L;
+                mapEl.innerHTML = '';
+                var map = L.map(mapEl, { scrollWheelZoom: false }).setView([lat, lng], 16);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+                var marker = L.marker([lat, lng]).addTo(map);
+                var addressLine = [data.address, data.city, data.country].filter(Boolean).join(', ');
+                marker.bindPopup('<strong>' + String(data.title || 'Property') + '</strong><br>' + addressLine).openPopup();
+                setTimeout(function () { map.invalidateSize(); }, 50);
+            }
+
+            function geocodeAndInit() {
+                var query = [data.address, data.city, data.country || 'Philippines'].filter(Boolean).join(', ');
+                if (!query) query = (data.city || 'Philippines');
+                var url = 'https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(query) + '&limit=1';
+                fetch(url, { headers: { 'Accept': 'application/json', 'User-Agent': 'ReserveProHostMap/1.0' } })
+                    .then(function (r) { return r.json(); })
+                    .then(function (res) {
+                        if (res && res[0] && res[0].lat && res[0].lon) {
+                            initMap(parseFloat(res[0].lat), parseFloat(res[0].lon));
+                        } else {
+                            mapEl.innerHTML = '<div style="padding:14px;color:#94a3b8;font-size:13px;">Map unavailable for this address.</div>';
+                        }
+                    })
+                    .catch(function () {
+                        mapEl.innerHTML = '<div style="padding:14px;color:#94a3b8;font-size:13px;">Map unavailable.</div>';
+                    });
+            }
+
+            loadLeaflet(function () {
+                var lat = data.latitude !== null ? parseFloat(data.latitude) : NaN;
+                var lng = data.longitude !== null ? parseFloat(data.longitude) : NaN;
+                if (isFinite(lat) && isFinite(lng)) initMap(lat, lng);
+                else geocodeAndInit();
+            });
+        })();
+    </script>
+    <?php if (!empty($photos) && count($photos) > 1): ?>
+    <script>
+        (function () {
+            var mainImg = document.getElementById('host-main-photo');
+            if (!mainImg) return;
+
+            var prevBtn = document.getElementById('vpGalleryPrev');
+            var nextBtn = document.getElementById('vpGalleryNext');
+            var thumbs = Array.prototype.slice.call(document.querySelectorAll('[data-vp-thumb]'));
+            if (!thumbs.length) return;
+
+            var urls = thumbs.map(function (t) { return t.getAttribute('data-src') || ''; }).filter(Boolean);
+            var index = 0;
+
+            function setActive(i) {
+                index = ((i % urls.length) + urls.length) % urls.length;
+                mainImg.src = urls[index];
+                thumbs.forEach(function (t, ti) {
+                    t.style.borderColor = (ti === index) ? '#D4A574' : 'transparent';
+                });
+            }
+
+            thumbs.forEach(function (t) {
+                t.addEventListener('click', function () {
+                    var i = parseInt(t.getAttribute('data-index') || '0', 10);
+                    if (isNaN(i)) i = 0;
+                    setActive(i);
+                });
+            });
+
+            if (prevBtn) prevBtn.addEventListener('click', function (e) { e.preventDefault(); setActive(index - 1); });
+            if (nextBtn) nextBtn.addEventListener('click', function (e) { e.preventDefault(); setActive(index + 1); });
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'ArrowLeft') setActive(index - 1);
+                if (e.key === 'ArrowRight') setActive(index + 1);
+            });
+        })();
+    </script>
+    <?php endif; ?>
 </body>
 </html>

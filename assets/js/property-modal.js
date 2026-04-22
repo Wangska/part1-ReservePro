@@ -345,7 +345,7 @@ function renderPropertyDetails(property, bookedDates) {
                         const border = idx === 0 ? '#D4A574' : 'transparent';
                         return `
                             <div class="property-slideshow-thumb${idx === 0 ? ' is-active' : ''}" data-thumb-index="${idx}" style="flex:0 0 auto; border-radius:8px; overflow:hidden; border:2px solid ${border}; cursor:pointer;">
-                                <img src="${thumbUrl}" alt="" style="width:110px; height:75px; object-fit:cover;" onerror="this.src='${fallbackPhoto}'">
+                                <img src="${thumbUrl}" alt="" data-lightbox="property" data-lightbox-title="${safeTitle}" style="width:110px; height:75px; object-fit:cover;" onerror="this.src='${fallbackPhoto}'">
                             </div>
                         `;
                     }).join('')}
@@ -356,7 +356,7 @@ function renderPropertyDetails(property, bookedDates) {
     const photosHTML = `
         <div id="propertyModalSlideshow" class="property-modal-slideshow">
             <div class="property-modal-hero-image">
-                <img id="propertyModalMainPhoto" src="${mainPhotoUrl}" alt="${safeTitle}" onerror="this.src='${fallbackPhoto}'">
+                <img id="propertyModalMainPhoto" src="${mainPhotoUrl}" alt="${safeTitle}" data-lightbox="property" data-lightbox-title="${safeTitle}" onerror="this.src='${fallbackPhoto}'">
                 ${slideshowControls}
             </div>
             ${thumbnailsHTML}
@@ -446,6 +446,22 @@ function renderPropertyDetails(property, bookedDates) {
                             <div id="modalPaymentSection" style="margin-top: 2px;">
                                 <p style="margin: 0; font-size: 12px; color: #e57373; line-height: 1.5;">Online payment is not configured. Add your PayMongo keys in <code style="font-size:11px;color:#fca5a5;">config/paymongo.local.php</code> to enable bookings.</p>
                             </div>`;
+
+    // Refund / cancellation policy
+    const policyKey = String(property.cancellation_policy || 'moderate').toLowerCase();
+    const policyLabel = policyKey === 'flexible' ? 'Flexible'
+        : policyKey === 'strict' ? 'Strict'
+        : '';
+    const policyText = '99% refund within 6 hours, 50% within 12 hours, none after 12 hours.';
+    const refundPolicyHTML = `
+        <div style="margin-top:10px; padding:12px 12px; border-radius:14px; border:1px solid rgba(255,255,255,0.10); background: rgba(255,255,255,0.05);">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                <div style="font-size:12px; color:#94A3B8; font-weight:900; letter-spacing:0.08em; text-transform:uppercase;">Refund policy</div>
+                ${policyLabel ? `<div style="font-size:12px; font-weight:900; color:#FDE68A;">${policyLabel}</div>` : ''}
+            </div>
+            <div style="margin-top:6px; font-size:12px; color:#CBD5E1; line-height:1.45;">${policyText}</div>
+        </div>
+    `;
 
     const html = `
         <div class="property-modal-inner">
@@ -617,6 +633,7 @@ function renderPropertyDetails(property, bookedDates) {
                             ${paymentMethodsHTML}
 
                             <button type="submit" class="pm-cta-btn modal-btn modal-reserve-submit" ${paymongoOn ? '' : 'disabled'} style="opacity:${paymongoOn ? '1' : '0.45'};cursor:${paymongoOn ? 'pointer' : 'not-allowed'};">${paymongoOn ? 'Reserve' : 'Booking unavailable'}</button>
+                            ${refundPolicyHTML}
 
                         </form>
                     </div>

@@ -28,12 +28,23 @@ $q = "
         b.check_in, b.check_out, b.total_price, b.status AS booking_status, b.booking_date,
         p.title AS property_title, p.city, p.country, p.host_id, p.cancellation_policy,
         h.first_name AS host_first_name, h.last_name AS host_last_name, h.email AS host_email,
-        g.first_name AS guest_first_name, g.last_name AS guest_last_name, g.email AS guest_email
+        g.first_name AS guest_first_name, g.last_name AS guest_last_name, g.email AS guest_email,
+        rl.action AS last_action,
+        rl.created_at AS last_action_at
     FROM refund_requests rr
     JOIN bookings b ON b.id = rr.booking_id
     JOIN properties p ON p.id = rr.property_id
     JOIN users g ON g.id = rr.requester_user_id
     JOIN users h ON h.id = p.host_id
+    LEFT JOIN (
+        SELECT x.refund_request_id, x.action, x.created_at
+        FROM refund_logs x
+        JOIN (
+            SELECT refund_request_id, MAX(id) AS max_id
+            FROM refund_logs
+            GROUP BY refund_request_id
+        ) mx ON mx.refund_request_id = x.refund_request_id AND mx.max_id = x.id
+    ) rl ON rl.refund_request_id = rr.id
     $where
     ORDER BY rr.created_at DESC
 ";
@@ -56,6 +67,15 @@ function badge($s) {
     if ($s === 'completed') return 'badge-completed';
     if ($s === 'pending_review') return 'badge-pending';
     return 'badge-pending';
+}
+function hostDecisionLabel($decision, $percent) {
+    $d = strtolower((string)$decision);
+    $pct = ($percent !== null) ? (int)$percent : null;
+    if ($d === '' || $d === 'none') return 'None';
+    if ($d === 'reject') return 'Rejected';
+    if ($d === 'approve_full') return 'Approved (100%)';
+    if ($d === 'approve_partial') return 'Approved' . ($pct !== null ? (' (' . $pct . '%)') : '');
+    return ucfirst(str_replace('_', ' ', $d)) . ($pct !== null ? (' (' . $pct . '%)') : '');
 }
 ?>
 <!DOCTYPE html>
@@ -790,6 +810,7 @@ function badge($s) {
                                 <th>Property</th>
                                 <th>Suggested</th>
                                 <th>Host Decision</th>
+                                <th>Latest Log</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -803,7 +824,7 @@ function badge($s) {
                                 $typeIcon  = (str_contains($type, 'issue')) ? 'fa-triangle-exclamation' : 'fa-rotate-left';
                                 $statusKey   = strtolower(str_replace(' ', '_', (string)$r['status']));
                                 $statusLabel = ucfirst(str_replace('_', ' ', $r['status']));
-                                $hostDec    = !empty($r['host_decision']) ? h($r['host_decision']) : '—';
+                                $hostDec    = hostDecisionLabel($r['host_decision'] ?? '', $r['host_decision_percent'] ?? null);
                                 $hostDecPct = $r['host_decision_percent'] !== null ? ((int)$r['host_decision_percent'] . '%') : '';
                             ?>
                             <tr>
@@ -839,8 +860,12 @@ function badge($s) {
                                     <div class="rf-amount-val">₱<?php echo number_format((float)$r['refund_amount'], 2); ?></div>
                                 </td>
                                 <td>
-                                    <div class="rf-decision-val"><?php echo $hostDec; ?></div>
+                                    <div class="rf-decision-val"><?php echo h($hostDec); ?></div>
                                     <?php if ($hostDecPct): ?><div class="rf-decision-pct"><?php echo $hostDecPct; ?></div><?php endif; ?>
+                                </td>
+                                <td>
+                                    <div class="rf-decision-val"><?php echo h($r['last_action'] ?? '—'); ?></div>
+                                    <div class="rf-decision-pct"><?php echo !empty($r['last_action_at']) ? h(date('M j, Y g:i A', strtotime($r['last_action_at']))) : '—'; ?></div>
                                 </td>
                                 <td>
                                     <span class="rf-status rf-status-<?php echo h($statusKey); ?>">
@@ -849,7 +874,7 @@ function badge($s) {
                                 </td>
                                 <td>
                                     <a class="rf-manage-btn" href="refund.php?id=<?php echo (int)$r['id']; ?>">
-                                        Manage
+                                        View
                                     </a>
                                 </td>
                             </tr>

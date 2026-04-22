@@ -100,8 +100,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($img && !empty($img[0]) && !empty($img[1])) {
             $w = (int)$img[0];
             $h = (int)$img[1];
-            if ($w < 900 || $h < 600) {
-                $errors[] = ucfirst($prefix) . ' image resolution is too low. Please upload a clearer photo (at least 900×600).';
+            // Minimum resolution: 480×640 (orientation-agnostic)
+            // Accept either portrait (>=480×640) or landscape (>=640×480)
+            if (!(($w >= 480 && $h >= 640) || ($w >= 640 && $h >= 480))) {
+                $errors[] = ucfirst($prefix) . ' image resolution is too low. Please upload a clearer photo (at least 480×640).';
                 return null;
             }
         } elseif ($ext === 'avif') {
@@ -323,9 +325,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .hv-preview { margin-top: 10px; border-radius: 12px; border: 1px solid rgba(148,163,184,0.12); background: rgba(0,0,0,0.2); padding: 14px; }
         .hv-preview.hidden { display: none; }
         .hv-preview img { width: 100%; max-height: 200px; object-fit: contain; border-radius: 8px; }
+        .hv-preview img.hv-clickable { cursor: zoom-in; }
         .hv-preview-meta { font-size: 13px; color: #9ca3af; margin-top: 8px; }
         .hv-preview-warn { margin-top: 8px; padding: 10px 12px; border-radius: 10px; font-size: 13px; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: #fca5a5; }
         .hv-preview-warn.hidden { display: none; }
+
+        /* Image modal */
+        .hv-imgmodal-backdrop {
+            position: fixed; inset: 0; z-index: 10000;
+            display: none; align-items: center; justify-content: center;
+            padding: 18px;
+            background: rgba(0,0,0,0.72);
+            backdrop-filter: blur(4px);
+        }
+        .hv-imgmodal-backdrop.open { display: flex; }
+        .hv-imgmodal {
+            width: min(980px, 96vw);
+            max-height: 92vh;
+            border-radius: 18px;
+            overflow: hidden;
+            background: rgba(17,24,39,0.96);
+            border: 1px solid rgba(148,163,184,0.18);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+        }
+        .hv-imgmodal-head {
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(148,163,184,0.14);
+        }
+        .hv-imgmodal-title {
+            flex: 1;
+            min-width: 0;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 900;
+            color: #E2E8F0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .hv-imgmodal-btn {
+            border: 1px solid rgba(255,255,255,0.14);
+            background: rgba(255,255,255,0.06);
+            color: #E2E8F0;
+            border-radius: 10px;
+            padding: 7px 10px;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 12px;
+        }
+        .hv-imgmodal-btn:hover { background: rgba(255,255,255,0.1); }
+        .hv-imgmodal-body {
+            padding: 14px;
+            display: grid;
+            place-items: center;
+            background: rgba(0,0,0,0.22);
+        }
+        .hv-imgmodal-body img {
+            max-width: 100%;
+            max-height: calc(92vh - 120px);
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.10);
+        }
 
         /* Submit row */
         .hv-submit { display: flex; align-items: center; justify-content: flex-end; gap: 18px; padding-top: 10px; }
@@ -478,13 +541,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 </div>
                 <div class="hv-group">
-                    <label for="gov_id_photo">ID photo * <span class="hv-hint" style="display:inline;">(min 900&times;600, max 6MB)</span></label>
+                    <label for="gov_id_photo">ID photo * <span class="hv-hint" style="display:inline;">(min 480&times;640, max 6MB)</span></label>
                     <input type="file" id="gov_id_photo" name="gov_id_photo" accept="image/*" <?php echo empty($existing['gov_id_photo_path'])?'required':''; ?>>
                     <?php if (!empty($existing['gov_id_photo_path'])): ?>
                         <p class="hv-hint">Current: <a href="../<?php echo htmlspecialchars($existing['gov_id_photo_path']); ?>" target="_blank" rel="noopener">View file</a></p>
                     <?php endif; ?>
                     <div class="hv-preview hidden" id="govPreview">
-                        <img id="govPreviewImg" alt="ID preview" />
+                        <img id="govPreviewImg" class="hv-clickable" alt="ID preview" />
                         <div class="hv-preview-meta" id="govPreviewMeta"></div>
                         <div class="hv-preview-warn hidden" id="govPreviewWarn"></div>
                     </div>
@@ -511,13 +574,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 </div>
                 <div class="hv-group">
-                    <label for="supporting_doc_photo">Document photo * <span class="hv-hint" style="display:inline;">(min 900&times;600, max 6MB)</span></label>
+                    <label for="supporting_doc_photo">Document photo * <span class="hv-hint" style="display:inline;">(min 480&times;640, max 6MB)</span></label>
                     <input type="file" id="supporting_doc_photo" name="supporting_doc_photo" accept="image/*" <?php echo empty($existing['ownership_doc_photo_path'])?'required':''; ?>>
                     <?php if (!empty($existing['ownership_doc_photo_path'])): ?>
                         <p class="hv-hint">Current: <a href="../<?php echo htmlspecialchars($existing['ownership_doc_photo_path']); ?>" target="_blank" rel="noopener">View file</a></p>
                     <?php endif; ?>
                     <div class="hv-preview hidden" id="supportPreview">
-                        <img id="supportPreviewImg" alt="Document preview" />
+                        <img id="supportPreviewImg" class="hv-clickable" alt="Document preview" />
                         <div class="hv-preview-meta" id="supportPreviewMeta"></div>
                         <div class="hv-preview-warn hidden" id="supportPreviewWarn"></div>
                     </div>
@@ -575,6 +638,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 </main>
 
+<div class="hv-imgmodal-backdrop" id="hvImgModalBackdrop" aria-hidden="true">
+    <div class="hv-imgmodal" role="dialog" aria-modal="true" aria-labelledby="hvImgModalTitle">
+        <div class="hv-imgmodal-head">
+            <button type="button" class="hv-imgmodal-btn" id="hvImgModalBack">Back</button>
+            <div class="hv-imgmodal-title" id="hvImgModalTitle">Preview</div>
+            <button type="button" class="hv-imgmodal-btn" id="hvImgModalClose">Close</button>
+        </div>
+        <div class="hv-imgmodal-body">
+            <img id="hvImgModalImg" alt="Preview image">
+        </div>
+    </div>
+</div>
+
 
 <script>
 (function() {
@@ -625,7 +701,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 var ws = [];
                 if (file.size < 60*1024) ws.push('File too small, may be blurry.');
                 if (file.size > 6*1024*1024) ws.push('File exceeds 6MB limit.');
-                if (w && h && (w < 900 || h < 600)) ws.push('Resolution too low — use at least 900\u00d7600.');
+                if (w && h && !((w >= 480 && h >= 640) || (w >= 640 && h >= 480))) ws.push('Resolution too low — use at least 480\u00d7640.');
                 if (ws.length) { warn.textContent = ws.join(' '); warn.classList.remove('hidden'); }
                 else warn.classList.add('hidden');
                 box.classList.remove('hidden');
@@ -636,6 +712,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     setupPreview('gov_id_photo','govPreview','govPreviewImg','govPreviewMeta','govPreviewWarn');
     setupPreview('supporting_doc_photo','supportPreview','supportPreviewImg','supportPreviewMeta','supportPreviewWarn');
+
+    // Click-to-zoom modal for previews
+    (function () {
+        var backdrop = document.getElementById('hvImgModalBackdrop');
+        var modalImg = document.getElementById('hvImgModalImg');
+        var titleEl = document.getElementById('hvImgModalTitle');
+        var closeBtn = document.getElementById('hvImgModalClose');
+        var backBtn = document.getElementById('hvImgModalBack');
+        if (!backdrop || !modalImg || !titleEl || !closeBtn) return;
+
+        function open(src, title) {
+            if (!src) return;
+            modalImg.src = src;
+            titleEl.textContent = title || 'Preview';
+            backdrop.classList.add('open');
+            backdrop.setAttribute('aria-hidden', 'false');
+        }
+        function close() {
+            backdrop.classList.remove('open');
+            backdrop.setAttribute('aria-hidden', 'true');
+            modalImg.removeAttribute('src');
+        }
+
+        function wire(imgId, title) {
+            var img = document.getElementById(imgId);
+            if (!img) return;
+            img.addEventListener('click', function () {
+                var src = img.getAttribute('src') || '';
+                if (!src) return;
+                open(src, title);
+            });
+        }
+        wire('govPreviewImg', 'Government ID');
+        wire('supportPreviewImg', 'Supporting document');
+
+        closeBtn.addEventListener('click', close);
+        if (backBtn) backBtn.addEventListener('click', close);
+        backdrop.addEventListener('click', function (e) { if (e.target === backdrop) close(); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && backdrop.classList.contains('open')) close(); });
+    })();
 })();
 </script>
 </body>

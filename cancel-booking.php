@@ -104,15 +104,12 @@ $preview = reservepro_refund_preview_cancellation(
 $refundPercent = (int)$preview['percent'];
 $refundAmount = (float)$preview['amount'];
 
-// Strict policy: do not auto-approve; keep at 0% and route to review.
-$refundStatus = 'pending';
+// Host-authority model: always route refund requests to host review first.
+$refundStatus = 'pending_review';
 if (strtolower($policy) === 'strict') {
     $refundPercent = 0;
     $refundAmount = 0.0;
     $refundStatus = 'pending_review';
-} elseif ($refundPercent >= 99) {
-    // Optional enhancement: auto-approve highest cancellation refund tier when eligible
-    $refundStatus = 'approved';
 }
 
 $conn->begin_transaction();

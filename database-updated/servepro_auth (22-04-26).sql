@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 21, 2026 at 05:38 PM
+-- Generation Time: Apr 22, 2026 at 04:12 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -83,12 +83,13 @@ CREATE TABLE `bookings` (
 --
 
 INSERT INTO `bookings` (`id`, `property_id`, `guest_id`, `check_in`, `check_out`, `guests`, `total_price`, `status`, `booking_date`) VALUES
-(14, 17, 3, '2026-04-20', '2026-04-22', 1, 35200.00, 'confirmed', '2026-04-18 07:36:02'),
-(15, 1, 3, '2026-04-20', '2026-04-30', 1, 439989.00, 'pending', '2026-04-18 07:41:25'),
+(14, 17, 3, '2026-04-20', '2026-04-22', 1, 35200.00, 'cancelled', '2026-04-18 07:36:02'),
+(15, 1, 3, '2026-04-20', '2026-04-30', 1, 439989.00, 'cancelled', '2026-04-18 07:41:25'),
 (16, 1, 3, '2026-04-30', '2026-05-30', 1, 1319967.00, 'pending', '2026-04-18 07:42:34'),
 (17, 15, 3, '2026-04-19', '2026-04-22', 1, 14850.00, 'cancelled', '2026-04-18 07:48:32'),
 (18, 19, 3, '2026-04-22', '2026-04-24', 1, 33000.00, 'cancelled', '2026-04-21 13:47:16'),
-(19, 17, 3, '2026-04-22', '2026-04-26', 1, 70400.00, 'confirmed', '2026-04-21 14:32:24');
+(19, 17, 3, '2026-04-22', '2026-04-26', 1, 70400.00, 'cancelled', '2026-04-21 14:32:24'),
+(20, 24, 22, '2026-04-23', '2026-04-27', 1, 37400.00, 'confirmed', '2026-04-22 08:40:41');
 
 -- --------------------------------------------------------
 
@@ -113,7 +114,10 @@ CREATE TABLE `booking_cancellations` (
 
 INSERT INTO `booking_cancellations` (`id`, `booking_id`, `user_id`, `policy`, `refund_percent_preview`, `refund_amount_preview`, `reason`, `cancelled_at`) VALUES
 (2, 17, 3, 'moderate', 70, 10395.00, '', '2026-04-19 13:47:04'),
-(3, 18, 3, 'moderate', 99, 32670.00, 'change my mind', '2026-04-21 14:11:06');
+(3, 18, 3, 'moderate', 99, 32670.00, 'change my mind', '2026-04-21 14:11:06'),
+(4, 19, 3, 'moderate', 50, 35200.00, '', '2026-04-22 06:54:53'),
+(5, 14, 3, 'moderate', 0, 0.00, '', '2026-04-22 07:46:36'),
+(6, 15, 3, 'moderate', 0, 0.00, '', '2026-04-22 13:51:43');
 
 -- --------------------------------------------------------
 
@@ -165,6 +169,13 @@ CREATE TABLE `host_ledger` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `host_ledger`
+--
+
+INSERT INTO `host_ledger` (`id`, `host_id`, `booking_id`, `refund_request_id`, `entry_type`, `amount`, `note`, `created_at`) VALUES
+(1, 1, 19, 4, 'refund_debit', -31680.00, 'Refund completed by host: deduct host share (50% of host share)', '2026-04-22 14:09:14');
+
 -- --------------------------------------------------------
 
 --
@@ -214,7 +225,17 @@ INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `body`, `link`, `
 (1, 1, 'new_message', 'New message', 'angela lopez messaged you about Aloguinsan Adventure Base | Near Falls & River Tours.', '../host/messages.php', 0, '2026-04-21 14:31:35'),
 (2, 1, 'booking_created', 'New booking (pending)', 'angela lopez booked Aloguinsan Adventure Base | Near Falls & River Tours · Booking #19', '../host/bookings.php', 0, '2026-04-21 14:32:25'),
 (3, 2, 'booking_created', 'New booking (pending)', 'angela lopez booked Aloguinsan Adventure Base | Near Falls & River Tours · Booking #19', '../admin/bookings.php', 0, '2026-04-21 14:32:26'),
-(4, 3, 'new_message', 'New message', 'Host replied about Aloguinsan Adventure Base | Near Falls & River Tours.', 'messages.php', 0, '2026-04-21 14:46:06');
+(4, 3, 'new_message', 'New message', 'Host replied about Aloguinsan Adventure Base | Near Falls & River Tours.', 'messages.php', 0, '2026-04-21 14:46:06'),
+(5, 2, 'user_created', 'New user created', 'johnny deep (johnny@gmail.com)', NULL, 0, '2026-04-22 06:20:59'),
+(6, 1, 'booking_cancelled', 'Booking cancelled', 'A guest cancelled booking #19.', '../host/bookings.php', 1, '2026-04-22 06:54:53'),
+(7, 2, 'booking_cancelled', 'Booking cancelled', 'A guest cancelled booking #19.', '../admin/bookings.php', 0, '2026-04-22 06:54:53'),
+(8, 1, 'booking_cancelled', 'Booking cancelled', 'A guest cancelled booking #14.', '../host/bookings.php', 0, '2026-04-22 07:46:36'),
+(9, 2, 'booking_cancelled', 'Booking cancelled', 'A guest cancelled booking #14.', '../admin/bookings.php', 0, '2026-04-22 07:46:36'),
+(10, 2, 'user_created', 'New user created', 'angelo mendoza (mendozaangelo12@gmail.com)', NULL, 0, '2026-04-22 08:34:37'),
+(11, 1, 'booking_created', 'New booking (pending)', 'angelo mendoza booked Beachfront Cottage with Stunning Sunset Views · Booking #20', '../host/bookings.php', 1, '2026-04-22 08:40:42'),
+(12, 2, 'booking_created', 'New booking (pending)', 'angelo mendoza booked Beachfront Cottage with Stunning Sunset Views · Booking #20', '../admin/bookings.php', 0, '2026-04-22 08:40:42'),
+(13, 1, 'booking_cancelled', 'Booking cancelled', 'A guest cancelled booking #15.', '../host/bookings.php', 0, '2026-04-22 13:51:43'),
+(14, 2, 'booking_cancelled', 'Booking cancelled', 'A guest cancelled booking #15.', '../admin/bookings.php', 0, '2026-04-22 13:51:43');
 
 -- --------------------------------------------------------
 
@@ -241,12 +262,13 @@ CREATE TABLE `payments` (
 --
 
 INSERT INTO `payments` (`id`, `booking_id`, `provider`, `method`, `amount`, `currency`, `status`, `external_reference`, `raw_payload`, `created_at`, `updated_at`) VALUES
-(13, 14, 'paymongo', 'checkout_session', 35200.00, 'PHP', 'pending', 'cs_aedcb30258ac382d68da747d', NULL, '2026-04-18 07:36:02', '2026-04-18 07:36:03'),
-(14, 15, 'paymongo', 'checkout_session', 439989.00, 'PHP', 'pending', 'cs_20c6d6aa7d58d7b819bb7f43', NULL, '2026-04-18 07:41:25', '2026-04-18 07:41:34'),
+(13, 14, 'paymongo', 'checkout_session', 35200.00, 'PHP', 'cancelled', 'cs_aedcb30258ac382d68da747d', NULL, '2026-04-18 07:36:02', '2026-04-22 07:46:36'),
+(14, 15, 'paymongo', 'checkout_session', 439989.00, 'PHP', 'cancelled', 'cs_20c6d6aa7d58d7b819bb7f43', NULL, '2026-04-18 07:41:25', '2026-04-22 13:51:43'),
 (15, 16, 'paymongo', 'checkout_session', 1319967.00, 'PHP', 'pending', 'cs_67e47ed20048cf3e9bb7a81c', NULL, '2026-04-18 07:42:34', '2026-04-18 07:42:36'),
 (16, 17, 'paymongo', 'checkout_session', 14850.00, 'PHP', 'cancelled', 'cs_f48eec46852bf3a0068380cb', NULL, '2026-04-18 07:48:32', '2026-04-19 13:47:04'),
 (17, 18, 'paymongo', 'checkout_session', 33000.00, 'PHP', 'cancelled', 'cs_608e83912a96081ab3296de7', NULL, '2026-04-21 13:47:16', '2026-04-21 14:11:06'),
-(18, 19, 'paymongo', 'checkout_session', 70400.00, 'PHP', 'pending', 'cs_871190f3baed7b9a64f5bac0', NULL, '2026-04-21 14:32:24', '2026-04-21 14:32:25');
+(18, 19, 'paymongo', 'checkout_session', 70400.00, 'PHP', 'cancelled', 'cs_871190f3baed7b9a64f5bac0', NULL, '2026-04-21 14:32:24', '2026-04-22 06:54:53'),
+(19, 20, 'paymongo', 'checkout_session', 37400.00, 'PHP', 'pending', 'cs_71467e4a6f2ec43ce1ccf65d', NULL, '2026-04-22 08:40:41', '2026-04-22 08:40:42');
 
 -- --------------------------------------------------------
 
@@ -289,7 +311,16 @@ INSERT INTO `properties` (`id`, `host_id`, `title`, `description`, `property_typ
 (16, 1, 'Stylish Aloguinsan Stay w/ Balcony & Fast Wi-Fi', 'Enjoy a modern and comfortable stay in Aloguinsan with a touch of style. This space features clean interiors, cozy furnishings, and a relaxing balcony for your morning coffee. Ideal for travelers looking for a peaceful escape while still having essential comforts like Wi-Fi and air conditioning.', 'apartment', 'Aloguinsan, Cebu', 'Aloguinsan', 'Philippines', 2500.00, 2, 1, 1, 10.22821200, 123.55034800, 0, 'moderate', NULL, 0, 'approved', '', '2026-04-18 07:04:22', '2026-04-18 07:06:54'),
 (17, 1, 'Aloguinsan Adventure Base | Near Falls & River Tours', 'Perfect for explorers, this Aloguinsan stay puts you close to waterfalls, river cruises, and scenic trails. After a day of adventure, come home to a comfortable and quiet space with all the essentials. Ideal for nature lovers looking for both excitement and relaxation.', 'house', 'Looc', 'Danao', 'Philippines', 16000.00, 8, 3, 3, 10.51161600, 124.02301800, 0, 'moderate', NULL, 0, 'approved', '', '2026-04-18 07:31:46', '2026-04-18 07:33:47'),
 (18, 1, 'Romantic Aloguinsan Hideaway | Peaceful & Private', 'Escape the noise and enjoy a quiet, intimate stay in Aloguinsan. This cozy space is perfect for couples seeking privacy and relaxation. Surrounded by nature, it’s an ideal spot to unwind, reconnect, and enjoy slow, peaceful moments together.', 'apartment', 'Diosdado Macapagal Highway, Poblacion', 'Aloguinsan', 'Philippines', 6800.00, 8, 4, 4, 10.22200100, 123.54878300, 0, 'moderate', NULL, 0, 'approved', '', '2026-04-18 08:06:42', '2026-04-18 08:09:25'),
-(19, 1, 'Cozy 2-Bedroom Condo in Cebu City', 'A comfortable 2-bedroom condo located in the heart of Cebu City. Offers easy access to malls, restaurants, and business districts, making it ideal for professionals and small families.', 'villa', 'P. Burgos Street, San Roque', 'Cebu City', 'Philippines', 15000.00, 12, 12, 12, 10.29342100, 123.90226100, 0, 'moderate', NULL, 0, 'approved', '', '2026-04-21 13:10:12', '2026-04-21 13:34:17');
+(19, 1, 'Cozy 2-Bedroom Condo in Cebu City', 'A comfortable 2-bedroom condo located in the heart of Cebu City. Offers easy access to malls, restaurants, and business districts, making it ideal for professionals and small families.', 'villa', 'P. Burgos Street, San Roque', 'Cebu City', 'Philippines', 15000.00, 13, 12, 12, 10.29342100, 123.90226100, 0, 'moderate', NULL, 0, 'pending', '', '2026-04-21 13:10:12', '2026-04-22 05:57:57'),
+(20, 1, 'Modern 2-Bedroom Apartment with Balcony & City View', 'Enjoy comfort and convenience in this bright and fully furnished 2-bedroom apartment located in a peaceful yet accessible neighborhood. The unit features a spacious living area, equipped kitchen, high-speed Wi-Fi, air-conditioning, and a private balcony with relaxing city views. Ideal for families, remote workers, or travelers looking for a cozy home base. Nearby are restaurants, grocery stores, public transport, and key city attractions. Parking and 24/7 security included.', 'apartment', 'Dionisio Jakosalem Street, Señor Santo Niño', 'Cebu City', 'Philippines', 20000.00, 10, 10, 10, 10.29343600, 123.90085700, 0, 'moderate', NULL, 0, 'approved', '', '2026-04-22 06:15:24', '2026-04-22 09:17:04'),
+(21, 1, 'Cozy Studio Apartment Near City Center', 'A fully furnished studio apartment perfect for short or long stays. The unit includes a comfortable bed, private bathroom, kitchenette, air-conditioning, Wi-Fi, and a small dining/work area. Located in a safe and quiet neighborhood with easy access to public transportation, restaurants, and convenience stores. Ideal for solo travelers, students, or business guests.', 'villa', 'Dionisio Jakosalem Street, Kamagayan', 'Cebu City', 'Philippines', 25000.00, 12, 12, 11, 10.30067400, 123.90134000, 0, 'moderate', NULL, 0, 'approved', '', '2026-04-22 07:06:05', '2026-04-22 09:16:58'),
+(22, 1, 'Modern Condo with Pool & Gym Access', 'Enjoy a stylish stay in this modern condo featuring a queen bed, smart TV, high-speed internet, and a balcony with city views. Guests have access to building amenities including a swimming pool, gym, and 24/7 security. Perfect for couples and business travelers.', 'condo', 'Pusok', 'Lapu-Lapu', 'Philippines', 22000.00, 9, 9, 9, 10.32307700, 123.97527600, 0, 'moderate', NULL, 0, 'approved', '', '2026-04-22 07:11:30', '2026-04-22 07:52:16'),
+(23, 1, 'Budget-Friendly Room Near Universities', 'Clean and comfortable private room with shared kitchen and living space. Includes Wi-Fi, workspace, and air-conditioning. Located near universities, cafés, and public transport, making it ideal for students and backpackers.', 'hotel', 'Poblacion', 'Compostela', 'Philippines', 16000.00, 8, 8, 8, 10.44960500, 124.00891900, 0, 'moderate', NULL, 0, 'approved', '', '2026-04-22 07:15:55', '2026-04-22 07:48:28'),
+(24, 1, 'Beachfront Cottage with Stunning Sunset Views', 'Wake up to the sound of waves in this charming beachfront cottage. Features a private terrace, fully equipped kitchen, and outdoor dining area. Perfect for a relaxing getaway, romantic trips, or weekend escapes.', 'house', 'Capitol Site', 'Cebu City', 'Philippines', 8500.00, 7, 7, 7, 10.57698800, 124.01312300, 0, 'moderate', NULL, 0, 'approved', '', '2026-04-22 07:20:40', '2026-04-22 07:48:26'),
+(25, 1, 'Modern 2-Storey Tree House with Garage', 'A comfortable 3-bedroom, 2-bathroom house featuring a spacious living area, dining room, and fully equipped kitchen. Includes air-conditioning, Wi-Fi, private garage, and a small backyard. Located in a quiet and secure subdivision near malls, schools, and hospitals.', 'house', 'J. Janson Street, Poblacion', 'Sibonga', 'Philippines', 8699.99, 6, 6, 6, 10.01612600, 123.61442600, 0, 'moderate', NULL, 0, 'approved', '', '2026-04-22 07:24:28', '2026-04-22 07:48:24'),
+(26, 1, 'Cozy Bungalow House with Private Garden', 'This charming bungalow offers 2 bedrooms, 1 bathroom, a bright living space, and a fully furnished kitchen. Enjoy a relaxing outdoor garden and patio area. Ideal for small families or couples looking for a peaceful home stay.', 'house', 'Bolocboloc, Cebu', 'Bolocboloc', 'Philippines', 7699.00, 9, 9, 9, 10.10786900, 123.52172500, 0, 'moderate', NULL, 0, 'approved', '', '2026-04-22 07:28:48', '2026-04-22 07:48:22'),
+(27, 1, 'Spacious Family House Near City Center', 'Large 4-bedroom home perfect for big families or group stays. Includes multiple bathrooms, a big kitchen, living and entertainment area, fast Wi-Fi, and parking for two cars. Conveniently located near public transport and shopping centers.', 'house', 'Jose Rizal Street, Señor Santo Niño', 'Cebu City', 'Philippines', 3500.00, 4, 4, 4, 10.29306600, 123.90148800, 0, 'moderate', NULL, 0, 'approved', '', '2026-04-22 07:32:28', '2026-04-22 07:48:19'),
+(28, 1, 'Affordable Subdivision for Short Stays', 'Simple and clean 2-bedroom apartment with essential amenities such as kitchen, Wi-Fi, air-conditioning, and parking. Located in a safe residential neighborhood with nearby convenience stores and restaurants.', 'apartment', 'Poblacion', 'Lilo-an', 'Philippines', 5500.00, 5, 5, 5, 10.38942700, 123.99532600, 0, 'moderate', NULL, 0, 'pending', '', '2026-04-22 07:40:01', '2026-04-22 09:08:10');
 
 -- --------------------------------------------------------
 
@@ -381,7 +412,91 @@ INSERT INTO `property_amenities` (`property_id`, `amenity_id`) VALUES
 (19, 17),
 (19, 18),
 (19, 19),
-(19, 20);
+(19, 20),
+(20, 1),
+(20, 3),
+(20, 4),
+(20, 5),
+(20, 6),
+(20, 7),
+(20, 9),
+(20, 11),
+(20, 14),
+(20, 15),
+(20, 16),
+(20, 17),
+(20, 20),
+(21, 1),
+(21, 4),
+(21, 5),
+(21, 6),
+(21, 8),
+(21, 9),
+(21, 11),
+(21, 12),
+(21, 13),
+(21, 14),
+(21, 17),
+(21, 19),
+(22, 1),
+(22, 2),
+(22, 3),
+(22, 4),
+(22, 5),
+(22, 8),
+(22, 10),
+(22, 11),
+(22, 13),
+(22, 14),
+(22, 17),
+(22, 20),
+(23, 1),
+(23, 2),
+(23, 5),
+(23, 7),
+(23, 9),
+(23, 11),
+(23, 12),
+(23, 13),
+(23, 15),
+(24, 1),
+(24, 5),
+(24, 6),
+(24, 7),
+(24, 9),
+(24, 15),
+(24, 16),
+(24, 18),
+(24, 19),
+(25, 1),
+(25, 2),
+(25, 4),
+(25, 5),
+(25, 7),
+(25, 9),
+(25, 11),
+(25, 14),
+(25, 16),
+(26, 1),
+(26, 3),
+(26, 4),
+(26, 5),
+(26, 7),
+(26, 9),
+(26, 11),
+(26, 16),
+(27, 1),
+(27, 2),
+(27, 5),
+(27, 7),
+(27, 16),
+(28, 1),
+(28, 3),
+(28, 5),
+(28, 7),
+(28, 11),
+(28, 13),
+(28, 16);
 
 -- --------------------------------------------------------
 
@@ -407,7 +522,9 @@ INSERT INTO `property_edit_logs` (`id`, `property_id`, `host_id`, `changes_json`
 (5, 1, 1, '{\"property_id\":1,\"host_id\":1,\"changes\":[{\"field\":\"address\",\"label\":\"Address\",\"from\":\"Little Valley Colon City of Naga Cebu\",\"to\":\"Poblacion\"},{\"field\":\"city\",\"label\":\"City\",\"from\":\"City of Naga\",\"to\":\"Lapu-Lapu\"},{\"field\":\"latitude\",\"label\":\"Latitude\",\"from\":\"10.3285606\",\"to\":\"10.31313\"},{\"field\":\"longitude\",\"label\":\"Longitude\",\"from\":\"123.9008849\",\"to\":\"123.948188\"}]}', '2026-04-18 05:31:15'),
 (6, 16, 1, '{\"property_id\":16,\"host_id\":1,\"changes\":[{\"field\":\"property_type\",\"label\":\"Property type\",\"from\":\"condo\",\"to\":\"apartment\"},{\"field\":\"status\",\"label\":\"Status\",\"from\":\"approved\",\"to\":\"pending\"}]}', '2026-04-18 07:05:38'),
 (7, 17, 1, '{\"property_id\":17,\"host_id\":1,\"changes\":[{\"field\":\"photos_deleted\",\"label\":\"Photos deleted\",\"count\":1}]}', '2026-04-18 07:32:40'),
-(8, 17, 1, '{\"property_id\":17,\"host_id\":1,\"changes\":[{\"field\":\"property_type\",\"label\":\"Property type\",\"from\":\"hotel\",\"to\":\"house\"}]}', '2026-04-18 07:33:00');
+(8, 17, 1, '{\"property_id\":17,\"host_id\":1,\"changes\":[{\"field\":\"property_type\",\"label\":\"Property type\",\"from\":\"hotel\",\"to\":\"house\"}]}', '2026-04-18 07:33:00'),
+(9, 19, 1, '{\"property_id\":19,\"host_id\":1,\"changes\":[{\"field\":\"max_guests\",\"label\":\"Max guests\",\"from\":\"12\",\"to\":\"13\"},{\"field\":\"status\",\"label\":\"Status\",\"from\":\"approved\",\"to\":\"pending\"}]}', '2026-04-22 05:57:57'),
+(10, 28, 1, '{\"property_id\":28,\"host_id\":1,\"changes\":[{\"field\":\"status\",\"label\":\"Status\",\"from\":\"approved\",\"to\":\"pending\"}]}', '2026-04-22 09:08:10');
 
 -- --------------------------------------------------------
 
@@ -483,7 +600,88 @@ INSERT INTO `property_photos` (`id`, `property_id`, `photo_url`, `is_primary`, `
 (75, 19, 'uploads/properties/property_19_1776777012_11.avif', 0, '2026-04-21 13:10:12'),
 (76, 19, 'uploads/properties/property_19_1776777012_12.avif', 0, '2026-04-21 13:10:12'),
 (77, 19, 'uploads/properties/property_19_1776777012_13.avif', 0, '2026-04-21 13:10:12'),
-(78, 19, 'uploads/properties/property_19_1776777012_14.avif', 0, '2026-04-21 13:10:12');
+(78, 19, 'uploads/properties/property_19_1776777012_14.avif', 0, '2026-04-21 13:10:12'),
+(79, 20, 'uploads/properties/property_20_1776838525_0.avif', 1, '2026-04-22 06:15:25'),
+(80, 20, 'uploads/properties/property_20_1776838525_1.avif', 0, '2026-04-22 06:15:25'),
+(81, 20, 'uploads/properties/property_20_1776838525_2.avif', 0, '2026-04-22 06:15:25'),
+(82, 20, 'uploads/properties/property_20_1776838525_3.avif', 0, '2026-04-22 06:15:25'),
+(83, 20, 'uploads/properties/property_20_1776838525_4.avif', 0, '2026-04-22 06:15:25'),
+(84, 20, 'uploads/properties/property_20_1776838525_5.avif', 0, '2026-04-22 06:15:25'),
+(85, 20, 'uploads/properties/property_20_1776838525_6.avif', 0, '2026-04-22 06:15:25'),
+(86, 20, 'uploads/properties/property_20_1776838525_7.avif', 0, '2026-04-22 06:15:25'),
+(87, 20, 'uploads/properties/property_20_1776838525_8.avif', 0, '2026-04-22 06:15:25'),
+(88, 21, 'uploads/properties/property_21_1776841565_0.avif', 1, '2026-04-22 07:06:05'),
+(89, 21, 'uploads/properties/property_21_1776841565_1.avif', 0, '2026-04-22 07:06:05'),
+(90, 21, 'uploads/properties/property_21_1776841565_2.avif', 0, '2026-04-22 07:06:05'),
+(91, 21, 'uploads/properties/property_21_1776841565_3.avif', 0, '2026-04-22 07:06:05'),
+(92, 21, 'uploads/properties/property_21_1776841565_4.avif', 0, '2026-04-22 07:06:05'),
+(93, 21, 'uploads/properties/property_21_1776841565_5.avif', 0, '2026-04-22 07:06:05'),
+(94, 21, 'uploads/properties/property_21_1776841565_6.avif', 0, '2026-04-22 07:06:05'),
+(95, 21, 'uploads/properties/property_21_1776841565_7.avif', 0, '2026-04-22 07:06:05'),
+(96, 21, 'uploads/properties/property_21_1776841565_8.avif', 0, '2026-04-22 07:06:05'),
+(97, 22, 'uploads/properties/property_22_1776841890_0.avif', 1, '2026-04-22 07:11:30'),
+(98, 22, 'uploads/properties/property_22_1776841890_1.avif', 0, '2026-04-22 07:11:30'),
+(99, 22, 'uploads/properties/property_22_1776841890_2.avif', 0, '2026-04-22 07:11:30'),
+(100, 22, 'uploads/properties/property_22_1776841890_3.avif', 0, '2026-04-22 07:11:30'),
+(101, 22, 'uploads/properties/property_22_1776841890_4.avif', 0, '2026-04-22 07:11:30'),
+(102, 22, 'uploads/properties/property_22_1776841890_5.avif', 0, '2026-04-22 07:11:30'),
+(103, 22, 'uploads/properties/property_22_1776841890_6.avif', 0, '2026-04-22 07:11:30'),
+(104, 22, 'uploads/properties/property_22_1776841890_7.avif', 0, '2026-04-22 07:11:30'),
+(105, 22, 'uploads/properties/property_22_1776841890_8.avif', 0, '2026-04-22 07:11:30'),
+(106, 23, 'uploads/properties/property_23_1776842155_0.avif', 1, '2026-04-22 07:15:55'),
+(107, 23, 'uploads/properties/property_23_1776842155_1.avif', 0, '2026-04-22 07:15:55'),
+(108, 23, 'uploads/properties/property_23_1776842155_2.avif', 0, '2026-04-22 07:15:55'),
+(109, 23, 'uploads/properties/property_23_1776842155_3.avif', 0, '2026-04-22 07:15:55'),
+(110, 23, 'uploads/properties/property_23_1776842155_4.avif', 0, '2026-04-22 07:15:55'),
+(111, 23, 'uploads/properties/property_23_1776842155_5.avif', 0, '2026-04-22 07:15:55'),
+(112, 23, 'uploads/properties/property_23_1776842155_6.avif', 0, '2026-04-22 07:15:55'),
+(113, 23, 'uploads/properties/property_23_1776842155_7.avif', 0, '2026-04-22 07:15:55'),
+(114, 23, 'uploads/properties/property_23_1776842155_8.avif', 0, '2026-04-22 07:15:55'),
+(115, 24, 'uploads/properties/property_24_1776842440_0.avif', 1, '2026-04-22 07:20:40'),
+(116, 24, 'uploads/properties/property_24_1776842440_1.avif', 0, '2026-04-22 07:20:40'),
+(117, 24, 'uploads/properties/property_24_1776842440_2.avif', 0, '2026-04-22 07:20:40'),
+(118, 24, 'uploads/properties/property_24_1776842440_3.avif', 0, '2026-04-22 07:20:40'),
+(119, 24, 'uploads/properties/property_24_1776842440_4.avif', 0, '2026-04-22 07:20:40'),
+(120, 24, 'uploads/properties/property_24_1776842440_5.avif', 0, '2026-04-22 07:20:40'),
+(121, 24, 'uploads/properties/property_24_1776842440_6.avif', 0, '2026-04-22 07:20:40'),
+(122, 24, 'uploads/properties/property_24_1776842440_7.avif', 0, '2026-04-22 07:20:40'),
+(123, 24, 'uploads/properties/property_24_1776842440_8.avif', 0, '2026-04-22 07:20:40'),
+(124, 25, 'uploads/properties/property_25_1776842668_0.avif', 1, '2026-04-22 07:24:28'),
+(125, 25, 'uploads/properties/property_25_1776842668_1.avif', 0, '2026-04-22 07:24:28'),
+(126, 25, 'uploads/properties/property_25_1776842668_2.avif', 0, '2026-04-22 07:24:28'),
+(127, 25, 'uploads/properties/property_25_1776842668_3.avif', 0, '2026-04-22 07:24:28'),
+(128, 25, 'uploads/properties/property_25_1776842668_4.avif', 0, '2026-04-22 07:24:28'),
+(129, 25, 'uploads/properties/property_25_1776842668_5.avif', 0, '2026-04-22 07:24:28'),
+(130, 25, 'uploads/properties/property_25_1776842668_6.webp', 0, '2026-04-22 07:24:28'),
+(131, 25, 'uploads/properties/property_25_1776842668_7.avif', 0, '2026-04-22 07:24:28'),
+(132, 25, 'uploads/properties/property_25_1776842668_8.avif', 0, '2026-04-22 07:24:28'),
+(133, 26, 'uploads/properties/property_26_1776842928_0.avif', 1, '2026-04-22 07:28:48'),
+(134, 26, 'uploads/properties/property_26_1776842928_1.avif', 0, '2026-04-22 07:28:48'),
+(135, 26, 'uploads/properties/property_26_1776842928_2.avif', 0, '2026-04-22 07:28:48'),
+(136, 26, 'uploads/properties/property_26_1776842928_3.avif', 0, '2026-04-22 07:28:48'),
+(137, 26, 'uploads/properties/property_26_1776842928_4.avif', 0, '2026-04-22 07:28:48'),
+(138, 26, 'uploads/properties/property_26_1776842928_5.avif', 0, '2026-04-22 07:28:48'),
+(139, 26, 'uploads/properties/property_26_1776842928_6.avif', 0, '2026-04-22 07:28:48'),
+(140, 26, 'uploads/properties/property_26_1776842928_7.avif', 0, '2026-04-22 07:28:48'),
+(141, 26, 'uploads/properties/property_26_1776842928_8.avif', 0, '2026-04-22 07:28:48'),
+(142, 27, 'uploads/properties/property_27_1776843148_0.avif', 1, '2026-04-22 07:32:28'),
+(143, 27, 'uploads/properties/property_27_1776843148_1.avif', 0, '2026-04-22 07:32:28'),
+(144, 27, 'uploads/properties/property_27_1776843148_2.avif', 0, '2026-04-22 07:32:28'),
+(145, 27, 'uploads/properties/property_27_1776843148_3.avif', 0, '2026-04-22 07:32:28'),
+(146, 27, 'uploads/properties/property_27_1776843148_4.avif', 0, '2026-04-22 07:32:28'),
+(147, 27, 'uploads/properties/property_27_1776843148_5.avif', 0, '2026-04-22 07:32:28'),
+(148, 27, 'uploads/properties/property_27_1776843148_6.avif', 0, '2026-04-22 07:32:28'),
+(149, 27, 'uploads/properties/property_27_1776843148_7.avif', 0, '2026-04-22 07:32:28'),
+(150, 27, 'uploads/properties/property_27_1776843148_8.avif', 0, '2026-04-22 07:32:28'),
+(151, 28, 'uploads/properties/property_28_1776843601_0.avif', 1, '2026-04-22 07:40:01'),
+(152, 28, 'uploads/properties/property_28_1776843601_1.avif', 0, '2026-04-22 07:40:01'),
+(153, 28, 'uploads/properties/property_28_1776843601_2.avif', 0, '2026-04-22 07:40:01'),
+(154, 28, 'uploads/properties/property_28_1776843601_3.avif', 0, '2026-04-22 07:40:01'),
+(155, 28, 'uploads/properties/property_28_1776843601_4.avif', 0, '2026-04-22 07:40:01'),
+(156, 28, 'uploads/properties/property_28_1776843601_5.avif', 0, '2026-04-22 07:40:01'),
+(157, 28, 'uploads/properties/property_28_1776843601_6.avif', 0, '2026-04-22 07:40:01'),
+(158, 28, 'uploads/properties/property_28_1776843601_7.avif', 0, '2026-04-22 07:40:01'),
+(159, 28, 'uploads/properties/property_28_1776843601_8.avif', 0, '2026-04-22 07:40:01');
 
 -- --------------------------------------------------------
 
@@ -525,7 +723,15 @@ CREATE TABLE `refund_logs` (
 
 INSERT INTO `refund_logs` (`id`, `refund_request_id`, `actor_user_id`, `actor_role`, `action`, `from_status`, `to_status`, `note`, `meta_json`, `created_at`) VALUES
 (2, 2, 3, 'guest', 'create_cancellation_refund_request', NULL, 'pending', NULL, '{\"policy\":\"moderate\",\"preview_rule\":\"cancel_12h_to_24h_70\",\"warning\":\"If you cancel now, you will receive a 70% refund.\",\"refund_percent\":70,\"refund_amount\":10395}', '2026-04-19 13:47:04'),
-(3, 3, 3, 'guest', 'create_cancellation_refund_request', NULL, 'approved', 'Cancellation reason: change my mind', '{\"policy\":\"moderate\",\"preview_rule\":\"cancel_within_6h_99\",\"warning\":\"If you cancel now, you will receive a 99% refund.\",\"refund_percent\":99,\"refund_amount\":32670}', '2026-04-21 14:11:06');
+(3, 3, 3, 'guest', 'create_cancellation_refund_request', NULL, 'approved', 'Cancellation reason: change my mind', '{\"policy\":\"moderate\",\"preview_rule\":\"cancel_within_6h_99\",\"warning\":\"If you cancel now, you will receive a 99% refund.\",\"refund_percent\":99,\"refund_amount\":32670}', '2026-04-21 14:11:06'),
+(4, 4, 3, 'guest', 'create_cancellation_refund_request', NULL, 'pending', NULL, '{\"policy\":\"moderate\",\"preview_rule\":\"cancel_6h_to_12h_50\",\"warning\":\"If you cancel now, you will receive a 50% refund.\",\"refund_percent\":50,\"refund_amount\":35200}', '2026-04-22 06:54:53'),
+(5, 5, 3, 'guest', 'create_cancellation_refund_request', NULL, 'pending', NULL, '{\"policy\":\"moderate\",\"preview_rule\":\"cancel_after_12h_0\",\"warning\":\"If you cancel now, you may not be eligible for a refund under this policy.\",\"refund_percent\":0,\"refund_amount\":0}', '2026-04-22 07:46:36'),
+(6, 4, 1, 'host', 'host_decision', 'pending', 'pending', '', '{\"host_decision\":\"approve_partial\",\"host_percent\":50,\"host_amount\":35200}', '2026-04-22 08:48:43'),
+(7, 5, 2, 'admin', 'admin_approve', 'pending', 'approved', 'please be careful', NULL, '2026-04-22 08:55:15'),
+(8, 6, 3, 'guest', 'create_cancellation_refund_request', NULL, 'pending_review', NULL, '{\"policy\":\"moderate\",\"preview_rule\":\"cancel_after_12h_0\",\"warning\":\"If you cancel now, you may not be eligible for a refund under this policy.\",\"refund_percent\":0,\"refund_amount\":0}', '2026-04-22 13:51:43'),
+(9, 6, 1, 'host', 'host_decision', 'pending_review', 'pending', '', '{\"host_decision\":\"approve_partial\",\"host_percent\":0,\"host_amount\":0}', '2026-04-22 13:53:16'),
+(10, 2, 1, 'host', 'host_decision', 'pending', 'rejected', '', '{\"host_decision\":\"reject\",\"host_percent\":0,\"host_amount\":0}', '2026-04-22 13:58:30'),
+(11, 4, 1, 'host', 'host_decision', 'pending', 'completed', '', '{\"host_decision\":\"approve_partial\",\"host_percent\":50,\"host_amount\":35200}', '2026-04-22 14:09:14');
 
 -- --------------------------------------------------------
 
@@ -561,8 +767,11 @@ CREATE TABLE `refund_requests` (
 --
 
 INSERT INTO `refund_requests` (`id`, `booking_id`, `requester_user_id`, `property_id`, `request_type`, `issue_type`, `description`, `evidence_json`, `policy`, `refund_percent`, `refund_amount`, `currency`, `status`, `host_decision`, `host_decision_percent`, `host_decision_note`, `admin_override_percent`, `admin_override_note`, `created_at`, `updated_at`) VALUES
-(2, 17, 3, 15, 'cancellation', NULL, NULL, NULL, 'moderate', 70, 10395.00, 'PHP', 'pending', 'none', NULL, NULL, NULL, NULL, '2026-04-19 13:47:04', '2026-04-19 13:47:04'),
-(3, 18, 3, 19, 'cancellation', NULL, NULL, NULL, 'moderate', 99, 32670.00, 'PHP', 'approved', 'none', NULL, NULL, NULL, NULL, '2026-04-21 14:11:06', '2026-04-21 14:11:06');
+(2, 17, 3, 15, 'cancellation', NULL, NULL, NULL, 'moderate', 0, 0.00, 'PHP', 'rejected', 'reject', 0, '', NULL, NULL, '2026-04-19 13:47:04', '2026-04-22 13:58:30'),
+(3, 18, 3, 19, 'cancellation', NULL, NULL, NULL, 'moderate', 99, 32670.00, 'PHP', 'approved', 'none', NULL, NULL, NULL, NULL, '2026-04-21 14:11:06', '2026-04-21 14:11:06'),
+(4, 19, 3, 17, 'cancellation', NULL, NULL, NULL, 'moderate', 50, 35200.00, 'PHP', 'completed', 'approve_partial', 50, '', NULL, NULL, '2026-04-22 06:54:53', '2026-04-22 14:09:14'),
+(5, 14, 3, 17, 'cancellation', NULL, NULL, NULL, 'moderate', 0, 0.00, 'PHP', 'approved', 'none', NULL, NULL, NULL, NULL, '2026-04-22 07:46:36', '2026-04-22 08:55:15'),
+(6, 15, 3, 1, 'cancellation', NULL, NULL, NULL, 'moderate', 0, 0.00, 'PHP', 'pending', 'approve_partial', 0, '', NULL, NULL, '2026-04-22 13:51:43', '2026-04-22 13:53:16');
 
 -- --------------------------------------------------------
 
@@ -594,7 +803,9 @@ INSERT INTO `users` (`id`, `first_name`, `last_name`, `date_of_birth`, `profile_
 (1, 'angel', 'lou', '2000-01-01', 'uploads/profile-photos/1/avatar_1_1776784854.webp', 'angel@gmail.com', '$2y$10$IhgBdkVY/9C7PEq7f7KWSepGCehUQYsEJWeMPyoQ6g7.pk4NXkxzS', '2026-02-06 07:00:02', 'host', 1, NULL, 1, 'approved'),
 (2, 'Admin', 'ServePro', NULL, NULL, 'admin@servepro.com', '$2y$10$IWAaKuos/UEVZ0boNWZoTOinH2d1n/3Zbi6t41DOI3PXwoASZTm/i', '2026-02-06 08:03:38', 'admin', 1, NULL, 0, 'none'),
 (3, 'angela', 'lopez', '2003-01-20', 'uploads/profile-photos/3/avatar_3_1776784401.jpg', 'angela@gmail.com', '$2y$10$4f07bVfO1WD/owvmjYnUw.Uol7U.Pb/gtf6XaKT/KL1fqw6hjnBNW', '2026-02-06 08:29:04', 'guest', 1, NULL, 0, 'none'),
-(4, 'john', 'cena', NULL, NULL, 'johncena@gmail.com', '$2y$10$z3W6HvtJSkSkWojp.GGdxuK/bSEgcb7izG2SeELquNDymc0l6oXuK', '2026-02-06 08:37:01', 'guest', 0, NULL, 0, 'none');
+(4, 'john', 'cena', NULL, NULL, 'johncena@gmail.com', '$2y$10$z3W6HvtJSkSkWojp.GGdxuK/bSEgcb7izG2SeELquNDymc0l6oXuK', '2026-02-06 08:37:01', 'guest', 0, NULL, 0, 'none'),
+(21, 'johnny', 'deep', '2001-01-01', NULL, 'johnny@gmail.com', '$2y$10$1nYUi0DIpgMIre/c/JazOOLyvgDDRVOMcLGKeD4tJisbdx8LLw/E.', '2026-04-22 06:20:53', 'host', 1, NULL, 0, 'none'),
+(22, 'angelo', 'mendoza', '2004-12-21', NULL, 'mendozaangelo12@gmail.com', '$2y$10$CA4klXhFvbsHZiC6bcLfV.U89Wb3wpM70GgTFI1l80/lGtzySP4Fe', '2026-04-22 08:34:29', 'guest', 1, NULL, 0, 'none');
 
 --
 -- Indexes for dumped tables
@@ -731,19 +942,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `amenities`
 --
 ALTER TABLE `amenities`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46721;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=86321;
 
 --
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `booking_cancellations`
 --
 ALTER TABLE `booking_cancellations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `host_documents`
@@ -755,7 +966,7 @@ ALTER TABLE `host_documents`
 -- AUTO_INCREMENT for table `host_ledger`
 --
 ALTER TABLE `host_ledger`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `messages`
@@ -767,31 +978,31 @@ ALTER TABLE `messages`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `properties`
 --
 ALTER TABLE `properties`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `property_edit_logs`
 --
 ALTER TABLE `property_edit_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `property_photos`
 --
 ALTER TABLE `property_photos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=160;
 
 --
 -- AUTO_INCREMENT for table `property_reviews`
@@ -803,19 +1014,19 @@ ALTER TABLE `property_reviews`
 -- AUTO_INCREMENT for table `refund_logs`
 --
 ALTER TABLE `refund_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `refund_requests`
 --
 ALTER TABLE `refund_requests`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- Constraints for dumped tables

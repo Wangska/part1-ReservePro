@@ -56,6 +56,15 @@ function badge($s) {
     if ($s === 'pending_review') return 'badge-pending';
     return 'badge-pending';
 }
+function hostDecisionLabel($decision, $percent) {
+    $d = strtolower((string)$decision);
+    $pct = ($percent !== null) ? (int)$percent : null;
+    if ($d === '' || $d === 'none') return 'None';
+    if ($d === 'reject') return 'Rejected';
+    if ($d === 'approve_full') return 'Approved (100%)';
+    if ($d === 'approve_partial') return 'Approved' . ($pct !== null ? (' (' . $pct . '%)') : '');
+    return ucfirst(str_replace('_', ' ', $d)) . ($pct !== null ? (' (' . $pct . '%)') : '');
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -249,7 +258,7 @@ function badge($s) {
                                     </td>
                                     <td>
                                         <span class="badge <?php echo badge($r['status']); ?>"><?php echo h($r['status']); ?></span><br>
-                                        <span style="color:#94A3B8;">Host: <?php echo h($r['host_decision']); ?></span>
+                                        <span style="color:#94A3B8;">Host: <?php echo h(hostDecisionLabel($r['host_decision'] ?? '', $r['host_decision_percent'] ?? null)); ?></span>
                                     </td>
                                     <td>
                                         <div class="rr-actions">

@@ -18,7 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $id = isset($_POST['refund_request_id']) ? (int)$_POST['refund_request_id'] : 0;
 $action = strtolower(trim((string)($_POST['action'] ?? '')));
-$overridePercent = isset($_POST['override_percent']) ? (int)$_POST['override_percent'] : -1;
 $note = trim((string)($_POST['note'] ?? ''));
 if (strlen($note) > 1000) $note = substr($note, 0, 1000);
 
@@ -27,28 +26,16 @@ if ($id <= 0) {
     exit();
 }
 
-$allowed = ['approve','reject','processing','completed','override'];
-if (!in_array($action, $allowed, true)) {
-    header('Location: refund.php?id=' . $id . '&error=bad_action');
-    exit();
-}
-
-if ($action === 'override') {
-    if ($overridePercent < 0 || $overridePercent > 100) {
-        header('Location: refund.php?id=' . $id . '&error=bad_override');
-        exit();
-    }
-    if ($note === '') {
-        header('Location: refund.php?id=' . $id . '&error=note_required');
-        exit();
-    }
-}
+// Refund transactions are host-authority only.
+// Admin panel is record-only.
+header('Location: refund.php?id=' . $id . '&error=readonly');
+exit();
 
 $conn = getDBConnection();
 initializeHostTables();
 
 $stmt = $conn->prepare("
-    SELECT rr.id, rr.status, rr.refund_percent, rr.refund_amount, rr.booking_id, rr.property_id,
+    SELECT rr.id, rr.status, rr.refund_percent, rr.refund_amount, rr.host_decision, rr.host_decision_percent, rr.booking_id, rr.property_id,
            b.total_price,
            p.host_id
     FROM refund_requests rr
@@ -70,30 +57,31 @@ if (!$r) {
 
 $fromStatus = (string)($r['status'] ?? '');
 $toStatus = $fromStatus;
+$hostDecision = (string)($r['host_decision'] ?? 'none');
 
 $conn->begin_transaction();
 try {
     $meta = [];
 
-    if ($action === 'approve') {
-        $toStatus = 'approved';
-        $up = $conn->prepare("UPDATE refund_requests SET status = 'approved' WHERE id = ?");
-        $up->bind_param('i', $id);
-        $up->execute();
-        $up->close();
-    } elseif ($action === 'reject') {
-        $toStatus = 'rejected';
-        $up = $conn->prepare("UPDATE refund_requests SET status = 'rejected' WHERE id = ?");
-        $up->bind_param('i', $id);
-        $up->execute();
-        $up->close();
-    } elseif ($action === 'processing') {
+    if ($action === 'processing') {
+        if ($hostDecision === 'none') {
+            throw new Exception('Host decision required before processing');
+        }
+        if ($hostDecision === 'reject') {
+            throw new Exception('Cannot process a rejected refund');
+        }
         $toStatus = 'processing';
         $up = $conn->prepare("UPDATE refund_requests SET status = 'processing' WHERE id = ?");
         $up->bind_param('i', $id);
         $up->execute();
         $up->close();
     } elseif ($action === 'completed') {
+        if ($hostDecision === 'none') {
+            throw new Exception('Host decision required before completion');
+        }
+        if ($hostDecision === 'reject') {
+            throw new Exception('Cannot complete a rejected refund');
+        }
         $toStatus = 'completed';
         $up = $conn->prepare("UPDATE refund_requests SET status = 'completed' WHERE id = ?");
         $up->bind_param('i', $id);
@@ -120,23 +108,14 @@ try {
             $ins->execute();
             $ins->close();
         }
-    } else { // override
-        $total = (float)($r['total_price'] ?? 0);
-        $amt = round(max(0, $total) * ($overridePercent / 100), 2);
-        $toStatus = 'pending'; // stays pending for processing/approval sequence
-        $up = $conn->prepare("
-            UPDATE refund_requests
-            SET admin_override_percent = ?,
-                admin_override_note = ?,
-                refund_percent = ?,
-                refund_amount = ?,
-                status = 'pending'
-            WHERE id = ?
-        ");
-        $up->bind_param('isidi', $overridePercent, $note, $overridePercent, $amt, $id);
-        $up->execute();
-        $up->close();
-        $meta = ['override_percent' => $overridePercent, 'override_amount' => $amt];
+
+        // Platform commission refund rule:
+        // If refund is effectively "full" (>=99%), platform returns its 9% commission automatically.
+        if ($pct >= 99) {
+            $commission = reservepro_platform_commission_from_total($total);
+            $meta['platform_commission_refund'] = $commission;
+            $meta['platform_commission_refund_rule'] = 'pct>=99 => refund 9% commission';
+        }
     }
 
     $metaJson = $meta ? json_encode($meta) : null;

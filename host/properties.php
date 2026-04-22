@@ -131,7 +131,80 @@ $conn->close();
     <link rel="stylesheet" href="../assets/css/animations.css?v=1.0">
     <link rel="stylesheet" href="../assets/css/home-modern.css?v=4.5">
     <style>
-        .host-prop-card { cursor: default !important; }
+        .host-congrats {
+            margin: 0 0 18px;
+            border-radius: 22px;
+            padding: 20px 20px;
+            border: 1px solid rgba(34,197,94,0.28);
+            background: radial-gradient(1200px 400px at 30% 0%, rgba(34,197,94,0.14), transparent 60%),
+                        linear-gradient(135deg, rgba(17,24,39,0.86), rgba(30,41,59,0.80));
+            box-shadow: 0 18px 50px rgba(0,0,0,0.22);
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+        .host-congrats-icon {
+            width: 48px; height: 48px;
+            border-radius: 16px;
+            display: grid;
+            place-items: center;
+            flex: 0 0 auto;
+            background: rgba(34,197,94,0.14);
+            border: 1px solid rgba(34,197,94,0.28);
+            color: #86efac;
+        }
+        .host-congrats h2 {
+            margin: 0 0 4px;
+            font-size: 20px;
+            font-weight: 900;
+            color: #ffffff !important;
+            letter-spacing: -0.02em;
+        }
+        .host-congrats p {
+            margin: 0;
+            color: #CBD5E1 !important;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.55;
+        }
+        .host-congrats-actions {
+            margin-left: auto;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        .host-congrats-actions a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.14);
+            background: rgba(255,255,255,0.06);
+            color: #E2E8F0;
+            text-decoration: none;
+            font-weight: 900;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        .host-congrats-actions a:hover { background: rgba(255,255,255,0.10); }
+        .host-congrats-actions a.primary {
+            background: linear-gradient(135deg, #D4A574, #B8935F);
+            border-color: transparent;
+            color: #0f172a;
+        }
+        body.light-mode .host-congrats {
+            border-color: rgba(22,163,74,0.22);
+            background: linear-gradient(135deg, rgba(240,253,244,0.95), rgba(255,255,255,0.95));
+            box-shadow: 0 14px 35px rgba(15,23,42,0.10);
+        }
+        body.light-mode .host-congrats h2 { color: #0f172a !important; }
+        body.light-mode .host-congrats p { color: #334155 !important; }
+        body.light-mode .host-congrats-actions a { background: #fff; border-color: rgba(15,23,42,0.10); color: #0f172a; }
+
+        .host-prop-card { cursor: pointer !important; }
         .hpc-status-badge {
             position: absolute; top: 10px; right: 10px;
             padding: 4px 10px; border-radius: 20px;
@@ -557,6 +630,22 @@ $conn->close();
                 </div>
             </div>
 
+            <?php if (isset($_GET['success']) && $_GET['success'] === 'property_added'): ?>
+                <div class="host-congrats">
+                    <div class="host-congrats-icon" aria-hidden="true">
+                        <i class="fa-solid fa-circle-check" style="font-size:18px;"></i>
+                    </div>
+                    <div>
+                        <h2>Congratulations! You listed a property.</h2>
+                        <p>Please wait for the admin to approve it. Your listing will appear to guests once it’s approved.</p>
+                    </div>
+                    <div class="host-congrats-actions">
+                        <a href="add-property.php">Add another</a>
+                        <a class="primary" href="properties.php">Got it</a>
+                    </div>
+                </div>
+            <?php endif; ?>
+
 
             <?php if ($action_error): ?>
                 <div class="alert alert-error">
@@ -621,7 +710,7 @@ $conn->close();
                         $display_country  = htmlspecialchars($property['country'] ?? '');
                         $display_location = trim($display_city . ($display_city && $display_country ? ', ' : '') . $display_country);
                     ?>
-                        <div class="service-card host-prop-card">
+                        <div class="service-card host-prop-card" data-host-prop-card data-property-id="<?php echo (int)$property['id']; ?>">
                             <div class="card-image">
                                 <img src="<?php echo $photo_url; ?>" alt="<?php echo $display_title; ?>" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400'">
                                 <span class="card-badge"><?php echo ucfirst(htmlspecialchars($property['property_type'] ?? 'property')); ?></span>
@@ -733,6 +822,23 @@ $conn->close();
     
     <script src="../assets/js/theme-toggle.js?v=27.5"></script>
     <script src="../assets/js/host-view-site-confirm.js?v=1.0"></script>
+    <script>
+        // Host → My Properties: disable any modal-style card view.
+        // Clicking the card navigates to the full host view page instead.
+        (function () {
+            document.addEventListener('click', function (e) {
+                var card = e.target && e.target.closest ? e.target.closest('[data-host-prop-card]') : null;
+                if (!card) return;
+
+                // Let explicit actions behave normally.
+                if (e.target && e.target.closest && e.target.closest('a, button, form, input, textarea, select, label')) return;
+
+                var id = card.getAttribute('data-property-id');
+                if (!id) return;
+                window.location.href = 'view-property.php?id=' + encodeURIComponent(id);
+            });
+        })();
+    </script>
     <script>
         (function(){
             var btn = document.getElementById('admNotifBtn');

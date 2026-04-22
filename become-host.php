@@ -239,6 +239,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         .rp-card-footer a:hover { color: #FAD798; }
 
+        /* Show password */
+        .rp-showpass {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 2px;
+            user-select: none;
+            color: rgba(203,213,225,0.78);
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .rp-showpass input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--gold);
+        }
+
         @media (max-width: 540px) {
             .rp-card { padding: 32px 22px; border-radius: 20px; }
             .rp-row { grid-template-columns: 1fr; }
@@ -332,6 +349,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             required>
                         <i class="fa-solid fa-lock"></i>
                     </div>
+                    <label class="rp-showpass" for="show_password">
+                        <input type="checkbox" id="show_password" aria-controls="password confirm_password">
+                        Show password
+                    </label>
                 </div>
 
                 <div style="display:flex; gap:10px; align-items:flex-start; margin-top: 4px;">
@@ -362,6 +383,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         </div>
     </div>
+
+    <script>
+        (function () {
+            var toggle = document.getElementById('show_password');
+            var pass = document.getElementById('password');
+            var confirm = document.getElementById('confirm_password');
+            if (!toggle || !pass) return;
+
+            function apply() {
+                var show = !!toggle.checked;
+                pass.type = show ? 'text' : 'password';
+                if (confirm) confirm.type = show ? 'text' : 'password';
+            }
+            toggle.addEventListener('change', apply);
+        })();
+    </script>
 </body>
 </html>
 

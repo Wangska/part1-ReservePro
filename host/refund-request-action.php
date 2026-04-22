@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../config/session.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/database_schema.php';
+require_once __DIR__ . '/../config/booking_money.php';
 
 requireLogin();
 $user = getCurrentUser();
@@ -21,16 +22,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $id = isset($_POST['refund_request_id']) ? (int)$_POST['refund_request_id'] : 0;
 $decision = strtolower(trim((string)($_POST['decision'] ?? '')));
-$partial = isset($_POST['partial_percent']) ? (int)$_POST['partial_percent'] : 0;
 $note = trim((string)($_POST['note'] ?? ''));
 if (strlen($note) > 1000) $note = substr($note, 0, 1000);
 
-if ($id <= 0 || !in_array($decision, ['approve_full','approve_partial','approve_50','reject'], true)) {
+if ($id <= 0 || !in_array($decision, ['approve','reject','complete'], true)) {
     header('Location: refund-requests.php?error=invalid');
-    exit();
-}
-if (($decision === 'approve_partial' || $decision === 'approve_50') && ($partial < 1 || $partial > 100)) {
-    header('Location: refund-request.php?id=' . $id . '&error=bad_partial');
     exit();
 }
 
@@ -66,23 +62,22 @@ if (!in_array($currentStatus, ['pending_review','pending'], true)) {
     exit();
 }
 
-$suggestedPct = (int)($r['refund_percent'] ?? 0);
-if ($suggestedPct !== 50) {
-    $conn->close();
-    header('Location: refund-request.php?id=' . $id . '&error=not_allowed');
-    exit();
-}
-
 $total = (float)($r['total_price'] ?? 0);
 $hostDecision = 'none';
 $hostPct = null;
 
-if ($decision === 'approve_full') {
-    $hostDecision = 'approve_full';
-    $hostPct = 100;
-} elseif ($decision === 'approve_partial' || $decision === 'approve_50') {
+if ($decision === 'complete') {
+    // Idempotent completion: use the already decided percent on the request.
+    $hostDecision = (string)($r['host_decision'] ?? 'none');
+    $hostPct = ($r['host_decision_percent'] !== null) ? (int)$r['host_decision_percent'] : (int)($r['refund_percent'] ?? 0);
+    if ($hostPct < 0) $hostPct = 0;
+    if ($hostPct > 100) $hostPct = 100;
+} elseif ($decision === 'approve') {
+    // Approve the current suggested percent on the request.
     $hostDecision = 'approve_partial';
-    $hostPct = ($decision === 'approve_50') ? 50 : $partial;
+    $hostPct = (int)($r['refund_percent'] ?? 0);
+    if ($hostPct < 0) $hostPct = 0;
+    if ($hostPct > 100) $hostPct = 100;
 } else {
     $hostDecision = 'reject';
     $hostPct = 0;
@@ -92,38 +87,76 @@ $hostAmount = round(max(0, $total) * ((int)$hostPct / 100), 2);
 
 $conn->begin_transaction();
 try {
-    // Update refund_request host decision + suggested percent/amount from host
-    $up = $conn->prepare("
-        UPDATE refund_requests
-        SET host_decision = ?,
-            host_decision_percent = ?,
-            host_decision_note = ?,
-            refund_percent = ?,
-            refund_amount = ?,
-            updated_at = NOW()
-        WHERE id = ?
-    ");
-    $up->bind_param('sisidi', $hostDecision, $hostPct, $note, $hostPct, $hostAmount, $id);
-    $up->execute();
-    $up->close();
+    if ($decision !== 'complete') {
+        // Update refund_request host decision + suggested percent/amount from host
+        $up = $conn->prepare("
+            UPDATE refund_requests
+            SET host_decision = ?,
+                host_decision_percent = ?,
+                host_decision_note = ?,
+                refund_percent = ?,
+                refund_amount = ?,
+                updated_at = NOW()
+            WHERE id = ?
+        ");
+        $up->bind_param('sisidi', $hostDecision, $hostPct, $note, $hostPct, $hostAmount, $id);
+        $up->execute();
+        $up->close();
+    }
 
-    // Move status to pending (awaiting admin finalization) unless rejected then rejected
-    $toStatus = ($hostDecision === 'reject') ? 'rejected' : 'pending';
+    // Host-authority model:
+    // - Reject => rejected
+    // - Approve => completed immediately (host transacts the refund)
+    $toStatus = ($hostDecision === 'reject') ? 'rejected' : 'completed';
     $st = $conn->prepare("UPDATE refund_requests SET status = ? WHERE id = ?");
     $st->bind_param('si', $toStatus, $id);
     $st->execute();
     $st->close();
 
-    $meta = json_encode([
+    $metaArr = [
         'host_decision' => $hostDecision,
         'host_percent' => $hostPct,
         'host_amount' => $hostAmount,
-    ]);
+    ];
+
+    // Deduct host money when refund is completed (host share only).
+    if ($toStatus === 'completed') {
+        $hostId = (int)($r['host_id'] ?? 0);
+        $pct = (int)$hostPct;
+        $hostShare = reservepro_host_share_from_total((float)$total);
+        $deduct = round(max(0, $hostShare) * (max(0, min(100, $pct)) / 100), 2);
+
+        if ($hostId > 0 && $deduct > 0) {
+            $note2 = 'Refund completed by host: deduct host share (' . $pct . '% of host share)';
+            $ins = $conn->prepare("
+                INSERT IGNORE INTO host_ledger (host_id, booking_id, refund_request_id, entry_type, amount, note)
+                VALUES (?, ?, ?, 'refund_debit', ?, ?)
+            ");
+            $bookingId = (int)($r['booking_id'] ?? 0);
+            $neg = -1 * $deduct;
+            $ins->bind_param('iiids', $hostId, $bookingId, $id, $neg, $note2);
+            $ins->execute();
+            $ins->close();
+        }
+
+        // Platform commission refund record (informational): if refund is 99%+, platform returns its 9% commission.
+        if ($pct >= 99) {
+            $metaArr['platform_commission_refund'] = reservepro_platform_commission_from_total((float)$total);
+            $metaArr['platform_commission_refund_rule'] = 'pct>=99 => refund 9% commission';
+        }
+    }
+
+    $meta = json_encode($metaArr);
     $log = $conn->prepare("
         INSERT INTO refund_logs (refund_request_id, actor_user_id, actor_role, action, from_status, to_status, note, meta_json)
-        VALUES (?, ?, 'host', 'host_decision', ?, ?, ?, ?)
+        VALUES (?, ?, 'host', ?, ?, ?, ?, ?)
     ");
-    $log->bind_param('iissss', $id, $user['id'], $currentStatus, $toStatus, $note, $meta);
+    $act = ($decision === 'complete') ? 'host_complete_refund' : 'host_decision';
+    $note2 = $note;
+    if ($decision === 'complete' && $note2 === '') {
+        $note2 = 'Host marked refund as completed.';
+    }
+    $log->bind_param('iissssss', $id, $user['id'], $act, $currentStatus, $toStatus, $note2, $meta);
     $log->execute();
     $log->close();
 

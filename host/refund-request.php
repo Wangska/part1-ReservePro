@@ -28,11 +28,17 @@ $stmt = $conn->prepare("
     SELECT
         rr.*,
         b.check_in, b.check_out, b.total_price, b.status AS booking_status, b.booking_date,
+        bc.cancelled_at AS cancellation_date,
         p.title AS property_title, p.city, p.country, p.host_id,
         p.cancellation_policy AS listing_cancellation_policy,
         g.first_name AS guest_first_name, g.last_name AS guest_last_name, g.email AS guest_email
     FROM refund_requests rr
     JOIN bookings b ON b.id = rr.booking_id
+    LEFT JOIN (
+        SELECT booking_id, MAX(cancelled_at) AS cancelled_at
+        FROM booking_cancellations
+        GROUP BY booking_id
+    ) bc ON bc.booking_id = b.id
     JOIN properties p ON p.id = rr.property_id
     JOIN users g ON g.id = rr.requester_user_id
     WHERE rr.id = ? AND p.host_id = ?
@@ -67,11 +73,26 @@ if ($policyLatest === '') {
 $policyLatestSummary = reservepro_cancellation_policy_human_summary($policyLatest);
 
 function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
+function fmt_dt($v) {
+    $v = (string)$v;
+    if ($v === '') return '—';
+    $ts = strtotime($v);
+    if (!$ts) return h($v);
+    return date('M j, Y g:i A', $ts);
+}
+function hostDecisionLabel($decision, $percent) {
+    $d = strtolower((string)$decision);
+    $pct = ($percent !== null) ? (int)$percent : null;
+    if ($d === '' || $d === 'none') return 'None';
+    if ($d === 'reject') return 'Rejected';
+    if ($d === 'approve_full') return 'Approved (100%)';
+    if ($d === 'approve_partial') return 'Approved' . ($pct !== null ? (' (' . $pct . '%)') : '');
+    return ucfirst(str_replace('_', ' ', $d)) . ($pct !== null ? (' (' . $pct . '%)') : '');
+}
 
 $isReviewable = in_array((string)($r['status'] ?? ''), ['pending_review', 'pending'], true);
 $needsHostDecision = $isReviewable
-    && ((string)($r['host_decision'] ?? 'none') === 'none')
-    && ((int)($r['refund_percent'] ?? 0) === 50);
+    && ((string)($r['host_decision'] ?? 'none') === 'none');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -268,7 +289,8 @@ $needsHostDecision = $isReviewable
                         <div class="rr-pill"><small>Stay</small><strong><?php echo h((string)$r['check_in']); ?> → <?php echo h((string)$r['check_out']); ?></strong></div>
                         <div class="rr-pill"><small>Total amount</small><strong>₱<?php echo number_format((float)$r['total_price'], 2); ?></strong></div>
                         <div class="rr-pill"><small>Suggested refund</small><strong><?php echo (int)$r['refund_percent']; ?>% &middot; ₱<?php echo number_format((float)$r['refund_amount'], 2); ?></strong></div>
-                        <div class="rr-pill"><small>Policy</small><strong><?php echo h($r['policy'] ?? ''); ?></strong></div>
+                        <div class="rr-pill"><small>Booked on</small><strong><?php echo fmt_dt($r['booking_date'] ?? ''); ?></strong></div>
+                        <div class="rr-pill"><small>Cancelled on</small><strong><?php echo fmt_dt($r['cancellation_date'] ?? ''); ?></strong></div>
                     </div>
 
                     <?php if (!empty($r['issue_type'])): ?>
@@ -301,12 +323,11 @@ $needsHostDecision = $isReviewable
                     <?php if ($needsHostDecision): ?>
                         <form method="post" action="refund-request-action.php" style="margin-top: 14px;">
                             <input type="hidden" name="refund_request_id" value="<?php echo (int)$r['id']; ?>">
-                            <input type="hidden" name="partial_percent" value="50">
 
                             <label class="rr-form-label">Decision *</label>
                             <select name="decision" class="rf-host-decision-select" required>
                                 <option value="">Select</option>
-                                <option value="approve_50">Approve 50% refund</option>
+                                <option value="approve">Approve suggested refund (<?php echo (int)$r['refund_percent']; ?>%)</option>
                                 <option value="reject">Reject</option>
                             </select>
 
@@ -321,8 +342,33 @@ $needsHostDecision = $isReviewable
                     <?php else: ?>
                         <div class="rr-pill" style="margin-top: 14px;">
                             <small>Host decision</small>
-                            <strong>This request does not require a host decision (only 50% refund cases require host action).</strong>
+                            <?php
+                                $hostLabel = hostDecisionLabel($r['host_decision'] ?? 'none', $r['host_decision_percent'] ?? null);
+                                $st = strtolower((string)($r['status'] ?? ''));
+                                $suffix = '';
+                                if ($st === 'pending') $suffix = ' — pending';
+                                elseif ($st === 'processing') $suffix = ' — processing';
+                                elseif ($st === 'completed') $suffix = ' — completed';
+                                elseif ($st === 'approved') $suffix = ' — approved';
+                                elseif ($st === 'rejected') $suffix = ' — rejected';
+                                else $suffix = '';
+                            ?>
+                            <strong><?php echo h($hostLabel . $suffix); ?></strong>
                         </div>
+
+                        <?php
+                            $canComplete = ($st !== 'completed')
+                                && ($st !== 'rejected')
+                                && (strtolower((string)($r['host_decision'] ?? 'none')) !== 'reject')
+                                && (strtolower((string)($r['host_decision'] ?? 'none')) !== 'none');
+                        ?>
+                        <?php if ($canComplete): ?>
+                            <form method="post" action="refund-request-action.php" style="margin-top: 12px; display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
+                                <input type="hidden" name="refund_request_id" value="<?php echo (int)$r['id']; ?>">
+                                <input type="hidden" name="decision" value="complete">
+                                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-flag-checkered"></i>Mark as completed</button>
+                            </form>
+                        <?php endif; ?>
                     <?php endif; ?>
                 </div>
             </div>

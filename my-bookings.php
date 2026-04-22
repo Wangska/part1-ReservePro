@@ -66,7 +66,7 @@ function policy_label($p) {
     $p = strtolower((string)$p);
     if ($p === 'flexible') return 'Flexible';
     if ($p === 'strict') return 'Strict';
-    return 'Moderate';
+    return '';
 }
 function policy_badge_class($p) {
     $p = strtolower((string)$p);
@@ -450,7 +450,9 @@ function booking_status_class(array $b) {
                         <img src="<?php echo $img; ?>" alt="Property image" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&auto=format&fit=crop&q=80'">
                         <div class="gb-badges">
                             <span class="badge <?php echo booking_status_class($b); ?>"><i class="fa-solid fa-circle" style="font-size:8px;"></i><?php echo h(booking_status_label($b)); ?></span>
-                            <span class="badge <?php echo policy_badge_class($policy); ?>"><?php echo h(policy_label($policy)); ?></span>
+                            <?php $pl = policy_label($policy); if ($pl !== ''): ?>
+                                <span class="badge <?php echo policy_badge_class($policy); ?>"><?php echo h($pl); ?></span>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <div class="gb-body">
@@ -691,7 +693,8 @@ function booking_status_class(array $b) {
                     if (link) attrs = ' data-link="'+esc(link)+'" style="cursor:pointer"';
                     return '<div class="adm-notif-item'+(unread?' unread':'')+'"'+attrs+'>'+ 
                         '<div class="adm-notif-item-body"><strong>'+esc(n.title)+'</strong>'+ (body?'<small>'+esc(n.body)+'</small>':'')+'</div>'+ '<div class="adm-notif-item-actions">'+ (unread?'<button class="adm-notif-mark" data-mark="'+esc(n.id)+'">Mark read</button>':'')+'</div></div>';
-                }).join('');}}
+                }).join('');
+            }
 
             function load(){
                 fetch('api/notifications-list.php?limit=8', {credentials:'same-origin'})
@@ -775,6 +778,7 @@ function booking_status_class(array $b) {
 
             load();
         })();
+</script>
 </body>
 </html>
 

@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../config/session.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/database_schema.php';
+require_once __DIR__ . '/../config/notifications.php';
 
 requireLogin();
 $user = getCurrentUser();
@@ -142,6 +143,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             if (empty($errors)) {
                 $success = true;
+                // Notify admins about new pending listing
+                $hostName = trim((string)($user['first_name'] ?? '') . ' ' . (string)($user['last_name'] ?? ''));
+                $hostName = $hostName !== '' ? $hostName : 'A host';
+                $propTitle = trim((string)$title);
+                $body = $hostName . ' listed a new property' . ($propTitle !== '' ? (': ' . $propTitle) : '') . '. It is pending review.';
+                reservepro_notification_notify_admins(
+                    'property_listed',
+                    'New property listed',
+                    $body,
+                    '../admin/properties.php'
+                );
                 header('Location: properties.php?success=property_added');
                 exit();
             }

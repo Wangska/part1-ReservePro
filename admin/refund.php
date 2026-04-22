@@ -61,6 +61,27 @@ if (!empty($r['evidence_json'])) {
 $conn->close();
 
 function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
+function hostDecisionLabel($decision, $percent) {
+    $d = strtolower((string)$decision);
+    $pct = ($percent !== null) ? (int)$percent : null;
+    if ($d === '' || $d === 'none') return 'None';
+    if ($d === 'reject') return 'Rejected';
+    if ($d === 'approve_full') return 'Approved (100%)';
+    if ($d === 'approve_partial') return 'Approved' . ($pct !== null ? (' (' . $pct . '%)') : '');
+    return ucfirst(str_replace('_', ' ', $d)) . ($pct !== null ? (' (' . $pct . '%)') : '');
+}
+function actorLabel($l, $r) {
+    $role = strtolower((string)($l['actor_role'] ?? ''));
+    $uid = (int)($l['actor_user_id'] ?? 0);
+    if ($role === 'host' && $uid) {
+        return 'Host: ' . trim((string)($r['host_first_name'] ?? '') . ' ' . (string)($r['host_last_name'] ?? ''));
+    }
+    if ($role === 'guest' && $uid) {
+        return 'Guest: ' . trim((string)($r['guest_first_name'] ?? '') . ' ' . (string)($r['guest_last_name'] ?? ''));
+    }
+    if ($role === 'admin' && $uid) return 'Admin #' . $uid;
+    return ucfirst($role ?: 'actor') . ($uid ? (' #' . $uid) : '');
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -359,38 +380,16 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
         <!-- Content grid -->
         <div class="vu-grid">
 
-            <!-- Left column: Admin Action + Amounts -->
+            <!-- Left column: Amounts -->
             <div>
                 <div class="vu-card">
-                    <div class="vu-card-title">Admin Action</div>
-                    <form method="post" action="refund-action.php">
-                        <input type="hidden" name="refund_request_id" value="<?php echo (int)$r['id']; ?>">
-                        <div class="form-group">
-                            <label class="form-label">Action</label>
-                            <select name="action" required>
-                                <option value="">Select an action</option>
-                                <option value="approve">Approve</option>
-                                <option value="reject">Reject</option>
-                                <option value="processing">Mark as Processing</option>
-                                <option value="completed">Mark as Completed</option>
-                                <option value="override">Override Percent</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Override Percent <span style="color:#64748B; font-weight:400;">(override only)</span></label>
-                            <input type="number" name="override_percent" min="0" max="100" step="1" placeholder="e.g. 50">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Admin Note</label>
-                            <textarea name="note" maxlength="1000" placeholder="Explain your decision…"></textarea>
-                        </div>
-                        <button type="submit" class="btn-action btn-action-primary">
-                            Save Decision
-                        </button>
-                        <a class="btn-action btn-action-danger" href="../messages.php">
-                            Contact Host / Guest
-                        </a>
-                    </form>
+                    <div class="vu-card-title">Admin</div>
+                    <div style="color:#64748B; font-size:12px; line-height:1.55;">
+                        This page is <strong style="color:#CBD5E1;">record-only</strong>. Refund transactions are handled by the <strong style="color:#CBD5E1;">host</strong>.
+                    </div>
+                    <a class="btn-action" style="margin-top:12px;" href="../messages.php">
+                        Contact Host / Guest
+                    </a>
                 </div>
 
                 <div class="vu-card">
@@ -414,7 +413,7 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
                             <div class="vu-chip-icon"><i class="fa-solid fa-gavel"></i></div>
                             <div class="vu-chip-body">
                                 <div class="vu-chip-label">Host Decision</div>
-                                <div class="vu-chip-value"><?php echo !empty($r['host_decision']) ? h($r['host_decision']) . ($r['host_decision_percent'] !== null ? ' (' . (int)$r['host_decision_percent'] . '%)' : '') : '—'; ?></div>
+                                <div class="vu-chip-value"><?php echo h(hostDecisionLabel($r['host_decision'] ?? '', $r['host_decision_percent'] ?? null)); ?></div>
                             </div>
                         </div>
                         <div class="vu-chip">
@@ -519,7 +518,7 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
                                 <?php foreach ($logs as $l): ?>
                                 <tr>
                                     <td><?php echo h($l['created_at']); ?></td>
-                                    <td><?php echo h(ucfirst($l['actor_role'] ?? '') . ' #' . ($l['actor_user_id'] ?? '')); ?></td>
+                                    <td><?php echo h(actorLabel($l, $r)); ?></td>
                                     <td><?php echo h($l['action']); ?></td>
                                     <td><?php echo h(($l['from_status'] ?? '—') . ' → ' . ($l['to_status'] ?? '—')); ?></td>
                                     <td><?php echo h($l['note'] ?? ''); ?></td>

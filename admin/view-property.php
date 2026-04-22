@@ -45,6 +45,21 @@ $stmt->execute();
 $property['photos'] = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 
+$latest_edit_log = null;
+$stmt = $conn->prepare("
+    SELECT id, property_id, host_id, changes_json, created_at
+    FROM property_edit_logs
+    WHERE property_id = ?
+    ORDER BY id DESC
+    LIMIT 1
+");
+if ($stmt) {
+    $stmt->bind_param("i", $property_id);
+    $stmt->execute();
+    $latest_edit_log = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+}
+
 $stmt = $conn->prepare("
     SELECT a.name, a.icon FROM amenities a
     JOIN property_amenities pa ON a.id = pa.amenity_id
@@ -86,6 +101,10 @@ function amenityIconSvg(string $name): string {
         if (str_contains($n, $key) || str_contains($key, $n)) return $val;
     }
     return '<circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/>';
+}
+
+function h(string $v): string {
+    return htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
 }
 ?>
 <!DOCTYPE html>
@@ -212,6 +231,20 @@ function amenityIconSvg(string $name): string {
             display: block;
             margin: 0 auto;
             object-fit: unset;
+        }
+
+        /* Map */
+        .vp-map {
+            height: 420px;
+            min-height: 360px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.04);
+        }
+        body.light-mode .vp-map {
+            border-color: rgba(15,23,42,0.10);
+            background: #fff;
         }
 
         /* ── Amenity pills ── */
@@ -361,7 +394,7 @@ function amenityIconSvg(string $name): string {
 
                 <!-- Gallery -->
                 <div class="view-gallery">
-                    <img id="admin-main-photo" src="<?php echo htmlspecialchars($main_photo); ?>" alt="<?php echo htmlspecialchars($property['title']); ?>" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800'">
+                    <img id="admin-main-photo" data-lightbox="property" data-lightbox-title="<?php echo htmlspecialchars($property['title'], ENT_QUOTES); ?>" src="<?php echo htmlspecialchars($main_photo); ?>" alt="<?php echo htmlspecialchars($property['title']); ?>" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800'">
                 </div>
                 <?php if (!empty($photos) && count($photos) > 1): ?>
                     <div class="view-section" style="margin-top: 12px; margin-bottom: 18px;">
@@ -373,7 +406,7 @@ function amenityIconSvg(string $name): string {
                             ?>
                                 <div style="flex: 0 0 auto; border-radius: 8px; overflow: hidden; border: 2px solid <?php echo $idx === 0 ? '#D4A574' : 'transparent'; ?>; cursor: pointer;"
                                      onclick="document.getElementById('admin-main-photo').src='<?php echo htmlspecialchars($thumb, ENT_QUOTES); ?>';">
-                                    <img src="<?php echo htmlspecialchars($thumb); ?>" alt="Photo <?php echo $idx + 1; ?>" style="width: 120px; height: 80px; object-fit: cover;">
+                                    <img src="<?php echo htmlspecialchars($thumb); ?>" data-lightbox="property" data-lightbox-title="<?php echo htmlspecialchars($property['title'], ENT_QUOTES); ?>" alt="Photo <?php echo $idx + 1; ?>" style="width: 120px; height: 80px; object-fit: cover;">
                                 </div>
                             <?php endforeach; ?>
                         </div>
@@ -385,6 +418,66 @@ function amenityIconSvg(string $name): string {
                     <h2>Description</h2>
                     <p style="white-space: pre-wrap;"><?php echo nl2br(htmlspecialchars($property['description'])); ?></p>
                 </div>
+
+                <!-- Latest edits (audit log) -->
+                <?php
+                $editChanges = [];
+                $editAt = null;
+                if ($latest_edit_log && !empty($latest_edit_log['changes_json'])) {
+                    $decoded = json_decode((string)$latest_edit_log['changes_json'], true);
+                    if (is_array($decoded)) {
+                        $editChanges = $decoded['changes'] ?? [];
+                    }
+                    $editAt = $latest_edit_log['created_at'] ?? null;
+                }
+                ?>
+                <?php if (!empty($editChanges) && is_array($editChanges)): ?>
+                    <div class="view-section host-detail-shell">
+                        <h2>What&rsquo;s changed</h2>
+                        <p style="margin-top:-6px; color:#94a3b8 !important; font-size:12px;">
+                            Latest edit<?php echo $editAt ? (' on ' . date('M j, Y g:i A', strtotime((string)$editAt))) : ''; ?>
+                        </p>
+                        <div style="display:flex;flex-direction:column;gap:10px;">
+                            <?php foreach ($editChanges as $c):
+                                if (!is_array($c)) continue;
+                                $label = isset($c['label']) ? (string)$c['label'] : 'Change';
+                            ?>
+                                <div style="padding:12px 14px; border-radius:14px; border:1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03);">
+                                    <div style="font-weight:800;color:#F1F5F9; font-size:13px; margin-bottom:6px;"><?php echo h($label); ?></div>
+                                    <?php if (isset($c['from']) || isset($c['to'])): ?>
+                                        <div style="font-size:13px;color:#CBD5E1;">
+                                            <span style="color:#94a3b8;">From:</span> <?php echo h((string)($c['from'] ?? '')); ?>
+                                            <span style="color:#94a3b8; margin-left:10px;">To:</span> <?php echo h((string)($c['to'] ?? '')); ?>
+                                        </div>
+                                    <?php elseif (isset($c['count'])): ?>
+                                        <div style="font-size:13px;color:#CBD5E1;">
+                                            Count: <strong><?php echo (int)$c['count']; ?></strong>
+                                        </div>
+                                    <?php elseif (isset($c['added']) || isset($c['removed'])): ?>
+                                        <?php
+                                            $added = isset($c['added']) && is_array($c['added']) ? $c['added'] : [];
+                                            $removed = isset($c['removed']) && is_array($c['removed']) ? $c['removed'] : [];
+                                        ?>
+                                        <?php if (!empty($added)): ?>
+                                            <div style="font-size:13px;color:#CBD5E1; margin-bottom:6px;">
+                                                <span style="color:#86efac; font-weight:900;">Added</span>:
+                                                <?php echo h(implode(', ', array_map('strval', $added))); ?>
+                                            </div>
+                                        <?php endif; ?>
+                                        <?php if (!empty($removed)): ?>
+                                            <div style="font-size:13px;color:#CBD5E1;">
+                                                <span style="color:#fca5a5; font-weight:900;">Removed</span>:
+                                                <?php echo h(implode(', ', array_map('strval', $removed))); ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    <?php else: ?>
+                                        <div style="font-size:13px;color:#CBD5E1;">Updated.</div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
 
                 <!-- Details -->
                 <div class="view-section host-detail-shell">
@@ -403,6 +496,15 @@ function amenityIconSvg(string $name): string {
                     <h2>Address</h2>
                     <p><?php echo nl2br(htmlspecialchars($property['address'])); ?></p>
                     <p><?php echo htmlspecialchars($property['city'] . ', ' . $property['country']); ?></p>
+                </div>
+
+                <!-- Map -->
+                <div class="view-section host-detail-shell">
+                    <h2>Location map</h2>
+                    <div id="adminPropertyMap" class="vp-map" aria-label="Property location map"></div>
+                    <p style="margin-top:10px; font-size:12px; color:#94a3b8;">
+                        Pin is approximate if coordinates were not provided.
+                    </p>
                 </div>
 
                 <!-- Amenities -->
@@ -424,12 +526,86 @@ function amenityIconSvg(string $name): string {
     </div>
     <script src="../assets/js/theme-toggle.js?v=27.5"></script>
     <script src="../assets/js/admin-view-site-confirm.js?v=1.0"></script>
+    <script src="../assets/js/image-lightbox.js?v=1.0"></script>
     <script>
         function setMainPhoto(el, src) {
             document.getElementById('admin-main-photo').src = src;
             document.querySelectorAll('.vp-thumb').forEach(t => t.classList.remove('active'));
             el.classList.add('active');
         }
+    </script>
+    <script>
+        (function () {
+            var mapEl = document.getElementById('adminPropertyMap');
+            if (!mapEl) return;
+
+            var property = {
+                title: <?php echo json_encode((string)($property['title'] ?? 'Property')); ?>,
+                address: <?php echo json_encode((string)($property['address'] ?? '')); ?>,
+                city: <?php echo json_encode((string)($property['city'] ?? '')); ?>,
+                country: <?php echo json_encode((string)($property['country'] ?? '')); ?>,
+                latitude: <?php echo json_encode($property['latitude'] ?? null); ?>,
+                longitude: <?php echo json_encode($property['longitude'] ?? null); ?>,
+            };
+
+            function loadLeaflet(cb) {
+                if (window.L) return cb();
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+                document.head.appendChild(link);
+                var script = document.createElement('script');
+                script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+                script.onload = cb;
+                document.head.appendChild(script);
+            }
+
+            function initMap(lat, lng) {
+                if (!window.L) return;
+                var L = window.L;
+                var map = L.map(mapEl, { scrollWheelZoom: true });
+                map.setView([lat, lng], 16);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+                var addressLine = [property.address, property.city, property.country].filter(Boolean).join(', ');
+                L.marker([lat, lng]).addTo(map).bindPopup('<strong>' + String(property.title || 'Property').replace(/</g,'&lt;') + '</strong><br>' + String(addressLine || '').replace(/</g,'&lt;')).openPopup();
+                // Ensure proper sizing when inside flex layouts
+                setTimeout(function () { try { map.invalidateSize(); } catch (_) {} }, 60);
+            }
+
+            function parseNum(v) {
+                var n = typeof v === 'string' ? parseFloat(v) : (typeof v === 'number' ? v : NaN);
+                return isFinite(n) ? n : NaN;
+            }
+
+            function geocodeAndInit() {
+                var q = [property.address, property.city, property.country || 'Philippines'].filter(Boolean).join(', ');
+                if (!q) q = (property.city || '') + ', ' + (property.country || 'Philippines');
+                var url = 'https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(q) + '&limit=1';
+                fetch(url, { headers: { 'Accept': 'application/json', 'User-Agent': 'ReserveProAdminMap/1.0' } })
+                    .then(function (r) { return r.json(); })
+                    .then(function (res) {
+                        if (res && res[0] && res[0].lat && res[0].lon) {
+                            initMap(parseFloat(res[0].lat), parseFloat(res[0].lon));
+                        } else {
+                            // fallback: Manila
+                            initMap(14.5995, 120.9842);
+                        }
+                    })
+                    .catch(function () {
+                        initMap(14.5995, 120.9842);
+                    });
+            }
+
+            loadLeaflet(function () {
+                var lat = parseNum(property.latitude);
+                var lng = parseNum(property.longitude);
+                if (isFinite(lat) && isFinite(lng) && (lat !== 0 || lng !== 0)) {
+                    initMap(lat, lng);
+                } else {
+                    geocodeAndInit();
+                }
+            });
+        })();
     </script>
 </body>
 </html>
