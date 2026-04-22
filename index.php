@@ -818,7 +818,6 @@ if (isLoggedIn()) {
         <div class="lp-hero-ctas">
             <a href="home.php" class="lp-cta-primary">
                 Browse Stays
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
             </a>
             <a href="become-host.php" class="lp-cta-secondary">Become a Host</a>
         </div>
@@ -874,7 +873,6 @@ if (isLoggedIn()) {
                 </ul>
                 <span class="lp-path-cta browse">
                     Browse Stays
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                 </span>
             </div>
         </a>
@@ -891,7 +889,6 @@ if (isLoggedIn()) {
                 </ul>
                 <span class="lp-path-cta host">
                     Become a Host
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                 </span>
             </div>
         </a>
@@ -954,7 +951,7 @@ if (isLoggedIn()) {
                 <h5>Explore</h5>
                 <ul>
                     <li><a href="home.php">Browse Stays</a></li>
-                    <li><a href="experiences.php">Experiences</a></li>
+                    <!-- Removed Experiences link -->
                     <li><a href="become-host.php">Become a Host</a></li>
                 </ul>
             </div>

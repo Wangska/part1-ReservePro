@@ -429,7 +429,7 @@ $conn->close();
                 </a>
             </div>
             <nav class="sidebar-nav">
-                <a href="dashboard.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span><span>Dashboard</span></a>
+                
                 <a href="profile.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user" aria-hidden="true"></i></span><span>Profile</span></a>
                 <a href="properties.php" class="nav-item active"><span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span><span>My Properties</span></a>
                 <a href="add-property.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-plus" aria-hidden="true"></i></span><span>Add Property</span></a>
@@ -446,7 +446,7 @@ $conn->close();
                             <img
                                 src="<?php echo htmlspecialchars('../' . ltrim((string)$user['profile_photo'], '/')); ?>"
                                 alt="Profile photo"
-                                style="width:100%;height:100%;object-fit:cover;display:block;"
+                                style="width:100%;height:100%;object-fit:cover;display:block;border-radius:50%;"
                                 onerror="this.style.display='none'"
                             >
                         <?php else: ?>
@@ -459,16 +459,11 @@ $conn->close();
                     </div>
                 </div>
 
-                <div class="theme-toggle">
-                    <span class="theme-toggle-icon" aria-hidden="true"></span>
-                    <span class="theme-toggle-text">Light</span>
-                </div>
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
         </aside>
 
         <main class="host-main">
-            <?php require __DIR__ . '/../includes/notifications-widget.php'; ?>
             <div class="host-header host-page-hero">
                 <div class="host-page-hero-content">
                     <h1>Edit Property</h1>

@@ -77,6 +77,187 @@ $conn->close();
             color: #0F0F0F !important;
             box-shadow: 0 8px 20px rgba(212,165,116,0.22) !important;
         }
+        /* Notification bell styles */
+        .admin-hero-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+        .adm-notif-wrap {
+            position: relative;
+        }
+        .adm-notif-btn {
+            position: relative;
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            background: rgba(255, 255, 255, 0.06);
+            color: #A3A3A3;
+            font-size: 17px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.18s, border-color 0.18s;
+        }
+        .adm-notif-btn:hover {
+            background: rgba(255, 255, 255, 0.11);
+            border-color: rgba(212, 165, 116, 0.4);
+        }
+        .adm-notif-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 4px;
+            border-radius: 999px;
+            background: #EF4444;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            pointer-events: none;
+        }
+        .adm-notif-dropdown {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            width: 340px;
+            max-width: calc(100vw - 32px);
+            border-radius: 18px;
+            background: rgba(17, 24, 39, 0.97);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.42);
+            z-index: 9999;
+            overflow: hidden;
+        }
+        .adm-notif-dropdown-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 13px 14px 11px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+        }
+        .adm-notif-dropdown-title {
+            font-size: 13px;
+            font-weight: 900;
+            color: #F1F5F9;
+            letter-spacing: -0.01em;
+        }
+        .adm-notif-markall {
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.06);
+            color: #CBD5E1;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 5px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .adm-notif-markall:hover {
+            background: rgba(255, 255, 255, 0.11);
+        }
+        .adm-notif-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 10px;
+            max-height: 340px;
+            overflow-y: auto;
+        }
+        .adm-notif-item {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            padding: 9px 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(148, 163, 184, 0.12);
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .adm-notif-item.unread {
+            border-color: rgba(212, 165, 116, 0.32);
+            background: rgba(212, 165, 116, 0.07);
+        }
+        .adm-notif-item-body {
+            flex: 1;
+            min-width: 0;
+        }
+        .adm-notif-item strong {
+            display: block;
+            color: #F1F5F9;
+            font-weight: 800;
+            font-size: 12px;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .adm-notif-item small {
+            display: block;
+            color: #94A3B8;
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        .adm-notif-item-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            align-items: flex-end;
+            flex-shrink: 0;
+        }
+        .adm-notif-empty {
+            padding: 14px 10px;
+            color: #94A3B8;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+        }
+        body.light-mode .adm-notif-btn {
+            background: #F8FAFC;
+            border-color: rgba(15, 23, 42, 0.10);
+            color: #6B7280;
+        }
+        body.light-mode .adm-notif-btn:hover {
+            background: #F1F5F9;
+        }
+        body.light-mode .adm-notif-dropdown {
+            background: #FFFFFF;
+            border-color: rgba(15, 23, 42, 0.10);
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.14);
+        }
+        body.light-mode .adm-notif-dropdown-head {
+            border-color: rgba(15, 23, 42, 0.08);
+        }
+        body.light-mode .adm-notif-dropdown-title {
+            color: #0F172A;
+        }
+        body.light-mode .adm-notif-markall {
+            background: #F8FAFC;
+            color: #0F172A;
+            border-color: rgba(15, 23, 42, 0.10);
+        }
+        body.light-mode .adm-notif-item {
+            background: #F8FAFC;
+            border-color: #E2E8F0;
+        }
+        body.light-mode .adm-notif-item.unread {
+            background: rgba(212, 165, 116, 0.10);
+            border-color: rgba(212, 165, 116, 0.40);
+        }
+        body.light-mode .adm-notif-item strong {
+            color: #0F172A;
+        }
+        body.light-mode .adm-notif-item small {
+            color: #475569;
+        }
     </style>
 </head>
 <body class="dashboard-page admin-page admin-clean-page host-clean-page host-bookings-page">
@@ -91,10 +272,7 @@ $conn->close();
             </div>
             
             <nav class="sidebar-nav">
-                <a href="dashboard.php" class="nav-item">
-                    <span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
-                    <span>Dashboard</span>
-                </a>
+                
                 <a href="profile.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-user" aria-hidden="true"></i></span>
                     <span>Profile</span>
@@ -154,13 +332,28 @@ $conn->close();
 
         <!-- Main Content -->
         <main class="host-main">
-            <?php require __DIR__ . '/../includes/notifications-widget.php'; ?>
             <div class="host-header host-page-hero">
                 <div class="host-page-hero-content">
                     <h1 style="margin-top: 20px;">Bookings</h1>
                     <!-- subtitle removed -->
                 </div>
-                <!-- host-page-summary removed -->
+                <div class="admin-hero-actions">
+                    <div class="adm-notif-wrap" id="admNotifWrap">
+                        <button class="adm-notif-btn" id="admNotifBtn" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="admNotifDropdown">
+                            <i class="fa-solid fa-bell" aria-hidden="true" style="font-size: 17px;"></i>
+                            <span class="adm-notif-badge" id="admNotifBadge" hidden></span>
+                        </button>
+                        <div class="adm-notif-dropdown" id="admNotifDropdown" hidden>
+                            <div class="adm-notif-dropdown-head">
+                                <span class="adm-notif-dropdown-title">Notifications</span>
+                                <button class="adm-notif-markall" id="admNotifMarkAll" type="button">Mark all read</button>
+                            </div>
+                            <div class="adm-notif-list" id="admNotifList">
+                                <div class="adm-notif-empty">Loading&hellip;</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="host-metric-grid">
@@ -259,5 +452,6 @@ $conn->close();
     
     <script src="../assets/js/theme-toggle.js?v=27.5"></script>
     <script src="../assets/js/host-view-site-confirm.js?v=1.0"></script>
+    <script src="../assets/js/add-property-notifications.js"></script>
 </body>
 </html>

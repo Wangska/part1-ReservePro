@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact � ReservePro</title>
+    <title>Contact ReservePro</title>
     <link rel="icon" href="background%20image/newicon.png" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -449,7 +449,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div>
             <div class="ct-section-label">Reach Us</div>
             <h2>Get in touch</h2>
-            <p class="ct-info-intro">We're a small team and we read every message. If you're a host, a guest, or just curious � we're happy to chat.</p>
+            <p class="ct-info-intro">We're a small team and we read every message. If you're a host, a guest, or just curious, we're happy to chat.</p>
             <div class="ct-items">
                 <div class="ct-item">
                     <div class="ct-item-label">Email</div>
@@ -461,7 +461,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div class="ct-item">
                     <div class="ct-item-label">Hours</div>
-                    <div class="ct-item-value">Monday � Friday<br>9:00 AM � 6:00 PM PHT</div>
+                    <div class="ct-item-value">Monday to Friday<br>9:00 AM to 6:00 PM PHT</div>
                 </div>
                 <div class="ct-item">
                     <div class="ct-item-label">Support</div>
@@ -531,7 +531,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <div class="ct-faq-item">
             <div class="ct-faq-q">Is my payment secure?</div>
-            <div class="ct-faq-a">Yes. Payments are processed through PayMongo � a licensed payment processor in the Philippines. We never store your card details.</div>
+            <div class="ct-faq-a">Yes. Payments are processed through PayMongo, a licensed payment processor in the Philippines. We never store your card details.</div>
         </div>
         <div class="ct-faq-item">
             <div class="ct-faq-q">Can I cancel a booking?</div>
@@ -554,7 +554,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h5>Explore</h5>
                 <ul>
                     <li><a href="home.php">Browse Stays</a></li>
-                    <li><a href="experiences.php">Experiences</a></li>
+                    <!-- Removed Experiences link -->
                     <li><a href="become-host.php">Become a Host</a></li>
                 </ul>
             </div>

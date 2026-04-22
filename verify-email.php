@@ -7,12 +7,13 @@ initializeHostTables();
 
 $token = isset($_GET['token']) ? trim($_GET['token']) : '';
 $status = null;
+$user_role = '';
 
 if ($token === '') {
     $status = 'missing';
 } else {
     $conn = getDBConnection();
-    $stmt = $conn->prepare("SELECT id, email_verified FROM users WHERE verification_token = ? LIMIT 1");
+    $stmt = $conn->prepare("SELECT id, email_verified, role FROM users WHERE verification_token = ? LIMIT 1");
     $stmt->bind_param("s", $token);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -31,6 +32,7 @@ if ($token === '') {
             $stmt->close();
             $_SESSION['user_id'] = $user['id'];
             $status = 'success';
+            $user_role = $user['role'] ?? '';
         }
     }
 
@@ -174,7 +176,11 @@ if ($token === '') {
                     Your email has been verified successfully. You can now use all ReservePro features.
                 </p>
                 <p class="verify-status success">✅ Email verified.</p>
-                <a href="home.php" class="verify-btn">Go to Home</a>
+                <?php if (($user_role ?? '') === 'host'): ?>
+                    <a href="host/verify-account.php" class="verify-btn">Complete Host Verification</a>
+                <?php else: ?>
+                    <a href="home.php" class="verify-btn">Go to Home</a>
+                <?php endif; ?>
             <?php elseif ($status === 'already'): ?>
                 <p class="verify-text">
                     This email has already been verified.

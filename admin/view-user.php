@@ -131,7 +131,7 @@ function bool_label($value) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/host-dashboard.css?v=27.3">
     <link rel="stylesheet" href="../assets/css/admin.css?v=25.0">
-    <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
+
     <style>
         body.admin-page:not(.light-mode) { background: #06090F !important; }
         body.admin-page::before, body.admin-page::after { display: none !important; }
@@ -303,7 +303,7 @@ function bool_label($value) {
                 </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
-                    <span>View Site</span>
+                    <span>Home</span>
                 </a>
             </nav>
             <div class="sidebar-footer">
@@ -316,10 +316,7 @@ function bool_label($value) {
                         <div class="user-role">Administrator</div>
                     </div>
                 </div>
-                <div class="theme-toggle" style="margin-bottom: 12px;">
-                    <span class="theme-toggle-icon">☀️</span>
-                    <span class="theme-toggle-text">Light</span>
-                </div>
+
                 <a href="../logout.php" class="btn-logout">Logout</a>
             </div>
         </aside>
@@ -534,7 +531,7 @@ function bool_label($value) {
         </main>
     </div>
 
-    <script src="../assets/js/theme-toggle.js?v=26.0"></script>
+
     <script src="../assets/js/admin-view-site-confirm.js?v=1.0"></script>
 </body>
 </html>

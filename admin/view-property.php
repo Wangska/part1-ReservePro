@@ -101,6 +101,28 @@ function amenityIconSvg(string $name): string {
     <link rel="stylesheet" href="../assets/css/admin.css?v=25.4">
     <link rel="stylesheet" href="../assets/css/theme-toggle.css?v=27.5">
     <style>
+                .vp-btn-back {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 7px;
+                    padding: 10px 18px;
+                    border-radius: 999px;
+                    font-size: 13px;
+                    font-weight: 700;
+                    text-decoration: none;
+                    border: 1px solid rgba(212,165,116,0.22);
+                    background: linear-gradient(135deg, #D4A574, #B8935F);
+                    color: #0F0F0F !important;
+                    transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+                    box-shadow: 0 2px 8px rgba(212,165,116,0.10);
+                    cursor: pointer;
+                }
+                .vp-btn-back:hover {
+                    background: linear-gradient(135deg, #B8935F, #D4A574);
+                    color: #0F0F0F !important;
+                    box-shadow: 0 6px 18px rgba(212,165,116,0.25);
+                    transform: translateY(-1px);
+                }
         /* ── Page layout ── */
         .view-property-page { max-width: 1280px; margin: 0 auto; padding: 28px 32px; }
 
@@ -283,7 +305,7 @@ function amenityIconSvg(string $name): string {
                 </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
-                    <span>View Site</span>
+                    <span>Home</span>
                 </a>
             </nav>
             <div class="sidebar-footer">
@@ -305,7 +327,6 @@ function amenityIconSvg(string $name): string {
         </aside>
 
         <main class="host-main">
-            <?php require __DIR__ . '/../includes/notifications-widget.php'; ?>
             <div class="view-property-page">
 
                 <div class="vp-hero">

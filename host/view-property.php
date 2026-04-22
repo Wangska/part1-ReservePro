@@ -262,7 +262,7 @@ $needsApproval = isset($_GET['needs_approval']) && $_GET['needs_approval'] === '
                 </a>
             </div>
             <nav class="sidebar-nav">
-                <a href="dashboard.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span><span>Dashboard</span></a>
+                
                 <a href="profile.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user" aria-hidden="true"></i></span><span>Profile</span></a>
                 <a href="properties.php" class="nav-item active"><span class="nav-icon"><i class="fa-solid fa-house" aria-hidden="true"></i></span><span>My Properties</span></a>
                 <a href="add-property.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-plus" aria-hidden="true"></i></span><span>Add Property</span></a>
@@ -296,7 +296,6 @@ $needsApproval = isset($_GET['needs_approval']) && $_GET['needs_approval'] === '
         </aside>
 
         <main class="host-main">
-            <?php require __DIR__ . '/../includes/notifications-widget.php'; ?>
             <div class="view-property-page">
                 <?php if ($justUpdated && $needsApproval): ?>
                     <div class="rp-approval-banner">

@@ -77,18 +77,21 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
             </a>
         </div>
         <nav class="sidebar-nav">
-            <a href="dashboard.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span><span>Dashboard</span></a>
+            
             <a href="profile.php" class="nav-item active"><span class="nav-icon"><i class="fa-solid fa-user"></i></span><span>Profile</span></a>
             <a href="properties.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-house"></i></span><span>My Properties</span></a>
+            <a href="add-property.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-plus"></i></span><span>Add Property</span></a>
             <a href="bookings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-calendar-check"></i></span><span>Bookings</span></a>
+            <a href="refund-requests.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-rotate-left"></i></span><span>Refund Requests</span></a>
             <a href="messages.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-envelope"></i></span><span>Messages</span></a>
+            <a href="earnings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-wallet"></i></span><span>Earnings</span></a>
             <a href="../home.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-globe"></i></span><span>Home</span></a>
         </nav>
         <div class="sidebar-footer">
             <div class="user-profile">
-                <div class="user-avatar" style="overflow:hidden;">
+                <div class="user-avatar">
                     <?php if (!empty($profile_photo)): ?>
-                        <img src="<?php echo h('../' . ltrim($profile_photo, '/')); ?>" alt="Profile photo" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'">
+                        <img src="<?php echo h('../' . ltrim($profile_photo, '/')); ?>" alt="Profile photo" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:50%;" onerror="this.style.display='none'">
                     <?php else: ?>
                         <?php echo strtoupper(substr((string)$first_name, 0, 1) . substr((string)$last_name, 0, 1)); ?>
                     <?php endif; ?>
@@ -103,7 +106,6 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
     </aside>
 
     <main class="host-main">
-        <?php require __DIR__ . '/../includes/notifications-widget.php'; ?>
 
         <?php if ($updated): ?>
             <div class="pf-alert pf-alert-success"><i class="fa-solid fa-circle-check"></i> Profile updated.</div>

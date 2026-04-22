@@ -542,17 +542,17 @@ body.admin-verifications-page .admin-page-hero-content h1 {
 }
 
 .admin-verifications-page .btn-reject {
-    background: rgba(245, 158, 11, 0.08);
-    border: 1px solid rgba(245, 158, 11, 0.34);
-    color: #FDE68A;
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.34);
+    color: #FCA5A5;
     box-shadow: none;
 }
 
 .admin-verifications-page .btn-reject:hover {
-    background: linear-gradient(135deg, #F59E0B, #D97706);
+    background: linear-gradient(135deg, #EF4444, #DC2626);
     border-color: transparent;
-    color: #0F0F0F;
-    box-shadow: 0 12px 24px rgba(245, 158, 11, 0.28);
+    color: #FFFFFF;
+    box-shadow: 0 12px 24px rgba(239, 68, 68, 0.3);
 }
 
 .admin-scroll-x {

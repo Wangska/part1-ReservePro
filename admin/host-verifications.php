@@ -27,6 +27,8 @@ $result = $conn->query("
 ");
 if ($result) {
     $pending = $result->fetch_all(MYSQLI_ASSOC);
+} else {
+    error_log("Query failed: " . $conn->error);
 }
 $conn->close();
 ?>
@@ -61,10 +63,20 @@ $conn->close();
         .verification-card .meta { color: #B8B8B8; font-size: 14px; margin-bottom: 12px; }
         .verification-card .details { font-size: 13px; color: #B8B8B8; margin-bottom: 16px; }
         .verification-card .details span { display: inline-block; margin-right: 16px; }
-        .verification-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+        .verification-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.07);
+        }
+        .hv-doc-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+        .verification-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
         .hv-doc-btn {
-            display: inline-flex; align-items: center; gap: 8px;
-            margin-right: 10px; margin-top: 6px;
+            display: inline-flex; align-items: center; gap: 7px;
         }
         .alert-success { background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.4); color: #86efac; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; }
         .alert-error { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; }
@@ -160,7 +172,7 @@ $conn->close();
                 </a>
                 <a href="../home.php" class="nav-item">
                     <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
-                    <span>View Site</span>
+                    <span>Home</span>
                 </a>
             </nav>
             <div class="sidebar-footer">
@@ -179,7 +191,7 @@ $conn->close();
         </aside>
 
         <main class="host-main">
-            <?php require __DIR__ . '/../includes/notifications-widget.php'; ?>
+
             <div class="host-header admin-page-hero">
                 <div class="admin-page-hero-content">
                     <h1>Host Verifications</h1>
@@ -207,7 +219,7 @@ $conn->close();
                     <h3>No pending verifications</h3>
                 </div>
             <?php else: ?>
-                <p class="admin-inline-note"><?php echo count($pending); ?> request(s) are ready for review. Start with the newest submissions to keep host onboarding moving.</p>
+                
                 <?php foreach ($pending as $doc): ?>
                 <div class="verification-card">
                     <h3><?php echo htmlspecialchars($doc['first_name'] . ' ' . $doc['last_name']); ?></h3>
@@ -238,30 +250,32 @@ $conn->close();
                             <span class="admin-detail-value"><?php echo htmlspecialchars($doc['bank_account_name']); ?></span>
                         </div>
                     </div>
-                    <div class="details" style="margin-top: 14px;">
-                        <?php
-                        $hostName = htmlspecialchars(trim(($doc['first_name'] ?? '') . ' ' . ($doc['last_name'] ?? '')));
-                        $govFull = !empty($doc['gov_id_photo_path']) ? '../' . ltrim((string)$doc['gov_id_photo_path'], '/') : '';
-                        $ownFull = !empty($doc['ownership_doc_photo_path']) ? '../' . ltrim((string)$doc['ownership_doc_photo_path'], '/') : '';
-                        ?>
-                        <?php if ($govFull !== ''): ?>
-                            <button type="button" class="btn-action btn-view hv-doc-btn hv-proof-btn" data-img="<?php echo htmlspecialchars($govFull); ?>" data-title="Government ID — <?php echo $hostName; ?>"><i class="fa-solid fa-id-card"></i> View Government ID</button>
-                        <?php endif; ?>
-                        <?php if ($ownFull !== ''): ?>
-                            <button type="button" class="btn-action btn-view hv-doc-btn hv-proof-btn" data-img="<?php echo htmlspecialchars($ownFull); ?>" data-title="Supporting Doc — <?php echo $hostName; ?>"><i class="fa-solid fa-file-image"></i> View Supporting Doc</button>
-                        <?php endif; ?>
-                    </div>
-                    <div class="verification-actions">
-                        <form method="POST" action="approve-host.php" style="display: inline;">
-                            <input type="hidden" name="doc_id" value="<?php echo (int)$doc['doc_id']; ?>">
-                            <input type="hidden" name="action" value="approve">
-                            <button type="submit" class="btn-approve"><i class="fa-solid fa-circle-check"></i> Approve</button>
-                        </form>
-                        <form method="POST" action="approve-host.php" style="display: inline;">
-                            <input type="hidden" name="doc_id" value="<?php echo (int)$doc['doc_id']; ?>">
-                            <input type="hidden" name="action" value="reject">
-                            <button type="submit" class="btn-reject"><i class="fa-solid fa-circle-xmark"></i> Reject</button>
-                        </form>
+                    <?php
+                    $hostName = htmlspecialchars(trim(($doc['first_name'] ?? '') . ' ' . ($doc['last_name'] ?? '')));
+                    $govFull = !empty($doc['gov_id_photo_path']) ? '../' . ltrim((string)$doc['gov_id_photo_path'], '/') : '';
+                    $ownFull = !empty($doc['ownership_doc_photo_path']) ? '../' . ltrim((string)$doc['ownership_doc_photo_path'], '/') : '';
+                    ?>
+                    <div class="verification-card-footer">
+                        <div class="hv-doc-buttons">
+                            <?php if ($govFull !== ''): ?>
+                                <button type="button" class="btn-action btn-view hv-doc-btn hv-proof-btn" data-img="<?php echo htmlspecialchars($govFull); ?>" data-title="Government ID — <?php echo $hostName; ?>"><i class="fa-solid fa-id-card"></i> View Government ID</button>
+                            <?php endif; ?>
+                            <?php if ($ownFull !== ''): ?>
+                                <button type="button" class="btn-action btn-view hv-doc-btn hv-proof-btn" data-img="<?php echo htmlspecialchars($ownFull); ?>" data-title="Supporting Doc — <?php echo $hostName; ?>"><i class="fa-solid fa-file-image"></i> View Supporting Doc</button>
+                            <?php endif; ?>
+                        </div>
+                        <div class="verification-actions">
+                            <form method="POST" action="approve-host.php" style="display:inline;">
+                                <input type="hidden" name="doc_id" value="<?php echo (int)$doc['doc_id']; ?>">
+                                <input type="hidden" name="action" value="approve">
+                                <button type="submit" class="btn-approve"><i class="fa-solid fa-circle-check"></i> Approve</button>
+                            </form>
+                            <form method="POST" action="approve-host.php" style="display:inline;">
+                                <input type="hidden" name="doc_id" value="<?php echo (int)$doc['doc_id']; ?>">
+                                <input type="hidden" name="action" value="reject">
+                                <button type="submit" class="btn-reject"><i class="fa-solid fa-circle-xmark"></i> Reject</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
                 <?php endforeach; ?>

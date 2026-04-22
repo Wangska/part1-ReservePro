@@ -4,6 +4,7 @@
     display: flex;
     min-height: 100vh;
     background: transparent;
+    align-items: stretch;
 }
 
 /* Sidebar */
@@ -208,8 +209,21 @@ body.admin-page::after {
 /* Main Content */
 .host-main {
     margin-left: 280px;
-    flex: 1;
-    padding: 32px;
+    flex: 1 1 0%;
+    padding: 32px 64px;
+    min-width: 0;
+    width: calc(100vw - 280px);
+    max-width: 100vw;
+    box-sizing: border-box;
+    align-self: stretch;
+}
+
+@media (max-width: 900px) {
+    .host-main {
+        margin-left: 0;
+        width: 100vw;
+        padding: 16px 24px;
+    }
 }
 
 .host-header {

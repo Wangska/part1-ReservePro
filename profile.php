@@ -260,6 +260,183 @@ $role_label = isset($user['role']) ? ucfirst($user['role']) : 'Guest';
             text-decoration: none;
         }
         .pf-edit-btn:hover { background: rgba(212,165,116,0.22); transform: translateY(-1px); }
+
+        /* ── Notification Button ── */
+        .adm-notif-wrap {
+            position: relative;
+        }
+        .adm-notif-btn {
+            position: relative;
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            background: rgba(255, 255, 255, 0.06);
+            color: #A3A3A3;
+            font-size: 17px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.18s, border-color 0.18s;
+        }
+        .adm-notif-btn:hover {
+            background: rgba(255, 255, 255, 0.11);
+            border-color: rgba(212, 165, 116, 0.4);
+        }
+        .adm-notif-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 4px;
+            border-radius: 999px;
+            background: #EF4444;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            pointer-events: none;
+        }
+        .adm-notif-dropdown {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            width: 340px;
+            max-width: calc(100vw - 32px);
+            border-radius: 18px;
+            background: rgba(17, 24, 39, 0.97);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.42);
+            z-index: 9999;
+            overflow: hidden;
+        }
+        .adm-notif-dropdown-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 13px 14px 11px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+        }
+        .adm-notif-dropdown-title {
+            font-size: 13px;
+            font-weight: 900;
+            color: #F1F5F9;
+            letter-spacing: -0.01em;
+        }
+        .adm-notif-markall {
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.06);
+            color: #CBD5E1;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 5px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .adm-notif-markall:hover {
+            background: rgba(255, 255, 255, 0.11);
+        }
+        .adm-notif-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 10px;
+            max-height: 340px;
+            overflow-y: auto;
+        }
+        .adm-notif-item {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            padding: 9px 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(148, 163, 184, 0.12);
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .adm-notif-item.unread {
+            border-color: rgba(212, 165, 116, 0.32);
+            background: rgba(212, 165, 116, 0.07);
+        }
+        .adm-notif-item-body {
+            flex: 1;
+            min-width: 0;
+        }
+        .adm-notif-item strong {
+            font-size: 12px;
+            font-weight: 700;
+            color: #E2E8F0;
+            display: block;
+        }
+        .adm-notif-item small {
+            display: block;
+            font-size: 11px;
+            color: #94A3B8;
+            margin-top: 2px;
+            line-height: 1.4;
+        }
+        .adm-notif-item-actions {
+            display: flex;
+            gap: 4px;
+        }
+        .adm-notif-mark {
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            background: rgba(255, 255, 255, 0.08);
+            color: #CBD5E1;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .adm-notif-mark:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+        .adm-notif-empty {
+            padding: 14px 10px;
+            color: #94A3B8;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+        }
+        /* Light mode overrides */
+        body.light-mode .adm-notif-btn {
+            background: #F8FAFC;
+            border-color: rgba(15, 23, 42, 0.10);
+            color: #6B7280;
+        }
+        body.light-mode .adm-notif-btn:hover {
+            background: #F1F5F9;
+        }
+        body.light-mode .adm-notif-dropdown {
+            background: #FFFFFF;
+            border-color: rgba(15, 23, 42, 0.10);
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.14);
+        }
+        body.light-mode .adm-notif-dropdown-head {
+            border-bottom-color: rgba(15, 23, 42, 0.08);
+        }
+        body.light-mode .adm-notif-dropdown-title {
+            color: #0f172a;
+        }
+        body.light-mode .adm-notif-item {
+            border-color: rgba(15, 23, 42, 0.08);
+            background: rgba(15, 23, 42, 0.02);
+        }
+        body.light-mode .adm-notif-item.unread {
+            border-color: rgba(212, 165, 116, 0.22);
+            background: rgba(212, 165, 116, 0.04);
+        }
+        body.light-mode .adm-notif-item strong {
+            color: #0f172a;
+        }
+        body.light-mode .adm-notif-item small {
+            color: #64748B;
+        }
     </style>
 </head>
 <body class="dashboard-page admin-page admin-clean-page profile-page-body">
@@ -312,8 +489,6 @@ $role_label = isset($user['role']) ? ucfirst($user['role']) : 'Guest';
 
         <!-- Main Content -->
         <main class="host-main">
-            <?php require __DIR__ . '/includes/notifications-widget.php'; ?>
-
             <?php if ($updated): ?>
             <div class="pf-alert pf-alert-success"><i class="fa-solid fa-circle-check"></i> Your profile has been updated successfully.</div>
             <?php endif; ?>
@@ -341,21 +516,37 @@ $role_label = isset($user['role']) ? ucfirst($user['role']) : 'Guest';
                     <div class="pf-banner-info">
                         <h2 class="pf-banner-name"><?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?></h2>
                         <p class="pf-banner-email"><?php echo htmlspecialchars($user['email']); ?></p>
-
                     </div>
-                    <div class="pf-banner-actions">
-                        <button class="pf-edit-btn" onclick="openEditModal()">
-                            Edit Profile
-                        </button>
+                    <div class="pf-banner-actions" style="display: flex; gap: 10px; align-items: center;">
+                        <div class="adm-notif-wrap" id="admNotifWrap">
+                            <button class="adm-notif-btn" id="admNotifBtn" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="admNotifDropdown">
+                                <i class="fa-solid fa-bell" aria-hidden="true" style="font-size: 17px;"></i>
+                                <span class="adm-notif-badge" id="admNotifBadge" hidden></span>
+                            </button>
+                            <div class="adm-notif-dropdown" id="admNotifDropdown" hidden>
+                                <div class="adm-notif-dropdown-head">
+                                    <span class="adm-notif-dropdown-title">Notifications</span>
+                                    <button class="adm-notif-markall" id="admNotifMarkAll" type="button">Mark all read</button>
+                                </div>
+                                <div class="adm-notif-list" id="admNotifList">
+                                    <div class="adm-notif-empty">Loading&hellip;</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Account Details Card -->
             <div class="pf-card">
-                <div class="pf-card-head">
-                    <div class="pf-card-head-icon"><i class="fa-solid fa-circle-info"></i></div>
-                    <h3>Account Details</h3>
+                <div class="pf-card-head" style="justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div class="pf-card-head-icon"><i class="fa-solid fa-circle-info"></i></div>
+                        <h3>Account Details</h3>
+                    </div>
+                    <button class="pf-edit-btn" onclick="openEditModal()" style="margin: 0;">
+                        <i class="fa-solid fa-edit"></i> Edit Profile
+                    </button>
                 </div>
                 <div class="pf-card-body">
                     <div class="pf-detail-row">
@@ -442,6 +633,116 @@ $role_label = isset($user['role']) ? ucfirst($user['role']) : 'Guest';
         <?php if (!empty($errors)): ?>
         window.addEventListener('DOMContentLoaded', function() { openEditModal(); });
         <?php endif; ?>
+
+        // Notification system
+        (function(){
+            var btn = document.getElementById('admNotifBtn');
+            var dropdown = document.getElementById('admNotifDropdown');
+            var badge = document.getElementById('admNotifBadge');
+            var list = document.getElementById('admNotifList');
+            var markAllBtn = document.getElementById('admNotifMarkAll');
+            if (!btn || !dropdown) return;
+
+            function esc(s){ var d=document.createElement('div'); d.textContent=String(s||''); return d.innerHTML; }
+
+            function render(items){
+                if (!items || !items.length){
+                    list.innerHTML = '<div class="adm-notif-empty">No notifications yet.</div>';
+                    return;
+                }
+                list.innerHTML = items.map(function(n){
+                    var unread = String(n.is_read)==='0';
+                    var link = n.link ? String(n.link) : '';
+                    var body = n.body ? String(n.body) : '';
+                    var attrs = '';
+                    if (link) attrs = ' data-link="'+esc(link)+'" style="cursor:pointer"';
+                    return '<div class="adm-notif-item'+(unread?' unread':'')+'"'+attrs+'>'+ 
+                        '<div class="adm-notif-item-body"><strong>'+esc(n.title)+'</strong>'+ (body?'<small>'+esc(n.body)+'</small>':'')+'</div>'+ '<div class="adm-notif-item-actions">'+ (unread?'<button class="adm-notif-mark" data-mark="'+esc(n.id)+'">Mark read</button>':'')+'</div></div>';
+                }).join('');}
+            }
+
+            function load(){
+                fetch('api/notifications-list.php?limit=8', {credentials:'same-origin'})
+                    .then(function(r){ return r.json(); })
+                    .then(function(data){
+                        if (!data||!data.ok) return;
+                        var unread = parseInt(data.unread||0, 10);
+                        var items = data.items||[];
+                        if (items.length > 0) {
+                            if (unread > 0) {
+                                badge.textContent = unread > 99 ? '99+' : String(unread);
+                                badge.hidden = false;
+                            } else {
+                                badge.hidden = true;
+                            }
+                        } else {
+                            badge.hidden = true;
+                        }
+                        render(items);
+                    })
+                    .catch(function(){ list.innerHTML='<div class="adm-notif-empty">Failed to load.</div>'; badge.hidden = true; });
+            }
+
+            function mark(id){
+                var fd = new FormData();
+                if (id) fd.append('id', String(id));
+                fetch('api/notifications-mark-read.php',{method:'POST',body:fd,credentials:'same-origin'})
+                    .then(function(r){ return r.json(); })
+                    .then(function(data){ if(data&&data.ok) load(); })
+                    .catch(function(){});
+            }
+
+            list.addEventListener('click', function(e){
+                var item = e.target && e.target.closest && e.target.closest('.adm-notif-item');
+                if (!item) return;
+                
+                var hasMarkAttr = item.hasAttribute('data-mark');
+                var hasLinkAttr = item.hasAttribute('data-link');
+                
+                if (hasMarkAttr) {
+                    var id = parseInt(item.getAttribute('data-mark'), 10);
+                    if (id) {
+                        var url = hasLinkAttr ? item.getAttribute('data-link') : null;
+                        var fd = new FormData();
+                        fd.append('id', String(id));
+                        fetch('api/notifications-mark-read.php',{method:'POST',body:fd,credentials:'same-origin'})
+                            .then(function(r){ return r.json(); })
+                            .then(function(data){ 
+                                if(data&&data.ok) {
+                                    if (url) window.location.href = url;
+                                    else load();
+                                }
+                            })
+                            .catch(function(){});
+                        return;
+                    }
+                }
+                
+                if (hasLinkAttr) {
+                    var url = item.getAttribute('data-link');
+                    if (url) window.location.href = url;
+                }
+            });
+
+            markAllBtn.addEventListener('click', function(){ mark(0); });
+
+            btn.addEventListener('click', function(e){
+                e.stopPropagation();
+                var open = !dropdown.hidden;
+                dropdown.hidden = open;
+                btn.setAttribute('aria-expanded', String(!open));
+                if (!open) load();
+            });
+
+            document.addEventListener('click', function(e){
+                if (!document.getElementById('admNotifWrap').contains(e.target)){
+                    dropdown.hidden = true;
+                    btn.setAttribute('aria-expanded','false');
+                }
+            });
+
+            load();
+        })();
     </script>
 </body>
 </html>

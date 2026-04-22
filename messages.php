@@ -122,6 +122,14 @@ $conn->close();
             color: #E0E0E0 !important;
         }
 
+        .admin-hero-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
         .host-messages-layout {
             display: grid;
             grid-template-columns: 350px 1fr;
@@ -156,13 +164,18 @@ $conn->close();
         }
 
         .host-conversation-item {
-            padding: 16px 20px;
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            font-size: 15px;
+            letter-spacing: 0.01em;
+            padding: 14px 16px;
             border-bottom: 1px solid #2C2C2C;
             cursor: pointer;
             transition: background 0.2s ease;
             display: flex;
-            gap: 12px;
-            align-items: flex-start;
+            flex-direction: column;
+            align-items: stretch;
+            position: relative;
+            gap: 0;
         }
 
         .host-conversation-item:hover {
@@ -178,6 +191,38 @@ $conn->close();
             width: 48px;
             height: 48px;
             border-radius: 50%;
+            background: linear-gradient(135deg, #D4A574, #B8935F);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0F0F0F;
+            flex-shrink: 0;
+        }
+
+        .conversation-details {
+            flex: 1;
+            min-width: 0;
+            padding-right: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .conversation-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #F1F5F9;
+            margin-bottom: 0;
+            line-height: 1.4;
+        }
+
+        .conversation-preview {
+            font-size: 13px;
+            color: #B8B8B8;
+            margin-bottom: 0;
+            line-height: 1.5;
+        }
             background: linear-gradient(135deg, #D4A574, #B8935F);
             display: flex;
             align-items: center;
@@ -399,9 +444,232 @@ $conn->close();
             margin-bottom: 24px;
         }
 
+        .conv-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .conv-guest-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: #F1F5F9;
+            white-space: nowrap;
+        }
+
+        .conversation-property {
+            font-size: 12px;
+            color: #A3A3A3 !important;
+            margin-bottom: 4px !important;
+            font-weight: 500;
+            line-height: 1.3;
+        }
+
+        .message-snippet {
+            font-size: 13px !important;
+            color: #C0C0C0 !important;
+            line-height: 1.4;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .conversation-time {
+            position: static;
+            margin-left: auto;
+            align-self: flex-end;
+            background: none;
+            padding: 0 0 0 12px;
+            border-radius: 0;
+            font-size: 11px;
+            color: #8B8B8B;
+            white-space: nowrap;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
         @media (max-width: 968px) {
             .host-messages-layout { grid-template-columns: 1fr; }
             .host-conversations-list { max-height: 400px; }
+        }
+
+        /* Notification Button Styles (from my-bookings.php) */
+        .adm-notif-wrap {
+            position: relative;
+        }
+        .adm-notif-btn {
+            position: relative;
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            background: rgba(255, 255, 255, 0.06);
+            color: #A3A3A3;
+            font-size: 17px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.18s, border-color 0.18s;
+        }
+        .adm-notif-btn:hover {
+            background: rgba(255, 255, 255, 0.11);
+            border-color: rgba(212, 165, 116, 0.4);
+        }
+        .adm-notif-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 4px;
+            border-radius: 999px;
+            background: #EF4444;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            pointer-events: none;
+        }
+        .adm-notif-dropdown {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            width: 340px;
+            max-width: calc(100vw - 32px);
+            border-radius: 18px;
+            background: rgba(17, 24, 39, 0.97);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.42);
+            z-index: 9999;
+            overflow: hidden;
+        }
+        .adm-notif-dropdown-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 13px 14px 11px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+        }
+        .adm-notif-dropdown-title {
+            font-size: 13px;
+            font-weight: 900;
+            color: #F1F5F9;
+            letter-spacing: -0.01em;
+        }
+        .adm-notif-markall {
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.06);
+            color: #CBD5E1;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 5px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .adm-notif-markall:hover {
+            background: rgba(255, 255, 255, 0.11);
+        }
+        .adm-notif-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 10px;
+            max-height: 340px;
+            overflow-y: auto;
+        }
+        .adm-notif-item {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            padding: 9px 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(148, 163, 184, 0.12);
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .adm-notif-item.unread {
+            border-color: rgba(212, 165, 116, 0.32);
+            background: rgba(212, 165, 116, 0.07);
+        }
+        .adm-notif-item-body {
+            flex: 1;
+            min-width: 0;
+        }
+        .adm-notif-item strong {
+            font-size: 12px;
+            font-weight: 700;
+            color: #E2E8F0;
+            display: block;
+        }
+        .adm-notif-item small {
+            display: block;
+            font-size: 11px;
+            color: #94A3B8;
+            margin-top: 2px;
+            line-height: 1.4;
+        }
+        .adm-notif-item-actions {
+            display: flex;
+            gap: 4px;
+        }
+        .adm-notif-mark {
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            background: rgba(255, 255, 255, 0.08);
+            color: #CBD5E1;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .adm-notif-mark:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+        .adm-notif-empty {
+            padding: 14px 10px;
+            color: #94A3B8;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+        }
+        /* Light mode notification overrides */
+        body.light-mode .adm-notif-btn {
+            background: #F8FAFC;
+            border-color: rgba(15, 23, 42, 0.10);
+            color: #6B7280;
+        }
+        body.light-mode .adm-notif-btn:hover {
+            background: #F1F5F9;
+        }
+        body.light-mode .adm-notif-dropdown {
+            background: #FFFFFF;
+            border-color: rgba(15, 23, 42, 0.10);
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.14);
+        }
+        body.light-mode .adm-notif-dropdown-head {
+            border-bottom-color: rgba(15, 23, 42, 0.08);
+        }
+        body.light-mode .adm-notif-dropdown-title {
+            color: #0f172a;
+        }
+        body.light-mode .adm-notif-item {
+            border-color: rgba(15, 23, 42, 0.08);
+            background: rgba(15, 23, 42, 0.02);
+        }
+        body.light-mode .adm-notif-item.unread {
+            border-color: rgba(212, 165, 116, 0.22);
+            background: rgba(212, 165, 116, 0.04);
+        }
+        body.light-mode .adm-notif-item strong {
+            color: #0f172a;
+        }
+        body.light-mode .adm-notif-item small {
+            color: #64748B;
         }
     </style>
 </head>
@@ -449,10 +717,26 @@ $conn->close();
 
         <!-- Main Content -->
         <main class="host-main">
-            <?php require __DIR__ . '/includes/notifications-widget.php'; ?>
             <div class="messages-header host-page-hero">
                 <div class="host-page-hero-content">
                     <h1 style="margin-top: 20px;">Messages</h1>
+                </div>
+                <div class="admin-hero-actions">
+                    <div class="adm-notif-wrap" id="admNotifWrap">
+                        <button class="adm-notif-btn" id="admNotifBtn" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="admNotifDropdown">
+                            <i class="fa-solid fa-bell" aria-hidden="true" style="font-size: 17px;"></i>
+                            <span class="adm-notif-badge" id="admNotifBadge" hidden></span>
+                        </button>
+                        <div class="adm-notif-dropdown" id="admNotifDropdown" hidden>
+                            <div class="adm-notif-dropdown-head">
+                                <span class="adm-notif-dropdown-title">Notifications</span>
+                                <button class="adm-notif-markall" id="admNotifMarkAll" type="button">Mark all read</button>
+                            </div>
+                            <div class="adm-notif-list" id="admNotifList">
+                                <div class="adm-notif-empty">Loading&hellip;</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -479,12 +763,12 @@ $conn->close();
                             $lastTime = $last ? $last['created_at'] : '';
                         ?>
                         <div class="host-conversation-item" data-property-id="<?php echo (int)$conv['property_id']; ?>" data-host-id="<?php echo (int)$conv['host_id']; ?>" data-host-name="<?php echo htmlspecialchars($conv['host_name']); ?>" data-property-title="<?php echo htmlspecialchars($conv['property_title']); ?>">
-                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 6px;">
-                                <strong style="color: #FFFFFF;"><?php echo htmlspecialchars($conv['host_name']); ?></strong>
-                                <span style="font-size: 12px; color: #888;"><?php echo $lastTime ? date('M j, g:i A', strtotime($lastTime)) : ''; ?></span>
+                            <div class="conv-header">
+                                <div class="conv-guest-name"><?php echo htmlspecialchars($conv['host_name']); ?></div>
+                                <div class="conversation-time"><?php echo $lastTime ? date('M j, g:i A', strtotime($lastTime)) : ''; ?></div>
                             </div>
-                            <div class="conversation-property" style="font-size: 12px; color: #B8B8B8; margin-bottom: 4px;"><?php echo htmlspecialchars($conv['property_title']); ?></div>
-                            <div class="message-snippet" style="font-size: 13px; color: #E0E0E0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><?php echo htmlspecialchars($preview); ?></div>
+                            <div class="conversation-property"><?php echo htmlspecialchars($conv['property_title']); ?></div>
+                            <div class="message-snippet"><?php echo htmlspecialchars($preview); ?></div>
                         </div>
                         <?php endforeach; ?>
                     </div>
@@ -608,6 +892,117 @@ $conn->close();
                         });
                     });
                 }
+            })();
+            </script>
+
+            <!-- Notification system (from my-bookings.php) -->
+            <script>
+            (function(){
+                var btn = document.getElementById('admNotifBtn');
+                var dropdown = document.getElementById('admNotifDropdown');
+                var badge = document.getElementById('admNotifBadge');
+                var list = document.getElementById('admNotifList');
+                var markAllBtn = document.getElementById('admNotifMarkAll');
+                if (!btn || !dropdown) return;
+
+                function esc(s){ var d=document.createElement('div'); d.textContent=String(s||''); return d.innerHTML; }
+
+                function render(items){
+                    if (!items || !items.length){
+                        list.innerHTML = '<div class="adm-notif-empty">No notifications yet.</div>';
+                        return;
+                    }
+                    list.innerHTML = items.map(function(n){
+                        var unread = String(n.is_read)==='0';
+                        var link = n.link ? String(n.link) : '';
+                        var body = n.body ? String(n.body) : '';
+                        var attrs = '';
+                        if (link) attrs = ' data-link="'+esc(link)+'" style="cursor:pointer"';
+                        return '<div class="adm-notif-item'+(unread?' unread':'')+'""+attrs+'>'+ 
+                            '<div class="adm-notif-item-body"><strong>'+esc(n.title)+'</strong>'+ (body?'<small>'+esc(n.body)+'</small>':'')+'</div>'+ '<div class="adm-notif-item-actions">'+ (unread?'<button class="adm-notif-mark" data-mark="'+esc(n.id)+'">Mark read</button>':'')+'</div></div>';
+                    }).join('');}}
+
+                function load(){
+                    fetch('api/notifications-list.php?limit=8', {credentials:'same-origin'})
+                        .then(function(r){ return r.json(); })
+                        .then(function(data){
+                            if (!data||!data.ok) return;
+                            var unread = parseInt(data.unread||0, 10);
+                            var items = data.items||[];
+                            if (items.length > 0) {
+                                if (unread > 0) {
+                                    badge.textContent = unread > 99 ? '99+' : String(unread);
+                                    badge.hidden = false;
+                                } else {
+                                    badge.hidden = true;
+                                }
+                            } else {
+                                badge.hidden = true;
+                            }
+                            render(items);
+                        })
+                        .catch(function(){ list.innerHTML='<div class="adm-notif-empty">Failed to load.</div>'; badge.hidden = true; });
+                }
+
+                function mark(id){
+                    var fd = new FormData();
+                    if (id) fd.append('id', String(id));
+                    fetch('api/notifications-mark-read.php',{method:'POST',body:fd,credentials:'same-origin'})
+                        .then(function(r){ return r.json(); })
+                        .then(function(data){ if(data&&data.ok) load(); })
+                        .catch(function(){});
+                }
+
+                list.addEventListener('click', function(e){
+                    var item = e.target && e.target.closest && e.target.closest('.adm-notif-item');
+                    if (!item) return;
+                    
+                    var hasMarkAttr = item.hasAttribute('data-mark');
+                    var hasLinkAttr = item.hasAttribute('data-link');
+                    
+                    if (hasMarkAttr) {
+                        var id = parseInt(item.getAttribute('data-mark'), 10);
+                        if (id) {
+                            var url = hasLinkAttr ? item.getAttribute('data-link') : null;
+                            var fd = new FormData();
+                            fd.append('id', String(id));
+                            fetch('api/notifications-mark-read.php',{method:'POST',body:fd,credentials:'same-origin'})
+                                .then(function(r){ return r.json(); })
+                                .then(function(data){ 
+                                    if(data&&data.ok) {
+                                        if (url) window.location.href = url;
+                                        else load();
+                                    }
+                                })
+                                .catch(function(){});
+                            return;
+                        }
+                    }
+                    
+                    if (hasLinkAttr) {
+                        var url = item.getAttribute('data-link');
+                        if (url) window.location.href = url;
+                    }
+                });
+
+                markAllBtn.addEventListener('click', function(){ mark(0); });
+
+                btn.addEventListener('click', function(e){
+                    e.stopPropagation();
+                    var open = !dropdown.hidden;
+                    dropdown.hidden = open;
+                    btn.setAttribute('aria-expanded', String(!open));
+                    if (!open) load();
+                });
+
+                document.addEventListener('click', function(e){
+                    if (!document.getElementById('admNotifWrap').contains(e.target)){
+                        dropdown.hidden = true;
+                        btn.setAttribute('aria-expanded','false');
+                    }
+                });
+
+                load();
             })();
             </script>
         </main>

@@ -10,16 +10,24 @@ $errors = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $first_name       = trim($_POST['first_name'] ?? '');
     $last_name        = trim($_POST['last_name'] ?? '');
+    $birthdate        = $_POST['birthdate'] ?? '';
     $email            = trim($_POST['email'] ?? '');
     $password         = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
+    $terms            = isset($_POST['terms']) ? trim((string)$_POST['terms']) : '';
     // This page always creates a Host account
     $role             = 'host';
 
+    if ($terms !== '1') {
+        $errors[] = "You must agree to the Terms & Conditions";
+    }
+
     if ($password !== $confirm_password) {
         $errors[] = "Passwords do not match";
-    } else {
-        $result = Auth::register($first_name, $last_name, $email, $password, $role);
+    }
+
+    if (empty($errors)) {
+        $result = Auth::register($first_name, $last_name, $email, $password, $role, $birthdate);
 
         if ($result['success']) {
             // After signup, show email verification instructions
@@ -287,6 +295,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <div class="rp-field">
+                    <label for="birthdate">Date of Birth</label>
+                    <div class="rp-input-wrap">
+                        <input type="date" id="birthdate" name="birthdate"
+                            value="<?php echo isset($_POST['birthdate']) ? htmlspecialchars($_POST['birthdate']) : ''; ?>">
+                        <i class="fa-solid fa-calendar"></i>
+                    </div>
+                </div>
+
+                <div class="rp-field">
                     <label for="email">Email Address</label>
                     <div class="rp-input-wrap">
                         <input type="email" id="email" name="email"
@@ -315,6 +332,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             required>
                         <i class="fa-solid fa-lock"></i>
                     </div>
+                </div>
+
+                <div style="display:flex; gap:10px; align-items:flex-start; margin-top: 4px;">
+                    <input
+                        type="checkbox"
+                        id="terms"
+                        name="terms"
+                        value="1"
+                        <?php echo (($_POST['terms'] ?? '') === '1') ? 'checked' : ''; ?>
+                        style="margin-top:4px;"
+                        required
+                    >
+                    <label for="terms" style="margin:0; color: #CBD5E1; font-size: 13px; font-weight: 600; line-height: 1.45;">
+                        I agree to the <a href="terms.php" style="color: var(--gold); text-decoration:none; font-weight:800;">Terms &amp; Conditions</a>.
+                    </label>
                 </div>
 
                 <button type="submit" class="rp-btn" id="submitBtn">

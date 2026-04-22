@@ -207,6 +207,11 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
             box-shadow: 0 6px 16px rgba(212,165,116,0.25);
         }
         .btn-action-primary:hover { box-shadow: 0 8px 22px rgba(212,165,116,0.35); }
+                .btn-action-primary:hover {
+                    background: linear-gradient(135deg, #D4A574, #B8935F) !important;
+                    color: #0f172a !important;
+                    box-shadow: 0 8px 22px rgba(212,165,116,0.35);
+                }
         .btn-action-danger { border-color: rgba(239,68,68,0.28); color: #fca5a5 !important; }
         .btn-action-danger:hover { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.4); }
 
@@ -306,7 +311,7 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
             </a>
             <a href="../home.php" class="nav-item">
                 <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
-                <span>View Site</span>
+                <span>Home</span>
             </a>
         </nav>
         <div class="sidebar-footer">
@@ -319,22 +324,17 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
                     <div class="user-role">Administrator</div>
                 </div>
             </div>
-            <div class="theme-toggle" style="margin-bottom: 12px;">
-                <span class="theme-toggle-icon" aria-hidden="true"></span>
-                <span class="theme-toggle-text">Theme</span>
-            </div>
             <a href="../logout.php" class="btn-logout">Logout</a>
         </div>
     </aside>
 
     <main class="host-main">
-        <?php require __DIR__ . '/../includes/notifications-widget.php'; ?>
+
 
         <!-- Hero -->
         <div class="vu-hero">
             <div class="vu-hero-left">
                 <div>
-                    <span class="vu-eyebrow"><i class="fa-solid fa-rotate-left"></i> Refund Request</span>
                     <h1>Refund #<?php echo (int)$r['id']; ?></h1>
                     <div class="vu-meta">
                         <?php
@@ -352,8 +352,7 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
                 </div>
             </div>
             <div class="vu-hero-right">
-                <a href="refunds.php" class="btn-vu-back"><i class="fa-solid fa-arrow-left"></i> Back to Refunds</a>
-                <a href="../messages.php" class="btn-vu-back"><i class="fa-solid fa-envelope"></i> Messages</a>
+                <a href="refunds.php" class="btn-vu-back"></i> Back to Refunds</a>
             </div>
         </div>
 
@@ -363,11 +362,11 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
             <!-- Left column: Admin Action + Amounts -->
             <div>
                 <div class="vu-card">
-                    <div class="vu-card-title"><i class="fa-solid fa-sliders"></i> Admin Action</div>
+                    <div class="vu-card-title">Admin Action</div>
                     <form method="post" action="refund-action.php">
                         <input type="hidden" name="refund_request_id" value="<?php echo (int)$r['id']; ?>">
                         <div class="form-group">
-                            <label class="form-label">Action <span style="color:#f87171;">*</span></label>
+                            <label class="form-label">Action</label>
                             <select name="action" required>
                                 <option value="">Select an action</option>
                                 <option value="approve">Approve</option>
@@ -386,10 +385,10 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
                             <textarea name="note" maxlength="1000" placeholder="Explain your decision…"></textarea>
                         </div>
                         <button type="submit" class="btn-action btn-action-primary">
-                            <i class="fa-solid fa-check"></i> Save Decision
+                            Save Decision
                         </button>
                         <a class="btn-action btn-action-danger" href="../messages.php">
-                            <i class="fa-solid fa-envelope"></i> Contact Host / Guest
+                            Contact Host / Guest
                         </a>
                     </form>
                 </div>

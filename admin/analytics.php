@@ -284,7 +284,7 @@ function toChart(array $rows, string $xKey, string $yKey): array {
             </a>
             <a href="../home.php" class="nav-item">
                 <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
-                <span>View Site</span>
+                <span>Home</span>
             </a>
         </nav>
         <div class="sidebar-footer">
@@ -303,7 +303,7 @@ function toChart(array $rows, string $xKey, string $yKey): array {
     </aside>
 
     <main class="host-main">
-        <?php require __DIR__ . '/../includes/notifications-widget.php'; ?>
+
         <div class="properties-header admin-page-hero">
             <div class="admin-page-hero-content">
                 <h1>Booking analytics</h1>

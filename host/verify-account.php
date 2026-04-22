@@ -114,15 +114,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors[] = ucfirst($prefix) . ' must be a valid image file.';
             return null;
         }
-<<<<<<< HEAD
-=======
-        $w = (int)$img[0];
-        $h = (int)$img[1];
-        if ($w < 900 || $h < 600) {
-            $errors[] = ucfirst($prefix) . ' image resolution is too low. Please upload a clearer photo (at least 900Ã—600).';
-            return null;
-        }
->>>>>>> ad87513098603380b3b373b63b23603737d70897
 
         $baseDir = dirname(__DIR__) . '/uploads/host-documents/' . (int)$userId . '/';
         if (!file_exists($baseDir)) {

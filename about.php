@@ -7,7 +7,7 @@ $user = isLoggedIn() ? getCurrentUser() : null;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About � ReservePro</title>
+    <title>About ReservePro</title>
     <link rel="icon" href="background%20image/newicon.png" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -385,9 +385,9 @@ $user = isLoggedIn() ? getCurrentUser() : null;
 <div class="ab-section ab-wrap">
     <div class="ab-section-label">About ReservePro</div>
     <h2>What we are</h2>
-    <p>ReservePro is a short-term rental platform made specifically for the Philippines. We connect people who have spaces to share with people who need somewhere to stay � whether that's a night, a week, or a month.</p>
+    <p>ReservePro is a short-term rental platform made specifically for the Philippines. We connect people who have spaces to share with people who need somewhere to stay, whether that's a night, a week, or a month.</p>
     <p>We got started because booking a place to stay locally was harder than it should be. International platforms had confusing fees, unverified listings, and no real understanding of the local market. We wanted to fix that.</p>
-    <p>Every listing on ReservePro is reviewed before it goes live. Payments go through PayMongo � secure, local, and straightforward. And if something goes wrong, there's an actual team here to help.</p>
+    <p>Every listing on ReservePro is reviewed before it goes live. Payments go through PayMongo secure, local, and straightforward. And if something goes wrong, there's an actual team here to help.</p>
 </div>
 
 <div style="border-top:1px solid var(--border);"></div>
@@ -474,7 +474,7 @@ $user = isLoggedIn() ? getCurrentUser() : null;
                 <h5>Explore</h5>
                 <ul>
                     <li><a href="home.php">Browse Stays</a></li>
-                    <li><a href="experiences.php">Experiences</a></li>
+                    <!-- Removed Experiences link -->
                     <li><a href="become-host.php">Become a Host</a></li>
                 </ul>
             </div>
