@@ -396,7 +396,6 @@ $justConfirmed = isset($_GET['confirmed']) && $_GET['confirmed'] === '1';
                 <a href="refund-requests.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></span><span>Refund Requests</span></a>
                 <a href="earnings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span><span>Earnings</span></a>
                 <a href="messages.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span><span>Messages</span></a>
-                <a href="../home.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span><span>Home</span></a>
             </nav>
             <div class="sidebar-footer">
                 <div class="user-profile">
@@ -498,6 +497,7 @@ $justConfirmed = isset($_GET['confirmed']) && $_GET['confirmed'] === '1';
     </div>
 
     <script src="../assets/js/theme-toggle.js?v=27.5"></script>
+    <script src="../assets/js/admin-view-site-confirm.js?v=1.0"></script>
     <script src="../assets/js/host-view-site-confirm.js?v=1.0"></script>
     <script>
         (function() {

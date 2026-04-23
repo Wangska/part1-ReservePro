@@ -340,6 +340,7 @@ if (!empty($date_of_birth)) {
     </div>
 
     <script src="../assets/js/theme-toggle.js"></script>
+    <script src="../assets/js/admin-view-site-confirm.js?v=1.0"></script>
 </body>
 </html>
 

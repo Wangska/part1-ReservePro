@@ -57,6 +57,7 @@ $query = "
             (SELECT photo_url FROM property_photos WHERE property_id = p.id AND is_primary = 1 LIMIT 1),
             (SELECT photo_url FROM property_photos WHERE property_id = p.id LIMIT 1)
         ) as primary_photo,
+        (SELECT GROUP_CONCAT(photo_url ORDER BY is_primary DESC, id ASC SEPARATOR '||') FROM property_photos WHERE property_id = p.id) as photo_list,
         (SELECT COUNT(*) FROM bookings WHERE property_id = p.id) as total_bookings,
         (SELECT created_at FROM property_edit_logs WHERE property_id = p.id ORDER BY id DESC LIMIT 1) as last_edited_at
     FROM properties p
@@ -149,6 +150,12 @@ $conn->close();
             object-fit: cover;
             object-position: center;
             background: #2C2C2C;
+        }
+        .prop-thumb-wrap{
+            position: relative;
+            width: 80px;
+            height: 60px;
+            flex: 0 0 auto;
         }
 
         .property-info h3 {
@@ -486,10 +493,6 @@ $conn->close();
                     <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
                     <span>Commission</span>
                 </a>
-                <a href="../home.php" class="nav-item">
-                    <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
-                    <span>Home</span>
-                </a>
             </nav>
             
             <div class="sidebar-footer">
@@ -636,9 +639,35 @@ $conn->close();
                                         } else {
                                             $img_src = 'https://via.placeholder.com/80x60?text=No+Image';
                                         }
+
+                                        $photo_list_raw = (string)($property['photo_list'] ?? '');
+                                        $photos = [];
+                                        if ($photo_list_raw !== '') {
+                                            foreach (explode('||', $photo_list_raw) as $purl) {
+                                                $purl = trim((string)$purl);
+                                                if ($purl === '') continue;
+                                                if (strpos($purl, 'http') === 0) $photos[] = $purl;
+                                                else $photos[] = '../' . ltrim($purl, '/');
+                                            }
+                                        }
+                                        if (empty($photos) && $raw) {
+                                            // Fallback to primary_photo
+                                            if (strpos($raw, 'http') === 0) $photos[] = $raw;
+                                            else $photos[] = '../' . ltrim($raw, '/');
+                                        }
+                                        $hasMulti = count($photos) > 1;
+                                        $photosAttr = htmlspecialchars(implode('||', $photos), ENT_QUOTES);
                                     ?>
-                                            <img src="<?php echo $img_src; ?>" 
-                                                 alt="Property" class="property-thumb" loading="lazy" decoding="async" onerror="this.src='https://via.placeholder.com/80x60?text=No+Image'">
+                                            <div class="prop-thumb-wrap" data-prop-photos="<?php echo $photosAttr; ?>">
+                                                <img
+                                                    src="<?php echo $img_src; ?>"
+                                                    alt="Property"
+                                                    class="property-thumb"
+                                                    loading="lazy"
+                                                    decoding="async"
+                                                    onerror="this.src='https://via.placeholder.com/80x60?text=No+Image'"
+                                                >
+                                            </div>
                                             <div class="property-info">
                                                 <h3><?php echo htmlspecialchars($property['title']); ?></h3>
                                             </div>
@@ -711,6 +740,7 @@ $conn->close();
                 document.getElementById('deletePropertyForm').submit();
             }
         }
+
     </script>
     <script>
         (function(){

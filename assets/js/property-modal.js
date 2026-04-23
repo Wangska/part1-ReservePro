@@ -837,6 +837,68 @@ function renderBookingCalendar(bookedDates) {
         for (let i = 0; i < pad; i++) html += '<div></div>';
     }
     container.innerHTML = html;
+
+    // --- Selection highlight helpers ---
+    function parseDate(d) {
+        const parts = String(d || '').split('-').map(n => parseInt(n, 10));
+        if (parts.length !== 3) return null;
+        const dt = new Date(parts[0], parts[1] - 1, parts[2]);
+        dt.setHours(0, 0, 0, 0);
+        return isNaN(dt.getTime()) ? null : dt;
+    }
+
+    function applySelectionUI() {
+        const checkInEl = document.getElementById('modal_check_in');
+        const checkOutEl = document.getElementById('modal_check_out');
+        const inStr = checkInEl ? checkInEl.value : '';
+        const outStr = checkOutEl ? checkOutEl.value : '';
+        const inD = parseDate(inStr);
+        const outD = parseDate(outStr);
+
+        container.querySelectorAll('.calendar-day').forEach(cell => {
+            cell.classList.remove('is-selected', 'is-selected-start', 'is-selected-end', 'is-in-range');
+            const ds = cell.getAttribute('data-date');
+            if (!ds) return;
+            if (inStr && ds === inStr) {
+                cell.classList.add('is-selected', 'is-selected-start');
+            }
+            if (outStr && ds === outStr) {
+                cell.classList.add('is-selected', 'is-selected-end');
+            }
+            if (inD && outD) {
+                const cd = parseDate(ds);
+                if (!cd) return;
+                // Mark strictly between check-in and check-out
+                if (cd > inD && cd < outD) {
+                    cell.classList.add('is-in-range');
+                }
+            }
+        });
+    }
+
+    // Inject once: minimal CSS for selected/range styles
+    if (!document.getElementById('rpCalendarSelectStyles')) {
+        const style = document.createElement('style');
+        style.id = 'rpCalendarSelectStyles';
+        style.textContent = `
+            #bookingCalendar .calendar-day.is-in-range{
+                outline: 2px solid rgba(212,165,116,0.18);
+                background: rgba(212,165,116,0.12) !important;
+            }
+            #bookingCalendar .calendar-day.is-selected{
+                background: rgba(212,165,116,0.26) !important;
+                outline: 2px solid rgba(212,165,116,0.55);
+                font-weight: 800;
+            }
+            #bookingCalendar .calendar-day.is-selected-start,
+            #bookingCalendar .calendar-day.is-selected-end{
+                background: rgba(212,165,116,0.38) !important;
+                outline: 2px solid rgba(212,165,116,0.75);
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    applySelectionUI();
     
     // Click on available day to set check-in or check-out
     container.querySelectorAll('.calendar-day:not(.calendar-day-booked)').forEach(cell => {
@@ -846,19 +908,49 @@ function renderBookingCalendar(bookedDates) {
             const checkIn = document.getElementById('modal_check_in');
             const checkOut = document.getElementById('modal_check_out');
             if (!checkIn || !checkOut) return;
+
+            // Separate selection:
+            // 1st click = set check-in only
+            // 2nd click = set check-out
+            // if both already set, start over
             if (!checkIn.value || (checkIn.value && checkOut.value)) {
                 checkIn.value = dateStr;
-                const next = new Date(dateStr);
-                next.setDate(next.getDate() + 1);
-                checkOut.value = next.toISOString().split('T')[0];
-                checkOut.min = checkOut.value;
+                checkOut.value = '';
+                const nextDay = new Date(dateStr);
+                nextDay.setDate(nextDay.getDate() + 1);
+                checkOut.min = nextDay.toISOString().split('T')[0];
             } else {
-                checkOut.value = dateStr;
+                // Setting check-out: must be after check-in
+                const inD = parseDate(checkIn.value);
+                const outD = parseDate(dateStr);
+                if (inD && outD && outD <= inD) {
+                    // If user clicked an earlier/same date, treat it as a new check-in
+                    checkIn.value = dateStr;
+                    checkOut.value = '';
+                    const nextDay = new Date(dateStr);
+                    nextDay.setDate(nextDay.getDate() + 1);
+                    checkOut.min = nextDay.toISOString().split('T')[0];
+                } else {
+                    checkOut.value = dateStr;
+                }
             }
             checkIn.dispatchEvent(new Event('change', { bubbles: true }));
             checkOut.dispatchEvent(new Event('change', { bubbles: true }));
+            applySelectionUI();
         });
     });
+
+    // Keep UI in sync when user edits date inputs manually
+    const checkInEl = document.getElementById('modal_check_in');
+    const checkOutEl = document.getElementById('modal_check_out');
+    if (checkInEl && !checkInEl.dataset.rpSelBound) {
+        checkInEl.addEventListener('change', applySelectionUI);
+        checkInEl.dataset.rpSelBound = '1';
+    }
+    if (checkOutEl && !checkOutEl.dataset.rpSelBound) {
+        checkOutEl.addEventListener('change', applySelectionUI);
+        checkOutEl.dataset.rpSelBound = '1';
+    }
 }
 
 function showPropertyMap(property) {

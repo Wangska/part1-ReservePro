@@ -35,7 +35,7 @@ initializeHostTables();
 
 // Ensure this refund request belongs to one of host's properties and is still reviewable
 $stmt = $conn->prepare("
-    SELECT rr.id, rr.status, rr.host_decision, rr.refund_percent, rr.refund_amount, rr.booking_id, rr.property_id,
+    SELECT rr.id, rr.status, rr.host_decision, rr.host_decision_percent, rr.refund_percent, rr.refund_amount, rr.booking_id, rr.property_id,
            b.total_price,
            p.host_id
     FROM refund_requests rr
@@ -69,7 +69,9 @@ $hostPct = null;
 if ($decision === 'complete') {
     // Idempotent completion: use the already decided percent on the request.
     $hostDecision = (string)($r['host_decision'] ?? 'none');
-    $hostPct = ($r['host_decision_percent'] !== null) ? (int)$r['host_decision_percent'] : (int)($r['refund_percent'] ?? 0);
+    $hostPct = (isset($r['host_decision_percent']) && $r['host_decision_percent'] !== null)
+        ? (int)$r['host_decision_percent']
+        : (int)($r['refund_percent'] ?? 0);
     if ($hostPct < 0) $hostPct = 0;
     if ($hostPct > 100) $hostPct = 100;
 } elseif ($decision === 'approve') {
@@ -156,7 +158,7 @@ try {
     if ($decision === 'complete' && $note2 === '') {
         $note2 = 'Host marked refund as completed.';
     }
-    $log->bind_param('iissssss', $id, $user['id'], $act, $currentStatus, $toStatus, $note2, $meta);
+    $log->bind_param('iisssss', $id, $user['id'], $act, $currentStatus, $toStatus, $note2, $meta);
     $log->execute();
     $log->close();
 

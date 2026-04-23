@@ -18,7 +18,9 @@ $result = $conn->query("
     SELECT h.id AS doc_id, h.user_id, h.id_full_name,
            h.gov_id_type, h.gov_id_number, h.gov_id_photo_path,
            h.ownership_proof_type, h.ownership_reference, h.ownership_doc_photo_path,
-           h.bank_name, h.bank_account_name, h.verification_status, h.created_at,
+           h.business_registration, h.tax_id, h.tourism_license,
+           h.bank_name, h.bank_account_name, h.bank_account_number,
+           h.verification_status, h.created_at,
            u.first_name, u.last_name, u.email
     FROM host_documents h
     JOIN users u ON h.user_id = u.id
@@ -170,10 +172,6 @@ $conn->close();
                     <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
                     <span>Commission</span>
                 </a>
-                <a href="../home.php" class="nav-item">
-                    <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
-                    <span>Home</span>
-                </a>
             </nav>
             <div class="sidebar-footer">
                 <div class="user-profile">
@@ -234,6 +232,10 @@ $conn->close();
                             <span class="admin-detail-value"><?php echo htmlspecialchars($doc['gov_id_type']); ?></span>
                         </div>
                         <div class="admin-detail-card">
+                            <span class="admin-detail-label">ID number</span>
+                            <span class="admin-detail-value"><?php echo htmlspecialchars($doc['gov_id_number'] ?? ''); ?></span>
+                        </div>
+                        <div class="admin-detail-card">
                             <span class="admin-detail-label">Ownership Proof</span>
                             <span class="admin-detail-value"><?php echo htmlspecialchars($doc['ownership_proof_type']); ?></span>
                         </div>
@@ -242,12 +244,28 @@ $conn->close();
                             <span class="admin-detail-value"><?php echo htmlspecialchars($doc['ownership_reference'] ?? ''); ?></span>
                         </div>
                         <div class="admin-detail-card">
+                            <span class="admin-detail-label">TIN</span>
+                            <span class="admin-detail-value"><?php echo htmlspecialchars($doc['tax_id'] ?? ''); ?></span>
+                        </div>
+                        <div class="admin-detail-card">
                             <span class="admin-detail-label">Bank</span>
                             <span class="admin-detail-value"><?php echo htmlspecialchars($doc['bank_name']); ?></span>
                         </div>
                         <div class="admin-detail-card">
                             <span class="admin-detail-label">Account Name</span>
                             <span class="admin-detail-value"><?php echo htmlspecialchars($doc['bank_account_name']); ?></span>
+                        </div>
+                        <div class="admin-detail-card">
+                            <span class="admin-detail-label">Account / GCash number</span>
+                            <span class="admin-detail-value"><?php echo htmlspecialchars($doc['bank_account_number'] ?? ''); ?></span>
+                        </div>
+                        <div class="admin-detail-card">
+                            <span class="admin-detail-label">Business registration</span>
+                            <span class="admin-detail-value"><?php echo htmlspecialchars($doc['business_registration'] ?? ''); ?></span>
+                        </div>
+                        <div class="admin-detail-card">
+                            <span class="admin-detail-label">Tourism license</span>
+                            <span class="admin-detail-value"><?php echo htmlspecialchars($doc['tourism_license'] ?? ''); ?></span>
                         </div>
                     </div>
                     <?php

@@ -643,10 +643,6 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
                 <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
                 <span>Commission</span>
             </a>
-            <a href="../home.php" class="nav-item">
-                <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
-                <span>Home</span>
-            </a>
         </nav>
         <div class="sidebar-footer">
             <div class="user-profile">

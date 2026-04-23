@@ -894,17 +894,23 @@ body.light-mode .review-star.review-star-active {
 
 /* Dates group */
 .pm-dates-group {
-    display: flex;
-    align-items: stretch;
-    border: 1px solid #222222;
-    border-radius: 12px;
-    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    border: 0;
+    border-radius: 0;
+    overflow: visible;
     margin: 14px 20px 0;
     transition: border-color 0.2s;
 }
-.pm-dates-group:focus-within { border-color: rgba(212,165,116,0.4); }
-.pm-date-cell { flex: 1; padding: 11px 14px; background: transparent; }
-.pm-date-divider { width: 1px; background: #222222; flex-shrink: 0; align-self: stretch; }
+.pm-dates-group:focus-within .pm-date-cell { border-color: rgba(212,165,116,0.4); }
+.pm-date-cell {
+    padding: 11px 14px;
+    background: transparent;
+    border: 1px solid #222222;
+    border-radius: 12px;
+}
+.pm-date-divider { display: none; }
 .pm-date-label {
     display: block;
     font-size: 9px;

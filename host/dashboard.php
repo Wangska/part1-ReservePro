@@ -551,10 +551,6 @@ $conn->close();
                     <span class="nav-icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span>
                     <span>Messages</span>
                 </a>
-                <a href="../home.php" class="nav-item">
-                    <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
-                    <span>Home</span>
-                </a>
             </nav>
             
             <div class="sidebar-footer">
@@ -745,6 +741,7 @@ $conn->close();
     </div>
     
     <script src="../assets/js/theme-toggle.js?v=27.5"></script>
+    <script src="../assets/js/admin-view-site-confirm.js?v=1.0"></script>
     <script src="../assets/js/host-view-site-confirm.js?v=1.0"></script>
 </body>
 </html>

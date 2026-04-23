@@ -104,6 +104,10 @@
         style.textContent = [
             '#rpLightboxBackdrop{position:fixed;inset:0;z-index:20000;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.72);backdrop-filter:blur(4px)}',
             '#rpLightboxBackdrop.open{display:flex}',
+            '#rpLightboxBackdrop.minimal #rpLightboxBack{display:none}',
+            '#rpLightboxBackdrop.minimal #rpLightboxZoomOut{display:none}',
+            '#rpLightboxBackdrop.minimal #rpLightboxZoomIn{display:none}',
+            '#rpLightboxBackdrop.minimal #rpLightboxReset{display:none}',
             '#rpLightboxModal{width:min(1040px,96vw);max-height:92vh;border-radius:18px;overflow:hidden;background:rgba(17,24,39,.96);border:1px solid rgba(148,163,184,.18);box-shadow:0 30px 80px rgba(0,0,0,.6)}',
             '#rpLightboxHead{padding:12px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(148,163,184,.14);position:relative}',
             '#rpLightboxTitle{flex:1;min-width:0;text-align:center;font-size:13px;font-weight:900;color:#E2E8F0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
@@ -262,7 +266,7 @@
         return backdrop;
     }
 
-    function open(src, title, items, index) {
+    function open(src, title, items, index, minimal) {
         if (!src && !(items && items.length)) return;
         var backdrop = ensureModal();
         var img = document.getElementById('rpLightboxImg');
@@ -277,6 +281,7 @@
             titleEl.setAttribute('data-base', title || 'Preview');
         }
         backdrop.classList.add('open');
+        backdrop.classList.toggle('minimal', !!minimal);
         backdrop.setAttribute('aria-hidden', 'false');
 
         state.items = Array.isArray(items) ? items.slice() : (src ? [src] : []);
@@ -325,6 +330,7 @@
         var title = img.getAttribute('data-lightbox-title') || img.getAttribute('alt') || 'Property photo';
 
         var group = img.getAttribute('data-lightbox') || '';
+        var minimal = group.indexOf('admin-prop-') === 0;
         var nodes = group ? document.querySelectorAll('img[data-lightbox="' + group.replace(/"/g, '\\"') + '"]') : [];
         var items = [];
         if (nodes && nodes.length) {
@@ -341,7 +347,7 @@
             index = found >= 0 ? found : 0;
         }
 
-        open(src, title, items, index);
+        open(src, title, items, index, minimal);
     }, true);
 })();
 

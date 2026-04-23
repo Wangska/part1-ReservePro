@@ -440,6 +440,24 @@ function hostDecisionLabel($decision, $percent) {
             border-color: transparent;
             box-shadow: 0 10px 24px rgba(212,165,116,0.22);
         }
+
+        /* The markup uses .filter-tabs/.filter-tab; ensure no underline */
+        .filter-tabs a,
+        .filter-tab,
+        .filter-tab:hover,
+        .filter-tab:focus {
+            text-decoration: none !important;
+        }
+
+        /* Also ensure the stat cards (links) have no underline */
+        .admin-metric-card,
+        .admin-metric-card:hover,
+        .admin-metric-card:focus,
+        .refund-stat-card,
+        .refund-stat-card:hover,
+        .refund-stat-card:focus {
+            text-decoration: none !important;
+        }
         /* Table */
         .rf-table-wrap { overflow-x: auto; width: 100%; }
         .rf-new-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
@@ -691,10 +709,6 @@ function hostDecisionLabel($decision, $percent) {
             <a href="commission.php" class="nav-item">
                 <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
                 <span>Commission</span>
-            </a>
-            <a href="../home.php" class="nav-item">
-                <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
-                <span>Home</span>
             </a>
         </nav>
         <div class="sidebar-footer">

@@ -85,7 +85,6 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
             <a href="refund-requests.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-rotate-left"></i></span><span>Refund Requests</span></a>
             <a href="messages.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-envelope"></i></span><span>Messages</span></a>
             <a href="earnings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-wallet"></i></span><span>Earnings</span></a>
-            <a href="../home.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-globe"></i></span><span>Home</span></a>
         </nav>
         <div class="sidebar-footer">
             <div class="user-profile">
@@ -178,6 +177,7 @@ function h($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
 </div>
 
 <script src="../assets/js/theme-toggle.js?v=27.5"></script>
+<script src="../assets/js/admin-view-site-confirm.js?v=1.0"></script>
 <script>
 function openEditModal(){ document.getElementById('editModal').classList.add('open'); document.body.style.overflow='hidden'; }
 function closeEditModal(){ document.getElementById('editModal').classList.remove('open'); document.body.style.overflow=''; }

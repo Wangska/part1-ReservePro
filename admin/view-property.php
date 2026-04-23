@@ -224,6 +224,7 @@ function h(string $v): string {
             border-radius: 18px; overflow: hidden; margin-bottom: 22px;
             background: #1a1a1a;
             box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+            position: relative;
         }
         .view-gallery img {
             max-width: 100%;
@@ -232,6 +233,33 @@ function h(string $v): string {
             margin: 0 auto;
             object-fit: unset;
         }
+        .vp-gallery-nav {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+        .vp-gallery-arrow {
+            pointer-events: auto;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 46px;
+            height: 46px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.18);
+            background: rgba(15,23,42,0.38);
+            color: #E2E8F0;
+            font-weight: 900;
+            font-size: 26px;
+            line-height: 1;
+            cursor: pointer;
+            display: inline-grid;
+            place-items: center;
+            backdrop-filter: blur(4px);
+        }
+        .vp-gallery-arrow:hover { background: rgba(15,23,42,0.55); }
+        .vp-gallery-prev { left: 14px; }
+        .vp-gallery-next { right: 14px; }
 
         /* Map */
         .vp-map {
@@ -336,10 +364,6 @@ function h(string $v): string {
                     <span class="nav-icon"><i class="fa-solid fa-coins" aria-hidden="true"></i></span>
                     <span>Commission</span>
                 </a>
-                <a href="../home.php" class="nav-item">
-                    <span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
-                    <span>Home</span>
-                </a>
             </nav>
             <div class="sidebar-footer">
                 <div class="user-profile">
@@ -394,7 +418,13 @@ function h(string $v): string {
 
                 <!-- Gallery -->
                 <div class="view-gallery">
-                    <img id="admin-main-photo" data-lightbox="property" data-lightbox-title="<?php echo htmlspecialchars($property['title'], ENT_QUOTES); ?>" src="<?php echo htmlspecialchars($main_photo); ?>" alt="<?php echo htmlspecialchars($property['title']); ?>" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800'">
+                    <img id="admin-main-photo" src="<?php echo htmlspecialchars($main_photo); ?>" alt="<?php echo htmlspecialchars($property['title']); ?>" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800'">
+                    <?php if (!empty($photos) && count($photos) > 1): ?>
+                        <div class="vp-gallery-nav" aria-hidden="true">
+                            <button type="button" class="vp-gallery-arrow vp-gallery-prev" id="vpAdminGalleryPrev" aria-label="Previous photo">‹</button>
+                            <button type="button" class="vp-gallery-arrow vp-gallery-next" id="vpAdminGalleryNext" aria-label="Next photo">›</button>
+                        </div>
+                    <?php endif; ?>
                 </div>
                 <?php if (!empty($photos) && count($photos) > 1): ?>
                     <div class="view-section" style="margin-top: 12px; margin-bottom: 18px;">
@@ -404,9 +434,8 @@ function h(string $v): string {
                                 $thumb = $p['photo_url'];
                                 if ($thumb && strpos($thumb, 'http') !== 0) $thumb = '../' . ltrim($thumb, '/');
                             ?>
-                                <div style="flex: 0 0 auto; border-radius: 8px; overflow: hidden; border: 2px solid <?php echo $idx === 0 ? '#D4A574' : 'transparent'; ?>; cursor: pointer;"
-                                     onclick="document.getElementById('admin-main-photo').src='<?php echo htmlspecialchars($thumb, ENT_QUOTES); ?>';">
-                                    <img src="<?php echo htmlspecialchars($thumb); ?>" data-lightbox="property" data-lightbox-title="<?php echo htmlspecialchars($property['title'], ENT_QUOTES); ?>" alt="Photo <?php echo $idx + 1; ?>" style="width: 120px; height: 80px; object-fit: cover;">
+                                <div class="vp-admin-thumb" data-admin-thumb data-index="<?php echo (int)$idx; ?>" data-src="<?php echo htmlspecialchars($thumb, ENT_QUOTES); ?>" style="flex: 0 0 auto; border-radius: 8px; overflow: hidden; border: 2px solid <?php echo $idx === 0 ? '#D4A574' : 'transparent'; ?>; cursor: pointer;">
+                                    <img src="<?php echo htmlspecialchars($thumb); ?>" alt="Photo <?php echo $idx + 1; ?>" style="width: 120px; height: 80px; object-fit: cover;">
                                 </div>
                             <?php endforeach; ?>
                         </div>
@@ -526,14 +555,41 @@ function h(string $v): string {
     </div>
     <script src="../assets/js/theme-toggle.js?v=27.5"></script>
     <script src="../assets/js/admin-view-site-confirm.js?v=1.0"></script>
-    <script src="../assets/js/image-lightbox.js?v=1.0"></script>
+    <?php if (!empty($photos) && count($photos) > 1): ?>
     <script>
-        function setMainPhoto(el, src) {
-            document.getElementById('admin-main-photo').src = src;
-            document.querySelectorAll('.vp-thumb').forEach(t => t.classList.remove('active'));
-            el.classList.add('active');
-        }
+        (function () {
+            var mainImg = document.getElementById('admin-main-photo');
+            if (!mainImg) return;
+
+            var prevBtn = document.getElementById('vpAdminGalleryPrev');
+            var nextBtn = document.getElementById('vpAdminGalleryNext');
+            var thumbs = Array.prototype.slice.call(document.querySelectorAll('[data-admin-thumb]'));
+            if (!thumbs.length) return;
+
+            var urls = thumbs.map(function (t) { return t.getAttribute('data-src') || ''; }).filter(Boolean);
+            var index = 0;
+
+            function setActive(i) {
+                index = ((i % urls.length) + urls.length) % urls.length;
+                mainImg.src = urls[index];
+                thumbs.forEach(function (t, ti) {
+                    t.style.borderColor = (ti === index) ? '#D4A574' : 'transparent';
+                });
+            }
+
+            thumbs.forEach(function (t) {
+                t.addEventListener('click', function () {
+                    var i = parseInt(t.getAttribute('data-index') || '0', 10);
+                    if (isNaN(i)) i = 0;
+                    setActive(i);
+                });
+            });
+
+            if (prevBtn) prevBtn.addEventListener('click', function (e) { e.preventDefault(); setActive(index - 1); });
+            if (nextBtn) nextBtn.addEventListener('click', function (e) { e.preventDefault(); setActive(index + 1); });
+        })();
     </script>
+    <?php endif; ?>
     <script>
         (function () {
             var mapEl = document.getElementById('adminPropertyMap');

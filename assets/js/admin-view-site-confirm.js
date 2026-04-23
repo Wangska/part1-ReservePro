@@ -1,8 +1,22 @@
 document.addEventListener('DOMContentLoaded', function () {
-    var viewSiteLinks = document.querySelectorAll('.sidebar-nav a.nav-item[href="../home.php"]');
-    if (!viewSiteLinks.length) {
-        return;
-    }
+    var candidates = Array.prototype.slice.call(
+        document.querySelectorAll('.sidebar-nav a.nav-item, .sidebar-brand')
+    );
+
+    var viewSiteLinks = candidates.filter(function (link) {
+        if (!link || !(link instanceof HTMLAnchorElement)) return false;
+        var rawHref = (link.getAttribute('href') || '').trim();
+        if (!rawHref) return false;
+        if (rawHref === '../home.php') return true;
+        return /(?:^|\/)home\.php(?:$|\?)/.test(rawHref);
+    });
+
+    if (!viewSiteLinks.length) return;
+
+    var isAdminPanel = /\/admin\//.test(String(window.location.pathname || ''));
+    var panelLabel = isAdminPanel ? 'Admin Panel' : 'Host Dashboard';
+    var titleText = 'Leave ' + panelLabel + '?';
+    var descText = 'You are about to open the main site view. Choose Proceed to continue or Return to stay in the ' + (isAdminPanel ? 'admin area.' : 'host area.');
 
     var modal = document.createElement('div');
     modal.className = 'admin-view-site-modal';
@@ -13,8 +27,8 @@ document.addEventListener('DOMContentLoaded', function () {
         '  <div class="admin-view-site-modal__icon" aria-hidden="true">',
         '    <i class="fa-solid fa-arrow-up-right-from-square"></i>',
         '  </div>',
-        '  <h2 id="adminViewSiteTitle">Leave Admin Panel?</h2>',
-        '  <p id="adminViewSiteDescription">You are about to open the main site view. Choose Proceed to continue or Return to stay in the admin area.</p>',
+        '  <h2 id="adminViewSiteTitle">' + titleText + '</h2>',
+        '  <p id="adminViewSiteDescription">' + descText + '</p>',
         '  <div class="admin-view-site-modal__actions">',
         '    <button type="button" class="admin-view-site-modal__button admin-view-site-modal__button--secondary" data-action="cancel">Return</button>',
         '    <button type="button" class="admin-view-site-modal__button admin-view-site-modal__button--primary" data-action="proceed">Proceed</button>',

@@ -29,15 +29,20 @@ $stmt = $conn->prepare("
         rr.*,
         b.check_in, b.check_out, b.total_price, b.status AS booking_status, b.booking_date,
         bc.cancelled_at AS cancellation_date,
+        bc.reason AS cancellation_reason,
         p.title AS property_title, p.city, p.country, p.host_id,
         p.cancellation_policy AS listing_cancellation_policy,
         g.first_name AS guest_first_name, g.last_name AS guest_last_name, g.email AS guest_email
     FROM refund_requests rr
     JOIN bookings b ON b.id = rr.booking_id
     LEFT JOIN (
-        SELECT booking_id, MAX(cancelled_at) AS cancelled_at
-        FROM booking_cancellations
-        GROUP BY booking_id
+        SELECT bc1.booking_id, bc1.cancelled_at, bc1.reason
+        FROM booking_cancellations bc1
+        JOIN (
+            SELECT booking_id, MAX(id) AS max_id
+            FROM booking_cancellations
+            GROUP BY booking_id
+        ) last ON last.booking_id = bc1.booking_id AND last.max_id = bc1.id
     ) bc ON bc.booking_id = b.id
     JOIN properties p ON p.id = rr.property_id
     JOIN users g ON g.id = rr.requester_user_id
@@ -239,7 +244,6 @@ $needsHostDecision = $isReviewable
             <a href="refund-requests.php" class="nav-item active"><span class="nav-icon"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></span><span>Refund Requests</span></a>
             <a href="earnings.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-wallet" aria-hidden="true"></i></span><span>Earnings</span></a>
             <a href="messages.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span><span>Messages</span></a>
-            <a href="../home.php" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span><span>Home</span></a>
         </nav>
         <div class="sidebar-footer">
             <div class="user-profile">
@@ -291,6 +295,14 @@ $needsHostDecision = $isReviewable
                         <div class="rr-pill"><small>Suggested refund</small><strong><?php echo (int)$r['refund_percent']; ?>% &middot; ₱<?php echo number_format((float)$r['refund_amount'], 2); ?></strong></div>
                         <div class="rr-pill"><small>Booked on</small><strong><?php echo fmt_dt($r['booking_date'] ?? ''); ?></strong></div>
                         <div class="rr-pill"><small>Cancelled on</small><strong><?php echo fmt_dt($r['cancellation_date'] ?? ''); ?></strong></div>
+                    </div>
+
+                    <?php
+                        $cancelReason = trim((string)($r['cancellation_reason'] ?? ''));
+                    ?>
+                    <div class="rr-pill" style="margin-top: 16px;">
+                        <small>Guest cancellation reason</small>
+                        <strong><?php echo $cancelReason !== '' ? h($cancelReason) : '—'; ?></strong>
                     </div>
 
                     <?php if (!empty($r['issue_type'])): ?>
@@ -376,6 +388,7 @@ $needsHostDecision = $isReviewable
 </div>
 
 <script src="../assets/js/theme-toggle.js?v=26.0"></script>
+<script src="../assets/js/admin-view-site-confirm.js?v=1.0"></script>
 </body>
 </html>
 
